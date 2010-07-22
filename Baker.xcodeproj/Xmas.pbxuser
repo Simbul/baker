@@ -10,6 +10,9 @@
 		activeBuildConfigurationName = Debug;
 		activeExecutable = 9F4F07AC11F8DA8700375A8C /* Baker */;
 		activeTarget = 1D6058900D05DD3D006BFB54 /* Baker */;
+		addToTargets = (
+			1D6058900D05DD3D006BFB54 /* Baker */,
+		);
 		codeSenseManager = 9F4F07BC11F8DA8D00375A8C /* Code sense */;
 		executables = (
 			9F4F07AC11F8DA8700375A8C /* Baker */,
@@ -22,7 +25,7 @@
 					20,
 					341,
 					20,
-					48.16259765625,
+					48,
 					43,
 					43,
 					20,
@@ -37,8 +40,13 @@
 					PBXFileDataSource_Target_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 301521543;
-			PBXWorkspaceStateSaveDate = 301521543;
+			PBXPerProjectTemplateStateSaveDate = 301521778;
+			PBXWorkspaceStateSaveDate = 301521778;
+		};
+		perUserProjectItems = {
+			9F4F07EC11F8DBE300375A8C /* PBXTextBookmark */ = 9F4F07EC11F8DBE300375A8C /* PBXTextBookmark */;
+			9F4F07ED11F8DBE300375A8C /* PBXBookmark */ = 9F4F07ED11F8DBE300375A8C /* PBXBookmark */;
+			9F4F07EE11F8DBE300375A8C /* PBXTextBookmark */ = 9F4F07EE11F8DBE300375A8C /* PBXTextBookmark */;
 		};
 		sourceControlManager = 9F4F07BB11F8DA8D00375A8C /* Source Control */;
 		userBuildSettings = {
@@ -60,6 +68,7 @@
 		dataTipSortType = 0;
 		debuggerPlugin = GDBDebugging;
 		disassemblyDisplayState = 0;
+		dylibVariantSuffix = "";
 		enableDebugStr = 1;
 		environmentEntries = (
 		);
@@ -84,5 +93,55 @@
 	9F4F07BC11F8DA8D00375A8C /* Code sense */ = {
 		isa = PBXCodeSenseManager;
 		indexTemplatePath = "";
+	};
+	9F4F07E711F8DBD800375A8C /* RootViewController.h */ = {
+		isa = PBXFileReference;
+		fileEncoding = 4;
+		lastKnownFileType = sourcecode.c.h;
+		name = RootViewController.h;
+		path = /Users/Xmas/Progetti/Baker/RootViewController.h;
+		sourceTree = "<absolute>";
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {519, 237}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{0, 210}";
+		};
+	};
+	9F4F07E811F8DBD800375A8C /* RootViewController.m */ = {
+		isa = PBXFileReference;
+		fileEncoding = 4;
+		lastKnownFileType = sourcecode.c.objc;
+		name = RootViewController.m;
+		path = /Users/Xmas/Progetti/Baker/RootViewController.m;
+		sourceTree = "<absolute>";
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1146, 702}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{0, 564}";
+		};
+	};
+	9F4F07EC11F8DBE300375A8C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 9F4F07E711F8DBD800375A8C /* RootViewController.h */;
+		name = "RootViewController.h: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 210;
+		vrLoc = 0;
+	};
+	9F4F07ED11F8DBE300375A8C /* PBXBookmark */ = {
+		isa = PBXBookmark;
+		fRef = 9F4F07E811F8DBD800375A8C /* RootViewController.m */;
+	};
+	9F4F07EE11F8DBE300375A8C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 9F4F07E811F8DBD800375A8C /* RootViewController.m */;
+		name = "RootViewController.m: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 564;
+		vrLoc = 0;
 	};
 }
