@@ -1,0 +1,36 @@
+body {
+	font-family: Arial, sans-serif;
+	font-size: 62.5%
+}
+
+#wrapper {
+	width: 746px;
+	margin: 10px;
+	padding: 10px;
+	border: 1px solid black;
+}
+
+#wrapper h1 {
+	font-size: 1.8em;
+	text-align: center;
+}
+
+#wrapper h2 {
+	font-size: 1.6em;
+	text-align: center;
+}
+
+#wrapper p {
+	font-size: 1.2em;
+	text-align: left;
+}
+
+#wrapper img.left {
+	float: left;
+	padding: 7px 10px 0 0;
+}
+
+#wrapper img.right {
+	float: right;
+	padding: 7px 0 0 10px;
+}
