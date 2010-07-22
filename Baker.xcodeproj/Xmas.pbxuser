@@ -10,7 +10,7 @@
 	1D3623250D0F684500981E51 /* BakerAppDelegate.m */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1965, 780}}";
-			sepNavSelRange = "{564, 6}";
+			sepNavSelRange = "{475, 0}";
 			sepNavVisRange = "{0, 1250}";
 		};
 	};
@@ -169,8 +169,15 @@
 	9F4F07F111F8DE8200375A8C /* RootViewController.h */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {787, 484}}";
-			sepNavSelRange = "{201, 0}";
-			sepNavVisRange = "{0, 210}";
+			sepNavSelRange = "{225, 0}";
+			sepNavVisRange = "{0, 410}";
+		};
+	};
+	9F4F07F211F8DE8200375A8C /* RootViewController.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1146, 793}}";
+			sepNavSelRange = "{1262, 0}";
+			sepNavVisRange = "{217, 1397}";
 		};
 	};
 	9F4F07F611F8DE8C00375A8C /* PBXTextBookmark */ = {
@@ -218,7 +225,7 @@
 		fRef = 9F4F07F111F8DE8200375A8C /* RootViewController.h */;
 		name = "RootViewController.h: 14";
 		rLen = 0;
-		rLoc = 203;
+		rLoc = 223;
 		rType = 0;
 		vrLen = 210;
 		vrLoc = 0;
@@ -228,7 +235,7 @@
 		fRef = 9F4F07F111F8DE8200375A8C /* RootViewController.h */;
 		name = "RootViewController.h: 13";
 		rLen = 0;
-		rLoc = 201;
+		rLoc = 221;
 		rType = 0;
 		vrLen = 210;
 		vrLoc = 0;
