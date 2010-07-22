@@ -8,11 +8,16 @@
 
 #import <UIKit/UIKit.h>
 
+@class RootViewController;
+
 @interface BakerAppDelegate : NSObject <UIApplicationDelegate> {
-    UIWindow *window;
+    
+	UIWindow *window;
+	UIViewController *rootViewController;
 }
 
 @property (nonatomic, retain) IBOutlet UIWindow *window;
+@property (nonatomic, retain) UIViewController *rootViewController;
 
 @end
 

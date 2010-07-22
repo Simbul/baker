@@ -1,14 +1,16 @@
 TBaker
 v7
 r0
-t301522284.329886
+t301523397.014363
 cCheck dependencies
 cProcessInfoPlistFile /Users/Xmas/Progetti/Baker/build/Debug-iphonesimulator/Baker.app/Info.plist Baker-Info.plist
 cCompileXIB /Users/Xmas/Progetti/Baker/MainWindow.xib
 cCpResource build/Debug-iphonesimulator/Baker.app/book book
+cCompileXIB /Users/Xmas/Progetti/Baker/RootViewController.xib
 cProcessPCH /var/folders/H8/H8sqJN73FqGn-eiasZAa-E+++TI/-Caches-/com.apple.Xcode.501/SharedPrecompiledHeaders/Baker_Prefix-dtgnolouxlgoszhklmwatogiscgw/Baker_Prefix.pch.gch Baker_Prefix.pch normal i386 objective-c com.apple.compilers.gcc.4_2
 cCompileC build/Baker.build/Debug-iphonesimulator/Baker.build/Objects-normal/i386/main.o /Users/Xmas/Progetti/Baker/main.m normal i386 objective-c com.apple.compilers.gcc.4_2
 cCompileC build/Baker.build/Debug-iphonesimulator/Baker.build/Objects-normal/i386/BakerAppDelegate.o /Users/Xmas/Progetti/Baker/Classes/BakerAppDelegate.m normal i386 objective-c com.apple.compilers.gcc.4_2
+cCompileC build/Baker.build/Debug-iphonesimulator/Baker.build/Objects-normal/i386/RootViewController.o /Users/Xmas/Progetti/Baker/Classes/RootViewController.m normal i386 objective-c com.apple.compilers.gcc.4_2
 cLd /Users/Xmas/Progetti/Baker/build/Debug-iphonesimulator/Baker.app/Baker normal i386
 cGenerateDSYMFile /Users/Xmas/Progetti/Baker/build/Debug-iphonesimulator/Baker.app.dSYM /Users/Xmas/Progetti/Baker/build/Debug-iphonesimulator/Baker.app/Baker
 cTouch /Users/Xmas/Progetti/Baker/build/Debug-iphonesimulator/Baker.app
@@ -118,22 +120,34 @@ i<Foundation/Foundation.h>
 i<UIKit/UIKit.h>
 
 N/Users/Xmas/Progetti/Baker/Classes/../RootViewController.m
-c000000004C48A4580000000000000507
-t1279829080
-s1287
-i"RootViewController.h"
+c00000000000000000000000000000000
+t2
+s0
 
 N/Users/Xmas/Progetti/Baker/Classes/BakerAppDelegate.h
-c000000004C48A306000000000000012D
-t1279828742
-s301
+c000000004C48A86700000000000001B6
+t1279830119
+s438
 i<UIKit/UIKit.h>
 
 N/Users/Xmas/Progetti/Baker/Classes/BakerAppDelegate.m
-c000000004C48A3060000000000000682
-t1279828742
-s1666
+c000000004C48A96B0000000000000746
+t1279830379
+s1862
 i"BakerAppDelegate.h"
+i"RootViewController.h"
+
+N/Users/Xmas/Progetti/Baker/Classes/RootViewController.h
+c000000004C48A9F400000000000000D2
+t1279830516
+s210
+i<UIKit/UIKit.h>
+
+N/Users/Xmas/Progetti/Baker/Classes/RootViewController.m
+c000000004C48A7020000000000000507
+t1279829762
+s1287
+i"RootViewController.h"
 
 N/Users/Xmas/Progetti/Baker/MainWindow.xib
 c000000004C48A3060000000000003E63
@@ -141,20 +155,20 @@ t1279828742
 s15971
 
 N/Users/Xmas/Progetti/Baker/RootViewController.h
-c000000004C48A45800000000000000D2
-t1279829080
+c000000004C48A9F400000000000000D2
+t1279830516
 s210
 i<UIKit/UIKit.h>
 
 N/Users/Xmas/Progetti/Baker/RootViewController.m
-c000000004C48A4580000000000000507
-t1279829080
+c000000004C48A7020000000000000507
+t1279829762
 s1287
 i"RootViewController.h"
 
 N/Users/Xmas/Progetti/Baker/RootViewController.xib
-c000000004C48A45800000000000050E0
-t1279829080
+c000000004C48A70200000000000050E0
+t1279829762
 s20704
 
 N/Users/Xmas/Progetti/Baker/book
@@ -163,33 +177,33 @@ t1279824927
 s238
 
 N/Users/Xmas/Progetti/Baker/build/Baker.build/Debug-iphonesimulator/Baker.build/Objects-normal/i386/Baker.LinkFileList
-c000000004C48A3F400000000000000E0
-t1279828980
-s224
+c000000004C48A9220000000000000158
+t1279830306
+s344
 
 N/Users/Xmas/Progetti/Baker/build/Baker.build/Debug-iphonesimulator/Baker.build/Objects-normal/i386/BakerAppDelegate.o
-t1279828983
-s20000
+t1279830596
+s46104
 
 N/Users/Xmas/Progetti/Baker/build/Baker.build/Debug-iphonesimulator/Baker.build/Objects-normal/i386/RootViewController.o
-t2
-s0
+t1279830596
+s34404
 
 N/Users/Xmas/Progetti/Baker/build/Baker.build/Debug-iphonesimulator/Baker.build/Objects-normal/i386/main.o
 t1279828983
 s6280
 
 N/Users/Xmas/Progetti/Baker/build/Debug-iphonesimulator/Baker.app
-t1279829484
-s238
+t1279830597
+s272
 
 N/Users/Xmas/Progetti/Baker/build/Debug-iphonesimulator/Baker.app.dSYM
-t1279828984
+t1279830596
 s102
 
 N/Users/Xmas/Progetti/Baker/build/Debug-iphonesimulator/Baker.app/Baker
-t1279828984
-s15292
+t1279830596
+s17096
 
 N/Users/Xmas/Progetti/Baker/build/Debug-iphonesimulator/Baker.app/Info.plist
 t1279828755
@@ -204,8 +218,8 @@ t1279828756
 s8
 
 N/Users/Xmas/Progetti/Baker/build/Debug-iphonesimulator/Baker.app/RootViewController.nib
-t2
-s0
+t1279830308
+s795
 
 N/Users/Xmas/Progetti/Baker/build/Debug-iphonesimulator/Baker.app/book
 t1279829484
@@ -232,7 +246,7 @@ s1238
 
 CCheck dependencies
 r0
-lSLF07#2@18"Check dependencies301522284#301522284#0(0"0(0#1#0"3343187568374212096#0"0#
+lSLF07#2@18"Check dependencies301523394#301523394#0(0"0(0#1#0"8614673984#0"0#
 
 CCompileC build/Baker.build/Debug-iphonesimulator/Baker.build/Objects-normal/i386/BakerAppDelegate.o /Users/Xmas/Desktop/Baker/Classes/BakerAppDelegate.m normal i386 objective-c com.apple.compilers.gcc.4_2
 s301521565.131071
@@ -248,8 +262,8 @@ xcom.apple.compilers.gcc.4_2
 lSLF07#2@60"Compile /Users/Xmas/Desktop/Baker/Classes/BakerAppDelegate.m301521565#301521565#0(0"0(0#0#52"/Users/Xmas/Desktop/Baker/Classes/BakerAppDelegate.m8603312544#1750"    cd /Users/Xmas/Desktop/Baker    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -x objective-c -arch i386 -fmessage-length=0 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -D__IPHONE_OS_VERSION_MIN_REQUIRED=30200 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.2.sdk -fvisibility=hidden -mmacosx-version-min=10.5 -gdwarf-2 -fobjc-abi-version=2 -fobjc-legacy-dispatch -iquote /Users/Xmas/Desktop/Baker/build/Baker.build/Debug-iphonesimulator/Baker.build/Baker-generated-files.hmap -I/Users/Xmas/Desktop/Baker/build/Baker.build/Debug-iphonesimulator/Baker.build/Baker-own-target-headers.hmap -I/Users/Xmas/Desktop/Baker/build/Baker.build/Debug-iphonesimulator/Baker.build/Baker-all-target-headers.hmap -iquote /Users/Xmas/Desktop/Baker/build/Baker.build/Debug-iphonesimulator/Baker.build/Baker-project-headers.hmap -F/Users/Xmas/Desktop/Baker/build/Debug-iphonesimulator -I/Users/Xmas/Desktop/Baker/build/Debug-iphonesimulator/include -I/Users/Xmas/Desktop/Baker/build/Baker.build/Debug-iphonesimulator/Baker.build/DerivedSources/i386 -I/Users/Xmas/Desktop/Baker/build/Baker.build/Debug-iphonesimulator/Baker.build/DerivedSources -include /var/folders/H8/H8sqJN73FqGn-eiasZAa-E+++TI/-Caches-/com.apple.Xcode.501/SharedPrecompiledHeaders/Baker_Prefix-bofmhmeewnbbdcdnklbbchclbdst/Baker_Prefix.pch -c /Users/Xmas/Desktop/Baker/Classes/BakerAppDelegate.m -o /Users/Xmas/Desktop/Baker/build/Baker.build/Debug-iphonesimulator/Baker.build/Objects-normal/i386/BakerAppDelegate.o0#
 
 CCompileC build/Baker.build/Debug-iphonesimulator/Baker.build/Objects-normal/i386/BakerAppDelegate.o /Users/Xmas/Progetti/Baker/Classes/BakerAppDelegate.m normal i386 objective-c com.apple.compilers.gcc.4_2
-s301521782.962721
-e301521783.787094
+s301523394.272511
+e301523396.218800
 r1
 xCompileC
 xbuild/Baker.build/Debug-iphonesimulator/Baker.build/Objects-normal/i386/BakerAppDelegate.o
@@ -258,10 +272,33 @@ xnormal
 xi386
 xobjective-c
 xcom.apple.compilers.gcc.4_2
-lSLF07#2@61"Compile /Users/Xmas/Progetti/Baker/Classes/BakerAppDelegate.m301521782#301521783#0(0"0(0#0#53"/Users/Xmas/Progetti/Baker/Classes/BakerAppDelegate.m8599714368#1761"    cd /Users/Xmas/Progetti/Baker    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -x objective-c -arch i386 -fmessage-length=0 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -D__IPHONE_OS_VERSION_MIN_REQUIRED=30200 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.2.sdk -fvisibility=hidden -mmacosx-version-min=10.5 -gdwarf-2 -fobjc-abi-version=2 -fobjc-legacy-dispatch -iquote /Users/Xmas/Progetti/Baker/build/Baker.build/Debug-iphonesimulator/Baker.build/Baker-generated-files.hmap -I/Users/Xmas/Progetti/Baker/build/Baker.build/Debug-iphonesimulator/Baker.build/Baker-own-target-headers.hmap -I/Users/Xmas/Progetti/Baker/build/Baker.build/Debug-iphonesimulator/Baker.build/Baker-all-target-headers.hmap -iquote /Users/Xmas/Progetti/Baker/build/Baker.build/Debug-iphonesimulator/Baker.build/Baker-project-headers.hmap -F/Users/Xmas/Progetti/Baker/build/Debug-iphonesimulator -I/Users/Xmas/Progetti/Baker/build/Debug-iphonesimulator/include -I/Users/Xmas/Progetti/Baker/build/Baker.build/Debug-iphonesimulator/Baker.build/DerivedSources/i386 -I/Users/Xmas/Progetti/Baker/build/Baker.build/Debug-iphonesimulator/Baker.build/DerivedSources -include /var/folders/H8/H8sqJN73FqGn-eiasZAa-E+++TI/-Caches-/com.apple.Xcode.501/SharedPrecompiledHeaders/Baker_Prefix-dtgnolouxlgoszhklmwatogiscgw/Baker_Prefix.pch -c /Users/Xmas/Progetti/Baker/Classes/BakerAppDelegate.m -o /Users/Xmas/Progetti/Baker/build/Baker.build/Debug-iphonesimulator/Baker.build/Objects-normal/i386/BakerAppDelegate.o0#
+lSLF07#2@61"Compile /Users/Xmas/Progetti/Baker/Classes/BakerAppDelegate.m301523394#301523396#0(0"0(0#0#53"/Users/Xmas/Progetti/Baker/Classes/BakerAppDelegate.m8615880576#1761"    cd /Users/Xmas/Progetti/Baker    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -x objective-c -arch i386 -fmessage-length=0 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -D__IPHONE_OS_VERSION_MIN_REQUIRED=30200 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.2.sdk -fvisibility=hidden -mmacosx-version-min=10.5 -gdwarf-2 -fobjc-abi-version=2 -fobjc-legacy-dispatch -iquote /Users/Xmas/Progetti/Baker/build/Baker.build/Debug-iphonesimulator/Baker.build/Baker-generated-files.hmap -I/Users/Xmas/Progetti/Baker/build/Baker.build/Debug-iphonesimulator/Baker.build/Baker-own-target-headers.hmap -I/Users/Xmas/Progetti/Baker/build/Baker.build/Debug-iphonesimulator/Baker.build/Baker-all-target-headers.hmap -iquote /Users/Xmas/Progetti/Baker/build/Baker.build/Debug-iphonesimulator/Baker.build/Baker-project-headers.hmap -F/Users/Xmas/Progetti/Baker/build/Debug-iphonesimulator -I/Users/Xmas/Progetti/Baker/build/Debug-iphonesimulator/include -I/Users/Xmas/Progetti/Baker/build/Baker.build/Debug-iphonesimulator/Baker.build/DerivedSources/i386 -I/Users/Xmas/Progetti/Baker/build/Baker.build/Debug-iphonesimulator/Baker.build/DerivedSources -include /var/folders/H8/H8sqJN73FqGn-eiasZAa-E+++TI/-Caches-/com.apple.Xcode.501/SharedPrecompiledHeaders/Baker_Prefix-dtgnolouxlgoszhklmwatogiscgw/Baker_Prefix.pch -c /Users/Xmas/Progetti/Baker/Classes/BakerAppDelegate.m -o /Users/Xmas/Progetti/Baker/build/Baker.build/Debug-iphonesimulator/Baker.build/Objects-normal/i386/BakerAppDelegate.o0#
 
 CCompileC build/Baker.build/Debug-iphonesimulator/Baker.build/Objects-normal/i386/RootViewController.o /Users/Xmas/Progetti/Baker/Classes/../RootViewController.m normal i386 objective-c com.apple.compilers.gcc.4_2
-r0
+s301523108.367777
+e301523108.720977
+r1
+xCompileC
+xbuild/Baker.build/Debug-iphonesimulator/Baker.build/Objects-normal/i386/RootViewController.o
+x/Users/Xmas/Progetti/Baker/Classes/../RootViewController.m
+xnormal
+xi386
+xobjective-c
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@66"Compile /Users/Xmas/Progetti/Baker/Classes/../RootViewController.m301523108#301523108#0(0"0(0#0#58"/Users/Xmas/Progetti/Baker/Classes/../RootViewController.m8612173248#1768"    cd /Users/Xmas/Progetti/Baker    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -x objective-c -arch i386 -fmessage-length=0 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -D__IPHONE_OS_VERSION_MIN_REQUIRED=30200 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.2.sdk -fvisibility=hidden -mmacosx-version-min=10.5 -gdwarf-2 -fobjc-abi-version=2 -fobjc-legacy-dispatch -iquote /Users/Xmas/Progetti/Baker/build/Baker.build/Debug-iphonesimulator/Baker.build/Baker-generated-files.hmap -I/Users/Xmas/Progetti/Baker/build/Baker.build/Debug-iphonesimulator/Baker.build/Baker-own-target-headers.hmap -I/Users/Xmas/Progetti/Baker/build/Baker.build/Debug-iphonesimulator/Baker.build/Baker-all-target-headers.hmap -iquote /Users/Xmas/Progetti/Baker/build/Baker.build/Debug-iphonesimulator/Baker.build/Baker-project-headers.hmap -F/Users/Xmas/Progetti/Baker/build/Debug-iphonesimulator -I/Users/Xmas/Progetti/Baker/build/Debug-iphonesimulator/include -I/Users/Xmas/Progetti/Baker/build/Baker.build/Debug-iphonesimulator/Baker.build/DerivedSources/i386 -I/Users/Xmas/Progetti/Baker/build/Baker.build/Debug-iphonesimulator/Baker.build/DerivedSources -include /var/folders/H8/H8sqJN73FqGn-eiasZAa-E+++TI/-Caches-/com.apple.Xcode.501/SharedPrecompiledHeaders/Baker_Prefix-dtgnolouxlgoszhklmwatogiscgw/Baker_Prefix.pch -c /Users/Xmas/Progetti/Baker/Classes/../RootViewController.m -o /Users/Xmas/Progetti/Baker/build/Baker.build/Debug-iphonesimulator/Baker.build/Objects-normal/i386/RootViewController.o0#
+
+CCompileC build/Baker.build/Debug-iphonesimulator/Baker.build/Objects-normal/i386/RootViewController.o /Users/Xmas/Progetti/Baker/Classes/RootViewController.m normal i386 objective-c com.apple.compilers.gcc.4_2
+s301523394.316607
+e301523396.228428
+r1
+xCompileC
+xbuild/Baker.build/Debug-iphonesimulator/Baker.build/Objects-normal/i386/RootViewController.o
+x/Users/Xmas/Progetti/Baker/Classes/RootViewController.m
+xnormal
+xi386
+xobjective-c
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@63"Compile /Users/Xmas/Progetti/Baker/Classes/RootViewController.m301523394#301523396#0(0"0(0#0#55"/Users/Xmas/Progetti/Baker/Classes/RootViewController.m8606955936#1765"    cd /Users/Xmas/Progetti/Baker    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -x objective-c -arch i386 -fmessage-length=0 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -D__IPHONE_OS_VERSION_MIN_REQUIRED=30200 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.2.sdk -fvisibility=hidden -mmacosx-version-min=10.5 -gdwarf-2 -fobjc-abi-version=2 -fobjc-legacy-dispatch -iquote /Users/Xmas/Progetti/Baker/build/Baker.build/Debug-iphonesimulator/Baker.build/Baker-generated-files.hmap -I/Users/Xmas/Progetti/Baker/build/Baker.build/Debug-iphonesimulator/Baker.build/Baker-own-target-headers.hmap -I/Users/Xmas/Progetti/Baker/build/Baker.build/Debug-iphonesimulator/Baker.build/Baker-all-target-headers.hmap -iquote /Users/Xmas/Progetti/Baker/build/Baker.build/Debug-iphonesimulator/Baker.build/Baker-project-headers.hmap -F/Users/Xmas/Progetti/Baker/build/Debug-iphonesimulator -I/Users/Xmas/Progetti/Baker/build/Debug-iphonesimulator/include -I/Users/Xmas/Progetti/Baker/build/Baker.build/Debug-iphonesimulator/Baker.build/DerivedSources/i386 -I/Users/Xmas/Progetti/Baker/build/Baker.build/Debug-iphonesimulator/Baker.build/DerivedSources -include /var/folders/H8/H8sqJN73FqGn-eiasZAa-E+++TI/-Caches-/com.apple.Xcode.501/SharedPrecompiledHeaders/Baker_Prefix-dtgnolouxlgoszhklmwatogiscgw/Baker_Prefix.pch -c /Users/Xmas/Progetti/Baker/Classes/RootViewController.m -o /Users/Xmas/Progetti/Baker/build/Baker.build/Debug-iphonesimulator/Baker.build/Objects-normal/i386/RootViewController.o0#
 
 CCompileC build/Baker.build/Debug-iphonesimulator/Baker.build/Objects-normal/i386/RootViewController.o /Users/Xmas/Progetti/Baker/RootViewController.m normal i386 objective-c com.apple.compilers.gcc.4_2
 r0
@@ -304,7 +341,14 @@ CCompileXIB /Users/Xmas/Progetti/Baker/MainWindow.xib
 r0
 
 CCompileXIB /Users/Xmas/Progetti/Baker/RootViewController.xib
-r0
+s301523106.318824
+e301523108.237627
+r1
+xCompileXIB
+x/Users/Xmas/Progetti/Baker/RootViewController.xib
+o/* com.apple.ibtool.document.warnings */
+o/Users/Xmas/Progetti/Baker/RootViewController.xib:-1: warning: The 'view' outlet of 'File's Owner' is connected to 'View' but 'view' is no longer defined on RootViewController.
+lSLF07#2@33"CompileXIB RootViewController.xib301523106#301523108#0(218"/* com.apple.ibtool.document.warnings *//Users/Xmas/Progetti/Baker/RootViewController.xib:-1: warning: The 'view' outlet of 'File's Owner' is connected to 'View' but 'view' is no longer defined on RootViewController.1(22@113"The 'view' outlet of 'File's Owner' is connected to 'View' but 'view' is no longer defined on RootViewController.301523108#18446744073709551615#0#0(6@49"/Users/Xmas/Progetti/Baker/RootViewController.xib301522562#18446744073709551615#0#18446744073709551615#0#0"0(0#0#49"/Users/Xmas/Progetti/Baker/RootViewController.xib8615696608#548"    cd /Users/Xmas/Progetti/Baker    setenv IBC_MINIMUM_COMPATIBILITY_VERSION 3.2    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/usr/bin/ibtool --errors --warnings --notices --output-format human-readable-text --compile /Users/Xmas/Progetti/Baker/build/Debug-iphonesimulator/Baker.app/RootViewController.nib /Users/Xmas/Progetti/Baker/RootViewController.xib --sdk /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.2.sdk0#
 
 CCpResource build/Debug-iphonesimulator/Baker.app/book book
 s301522284.188241
@@ -325,13 +369,13 @@ x/Users/Xmas/Desktop/Baker/build/Debug-iphonesimulator/Baker.app/Baker
 lSLF07#2@103"GenerateDSYMFile build/Debug-iphonesimulator/Baker.app.dSYM build/Debug-iphonesimulator/Baker.app/Baker301521566#301521566#0(0"0(0#0#69"/Users/Xmas/Desktop/Baker/build/Debug-iphonesimulator/Baker.app/Baker8603634400#338"    cd /Users/Xmas/Desktop/Baker    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/usr/bin/dsymutil /Users/Xmas/Desktop/Baker/build/Debug-iphonesimulator/Baker.app/Baker -o /Users/Xmas/Desktop/Baker/build/Debug-iphonesimulator/Baker.app.dSYM0#
 
 CGenerateDSYMFile /Users/Xmas/Progetti/Baker/build/Debug-iphonesimulator/Baker.app.dSYM /Users/Xmas/Progetti/Baker/build/Debug-iphonesimulator/Baker.app/Baker
-s301521784.511461
-e301521784.726409
+s301523396.618008
+e301523396.949268
 r1
 xGenerateDSYMFile
 x/Users/Xmas/Progetti/Baker/build/Debug-iphonesimulator/Baker.app.dSYM
 x/Users/Xmas/Progetti/Baker/build/Debug-iphonesimulator/Baker.app/Baker
-lSLF07#2@103"GenerateDSYMFile build/Debug-iphonesimulator/Baker.app.dSYM build/Debug-iphonesimulator/Baker.app/Baker301521784#301521784#0(0"0(0#0#70"/Users/Xmas/Progetti/Baker/build/Debug-iphonesimulator/Baker.app/Baker8599679136#341"    cd /Users/Xmas/Progetti/Baker    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/usr/bin/dsymutil /Users/Xmas/Progetti/Baker/build/Debug-iphonesimulator/Baker.app/Baker -o /Users/Xmas/Progetti/Baker/build/Debug-iphonesimulator/Baker.app.dSYM0#
+lSLF07#2@103"GenerateDSYMFile build/Debug-iphonesimulator/Baker.app.dSYM build/Debug-iphonesimulator/Baker.app/Baker301523396#301523396#0(0"0(0#0#70"/Users/Xmas/Progetti/Baker/build/Debug-iphonesimulator/Baker.app/Baker8612856576#341"    cd /Users/Xmas/Progetti/Baker    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/usr/bin/dsymutil /Users/Xmas/Progetti/Baker/build/Debug-iphonesimulator/Baker.app/Baker -o /Users/Xmas/Progetti/Baker/build/Debug-iphonesimulator/Baker.app.dSYM0#
 
 CLd /Users/Xmas/Desktop/Baker/build/Debug-iphonesimulator/Baker.app/Baker normal i386
 s301521565.344534
@@ -344,14 +388,14 @@ xi386
 lSLF07#2@74"Link /Users/Xmas/Desktop/Baker/build/Debug-iphonesimulator/Baker.app/Baker301521565#301521566#0(0"0(0#0#0"8600746560#825"    cd /Users/Xmas/Desktop/Baker    setenv MACOSX_DEPLOYMENT_TARGET 10.5    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -arch i386 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.2.sdk -L/Users/Xmas/Desktop/Baker/build/Debug-iphonesimulator -F/Users/Xmas/Desktop/Baker/build/Debug-iphonesimulator -filelist /Users/Xmas/Desktop/Baker/build/Baker.build/Debug-iphonesimulator/Baker.build/Objects-normal/i386/Baker.LinkFileList -mmacosx-version-min=10.5 -Xlinker -objc_abi_version -Xlinker 2 -framework Foundation -framework UIKit -framework CoreGraphics -o /Users/Xmas/Desktop/Baker/build/Debug-iphonesimulator/Baker.app/Baker0#
 
 CLd /Users/Xmas/Progetti/Baker/build/Debug-iphonesimulator/Baker.app/Baker normal i386
-s301521783.787176
-e301521784.511226
+s301523396.228535
+e301523396.617891
 r1
 xLd
 x/Users/Xmas/Progetti/Baker/build/Debug-iphonesimulator/Baker.app/Baker
 xnormal
 xi386
-lSLF07#2@75"Link /Users/Xmas/Progetti/Baker/build/Debug-iphonesimulator/Baker.app/Baker301521783#301521784#0(0"0(0#0#0"8604326624#830"    cd /Users/Xmas/Progetti/Baker    setenv MACOSX_DEPLOYMENT_TARGET 10.5    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -arch i386 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.2.sdk -L/Users/Xmas/Progetti/Baker/build/Debug-iphonesimulator -F/Users/Xmas/Progetti/Baker/build/Debug-iphonesimulator -filelist /Users/Xmas/Progetti/Baker/build/Baker.build/Debug-iphonesimulator/Baker.build/Objects-normal/i386/Baker.LinkFileList -mmacosx-version-min=10.5 -Xlinker -objc_abi_version -Xlinker 2 -framework Foundation -framework UIKit -framework CoreGraphics -o /Users/Xmas/Progetti/Baker/build/Debug-iphonesimulator/Baker.app/Baker0#
+lSLF07#2@75"Link /Users/Xmas/Progetti/Baker/build/Debug-iphonesimulator/Baker.app/Baker301523396#301523396#0(0"0(0#0#0"8616258880#830"    cd /Users/Xmas/Progetti/Baker    setenv MACOSX_DEPLOYMENT_TARGET 10.5    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -arch i386 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.2.sdk -L/Users/Xmas/Progetti/Baker/build/Debug-iphonesimulator -F/Users/Xmas/Progetti/Baker/build/Debug-iphonesimulator -filelist /Users/Xmas/Progetti/Baker/build/Baker.build/Debug-iphonesimulator/Baker.build/Objects-normal/i386/Baker.LinkFileList -mmacosx-version-min=10.5 -Xlinker -objc_abi_version -Xlinker 2 -framework Foundation -framework UIKit -framework CoreGraphics -o /Users/Xmas/Progetti/Baker/build/Debug-iphonesimulator/Baker.app/Baker0#
 
 CProcessInfoPlistFile /Users/Xmas/Desktop/Baker/build/Debug-iphonesimulator/Baker.app/Info.plist Baker-Info.plist
 s301521555.970073
@@ -400,10 +444,10 @@ x/Users/Xmas/Desktop/Baker/build/Debug-iphonesimulator/Baker.app
 lSLF07#2@69"Touch /Users/Xmas/Desktop/Baker/build/Debug-iphonesimulator/Baker.app301521566#301521566#0(0"0(0#0#0"8603338176#250"    cd /Users/Xmas/Desktop/Baker    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /usr/bin/touch -c /Users/Xmas/Desktop/Baker/build/Debug-iphonesimulator/Baker.app0#
 
 CTouch /Users/Xmas/Progetti/Baker/build/Debug-iphonesimulator/Baker.app
-s301522284.310245
-e301522284.329831
+s301523396.949370
+e301523397.014301
 r1
 xTouch
 x/Users/Xmas/Progetti/Baker/build/Debug-iphonesimulator/Baker.app
-lSLF07#2@70"Touch /Users/Xmas/Progetti/Baker/build/Debug-iphonesimulator/Baker.app301522284#301522284#0(0"0(0#0#0"8600513824#252"    cd /Users/Xmas/Progetti/Baker    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /usr/bin/touch -c /Users/Xmas/Progetti/Baker/build/Debug-iphonesimulator/Baker.app0#
+lSLF07#2@70"Touch /Users/Xmas/Progetti/Baker/build/Debug-iphonesimulator/Baker.app301523396#301523397#0(0"0(0#0#0"8615392000#252"    cd /Users/Xmas/Progetti/Baker    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /usr/bin/touch -c /Users/Xmas/Progetti/Baker/build/Debug-iphonesimulator/Baker.app0#
 
