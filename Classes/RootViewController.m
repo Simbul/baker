@@ -6,6 +6,7 @@
 //  Copyright 2010 Xmas. All rights reserved.
 //
 
+#import <QuartzCore/QuartzCore.h>
 #import "RootViewController.h"
 
 @implementation RootViewController
@@ -39,6 +40,8 @@
 	[[self view] addSubview:viewTwo];
 	[viewTwo release];
 	
+	currentView = 1;
+	
 	self.swipeLeft = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipePage:)];
 	swipeLeft.direction = UISwipeGestureRecognizerDirectionLeft;
 	[[self view] addGestureRecognizer:swipeLeft];
@@ -62,6 +65,61 @@
 - (void)swipePage:(UISwipeGestureRecognizer *)sender {
 		
 	NSLog(@"SWIPE!");
+	
+	//UIView Animation Method
+	[UIView beginAnimations:nil context:nil]; {
+		
+		[UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
+		[UIView setAnimationDuration:1.0];
+		[UIView setAnimationDelegate:self];
+		
+		switch(currentView) {
+			case 1:
+				if(sender.direction == UISwipeGestureRecognizerDirectionLeft) {
+					viewOne.frame = CGRectOffset(viewOne.frame,-768,0);
+					viewTwo.frame = CGRectOffset(viewTwo.frame,-768,0);
+					currentView = 2;				
+				} break;
+			case 2:
+				if(sender.direction == UISwipeGestureRecognizerDirectionRight) {
+					viewOne.frame = CGRectOffset(viewOne.frame,768,0);
+					viewTwo.frame = CGRectOffset(viewTwo.frame,768,0);
+					currentView = 1;
+				} break;
+			default:
+				break;
+		}
+	}
+	
+	[UIView commitAnimations];
+	
+	//CA Transition Method
+	/*CATransition *swipe;
+	swipe = [CATransition animation];
+	[swipe setDuration:1.0];
+	[swipe setType:kCATransitionPush];
+	[swipe setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionDefault]];
+	
+	switch(currentView) {
+		case 1:
+			if(sender.direction == UISwipeGestureRecognizerDirectionLeft) {
+				[swipe setSubtype:kCATransitionFromRight];
+				viewOne.frame = CGRectOffset(viewOne.frame,-768,0);
+				viewTwo.frame = CGRectOffset(viewTwo.frame,-768,0);
+				[[self.view layer] addAnimation:swipe forKey:@"swipePage"];
+				currentView = 2;
+			} break;
+		case 2:
+			if(sender.direction == UISwipeGestureRecognizerDirectionRight) {
+				[swipe setSubtype:kCATransitionFromLeft];
+				viewOne.frame = CGRectOffset(viewOne.frame,768,0);
+				viewTwo.frame = CGRectOffset(viewTwo.frame,768,0);
+				[[self.view layer] addAnimation:swipe forKey:@"swipePage"];
+				currentView = 1;
+			} break;
+		default:
+			break;
+	}*/
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
