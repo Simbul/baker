@@ -11,9 +11,13 @@
 @interface RootViewController : UIViewController {
 
 	UIWebView *viewOne;
+	UIWebView *viewTwo;
+	
+	int currentView;
 }
 
 @property (nonatomic, retain) UIWebView *viewOne;
+@property (nonatomic, retain) UIWebView *viewTwo;
 
 - (void)loadNewPage:(UIWebView *)target
 		   filename:(NSString *)filename

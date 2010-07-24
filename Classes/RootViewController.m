@@ -11,6 +11,7 @@
 @implementation RootViewController
 
 @synthesize viewOne;
+@synthesize viewTwo;
 
 /*
  // The designated initializer.  Override if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
@@ -29,6 +30,12 @@
 	self.viewOne = [[UIWebView alloc] initWithFrame:CGRectMake(0,20,768,1004)];
 	[self loadNewPage:viewOne filename:@"1" type:@"html" dir:@"book"];
 	[[self view] addSubview:viewOne];
+	[viewOne release];
+	
+	self.viewTwo = [[UIWebView alloc] initWithFrame:CGRectMake(768,20,768,1004)];
+	[self loadNewPage:viewTwo filename:@"2" type:@"html" dir:@"book"];
+	[[self view] addSubview:viewTwo];
+	[viewTwo release];
 }
 
 - (void)loadNewPage:(UIWebView *)target filename:(NSString *)filename type:(NSString *)type dir:(NSString *)dir {
@@ -55,11 +62,14 @@
 - (void)viewDidUnload {
     
 	[super viewDidUnload];
+	
 	self.viewOne = nil;
+	self.viewTwo = nil;
 }
 
 - (void)dealloc {
 	
+	[viewTwo dealloc];
 	[viewOne dealloc];
     [super dealloc];
 }
