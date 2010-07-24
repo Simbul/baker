@@ -12,6 +12,8 @@
 
 @synthesize viewOne;
 @synthesize viewTwo;
+@synthesize swipeLeft;
+@synthesize swipeRight;
 
 /*
  // The designated initializer.  Override if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
@@ -36,6 +38,16 @@
 	[self loadNewPage:viewTwo filename:@"2" type:@"html" dir:@"book"];
 	[[self view] addSubview:viewTwo];
 	[viewTwo release];
+	
+	self.swipeLeft = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipePage:)];
+	swipeLeft.direction = UISwipeGestureRecognizerDirectionLeft;
+	[[self view] addGestureRecognizer:swipeLeft];
+	[swipeLeft release];
+	
+	self.swipeRight = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipePage:)];
+	swipeRight.direction = UISwipeGestureRecognizerDirectionRight;
+	[[self view] addGestureRecognizer:swipeRight];
+	[swipeRight release];
 }
 
 - (void)loadNewPage:(UIWebView *)target filename:(NSString *)filename type:(NSString *)type dir:(NSString *)dir {
@@ -45,6 +57,11 @@
 	
 	NSURLRequest *requestObj = [NSURLRequest requestWithURL:url];	
 	[target loadRequest:requestObj];
+}
+
+- (void)swipePage:(UISwipeGestureRecognizer *)sender {
+		
+	NSLog(@"SWIPE!");
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
@@ -65,12 +82,16 @@
 	
 	self.viewOne = nil;
 	self.viewTwo = nil;
+	self.swipeLeft = nil;
+	self.swipeRight = nil;
 }
 
 - (void)dealloc {
 	
-	[viewTwo dealloc];
-	[viewOne dealloc];
+	[swipeRight release];
+	[swipeLeft release];
+	[viewTwo release];
+	[viewOne release];
     [super dealloc];
 }
 
