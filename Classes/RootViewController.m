@@ -25,6 +25,8 @@
 @synthesize frameCenter;
 @synthesize frameRight;
 
+@synthesize animating;
+
  // The designated initializer.  Override if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
     if ((self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil])) {
@@ -32,6 +34,8 @@
 		self.frameLeft = CGRectMake(-768,20,768,1004);
 		self.frameCenter = CGRectMake(0,20,768,1004);
 		self.frameRight = CGRectMake(768,20,768,1004);
+		
+		self.animating = FALSE;
     }
     return self;
 }
@@ -102,6 +106,12 @@
 		return;
 	}
 	
+	if (self.animating) {
+		NSLog(@"Cannot go: page turning in progress");
+		return;
+	}
+	self.animating = TRUE;
+	
 	// Move views
 	self.prevPage.frame = self.frameRight;
 	[self animateHorizontalSlide:@"left" dx:-768 firstView:self.currPage secondView:self.nextPage];
@@ -114,6 +124,12 @@
 		NSLog(@"Cannot go: first page reached");
 		return;
 	}
+	
+	if (self.animating) {
+		NSLog(@"Cannot go: page turning in progress");
+		return;
+	}
+	self.animating = TRUE;
 	
 	// Moving left, away from last page
 	self.currentPageIsLast = FALSE;
@@ -163,6 +179,7 @@
 		}
 		
 	}
+	self.animating = FALSE;
 	// NSLog(@"%f %f %f", self.prevPage.frame.origin.x, self.currPage.frame.origin.x, self.nextPage.frame.origin.x);
 }
 

@@ -23,6 +23,8 @@
 	CGRect frameLeft;
 	CGRect frameCenter;
 	CGRect frameRight;
+	
+	BOOL animating;
 }
 
 @property (nonatomic, retain) UIWebView *prevPage;
@@ -38,6 +40,8 @@
 @property (nonatomic) CGRect frameCenter;
 @property (nonatomic) CGRect frameRight;
 
+@property (nonatomic) BOOL animating;
+
 - (BOOL)loadNewPage:(UIWebView *)target
 		   filename:(NSString *)filename
 			   type:(NSString *)type
@@ -46,7 +50,7 @@
 - (void)swipePage:(UISwipeGestureRecognizer *)sender;
 
 - (void)gotoNextPage;
-- (void)slideLeft;
+
 - (void)animateHorizontalSlide:(NSString *)name
 							dx:(int) dx
 					 firstView:(UIWebView *)firstView
