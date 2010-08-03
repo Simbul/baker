@@ -11,31 +11,24 @@
 
 @implementation RootViewController
 
-@synthesize swipeLeft;
-@synthesize swipeRight;
-
 @synthesize prevPage;
 @synthesize currPage;
 @synthesize nextPage;
 
-@synthesize currentPageNumber;
-@synthesize currentPageIsLast;
-
-@synthesize frameLeft;
-@synthesize frameCenter;
-@synthesize frameRight;
-
-@synthesize animating;
+@synthesize swipeLeft;
+@synthesize swipeRight;
 
  // The designated initializer.  Override if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
     if ((self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil])) {
         // Custom initialization
-		self.frameLeft = CGRectMake(-768,20,768,1004);
-		self.frameCenter = CGRectMake(0,20,768,1004);
-		self.frameRight = CGRectMake(768,20,768,1004);
+		frameLeft = CGRectMake(-768,20,768,1004);
+		frameCenter = CGRectMake(0,20,768,1004);
+		frameRight = CGRectMake(768,20,768,1004);
 		
-		self.animating = FALSE;
+		currentPageNumber = 1;
+		currentPageIsLast = NO;
+		animating = NO;
     }
     return self;
 }
@@ -45,32 +38,23 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 	
-	UIWebView *webView;
+	// Create left view
+	self.prevPage = [[UIWebView alloc] initWithFrame:frameLeft];
+	[[self view] addSubview:prevPage];
 	
 	// Create center view
-	webView = [[UIWebView alloc] initWithFrame:self.frameCenter];
-	[self loadNewPage:webView filename:@"1" type:@"html" dir:@"book"];
-	[[self view] addSubview:webView];
-	self.currPage = webView;
-	[webView release];
+	self.currPage = [[UIWebView alloc] initWithFrame:frameCenter];
+	[[self view] addSubview:currPage];
 	
 	// Create right view
-	webView = [[UIWebView alloc] initWithFrame:self.frameRight];
-	[self loadNewPage:webView filename:@"2" type:@"html" dir:@"book"];
-	[[self view] addSubview:webView];
-	self.nextPage = webView;
-	[webView release];
+	self.nextPage = [[UIWebView alloc] initWithFrame:frameRight];
+	[[self view] addSubview:nextPage];
 	
-	// Create left view
-	webView = [[UIWebView alloc] initWithFrame:self.frameLeft];
-	[[self view] addSubview:webView];
-	self.prevPage = webView;
-	[webView release];
-		
-	// Initialize pointers to pages
-	self.currentPageNumber = 1;
-	self.currentPageIsLast = FALSE;
+	// Load default pages inside views
+	[self loadNewPage:currPage filename:@"1" type:@"html" dir:@"book"];
+	[self loadNewPage:nextPage filename:@"2" type:@"html" dir:@"book"];
 	
+	// Load swipe recognizers
 	self.swipeLeft = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipePage:)];
 	swipeLeft.direction = UISwipeGestureRecognizerDirectionLeft;
 	[[self view] addGestureRecognizer:swipeLeft];
@@ -83,104 +67,70 @@
 }
 
 - (BOOL)loadNewPage:(UIWebView *)target filename:(NSString *)filename type:(NSString *)type dir:(NSString *)dir {
-	NSLog(@"loadNewPage %@ %@ %@", filename, type, dir);
 	NSString *path = [[NSBundle mainBundle] pathForResource:filename ofType:type inDirectory:dir];
 	
-	if ([path length] == 0) {
-		return FALSE;
+	if ([path length] > 0) {
+		NSURL *url = [NSURL fileURLWithPath:path];
+		
+		NSURLRequest *requestObj = [NSURLRequest requestWithURL:url];	
+		[target loadRequest:requestObj];
+		
+		return YES;
+	} else {
+		// Path does not exist
+		return NO;
 	}
-	
-	NSURL *url = [NSURL fileURLWithPath:path];
-	
-	NSURLRequest *requestObj = [NSURLRequest requestWithURL:url];	
-	[target loadRequest:requestObj];
-	
-	return TRUE;
 }
 
-- (void)gotoNextPage {
-	NSLog(@"gotoNextPage, from page %d", self.currentPageNumber);
-	
-	if (self.currentPageIsLast) {
-		NSLog(@"Cannot go: last page reached");
-		return;
+- (void)swipePage:(UISwipeGestureRecognizer *)sender {
+	if(sender.direction == UISwipeGestureRecognizerDirectionLeft) {
+		NSLog(@"SWIPE left!");
+		[self gotoNextPage];
+	} else if (sender.direction == UISwipeGestureRecognizerDirectionRight) {
+		NSLog(@"SWIPE right!");
+		[self gotoPrevPage];
 	}
-	
-	if (self.animating) {
-		NSLog(@"Cannot go: page turning in progress");
-		return;
-	}
-	self.animating = TRUE;
-	
-	// Move views
-	self.prevPage.frame = self.frameRight;
-	[self animateHorizontalSlide:@"left" dx:-768 firstView:self.currPage secondView:self.nextPage];
 }
 
 - (void)gotoPrevPage {
-	NSLog(@"gotoPrevPage, from page %d", self.currentPageNumber);
+	NSLog(@"gotoPrevPage, from page %d", currentPageNumber);
 	
-	if (self.currentPageNumber == 1) {
+	if (currentPageNumber == 1) {
 		NSLog(@"Cannot go: first page reached");
 		return;
 	}
 	
-	if (self.animating) {
+	if (animating) {
 		NSLog(@"Cannot go: page turning in progress");
 		return;
 	}
-	self.animating = TRUE;
+	animating = TRUE;
 	
 	// Moving left, away from last page
-	self.currentPageIsLast = FALSE;
+	currentPageIsLast = FALSE;
 	
 	// Move views
-	self.nextPage.frame = self.frameLeft;
-	[self animateHorizontalSlide:@"right" dx:768 firstView:self.currPage secondView:self.prevPage];
+	nextPage.frame = frameLeft;
+	[self animateHorizontalSlide:@"right" dx:768 firstView:currPage secondView:prevPage];
 }
 
-- (void)swipeAnimationDidStop:(NSString *)animationID finished:(BOOL)flag {
-	NSLog(@"stop %@", animationID);
+- (void)gotoNextPage {
+	NSLog(@"gotoNextPage, from page %d", currentPageNumber);
 	
-	if( [animationID isEqualToString:@"left"] ) {
-		// Update pointers
-		self.currentPageNumber += 1;
-		
-		NSLog(@"went forward to page %d", self.currentPageNumber);
-		UIWebView *tmpView = self.prevPage;
-		self.prevPage = self.currPage;
-		self.currPage = self.nextPage;
-		self.nextPage = tmpView;
-		
-		// Preload next page
-		NSString *nextFile = [NSString stringWithFormat:@"%d", self.currentPageNumber+1];
-		if (![self loadNewPage:self.nextPage filename:nextFile type:@"html" dir:@"book"]) {
-			// Could not load: no more pages
-			NSLog(@"Could not load %@.html", nextFile);
-			self.currentPageIsLast = TRUE;
-		} else {
-			self.currentPageIsLast = FALSE;
-		}
-	} else if( [animationID isEqualToString:@"right"] ) {
-		// Update pointers
-		self.currentPageNumber -= 1;
-		
-		NSLog(@"went back to page %d", self.currentPageNumber);
-		UIWebView *tmpView = self.prevPage;
-		self.prevPage = self.nextPage;
-		self.nextPage = self.currPage;
-		self.currPage = tmpView;
-		
-		// Preload next page
-		NSString *file = [NSString stringWithFormat:@"%d", self.currentPageNumber-1];
-		if (![self loadNewPage:self.prevPage filename:file type:@"html" dir:@"book"]) {
-			// Could not load: no more pages
-			NSLog(@"Could not load %@.html", file);
-		}
-		
+	if (currentPageIsLast) {
+		NSLog(@"Cannot go: last page reached");
+		return;
 	}
-	self.animating = FALSE;
-	// NSLog(@"%f %f %f", self.prevPage.frame.origin.x, self.currPage.frame.origin.x, self.nextPage.frame.origin.x);
+	
+	if (animating) {
+		NSLog(@"Cannot go: page turning in progress");
+		return;
+	}
+	animating = TRUE;
+	
+	// Move views
+	prevPage.frame = frameRight;
+	[self animateHorizontalSlide:@"left" dx:-768 firstView:currPage secondView:nextPage];
 }
 
 - (void)animateHorizontalSlide:(NSString *)name dx:(int)dx firstView:(UIWebView *)firstView secondView:(UIWebView *)secondView {
@@ -198,19 +148,49 @@
 	[UIView commitAnimations];
 }
 
-- (void)swipePage:(UISwipeGestureRecognizer *)sender {
-	if(sender.direction == UISwipeGestureRecognizerDirectionLeft) {
-		NSLog(@"SWIPE left!");
-		[self gotoNextPage];
-	} else if (sender.direction == UISwipeGestureRecognizerDirectionRight) {
-		NSLog(@"SWIPE right!");
-		[self gotoPrevPage];
+- (void)swipeAnimationDidStop:(NSString *)animationID finished:(BOOL)flag {
+	NSLog(@"stop %@", animationID);
+	
+	if( [animationID isEqualToString:@"left"] ) {
+		// Update pointers
+		currentPageNumber += 1;
+		
+		NSLog(@"went forward to page %d", currentPageNumber);
+		UIWebView *tmpView = prevPage;
+		prevPage = currPage;
+		currPage = nextPage;
+		nextPage = tmpView;
+		
+		// Preload next page
+		NSString *file = [NSString stringWithFormat:@"%d", currentPageNumber+1];
+		if (![self loadNewPage:nextPage filename:file type:@"html" dir:@"book"]) {
+			// Could not load: no more pages
+			NSLog(@"Could not load %@.html", file);
+			currentPageIsLast = YES;
+		}
+	} else if( [animationID isEqualToString:@"right"] ) {
+		// Update pointers
+		currentPageNumber -= 1;
+		currentPageIsLast = NO;
+		
+		NSLog(@"went back to page %d", currentPageNumber);
+		UIWebView *tmpView = nextPage;
+		nextPage = currPage;
+		currPage = prevPage;
+		prevPage = tmpView;
+		
+		// Preload previous page
+		if (currentPageNumber > 1) {
+			NSString *file = [NSString stringWithFormat:@"%d", currentPageNumber-1];
+			[self loadNewPage:prevPage filename:file type:@"html" dir:@"book"];
+		}
 	}
+	animating = NO;
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
     // Overriden to allow any orientation.
-    return YES;
+    return NO;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -223,12 +203,6 @@
 - (void)viewDidUnload {
     
 	[super viewDidUnload];
-	
-	self.prevPage = nil;
-	self.currPage = nil;
-	self.nextPage = nil;
-	self.swipeLeft = nil;
-	self.swipeRight = nil;
 }
 
 - (void)dealloc {

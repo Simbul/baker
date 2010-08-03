@@ -9,21 +9,19 @@
 #import <UIKit/UIKit.h>
 
 @interface RootViewController : UIViewController {
-	UISwipeGestureRecognizer *swipeLeft;
-	UISwipeGestureRecognizer *swipeRight;
-	
-	BOOL currentPageIsLast;
+	CGRect frameLeft;
+	CGRect frameCenter;
+	CGRect frameRight;
 	
 	UIWebView *prevPage;
 	UIWebView *currPage;
 	UIWebView *nextPage;
 	
+	UISwipeGestureRecognizer *swipeLeft;
+	UISwipeGestureRecognizer *swipeRight;
+
 	int currentPageNumber;
-	
-	CGRect frameLeft;
-	CGRect frameCenter;
-	CGRect frameRight;
-	
+	BOOL currentPageIsLast;
 	BOOL animating;
 }
 
@@ -34,14 +32,6 @@
 @property (nonatomic, retain) UISwipeGestureRecognizer *swipeLeft;
 @property (nonatomic, retain) UISwipeGestureRecognizer *swipeRight;
 
-@property (nonatomic) int currentPageNumber;
-@property (nonatomic) BOOL currentPageIsLast;
-@property (nonatomic) CGRect frameLeft;
-@property (nonatomic) CGRect frameCenter;
-@property (nonatomic) CGRect frameRight;
-
-@property (nonatomic) BOOL animating;
-
 - (BOOL)loadNewPage:(UIWebView *)target
 		   filename:(NSString *)filename
 			   type:(NSString *)type
@@ -49,6 +39,7 @@
 
 - (void)swipePage:(UISwipeGestureRecognizer *)sender;
 
+- (void)gotoPrevPage;
 - (void)gotoNextPage;
 
 - (void)animateHorizontalSlide:(NSString *)name
