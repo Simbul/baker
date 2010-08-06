@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 
 @interface RootViewController : UIViewController {
+	
 	CGRect frameLeft;
 	CGRect frameCenter;
 	CGRect frameRight;
@@ -46,6 +47,7 @@
 							dx:(int) dx
 					 firstView:(UIWebView *)firstView
 					secondView:(UIWebView *)secondView;
+
 - (void)swipeAnimationDidStop:(NSString *)animationID
 					 finished:(BOOL)flag;
 

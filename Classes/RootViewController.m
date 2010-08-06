@@ -20,7 +20,8 @@
 
  // The designated initializer.  Override if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
-    if ((self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil])) {
+    
+	if ((self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil])) {
         // Custom initialization
 		frameLeft = CGRectMake(-768,20,768,1004);
 		frameCenter = CGRectMake(0,20,768,1004);
@@ -36,7 +37,8 @@
 
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad {
-    [super viewDidLoad];
+    
+	[super viewDidLoad];
 	
 	// Create left view
 	self.prevPage = [[UIWebView alloc] initWithFrame:frameLeft];
@@ -67,14 +69,13 @@
 }
 
 - (BOOL)loadNewPage:(UIWebView *)target filename:(NSString *)filename type:(NSString *)type dir:(NSString *)dir {
+	
 	NSString *path = [[NSBundle mainBundle] pathForResource:filename ofType:type inDirectory:dir];
 	
 	if ([path length] > 0) {
 		NSURL *url = [NSURL fileURLWithPath:path];
-		
 		NSURLRequest *requestObj = [NSURLRequest requestWithURL:url];	
 		[target loadRequest:requestObj];
-		
 		return YES;
 	} else {
 		// Path does not exist
@@ -83,57 +84,42 @@
 }
 
 - (void)swipePage:(UISwipeGestureRecognizer *)sender {
-	if(sender.direction == UISwipeGestureRecognizerDirectionLeft) {
-		NSLog(@"SWIPE left!");
-		[self gotoNextPage];
-	} else if (sender.direction == UISwipeGestureRecognizerDirectionRight) {
+	
+	if (sender.direction == UISwipeGestureRecognizerDirectionRight) {
 		NSLog(@"SWIPE right!");
 		[self gotoPrevPage];
-	}
+	} else if(sender.direction == UISwipeGestureRecognizerDirectionLeft) {
+		NSLog(@"SWIPE left!");
+		[self gotoNextPage];
+	} 
 }
 
 - (void)gotoPrevPage {
-	NSLog(@"gotoPrevPage, from page %d", currentPageNumber);
 	
-	if (currentPageNumber == 1) {
-		NSLog(@"Cannot go: first page reached");
-		return;
+	NSLog(@"Go to previous page from page %d", currentPageNumber);
+	
+	if(currentPageNumber != 1 && !animating) {
+		// Move views
+		animating = YES;
+		nextPage.frame = frameLeft;
+		[self animateHorizontalSlide:@"right" dx:768 firstView:currPage secondView:prevPage];
 	}
-	
-	if (animating) {
-		NSLog(@"Cannot go: page turning in progress");
-		return;
-	}
-	animating = TRUE;
-	
-	// Moving left, away from last page
-	currentPageIsLast = FALSE;
-	
-	// Move views
-	nextPage.frame = frameLeft;
-	[self animateHorizontalSlide:@"right" dx:768 firstView:currPage secondView:prevPage];
 }
 
 - (void)gotoNextPage {
-	NSLog(@"gotoNextPage, from page %d", currentPageNumber);
 	
-	if (currentPageIsLast) {
-		NSLog(@"Cannot go: last page reached");
-		return;
+	NSLog(@"Go to  next page from page %d", currentPageNumber);
+	
+	if(!currentPageIsLast && !animating) {
+		// Move views
+		animating = YES;
+		prevPage.frame = frameRight;
+		[self animateHorizontalSlide:@"left" dx:-768 firstView:currPage secondView:nextPage];
 	}
-	
-	if (animating) {
-		NSLog(@"Cannot go: page turning in progress");
-		return;
-	}
-	animating = TRUE;
-	
-	// Move views
-	prevPage.frame = frameRight;
-	[self animateHorizontalSlide:@"left" dx:-768 firstView:currPage secondView:nextPage];
 }
 
 - (void)animateHorizontalSlide:(NSString *)name dx:(int)dx firstView:(UIWebView *)firstView secondView:(UIWebView *)secondView {
+	
 	[UIView beginAnimations:name context:nil]; {
 		
 		[UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
@@ -149,6 +135,7 @@
 }
 
 - (void)swipeAnimationDidStop:(NSString *)animationID finished:(BOOL)flag {
+	
 	NSLog(@"stop %@", animationID);
 	
 	if( [animationID isEqualToString:@"left"] ) {
@@ -189,7 +176,8 @@
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    // Overriden to allow any orientation.
+    
+	// Overriden to allow any orientation.
     return NO;
 }
 
@@ -214,6 +202,5 @@
 	[prevPage release];
     [super dealloc];
 }
-
 
 @end
