@@ -156,6 +156,9 @@
 			NSLog(@"Could not load %@.html", file);
 			currentPageIsLast = YES;
 		}
+		
+		[prevPage stringByEvaluatingJavaScriptFromString:@"window.scrollTo(0,0);"];
+		
 	} else if( [animationID isEqualToString:@"right"] ) {
 		// Update pointers
 		currentPageNumber -= 1;
@@ -172,7 +175,10 @@
 			NSString *file = [NSString stringWithFormat:@"%d", currentPageNumber-1];
 			[self loadNewPage:prevPage filename:file type:@"html" dir:@"book"];
 		}
+		
+		[nextPage stringByEvaluatingJavaScriptFromString:@"window.scrollTo(0,0);"];
 	}
+	
 	animating = NO;
 }
 
