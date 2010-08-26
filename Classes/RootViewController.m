@@ -123,8 +123,9 @@
 	[UIView beginAnimations:name context:nil]; {
 		
 		[UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
-		[UIView setAnimationDuration:1.0];
+		[UIView setAnimationDuration:0.35];
 		[UIView setAnimationDelegate:self];
+		//[UIView setAnimationTransition:UIViewAnimationTransitionFlipFromRight forView:firstView cache:YES];
 		[UIView setAnimationDidStopSelector:@selector(swipeAnimationDidStop:finished:)];
 		
 		firstView.frame = CGRectOffset(firstView.frame, dx, 0);
