@@ -13,11 +13,11 @@
 @interface BakerAppDelegate : NSObject <UIApplicationDelegate> {
     
 	UIWindow *window;
-	UIViewController *rootViewController;
+	RootViewController *rootViewController;
 }
 
 @property (nonatomic, retain) IBOutlet UIWindow *window;
-@property (nonatomic, retain) UIViewController *rootViewController;
+@property (nonatomic, retain) RootViewController *rootViewController;
 
 @end
 

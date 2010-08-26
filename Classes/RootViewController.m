@@ -18,22 +18,22 @@
 @synthesize swipeLeft;
 @synthesize swipeRight;
 
+@synthesize currentPageNumber;
+
  // The designated initializer.  Override if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
     
 	if ((self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil])) {
-        // Custom initialization
+        // Custom initialization		
 		frameLeft = CGRectMake(-768,20,768,1004);
 		frameCenter = CGRectMake(0,20,768,1004);
 		frameRight = CGRectMake(768,20,768,1004);
 		
-		currentPageNumber = 1;
 		currentPageIsLast = NO;
 		animating = NO;
     }
     return self;
 }
-
 
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad {
@@ -52,9 +52,25 @@
 	self.nextPage = [[UIWebView alloc] initWithFrame:frameRight];
 	[[self view] addSubview:nextPage];
 	
-	// Load default pages inside views
-	[self loadNewPage:currPage filename:@"1" type:@"html" dir:@"book"];
-	[self loadNewPage:nextPage filename:@"2" type:@"html" dir:@"book"];
+	// Check if there is a saved starting page
+	NSUserDefaults *userDefs = [NSUserDefaults standardUserDefaults];
+	NSString *currPageToLoad = [userDefs objectForKey:@"lastPageViewed"];	
+	if(currPageToLoad != nil) {
+		currentPageNumber = [currPageToLoad intValue];
+	} else {
+		currentPageNumber = 1;
+	}
+	
+	// Load starting pages inside views
+	[self loadNewPage:currPage filename:currPageToLoad type:@"html" dir:@"book"];		
+	if(currentPageNumber > 1) {
+		NSString *prevPageToLoad = [NSString stringWithFormat:@"%d",currentPageNumber-1];
+		[self loadNewPage:prevPage filename:prevPageToLoad type:@"html" dir:@"book"];
+	}
+	NSString *nextPageToLoad = [NSString stringWithFormat:@"%d",currentPageNumber+1];
+	if(![self loadNewPage:nextPage filename:nextPageToLoad type:@"html" dir:@"book"]) {
+		currentPageIsLast = YES;
+	}
 	
 	// Load swipe recognizers
 	self.swipeLeft = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipePage:)];
@@ -176,7 +192,7 @@
 			[self loadNewPage:prevPage filename:file type:@"html" dir:@"book"];
 		}
 		
-		[nextPage stringByEvaluatingJavaScriptFromString:@"window.scrollTo(0,0);"];
+		[nextPage stringByEvaluatingJavaScriptFromString:@"window.scrollTo(0,0);"];		
 	}
 	
 	animating = NO;

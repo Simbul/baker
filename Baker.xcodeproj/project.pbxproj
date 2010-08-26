@@ -55,10 +55,10 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				9F4F07F111F8DE8200375A8C /* RootViewController.h */,
-				9F4F07F211F8DE8200375A8C /* RootViewController.m */,
 				1D3623240D0F684500981E51 /* BakerAppDelegate.h */,
 				1D3623250D0F684500981E51 /* BakerAppDelegate.m */,
+				9F4F07F111F8DE8200375A8C /* RootViewController.h */,
+				9F4F07F211F8DE8200375A8C /* RootViewController.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";

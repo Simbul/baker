@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 
 @interface RootViewController : UIViewController {
-	
+		
 	CGRect frameLeft;
 	CGRect frameCenter;
 	CGRect frameRight;
@@ -20,10 +20,10 @@
 	
 	UISwipeGestureRecognizer *swipeLeft;
 	UISwipeGestureRecognizer *swipeRight;
-
+	
 	int currentPageNumber;
 	BOOL currentPageIsLast;
-	BOOL animating;
+	BOOL animating;	
 }
 
 @property (nonatomic, retain) UIWebView *prevPage;
@@ -32,6 +32,8 @@
 
 @property (nonatomic, retain) UISwipeGestureRecognizer *swipeLeft;
 @property (nonatomic, retain) UISwipeGestureRecognizer *swipeRight;
+
+@property int currentPageNumber;
 
 - (BOOL)loadNewPage:(UIWebView *)target
 		   filename:(NSString *)filename
@@ -50,6 +52,5 @@
 
 - (void)swipeAnimationDidStop:(NSString *)animationID
 					 finished:(BOOL)flag;
-
 
 @end

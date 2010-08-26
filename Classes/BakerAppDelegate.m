@@ -41,9 +41,13 @@
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {
-    /*
-     Called when the application is about to terminate.
-     */
+	
+	// Saving last page viewed index
+	NSString *lastPageViewed = [NSString stringWithFormat:@"%d", rootViewController.currentPageNumber];	
+	NSUserDefaults *userDefs = [NSUserDefaults standardUserDefaults];	
+	[userDefs setObject:lastPageViewed forKey:@"lastPageViewed"];
+	
+	NSLog(@"Saved last page viewed: %@", lastPageViewed);
 }
 
 #pragma mark -
