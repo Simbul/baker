@@ -30,6 +30,7 @@
 		frameRight = CGRectMake(768,20,768,1004);
 		
 		currentPageIsLast = NO;
+		currentPageFirstLoading = YES;
 		animating = NO;
     }
     return self;
@@ -42,19 +43,22 @@
 	
 	// Create left view
 	self.prevPage = [[UIWebView alloc] initWithFrame:frameLeft];
+	prevPage.delegate = self;
 	[[self view] addSubview:prevPage];
 	
 	// Create center view
 	self.currPage = [[UIWebView alloc] initWithFrame:frameCenter];
+	currPage.delegate = self;
 	[[self view] addSubview:currPage];
 	
 	// Create right view
 	self.nextPage = [[UIWebView alloc] initWithFrame:frameRight];
+	nextPage.delegate = self;
 	[[self view] addSubview:nextPage];
 	
 	// Check if there is a saved starting page
 	NSUserDefaults *userDefs = [NSUserDefaults standardUserDefaults];
-	NSString *currPageToLoad = [userDefs objectForKey:@"lastPageViewed"];	
+	NSString *currPageToLoad = [userDefs objectForKey:@"lastPageViewed"];
 	if(currPageToLoad != nil) {
 		currentPageNumber = [currPageToLoad intValue];
 	} else {
@@ -71,7 +75,7 @@
 	if(![self loadNewPage:nextPage filename:nextPageToLoad type:@"html" dir:@"book"]) {
 		currentPageIsLast = YES;
 	}
-	
+
 	// Load swipe recognizers
 	self.swipeLeft = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipePage:)];
 	swipeLeft.direction = UISwipeGestureRecognizerDirectionLeft;
@@ -96,6 +100,49 @@
 	} else {
 		// Path does not exist
 		return NO;
+	}
+}
+
+- (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
+	
+	// Sent before a web view begins loading content.
+	return YES;
+}
+
+- (void)webViewDidStartLoad:(UIWebView *)webView {
+	
+	// Sent before a web view begins loading content.
+}
+
+- (void)webViewDidFinishLoad:(UIWebView *)webView {
+		
+	// Sent after a web view finishes loading content.
+	
+	//If is the first time i load something in the currPage web view...
+	if(webView == currPage && currentPageFirstLoading) {
+		
+		// ...check if there is a saved starting scroll index and set it
+		NSLog(@"currPage finishes loading for the first time");
+		NSUserDefaults *userDefs = [NSUserDefaults standardUserDefaults];
+		NSString *currPageScrollIndex = [userDefs objectForKey:@"lastScrollIndex"];
+		if(currPageScrollIndex != nil) {
+			NSString *jsCommand = [NSString stringWithFormat:@"window.scrollTo(0,%@);", currPageScrollIndex];
+			[currPage stringByEvaluatingJavaScriptFromString:jsCommand];
+		}
+		
+		currentPageFirstLoading = NO;
+	}
+}
+
+- (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
+	
+	// Sent if a web view failed to load content.
+	if(webView == prevPage) {
+		NSLog(@"prevPage failed to load content with error: %@", error);
+	} else if(webView == currPage) {
+		NSLog(@"currPage failed to load content with error: %@", error);
+	} else if(webView == nextPage) {
+		NSLog(@"nextPage failed to load content with error: %@", error);
 	}
 }
 
@@ -141,7 +188,6 @@
 		[UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
 		[UIView setAnimationDuration:0.35];
 		[UIView setAnimationDelegate:self];
-		//[UIView setAnimationTransition:UIViewAnimationTransitionFlipFromRight forView:firstView cache:YES];
 		[UIView setAnimationDidStopSelector:@selector(swipeAnimationDidStop:finished:)];
 		
 		firstView.frame = CGRectOffset(firstView.frame, dx, 0);
@@ -214,6 +260,11 @@
 - (void)viewDidUnload {
     
 	[super viewDidUnload];
+	
+	// Set web views delegates to nil, mandatory before releasing UIWebview instances 
+	nextPage.delegate = nil;
+	currPage.delegate = nil;
+	prevPage.delegate = nil;
 }
 
 - (void)dealloc {

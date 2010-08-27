@@ -43,11 +43,16 @@
 - (void)applicationWillTerminate:(UIApplication *)application {
 	
 	// Saving last page viewed index
-	NSString *lastPageViewed = [NSString stringWithFormat:@"%d", rootViewController.currentPageNumber];	
+	
+	NSString *lastPageViewed = [NSString stringWithFormat:@"%d", rootViewController.currentPageNumber];
+	NSString *lastScrollIndex = [rootViewController.currPage stringByEvaluatingJavaScriptFromString:@"window.scrollY;"];
+	
 	NSUserDefaults *userDefs = [NSUserDefaults standardUserDefaults];	
 	[userDefs setObject:lastPageViewed forKey:@"lastPageViewed"];
+	[userDefs setObject:lastScrollIndex forKey:@"lastScrollIndex"];
 	
 	NSLog(@"Saved last page viewed: %@", lastPageViewed);
+	NSLog(@"Saved last scroll index: %@", lastScrollIndex);
 }
 
 #pragma mark -

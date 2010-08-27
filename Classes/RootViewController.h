@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface RootViewController : UIViewController {
+@interface RootViewController : UIViewController < UIWebViewDelegate > {
 		
 	CGRect frameLeft;
 	CGRect frameCenter;
@@ -23,6 +23,7 @@
 	
 	int currentPageNumber;
 	BOOL currentPageIsLast;
+	BOOL currentPageFirstLoading;
 	BOOL animating;	
 }
 
