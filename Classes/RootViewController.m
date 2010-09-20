@@ -49,6 +49,7 @@
 	// Create center view
 	self.currPage = [[UIWebView alloc] initWithFrame:frameCenter];
 	currPage.delegate = self;
+	currPage.hidden = YES;
 	[[self view] addSubview:currPage];
 	
 	// Create right view
@@ -71,6 +72,7 @@
 		NSString *prevPageToLoad = [NSString stringWithFormat:@"%d",currentPageNumber-1];
 		[self loadNewPage:prevPage filename:prevPageToLoad type:@"html" dir:@"book"];
 	}
+	
 	NSString *nextPageToLoad = [NSString stringWithFormat:@"%d",currentPageNumber+1];
 	if(![self loadNewPage:nextPage filename:nextPageToLoad type:@"html" dir:@"book"]) {
 		currentPageIsLast = YES;
@@ -121,8 +123,9 @@
 	//If is the first time i load something in the currPage web view...
 	if(webView == currPage && currentPageFirstLoading) {
 		
+		NSLog(@"currPage finished first loading");
+		
 		// ...check if there is a saved starting scroll index and set it
-		NSLog(@"currPage finishes loading for the first time");
 		NSUserDefaults *userDefs = [NSUserDefaults standardUserDefaults];
 		NSString *currPageScrollIndex = [userDefs objectForKey:@"lastScrollIndex"];
 		if(currPageScrollIndex != nil) {
@@ -130,6 +133,7 @@
 			[currPage stringByEvaluatingJavaScriptFromString:jsCommand];
 		}
 		
+		webView.hidden = NO;
 		currentPageFirstLoading = NO;
 	}
 }
