@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+@class TapHandler;
+
 @interface RootViewController : UIViewController < UIWebViewDelegate > {
 		
 	CGRect frameLeft;
@@ -21,6 +23,11 @@
 	UISwipeGestureRecognizer *swipeLeft;
 	UISwipeGestureRecognizer *swipeRight;
 	
+	TapHandler *rightTapHandler;
+	TapHandler *leftTapHandler;
+	TapHandler *downTapHandler;
+	TapHandler *upTapHandler;
+
 	int currentPageNumber;
 	BOOL currentPageIsLast;
 	BOOL currentPageFirstLoading;
@@ -42,7 +49,9 @@
 				dir:(NSString *)dir;
 
 - (void)swipePage:(UISwipeGestureRecognizer *)sender;
+- (void)handleSingleTap:(NSNotification *)notification;
 
+- (void)scrollPage:(NSString *)offset;
 - (void)gotoPrevPage;
 - (void)gotoNextPage;
 
