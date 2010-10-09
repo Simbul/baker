@@ -31,7 +31,7 @@
 	int currentPageNumber;
 	BOOL currentPageIsLast;
 	BOOL currentPageFirstLoading;
-	BOOL animating;	
+	BOOL currentPageIsAnimating;	
 }
 
 @property (nonatomic, retain) UIWebView *prevPage;
@@ -48,19 +48,20 @@
 			   type:(NSString *)type
 				dir:(NSString *)dir;
 
-- (void)swipePage:(UISwipeGestureRecognizer *)sender;
 - (void)handleSingleTap:(NSNotification *)notification;
 
-- (void)scrollPage:(NSString *)offset;
-- (void)gotoPrevPage;
-- (void)gotoNextPage;
+- (void)goUpInPage:(NSString *)offset animating:(BOOL)animating;
+- (void)goDownInPage:(NSString *)offset animating:(BOOL)animating;
+- (void)scrollPage:(NSString *)offset animating:(BOOL)animating;
 
+- (void)swipePage:(UISwipeGestureRecognizer *)sender;
+- (void)goToPrevPage;
+- (void)goToNextPage;
 - (void)animateHorizontalSlide:(NSString *)name
 							dx:(int) dx
 					 firstView:(UIWebView *)firstView
 					secondView:(UIWebView *)secondView;
-
-- (void)swipeAnimationDidStop:(NSString *)animationID
+- (void)animationDidStop:(NSString *)animationID
 					 finished:(BOOL)flag;
 
 @end

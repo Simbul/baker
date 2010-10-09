@@ -29,6 +29,7 @@
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
 	
+	NSLog(@"TAP"); 
 	NSSet *allTouches = [event allTouches];
 	
 	// Number of touches on the screen

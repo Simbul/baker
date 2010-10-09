@@ -33,7 +33,7 @@
 		
 		currentPageIsLast = NO;
 		currentPageFirstLoading = YES;
-		animating = NO;
+		currentPageIsAnimating = NO;
     }
     return self;
 }
@@ -77,7 +77,33 @@
 	NSString *nextPageToLoad = [NSString stringWithFormat:@"%d",currentPageNumber+1];
 	if (![self loadNewPage:nextPage filename:nextPageToLoad type:@"html" dir:@"book"])
 		currentPageIsLast = YES;
-
+	
+	// Create tap handlers
+	upTapHandler = [[TapHandler alloc] initWithFrame:CGRectMake(50,20,668,50)];
+	//upTapHandler.backgroundColor = [UIColor redColor];
+	//upTapHandler.alpha = 0.5;
+	[[self view] addSubview:upTapHandler];
+	[upTapHandler release];
+	
+	downTapHandler = [[TapHandler alloc] initWithFrame:CGRectMake(50,954,668,50)];
+	//downTapHandler.backgroundColor = [UIColor redColor];
+	//downTapHandler.alpha = 0.5;
+	[[self view] addSubview:downTapHandler];
+	[downTapHandler release];
+	
+	leftTapHandler = [[TapHandler alloc] initWithFrame:CGRectMake(0,20,50,984)];
+	//leftTapHandler.backgroundColor = [UIColor redColor];
+	//leftTapHandler.alpha = 0.5;
+	[[self view] addSubview:leftTapHandler];
+	[leftTapHandler release];
+	
+	rightTapHandler = [[TapHandler alloc] initWithFrame:CGRectMake(718,20,50,984)];
+	//rightTapHandler.backgroundColor = [UIColor redColor];
+	//rightTapHandler.alpha = 0.5;
+	[[self view] addSubview:rightTapHandler];
+	[rightTapHandler release];
+	
+	
 	// Load swipe recognizers
 	self.swipeLeft = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipePage:)];
 	swipeLeft.direction = UISwipeGestureRecognizerDirectionLeft;
@@ -88,23 +114,6 @@
 	swipeRight.direction = UISwipeGestureRecognizerDirectionRight;
 	[[self view] addGestureRecognizer:swipeRight];
 	[swipeRight release];
-	
-	// Create tap handlers
-	rightTapHandler = [[TapHandler alloc] initWithFrame:CGRectMake(718,20,50,1004)];
-	[[self view] addSubview:rightTapHandler];
-	[rightTapHandler release];
-	
-	leftTapHandler = [[TapHandler alloc] initWithFrame:CGRectMake(0,20,50,1004)];
-	[[self view] addSubview:leftTapHandler];
-	[leftTapHandler release];
-	
-	downTapHandler = [[TapHandler alloc] initWithFrame:CGRectMake(50,974,668,50)];
-	[[self view] addSubview:downTapHandler];
-	[downTapHandler release];
-	
-	upTapHandler = [[TapHandler alloc] initWithFrame:CGRectMake(50,20,668,50)];
-	[[self view] addSubview:upTapHandler];
-	[upTapHandler release];
 }
 
 - (BOOL)loadNewPage:(UIWebView *)target filename:(NSString *)filename type:(NSString *)type dir:(NSString *)dir {
@@ -136,8 +145,7 @@
 - (void)webViewDidFinishLoad:(UIWebView *)webView {
 		
 	// Sent after a web view finishes loading content.
-	
-	//If is the first time i load something in the currPage web view...
+	// If is the first time i load something in the currPage web view...
 	if (webView == currPage && currentPageFirstLoading) {
 		
 		NSLog(@"currPage finished first loading");
@@ -146,7 +154,7 @@
 		NSUserDefaults *userDefs = [NSUserDefaults standardUserDefaults];
 		NSString *currPageScrollIndex = [userDefs objectForKey:@"lastScrollIndex"];
 		if(currPageScrollIndex != nil)
-			[self scrollPage:currPageScrollIndex];
+			[self goDownInPage:currPageScrollIndex animating:NO];
 		
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleSingleTap:) name:@"singleTap" object:nil];
 		currentPageFirstLoading = NO;
@@ -165,65 +173,102 @@
 		NSLog(@"nextPage failed to load content with error: %@", error);
 }
 
+- (void)handleSingleTap:(NSNotification *)notification {
+	
+	// Get the coordinates of the tap with the currPage as reference...
+	UITouch *tap = (UITouch *)[notification object];
+	CGPoint tapCoordinates = [tap locationInView:currPage];
+	
+	NSLog(@"SINGLE TAP on coordinates x:%f and y:%f", tapCoordinates.x, tapCoordinates.y);
+	
+	// ...and swipe or scroll the page.
+	if (tapCoordinates.y < upTapHandler.frame.size.height) {
+		NSLog(@"TAP up!");
+		[self goUpInPage:@"1004" animating:YES];
+	} else if (tapCoordinates.y > (downTapHandler.frame.origin.y-20)) {
+		NSLog(@"TAP down!");
+		[self goDownInPage:@"1004" animating:YES];
+	} else if (tapCoordinates.x < leftTapHandler.frame.size.width) {
+		NSLog(@"TAP left!");
+		[self goToPrevPage];
+	} else if (tapCoordinates.x > rightTapHandler.frame.origin.x) {
+		NSLog(@"TAP right!");
+		[self goToNextPage];
+	}
+}
+
+- (void)goUpInPage:(NSString *)offset animating:(BOOL)animating {
+	
+	NSLog(@"Scrolling page up");
+	
+	NSString *currPageOffset = [currPage stringByEvaluatingJavaScriptFromString:@"window.scrollY;"];
+	offset = [NSString stringWithFormat:@"%d", ([currPageOffset intValue]-[offset intValue])];
+	[self scrollPage:offset animating:animating];
+}
+
+- (void)goDownInPage:(NSString *)offset animating:(BOOL)animating {
+	
+	NSLog(@"Scrolling page down");
+	
+	NSString *currPageOffset = [currPage stringByEvaluatingJavaScriptFromString:@"window.scrollY;"];
+	offset = [NSString stringWithFormat:@"%d", ([currPageOffset intValue]+[offset intValue])];
+	[self scrollPage:offset animating:animating];
+}
+
+- (void)scrollPage:(NSString *)offset animating:(BOOL)animating {
+
+	NSString *jsCommand = [NSString stringWithFormat:@"window.scrollTo(0,%@);", offset];
+	
+	if (animating) {
+		
+		currentPageIsAnimating = YES;
+		
+		[UIView beginAnimations:@"scrollPage" context:nil]; {
+		
+			[UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
+			[UIView setAnimationDuration:0.35];
+			[UIView setAnimationDelegate:self];
+			[UIView setAnimationDidStopSelector:@selector(animationDidStop:finished:)];
+		
+			[currPage stringByEvaluatingJavaScriptFromString:jsCommand];
+		}
+		[UIView commitAnimations];
+	
+	} else {
+		[currPage stringByEvaluatingJavaScriptFromString:jsCommand];
+	}
+}
+
 - (void)swipePage:(UISwipeGestureRecognizer *)sender {
 	
 	if (sender.direction == UISwipeGestureRecognizerDirectionRight) {
 		NSLog(@"SWIPE right!");
-		[self gotoPrevPage];
+		[self goToPrevPage];
 	} else if (sender.direction == UISwipeGestureRecognizerDirectionLeft) {
 		NSLog(@"SWIPE left!");
-		[self gotoNextPage];
+		[self goToNextPage];
 	} 
 }
 
-- (void)handleSingleTap:(NSNotification *)notification {
-	
-	NSLog(@"TAP!");
-	// Get the coordinates of the tap with the currPage as reference...
-	UITouch *tap = (UITouch *)[notification object];
-	CGPoint tapCoordinates = [tap locationInView:currPage];
-	// ...and swipe or scroll the page.
-	if (tapCoordinates.x > rightTapHandler.frame.origin.x) 
-		[self gotoNextPage];
-	else if (tapCoordinates.x < leftTapHandler.frame.size.width)
-		[self gotoPrevPage];
-	else if (tapCoordinates.y > downTapHandler.frame.origin.y)
-		[self scrollPage:@"DOWN"];
-	else if (tapCoordinates.y < upTapHandler.frame.size.height)
-		[self scrollPage:@"UP"];
-}
-
-- (void)scrollPage:(NSString *)offset {
-	
-	NSString *currPageOffset = [currPage stringByEvaluatingJavaScriptFromString:@"window.scrollY;"];
-	if ([offset isEqualToString:@"UP"])
-		offset = [NSString stringWithFormat:@"%d", ([currPageOffset intValue]-1004)];
-	else if ([offset isEqualToString:@"DOWN"])
-		offset = [NSString stringWithFormat:@"%d", ([currPageOffset intValue]+1004)];
-
-	NSString *jsCommand = [NSString stringWithFormat:@"window.scrollTo(0,%@);", offset];
-	[currPage stringByEvaluatingJavaScriptFromString:jsCommand];
-}
-
-- (void)gotoPrevPage {
+- (void)goToPrevPage {
 	
 	NSLog(@"Go to previous page from page %d", currentPageNumber);
 	
-	if (currentPageNumber != 1 && !animating) {
+	if (currentPageNumber != 1 && !currentPageIsAnimating) {
 		// Move views
-		animating = YES;
+		currentPageIsAnimating = YES;
 		nextPage.frame = frameLeft;
 		[self animateHorizontalSlide:@"right" dx:768 firstView:currPage secondView:prevPage];
 	}
 }
 
-- (void)gotoNextPage {
+- (void)goToNextPage {
 	
 	NSLog(@"Go to  next page from page %d", currentPageNumber);
 	
-	if(!currentPageIsLast && !animating) {
+	if(!currentPageIsLast && !currentPageIsAnimating) {
 		// Move views
-		animating = YES;
+		currentPageIsAnimating = YES;
 		prevPage.frame = frameRight;
 		[self animateHorizontalSlide:@"left" dx:-768 firstView:currPage secondView:nextPage];
 	}
@@ -236,7 +281,7 @@
 		[UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
 		[UIView setAnimationDuration:0.35];
 		[UIView setAnimationDelegate:self];
-		[UIView setAnimationDidStopSelector:@selector(swipeAnimationDidStop:finished:)];
+		[UIView setAnimationDidStopSelector:@selector(animationDidStop:finished:)];
 	
 		firstView.frame = CGRectOffset(firstView.frame, dx, 0);
 		secondView.frame = CGRectOffset(secondView.frame, dx, 0);
@@ -245,7 +290,7 @@
 	[UIView commitAnimations];
 }
 
-- (void)swipeAnimationDidStop:(NSString *)animationID finished:(BOOL)flag {
+- (void)animationDidStop:(NSString *)animationID finished:(BOOL)flag {
 	
 	NSLog(@"stop %@", animationID);
 	
@@ -289,7 +334,7 @@
 		[nextPage stringByEvaluatingJavaScriptFromString:@"window.scrollTo(0,0);"];		
 	}
 	
-	animating = NO;
+	currentPageIsAnimating = NO;
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
