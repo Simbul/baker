@@ -135,9 +135,16 @@
 }
 
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
+	// Sent before a web view begins loading content, useful to trigger actions before the WebView.
+	NSLog(@"-> Link: %@", [[request URL] absoluteString]);
 	
-	// Sent before a web view begins loading content.
-	return YES;
+	if ([[[request URL] scheme] isEqualToString:@"x-local"]) {
+		NSLog(@"   x-local!", [[request URL] absoluteString]);
+		//TODO
+		return NO;
+	}
+	
+	return YES; // Return YES to make sure regular navigation works as expected.
 }
 
 - (void)webViewDidStartLoad:(UIWebView *)webView {
