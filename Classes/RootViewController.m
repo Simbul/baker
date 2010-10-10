@@ -27,9 +27,9 @@
 	if ((self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil])) {
         
 		// Custom initialization		
-		frameLeft = CGRectMake(-768,20,768,1004);
-		frameCenter = CGRectMake(0,20,768,1004);
-		frameRight = CGRectMake(768,20,768,1004);
+		frameLeft = CGRectMake(-768,0,768,1024);
+		frameCenter = CGRectMake(0,0,768,1024);
+		frameRight = CGRectMake(768,0,768,1024);
 		
 		currentPageIsLast = NO;
 		currentPageFirstLoading = YES;
@@ -42,6 +42,9 @@
 - (void)viewDidLoad {
     
 	[super viewDidLoad];
+	
+	// Permanently hide status bar
+	[[UIApplication sharedApplication] setStatusBarHidden:YES];
 	
 	// Create left view
 	self.prevPage = [[UIWebView alloc] initWithFrame:frameLeft];
@@ -79,13 +82,13 @@
 		currentPageIsLast = YES;
 	
 	// Create tap handlers
-	upTapHandler = [[TapHandler alloc] initWithFrame:CGRectMake(50,20,668,50)];
+	upTapHandler = [[TapHandler alloc] initWithFrame:CGRectMake(50,0,668,50)];
 	//upTapHandler.backgroundColor = [UIColor redColor];
 	//upTapHandler.alpha = 0.5;
 	[[self view] addSubview:upTapHandler];
 	[upTapHandler release];
 	
-	downTapHandler = [[TapHandler alloc] initWithFrame:CGRectMake(50,954,668,50)];
+	downTapHandler = [[TapHandler alloc] initWithFrame:CGRectMake(50,974,668,50)];
 	//downTapHandler.backgroundColor = [UIColor redColor];
 	//downTapHandler.alpha = 0.5;
 	[[self view] addSubview:downTapHandler];
