@@ -28,8 +28,8 @@
 	TapHandler *downTapHandler;
 	TapHandler *upTapHandler;
 
+	int totalPages;
 	int currentPageNumber;
-	BOOL currentPageIsLast;
 	BOOL currentPageFirstLoading;
 	BOOL currentPageIsAnimating;	
 }
@@ -41,22 +41,25 @@
 @property (nonatomic, retain) UISwipeGestureRecognizer *swipeLeft;
 @property (nonatomic, retain) UISwipeGestureRecognizer *swipeRight;
 
+@property int totalPages;
 @property int currentPageNumber;
 
-- (BOOL)loadNewPage:(UIWebView *)target
-		   filename:(NSString *)filename
-			   type:(NSString *)type
-				dir:(NSString *)dir;
+// ****** LOADING
+- (BOOL)loadSlot:(int)slot withPage:(int)page;
+- (BOOL)loadWebView:(UIWebView*)webview withPage:(int)page;
+- (void)preloadWebViewsWithPage:(int)page;
 
+// ****** GESTURES
+- (void)swipePage:(UISwipeGestureRecognizer *)sender;
 - (void)handleSingleTap:(NSNotification *)notification;
 
+// ****** SCROLLING
 - (void)goUpInPage:(NSString *)offset animating:(BOOL)animating;
 - (void)goDownInPage:(NSString *)offset animating:(BOOL)animating;
 - (void)scrollPage:(NSString *)offset animating:(BOOL)animating;
 
-- (void)swipePage:(UISwipeGestureRecognizer *)sender;
-- (void)goToPrevPage;
-- (void)goToNextPage;
+// ****** PAGING
+- (void)gotoPage:(int)pageNumber;
 - (void)animateHorizontalSlide:(NSString *)name
 							dx:(int) dx
 					 firstView:(UIWebView *)firstView
