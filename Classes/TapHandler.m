@@ -28,9 +28,16 @@
 */
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
+	[super touchesEnded:touches withEvent:event];
+    
+	// ****** INIT
+    UITouch *touch = [touches anyObject];
+	NSLog(@"* touch --- tapCount:%d", [touch tapCount]); 
 	
-	NSLog(@"TAP"); 
-	NSSet *allTouches = [event allTouches];
+	//TODO: this is harsh, we need to filter this better later (doubletaps properly detected)
+	[[NSNotificationCenter defaultCenter] postNotificationName:@"onTouch" object:touch];
+	
+	/*NSSet *allTouches = [event allTouches];
 	
 	// Number of touches on the screen
 	switch ([allTouches count]) {
@@ -54,10 +61,11 @@
 		}
 		// More touches
 		default: {
+			[[NSNotificationCenter defaultCenter] postNotificationName:@"singleTap" object:touch];
 			[super touchesEnded:touches withEvent:event];
 			break;
 		}
-	}	
+	}	*/
 }
 
 - (void)dealloc {

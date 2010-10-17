@@ -10,6 +10,9 @@
 #import "RootViewController.h"
 #import "TapHandler.h"
 
+#define PAGE_HEIGHT 1024
+#define PAGE_WIDTH 768
+
 @implementation RootViewController
 
 @synthesize prevPage;
@@ -46,9 +49,9 @@
 		scrollView.contentSize = CGSizeMake(2304, 1024);*/
 		
 		// Custom initialization		
-		frameLeft = CGRectMake(-768,0,768,1024);
-		frameCenter = CGRectMake(0,0,768,1024);
-		frameRight = CGRectMake(768,0,768,1024);
+		frameLeft = CGRectMake(-PAGE_WIDTH, 0, PAGE_WIDTH, PAGE_HEIGHT);
+		frameCenter = CGRectMake(0, 0, PAGE_WIDTH, PAGE_HEIGHT);
+		frameRight = CGRectMake(PAGE_WIDTH, 0, PAGE_WIDTH, PAGE_HEIGHT);
 		
 		totalPages = 0;
 		currentPageFirstLoading = YES;
@@ -210,8 +213,8 @@
 	// Sent before a web view begins loading content.
 }
 - (void)webViewDidFinishLoad:(UIWebView *)webView {
-		
 	// Sent after a web view finishes loading content.
+	
 	// If is the first time i load something in the currPage web view...
 	if (webView == currPage && currentPageFirstLoading) {
 		
@@ -220,14 +223,15 @@
 		// ...check if there is a saved starting scroll index and set it
 		NSUserDefaults *userDefs = [NSUserDefaults standardUserDefaults];
 		NSString *currPageScrollIndex = [userDefs objectForKey:@"lastScrollIndex"];
-		if(currPageScrollIndex != nil)
+		if(currPageScrollIndex != nil) {
 			[self goDownInPage:currPageScrollIndex animating:NO];
+		}
 		
-		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleSingleTap:) name:@"singleTap" object:nil];
+		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onTouch:) name:@"onTouch" object:nil];
 		currentPageFirstLoading = NO;
 	}
-
-	webView.hidden = NO;
+	
+	[self webView:webView hidden:NO animating:YES];
 }
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
 	
@@ -249,6 +253,27 @@
 	
 	return YES; // Return YES to make sure regular navigation works as expected.
 }
+- (void)webView:(UIWebView *)webView hidden:(BOOL)status animating:(BOOL)animating {
+	NSLog(@"--- unhiding animated=%d", animating);
+	
+	if (animating) {
+		webView.alpha = 0.0;
+		webView.hidden = NO;
+		
+		[UIView beginAnimations:@"webViewVisibility" context:nil]; {
+			//[UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
+			[UIView setAnimationDuration:0.5];
+			//[UIView setAnimationDelegate:self];
+			//[UIView setAnimationDidStopSelector:@selector(animationDidStop:finished:)];
+			
+			webView.alpha = 1.0;	
+		}
+		[UIView commitAnimations];		
+	} else {
+		webView.alpha = 1.0;
+		webView.hidden = NO;
+	}
+}
 
 // ****** GESTURES
 - (void)swipePage:(UISwipeGestureRecognizer *)sender {
@@ -261,27 +286,28 @@
 		[self gotoPage:currentPageNumber + 1];
 	} 
 }
-- (void)handleSingleTap:(NSNotification *)notification {
+- (void)onTouch:(NSNotification *)notification {
 	
 	// Get the coordinates of the tap with the currPage as reference...
 	UITouch *tap = (UITouch *)[notification object];
-	CGPoint tapCoordinates = [tap locationInView:currPage];
+	NSUInteger tapCount = [tap tapCount];
+	CGPoint tapPoint = [tap locationInView:currPage];
 	
-	NSLog(@"  .  SINGLE TAP on coordinates x:%f and y:%f", tapCoordinates.x, tapCoordinates.y);
+	NSLog(@"  .  %d tap(s) [%f, %f]", tapCount, tapPoint.x, tapPoint.y);
 	
 	// ...and swipe or scroll the page.
-	if (tapCoordinates.y < upTapHandler.frame.size.height) {
+	if (tapPoint.y < upTapHandler.frame.size.height) {
 		NSLog(@" /\\ TAP up!");
 		[self goUpInPage:@"1004" animating:YES];
-	} else if (tapCoordinates.y > (downTapHandler.frame.origin.y - 20)) {
+	} else if (tapPoint.y > (downTapHandler.frame.origin.y - 20)) {
 		NSLog(@" \\/ TAP down!");
 		[self goDownInPage:@"1004" animating:YES];
-	} else if (tapCoordinates.x < leftTapHandler.frame.size.width) {
+	} else if (tapPoint.x < leftTapHandler.frame.size.width) {
 		NSLog(@"<-- TAP left!");
-		[self gotoPage:currentPageNumber - 1];
-	} else if (tapCoordinates.x > rightTapHandler.frame.origin.x) {
+		[self gotoPage:currentPageNumber - 1]; //TODO: handle multipage jumps
+	} else if (tapPoint.x > rightTapHandler.frame.origin.x) {
 		NSLog(@"--> TAP right!");
-		[self gotoPage:currentPageNumber + 1];
+		[self gotoPage:currentPageNumber + 1]; //TODO: handle multipage jumps
 	}
 }
 
@@ -292,7 +318,8 @@
 	
 	NSString *currPageOffset = [currPage stringByEvaluatingJavaScriptFromString:@"window.scrollY;"];
 	offset = [NSString stringWithFormat:@"%d", ([currPageOffset intValue]-[offset intValue])];
-	[self scrollPage:offset animating:animating];
+	
+	[self scrollPage:currPage to:offset animating:animating];
 }
 - (void)goDownInPage:(NSString *)offset animating:(BOOL)animating {
 	
@@ -300,15 +327,16 @@
 	
 	NSString *currPageOffset = [currPage stringByEvaluatingJavaScriptFromString:@"window.scrollY;"];
 	offset = [NSString stringWithFormat:@"%d", ([currPageOffset intValue]+[offset intValue])];
-	[self scrollPage:offset animating:animating];
+	
+	[self scrollPage:currPage to:offset animating:animating];
 }
-- (void)scrollPage:(NSString *)offset animating:(BOOL)animating {
+- (void)scrollPage:(UIWebView *)webView to:(NSString *)offset animating:(BOOL)animating {
 
 	NSString *jsCommand = [NSString stringWithFormat:@"window.scrollTo(0,%@);", offset];
 	
 	if (animating) {
 		
-		//currentPageIsAnimating = YES;
+		currentPageIsAnimating = YES;
 		
 		[UIView beginAnimations:@"scrollPage" context:nil]; {
 		
@@ -317,12 +345,12 @@
 			[UIView setAnimationDelegate:self];
 			[UIView setAnimationDidStopSelector:@selector(animationDidStop:finished:)];
 		
-			[currPage stringByEvaluatingJavaScriptFromString:jsCommand];
+			[webView stringByEvaluatingJavaScriptFromString:jsCommand];
 		}
 		[UIView commitAnimations];
 	
 	} else {
-		[currPage stringByEvaluatingJavaScriptFromString:jsCommand];
+		[webView stringByEvaluatingJavaScriptFromString:jsCommand];
 	}
 }
 
@@ -340,7 +368,7 @@
 		NSLog(@"Opening: %@", path);
 		
 		currentPageIsAnimating = YES;
-		[currPage stopLoading];
+		//[currPage stopLoading];
 		
 		if ((pageNumber - currentPageNumber) > 0) {
 			// ****** Move RIGHT >>>
@@ -396,8 +424,10 @@
 	NSLog(@"(animation ended) %@", animationID);
 	
 	// Let's try to avoid the "grey screen" UIWebView bug
-	[prevPage stringByEvaluatingJavaScriptFromString:@"window.scrollTo(0,0);"];
-	[nextPage stringByEvaluatingJavaScriptFromString:@"window.scrollTo(0,0);"];
+	[self scrollPage:prevPage to:0 animating:NO];
+	//[prevPage reload];
+	[self scrollPage:nextPage to:0 animating:NO];
+	//[nextPage reload];
 	
 	currentPageIsAnimating = NO;
 }

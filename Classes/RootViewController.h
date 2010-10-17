@@ -49,14 +49,17 @@
 - (BOOL)loadWebView:(UIWebView*)webview withPage:(int)page;
 - (void)preloadWebViewsWithPage:(int)page;
 
+// ****** WEBVIEW
+- (void)webView:(UIWebView *)webView hidden:(BOOL)status animating:(BOOL)animating;
+
 // ****** GESTURES
 - (void)swipePage:(UISwipeGestureRecognizer *)sender;
-- (void)handleSingleTap:(NSNotification *)notification;
+- (void)onTouch:(NSNotification *)notification;
 
 // ****** SCROLLING
 - (void)goUpInPage:(NSString *)offset animating:(BOOL)animating;
 - (void)goDownInPage:(NSString *)offset animating:(BOOL)animating;
-- (void)scrollPage:(NSString *)offset animating:(BOOL)animating;
+- (void)scrollPage:(UIWebView *)webView to:(NSString *)offset animating:(BOOL)animating;
 
 // ****** PAGING
 - (void)gotoPage:(int)pageNumber;
