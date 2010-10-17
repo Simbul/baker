@@ -15,6 +15,8 @@
 
 @implementation RootViewController
 
+@synthesize scrollView;
+
 @synthesize prevPage;
 @synthesize currPage;
 @synthesize nextPage;
@@ -39,24 +41,53 @@
 		totalPages = [pagesArray count];
 		NSLog(@"Pages in this book: %d", totalPages);
 		
-        /*
-		// ****** Horizontal Scroll
-		UIScrollView *scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, 768, 1024)];
+		// Check if there is a saved starting page
+		NSString *currPageToLoad = [[NSUserDefaults standardUserDefaults] objectForKey:@"lastPageViewed"];
+		if (currPageToLoad != nil)
+			currentPageNumber = [currPageToLoad intValue];
+		else
+			currentPageNumber = 1;
+        
+		currentPageFirstLoading = YES;
+		currentPageIsAnimating = NO;
+		
+		// ****** VIEW
+		scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, PAGE_WIDTH, PAGE_HEIGHT)];
 		scrollView.showsHorizontalScrollIndicator = NO;
 		scrollView.showsVerticalScrollIndicator = NO;
 		scrollView.delaysContentTouches = YES;
 		scrollView.pagingEnabled = YES;
-		scrollView.contentSize = CGSizeMake(2304, 1024);*/
+		scrollView.contentSize = CGSizeMake(PAGE_WIDTH * totalPages, PAGE_HEIGHT);
+		
+		self.prevPage = [[UIWebView alloc] initWithFrame:[self frameForPage:currentPageNumber - 1]];
+		self.currPage = [[UIWebView alloc] initWithFrame:[self frameForPage:currentPageNumber]];
+		self.nextPage = [[UIWebView alloc] initWithFrame:[self frameForPage:currentPageNumber + 1]];
+		
+		[scrollView addSubview:self.prevPage];
+		[scrollView addSubview:self.currPage];
+		[scrollView addSubview:self.nextPage];
+		
+		self.prevPage.delegate = self;
+		self.currPage.delegate = self;
+		self.nextPage.delegate = self;
+		self.scrollView.delegate = self;
+		
+		[scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:NO];
+		[[self view] addSubview:scrollView];
+		[[self view] sendSubviewToBack:scrollView]; // might not be required, test
+		
+		// TEMP
+		/*NSURL *url = [NSURL URLWithString:@"http://www.google.com"];
+		NSURLRequest *requestObj = [NSURLRequest requestWithURL:url];	
+		[self.prevPage loadRequest:requestObj];
+		[self.currPage loadRequest:requestObj];
+		[self.nextPage loadRequest:requestObj];*/
 		
 		// Custom initialization		
-		frameLeft = CGRectMake(-PAGE_WIDTH, 0, PAGE_WIDTH, PAGE_HEIGHT);
-		frameCenter = CGRectMake(0, 0, PAGE_WIDTH, PAGE_HEIGHT);
-		frameRight = CGRectMake(PAGE_WIDTH, 0, PAGE_WIDTH, PAGE_HEIGHT);
-		
-		totalPages = 0;
-		currentPageFirstLoading = YES;
-		currentPageIsAnimating = NO;
-    }
+		//frameLeft = CGRectMake(-PAGE_WIDTH, 0, PAGE_WIDTH, PAGE_HEIGHT);
+		//frameCenter = CGRectMake(0, 0, PAGE_WIDTH, PAGE_HEIGHT);
+		//frameRight = CGRectMake(PAGE_WIDTH, 0, PAGE_WIDTH, PAGE_HEIGHT);
+	}
     return self;
 }
 
@@ -64,33 +95,10 @@
 - (void)viewDidLoad {
     
 	[super viewDidLoad];
-		
-	// ****** VIEWS
-	// Create left view
-	self.prevPage = [[UIWebView alloc] initWithFrame:frameLeft];
-	prevPage.delegate = self;
-	[[self view] addSubview:prevPage];
-	
-	// Create center view
-	self.currPage = [[UIWebView alloc] initWithFrame:frameCenter];
-	currPage.delegate = self;
-	currPage.hidden = YES;
-	[[self view] addSubview:currPage];
-	
-	// Create right view
-	self.nextPage = [[UIWebView alloc] initWithFrame:frameRight];
-	nextPage.delegate = self;
-	[[self view] addSubview:nextPage];
-	
-	// ****** Check if there is a saved starting page
-	NSString *currPageToLoad = [[NSUserDefaults standardUserDefaults] objectForKey:@"lastPageViewed"];
-	if (currPageToLoad != nil)
-		currentPageNumber = [currPageToLoad intValue];
-	else
-		currentPageNumber = 1;
 	
 	// ****** Load starting pages inside views
-	[self preloadWebViewsWithPage:currentPageNumber];
+	//[self preloadWebViewsWithPage:currentPageNumber];
+	[self loadSlot:0 withPage:currentPageNumber];
 	
 	// ****** Create tap handlers
 	upTapHandler = [[TapHandler alloc] initWithFrame:CGRectMake(50,0,668,50)];
@@ -119,7 +127,7 @@
 	
 	
 	// ****** Load swipe recognizers
-	self.swipeLeft = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipePage:)];
+	/*self.swipeLeft = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipePage:)];
 	swipeLeft.direction = UISwipeGestureRecognizerDirectionLeft;
 	[[self view] addGestureRecognizer:swipeLeft];
 	[swipeLeft release];
@@ -127,7 +135,7 @@
 	self.swipeRight = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipePage:)];
 	swipeRight.direction = UISwipeGestureRecognizerDirectionRight;
 	[[self view] addGestureRecognizer:swipeRight];
-	[swipeRight release];
+	[swipeRight release];*/
 }
 
 // ****** LOADING
@@ -195,16 +203,29 @@
 	NSString *path = [[NSBundle mainBundle] pathForResource:file ofType:@"html" inDirectory:@"book"];
 	
 	if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
-		NSLog(@"[+] Loading: %@", file);
+		NSLog(@"[+] Loading: book/%@.html", file);
 		[webview loadRequest:[NSURLRequest requestWithURL:[NSURL fileURLWithPath:path]]];
 		return YES;
 	}
 	return NO;
 }
-- (void)preloadWebViewsWithPage:(int)page {
-	[self loadSlot:-1 withPage:page - 1];
-	[self loadSlot:0 withPage:page];
-	[self loadSlot:+1 withPage:page + 1];
+
+// ****** SCROLLVIEW
+- (CGRect)frameForPage:(int)page {
+	return CGRectMake(PAGE_WIDTH * (page - 1), 0, PAGE_WIDTH, PAGE_HEIGHT);
+}
+- (void)scrollViewDidEndDragging:(UIScrollView *)scroll willDecelerate:(BOOL)decelerate {
+	// nothing to see, nothing to do
+}
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scroll {
+	int gotoPage = (int)(self.scrollView.contentOffset.x / PAGE_WIDTH) + 1;
+	
+	//NSLog(@"DEDe contentOffset: %@", NSStringFromCGPoint(self.scrollView.contentOffset));
+	NSLog(@" <<<>>> Swiping to page: %d", gotoPage);
+	
+	if (currentPageNumber != gotoPage) {
+		[self gotoPage:gotoPage];
+	}
 }
 
 // ****** WEBVIEW
@@ -228,6 +249,10 @@
 		}
 		
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onTouch:) name:@"onTouch" object:nil];
+		
+		[self loadSlot:+1 withPage:currentPageNumber + 1];
+		[self loadSlot:-1 withPage:currentPageNumber - 1];
+		
 		currentPageFirstLoading = NO;
 	}
 	
@@ -304,14 +329,16 @@
 		[self goDownInPage:@"1004" animating:YES];
 	} else if (tapPoint.x < leftTapHandler.frame.size.width) {
 		NSLog(@"<-- TAP left!");
+		[scrollView scrollRectToVisible:[self frameForPage:currentPageNumber - 1] animated:YES];
 		[self gotoPage:currentPageNumber - 1]; //TODO: handle multipage jumps
 	} else if (tapPoint.x > rightTapHandler.frame.origin.x) {
 		NSLog(@"--> TAP right!");
+		[scrollView scrollRectToVisible:[self frameForPage:currentPageNumber + 1] animated:YES];
 		[self gotoPage:currentPageNumber + 1]; //TODO: handle multipage jumps
 	}
 }
 
-// ****** SCROLLING
+// ****** PAGE SCROLLING
 - (void)goUpInPage:(NSString *)offset animating:(BOOL)animating {
 	
 	NSLog(@"Scrolling page up");
@@ -362,10 +389,8 @@
 	NSString *file = [NSString stringWithFormat:@"%d", pageNumber];
 	NSString *path = [[NSBundle mainBundle] pathForResource:file ofType:@"html" inDirectory:@"book"];
 	
-	NSLog(@"Going to page: %d", pageNumber);
-	
-	if ([[NSFileManager defaultManager] fileExistsAtPath:path] && !currentPageIsAnimating) {
-		NSLog(@"Opening: %@", path);
+	if ([[NSFileManager defaultManager] fileExistsAtPath:path]) { //} && !currentPageIsAnimating) {
+		NSLog(@"Goto Page: book/%d.html", pageNumber);
 		
 		currentPageIsAnimating = YES;
 		//[currPage stopLoading];
@@ -373,7 +398,7 @@
 		if ((pageNumber - currentPageNumber) > 0) {
 			// ****** Move RIGHT >>>
 			currentPageNumber = pageNumber;
-			prevPage.frame = frameRight;
+			prevPage.frame = [self frameForPage:pageNumber + 1];
 			
 			// Swap
 			UIWebView *tmpView = prevPage;
@@ -385,11 +410,11 @@
 			[self loadSlot:+1 withPage:currentPageNumber + 1];
 			
 			// Animate
-			[self animateHorizontalSlide:@"left" dx:-768 firstView:prevPage secondView:currPage];
+			//[self animateHorizontalSlide:@"left" dx:-768 firstView:prevPage secondView:currPage];
 		} else {
 			// ****** Move LEFT <<<
 			currentPageNumber = pageNumber;
-			nextPage.frame = frameLeft;
+			nextPage.frame = [self frameForPage:pageNumber - 1];
 			
 			// Swap
 			UIWebView *tmpView = nextPage;
@@ -401,7 +426,7 @@
 			[self loadSlot:-1 withPage:currentPageNumber - 1];
 			
 			// Animate
-			[self animateHorizontalSlide:@"right" dx:768 firstView:nextPage secondView:currPage];
+			//[self animateHorizontalSlide:@"right" dx:768 firstView:nextPage secondView:currPage];
 		}
 	}
 }

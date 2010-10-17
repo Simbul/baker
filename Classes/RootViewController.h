@@ -10,8 +10,10 @@
 
 @class TapHandler;
 
-@interface RootViewController : UIViewController < UIWebViewDelegate > {
-		
+@interface RootViewController : UIViewController < UIWebViewDelegate, UIScrollViewDelegate > {
+	
+	UIScrollView *scrollView;
+	
 	CGRect frameLeft;
 	CGRect frameCenter;
 	CGRect frameRight;
@@ -34,6 +36,8 @@
 	BOOL currentPageIsAnimating;	
 }
 
+@property (nonatomic, retain) UIScrollView *scrollView;
+
 @property (nonatomic, retain) UIWebView *prevPage;
 @property (nonatomic, retain) UIWebView *currPage;
 @property (nonatomic, retain) UIWebView *nextPage;
@@ -47,7 +51,9 @@
 // ****** LOADING
 - (BOOL)loadSlot:(int)slot withPage:(int)page;
 - (BOOL)loadWebView:(UIWebView*)webview withPage:(int)page;
-- (void)preloadWebViewsWithPage:(int)page;
+
+// ****** SCROLL
+- (CGRect)frameForPage:(int)page;
 
 // ****** WEBVIEW
 - (void)webView:(UIWebView *)webView hidden:(BOOL)status animating:(BOOL)animating;
