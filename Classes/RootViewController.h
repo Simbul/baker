@@ -68,6 +68,7 @@
 @property int currentPageNumber;
 
 // ****** LOADING
+- (void)gotoPage:(int)pageNumber;
 - (BOOL)loadSlot:(int)slot withPage:(int)page;
 - (BOOL)loadWebView:(UIWebView*)webview withPage:(int)page;
 
@@ -85,8 +86,5 @@
 - (void)goUpInPage:(NSString *)offset animating:(BOOL)animating;
 - (void)goDownInPage:(NSString *)offset animating:(BOOL)animating;
 - (void)scrollPage:(UIWebView *)webView to:(NSString *)offset animating:(BOOL)animating;
-
-// ****** PAGING
-- (void)gotoPage:(int)pageNumber;
 
 @end

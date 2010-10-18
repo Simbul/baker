@@ -135,6 +135,47 @@
 }
 
 // ****** LOADING
+- (void)gotoPage:(int)pageNumber {
+	/****************************************************************************************************
+	 * Opens a specific page
+	 */
+	NSString *file = [NSString stringWithFormat:@"%d", pageNumber];
+	NSString *path = [[NSBundle mainBundle] pathForResource:file ofType:@"html" inDirectory:@"book"];
+	
+	if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
+		NSLog(@"Goto Page: book/%d.html", pageNumber);
+		
+		//[currPage stopLoading];
+		
+		if ((pageNumber - currentPageNumber) > 0) {
+			// ****** Move RIGHT >>>
+			currentPageNumber = pageNumber;
+			prevPage.frame = [self frameForPage:pageNumber + 1];
+			
+			// Swap
+			UIWebView *tmpView = prevPage;
+			prevPage = currPage;
+			currPage = nextPage;
+			nextPage = tmpView;
+			
+			// Preload
+			[self loadSlot:+1 withPage:currentPageNumber + 1];
+		} else {
+			// ****** Move LEFT <<<
+			currentPageNumber = pageNumber;
+			nextPage.frame = [self frameForPage:pageNumber - 1];
+			
+			// Swap
+			UIWebView *tmpView = nextPage;
+			nextPage = currPage;
+			currPage = prevPage;
+			prevPage = tmpView;
+			
+			// Preload
+			[self loadSlot:-1 withPage:currentPageNumber - 1];
+		}
+	}
+}
 - (BOOL)loadSlot:(int)slot withPage:(int)page {
 	
 	UIWebView *webView;
@@ -350,49 +391,6 @@
 	
 	} else {
 		[webView stringByEvaluatingJavaScriptFromString:jsCommand];
-	}
-}
-
-// ****** PAGING
-- (void)gotoPage:(int)pageNumber {
-	/****************************************************************************************************
-	 * Opens a specific page
-	 */
-	NSString *file = [NSString stringWithFormat:@"%d", pageNumber];
-	NSString *path = [[NSBundle mainBundle] pathForResource:file ofType:@"html" inDirectory:@"book"];
-	
-	if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
-		NSLog(@"Goto Page: book/%d.html", pageNumber);
-		
-		//[currPage stopLoading];
-		
-		if ((pageNumber - currentPageNumber) > 0) {
-			// ****** Move RIGHT >>>
-			currentPageNumber = pageNumber;
-			prevPage.frame = [self frameForPage:pageNumber + 1];
-			
-			// Swap
-			UIWebView *tmpView = prevPage;
-			prevPage = currPage;
-			currPage = nextPage;
-			nextPage = tmpView;
-			
-			// Preload
-			[self loadSlot:+1 withPage:currentPageNumber + 1];
-		} else {
-			// ****** Move LEFT <<<
-			currentPageNumber = pageNumber;
-			nextPage.frame = [self frameForPage:pageNumber - 1];
-			
-			// Swap
-			UIWebView *tmpView = nextPage;
-			nextPage = currPage;
-			currPage = prevPage;
-			prevPage = tmpView;
-			
-			// Preload
-			[self loadSlot:-1 withPage:currentPageNumber - 1];
-		}
 	}
 }
 
