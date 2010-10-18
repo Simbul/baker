@@ -82,6 +82,8 @@
 		scrollView.pagingEnabled = YES;
 		scrollView.contentSize = CGSizeMake(PAGE_WIDTH * totalPages, PAGE_HEIGHT);
 		
+		[self initPageNumbersForPages:totalPages];
+		
 		self.prevPage = [[UIWebView alloc] initWithFrame:[self frameForPage:currentPageNumber - 1]];
 		self.currPage = [[UIWebView alloc] initWithFrame:[self frameForPage:currentPageNumber]];
 		self.nextPage = [[UIWebView alloc] initWithFrame:[self frameForPage:currentPageNumber + 1]];
@@ -174,6 +176,19 @@
 			// Preload
 			[self loadSlot:-1 withPage:currentPageNumber - 1];
 		}
+	}
+}
+- (void)initPageNumbersForPages:(int)count {
+	for (int i = 0; i < count; i++) {
+		UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+		
+		CGRect frame = spinner.frame;
+		frame.origin.x = PAGE_WIDTH * i + (PAGE_WIDTH + frame.size.width) / 2;
+		frame.origin.y = (PAGE_HEIGHT + frame.size.height) / 2;
+		spinner.frame = frame;
+		
+		[spinner startAnimating];
+		[[self scrollView] addSubview:spinner];
 	}
 }
 - (BOOL)loadSlot:(int)slot withPage:(int)page {

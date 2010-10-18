@@ -69,6 +69,7 @@
 
 // ****** LOADING
 - (void)gotoPage:(int)pageNumber;
+- (void)initPageNumbersForPages:(int)count;
 - (BOOL)loadSlot:(int)slot withPage:(int)page;
 - (BOOL)loadWebView:(UIWebView*)webview withPage:(int)page;
 
