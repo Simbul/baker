@@ -2,9 +2,33 @@
 //  RootViewController.m
 //  Baker
 //
-//  Created by Xmas on 10/22/07.
-//  Copyright 2010 Xmas. All rights reserved.
-//
+//  ==========================================================================================
+//  
+//  Copyright (c) 2010, Davide Casali, Marco Colombo, Alessandro Morandi
+//  All rights reserved.
+//  
+//  Redistribution and use in source and binary forms, with or without modification, are 
+//  permitted provided that the following conditions are met:
+//  
+//  Redistributions of source code must retain the above copyright notice, this list of 
+//  conditions and the following disclaimer.
+//  Redistributions in binary form must reproduce the above copyright notice, this list of 
+//  conditions and the following disclaimer in the documentation and/or other materials 
+//  provided with the distribution.
+//  Neither the name of the <ORGANIZATION> nor the names of its contributors may be used to 
+//  endorse or promote products derived from this software without specific prior written 
+//  permission.
+//  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY 
+//  EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES 
+//  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT 
+//  SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, 
+//  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, 
+//  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+//  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT 
+//  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE 
+//  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+//  
+
 
 #import <QuartzCore/QuartzCore.h>
 #import "RootViewController.h"
@@ -49,11 +73,10 @@
 			currentPageNumber = 1;
         
 		currentPageFirstLoading = YES;
-		currentPageIsAnimating = NO;
 		
 		// ****** VIEW
 		scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, PAGE_WIDTH, PAGE_HEIGHT)];
-		scrollView.showsHorizontalScrollIndicator = NO;
+		scrollView.showsHorizontalScrollIndicator = YES;
 		scrollView.showsVerticalScrollIndicator = NO;
 		scrollView.delaysContentTouches = YES;
 		scrollView.pagingEnabled = YES;
@@ -75,18 +98,6 @@
 		[scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:NO];
 		[[self view] addSubview:scrollView];
 		[[self view] sendSubviewToBack:scrollView]; // might not be required, test
-		
-		// TEMP
-		/*NSURL *url = [NSURL URLWithString:@"http://www.google.com"];
-		NSURLRequest *requestObj = [NSURLRequest requestWithURL:url];	
-		[self.prevPage loadRequest:requestObj];
-		[self.currPage loadRequest:requestObj];
-		[self.nextPage loadRequest:requestObj];*/
-		
-		// Custom initialization		
-		//frameLeft = CGRectMake(-PAGE_WIDTH, 0, PAGE_WIDTH, PAGE_HEIGHT);
-		//frameCenter = CGRectMake(0, 0, PAGE_WIDTH, PAGE_HEIGHT);
-		//frameRight = CGRectMake(PAGE_WIDTH, 0, PAGE_WIDTH, PAGE_HEIGHT);
 	}
     return self;
 }
@@ -95,12 +106,9 @@
 - (void)viewDidLoad {
     
 	[super viewDidLoad];
-	
-	// ****** Load starting pages inside views
-	//[self preloadWebViewsWithPage:currentPageNumber];
 	[self loadSlot:0 withPage:currentPageNumber];
 	
-	// ****** Create tap handlers
+	// ****** CORNER TAP HANDLERS
 	upTapHandler = [[TapHandler alloc] initWithFrame:CGRectMake(50,0,668,50)];
 	//upTapHandler.backgroundColor = [UIColor redColor];
 	//upTapHandler.alpha = 0.5;
@@ -124,36 +132,24 @@
 	//rightTapHandler.alpha = 0.5;
 	[[self view] addSubview:rightTapHandler];
 	[rightTapHandler release];
-	
-	
-	// ****** Load swipe recognizers
-	/*self.swipeLeft = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipePage:)];
-	swipeLeft.direction = UISwipeGestureRecognizerDirectionLeft;
-	[[self view] addGestureRecognizer:swipeLeft];
-	[swipeLeft release];
-	
-	self.swipeRight = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipePage:)];
-	swipeRight.direction = UISwipeGestureRecognizerDirectionRight;
-	[[self view] addGestureRecognizer:swipeRight];
-	[swipeRight release];*/
 }
 
 // ****** LOADING
 - (BOOL)loadSlot:(int)slot withPage:(int)page {
 	
 	UIWebView *webView;
-	CGRect frame;
+	//CGRect frame;
 	
 	// ****** SELECT
 	if (slot == -1) {
 		webView = self.prevPage;
-		frame = frameLeft;
+		//frame = [self frameForPage:page - 1];
 	} else if (slot == 0) {
 		webView = self.currPage;
-		frame = frameCenter;
+		//frame = [self frameForPage:page];
 	} else if (slot == +1) {
 		webView = self.nextPage;
-		frame = frameRight;
+		//frame = [self frameForPage:page + 1];
 	}
 	
 	// ****** DESTROY
@@ -164,9 +160,8 @@
 	
 	// ***** CREATE
 	/*webView = [[UIWebView alloc] initWithFrame:frame];
-	webView.delegate = self;*/
-	webView.hidden = YES;
-	/*[[self view] addSubview:webView];
+	webView.delegate = self;
+	[[self view] addSubview:webView];
 	[[self view] sendSubviewToBack:webView];*/
 	[self loadWebView:webView withPage:page];
 	
@@ -179,32 +174,16 @@
 		self.nextPage = webView;
 	}*/
 	
-	
-	/*UIWebView *webView1 = [[UIWebView alloc] initWithFrame:CGRectMake(0,20,768,1004)];
-	UIWebView *webView2 = [[UIWebView alloc] initWithFrame:CGRectMake(768,20,768,1004)];
-	UIWebView *webView3 = [[UIWebView alloc] initWithFrame:CGRectMake(1536,20,768,1004)];
-	[webView1 loadRequest:requestObj];
-	[webView2 loadRequest:requestObj];
-	[webView3 loadRequest:requestObj];
-	
-	[target loadRequest:[NSURLRequest requestWithURL:[NSURL fileURLWithPath:path]]];
-	prevPage.delegate = self;
-	
-	[scrollView addSubview:webView1];
-	[scrollView addSubview:webView2];
-	[scrollView addSubview:webView3];
-	
-	[window addSubview:scrollView];
-	*/
 	return NO;
 }
-- (BOOL)loadWebView:(UIWebView*)webview withPage:(int)page {
+- (BOOL)loadWebView:(UIWebView*)webView withPage:(int)page {
 	NSString *file = [NSString stringWithFormat:@"%d", page];
 	NSString *path = [[NSBundle mainBundle] pathForResource:file ofType:@"html" inDirectory:@"book"];
 	
 	if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
 		NSLog(@"[+] Loading: book/%@.html", file);
-		[webview loadRequest:[NSURLRequest requestWithURL:[NSURL fileURLWithPath:path]]];
+		webView.hidden = YES; // use direct property instead of [self webView:hidden:animating:] otherwise it won't work
+		[webView loadRequest:[NSURLRequest requestWithURL:[NSURL fileURLWithPath:path]]];
 		return YES;
 	}
 	return NO;
@@ -230,7 +209,6 @@
 
 // ****** WEBVIEW
 - (void)webViewDidStartLoad:(UIWebView *)webView {
-	
 	// Sent before a web view begins loading content.
 }
 - (void)webViewDidFinishLoad:(UIWebView *)webView {
@@ -238,15 +216,11 @@
 	
 	// If is the first time i load something in the currPage web view...
 	if (webView == currPage && currentPageFirstLoading) {
-		
-		NSLog(@"currPage finished first loading");
+		NSLog(@"(1) currPage finished first loading");
 		
 		// ...check if there is a saved starting scroll index and set it
-		NSUserDefaults *userDefs = [NSUserDefaults standardUserDefaults];
-		NSString *currPageScrollIndex = [userDefs objectForKey:@"lastScrollIndex"];
-		if(currPageScrollIndex != nil) {
-			[self goDownInPage:currPageScrollIndex animating:NO];
-		}
+		NSString *currPageScrollIndex = [[NSUserDefaults standardUserDefaults] objectForKey:@"lastScrollIndex"];
+		if (currPageScrollIndex != nil) [self goDownInPage:currPageScrollIndex animating:NO];
 		
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onTouch:) name:@"onTouch" object:nil];
 		
@@ -279,7 +253,7 @@
 	return YES; // Return YES to make sure regular navigation works as expected.
 }
 - (void)webView:(UIWebView *)webView hidden:(BOOL)status animating:(BOOL)animating {
-	NSLog(@"--- unhiding animated=%d", animating);
+	NSLog(@"- - hidden:%d animating:%d", status, animating);
 	
 	if (animating) {
 		webView.alpha = 0.0;
@@ -363,8 +337,6 @@
 	
 	if (animating) {
 		
-		currentPageIsAnimating = YES;
-		
 		[UIView beginAnimations:@"scrollPage" context:nil]; {
 		
 			[UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
@@ -389,10 +361,9 @@
 	NSString *file = [NSString stringWithFormat:@"%d", pageNumber];
 	NSString *path = [[NSBundle mainBundle] pathForResource:file ofType:@"html" inDirectory:@"book"];
 	
-	if ([[NSFileManager defaultManager] fileExistsAtPath:path]) { //} && !currentPageIsAnimating) {
+	if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
 		NSLog(@"Goto Page: book/%d.html", pageNumber);
 		
-		currentPageIsAnimating = YES;
 		//[currPage stopLoading];
 		
 		if ((pageNumber - currentPageNumber) > 0) {
@@ -408,9 +379,6 @@
 			
 			// Preload
 			[self loadSlot:+1 withPage:currentPageNumber + 1];
-			
-			// Animate
-			//[self animateHorizontalSlide:@"left" dx:-768 firstView:prevPage secondView:currPage];
 		} else {
 			// ****** Move LEFT <<<
 			currentPageNumber = pageNumber;
@@ -424,37 +392,8 @@
 			
 			// Preload
 			[self loadSlot:-1 withPage:currentPageNumber - 1];
-			
-			// Animate
-			//[self animateHorizontalSlide:@"right" dx:768 firstView:nextPage secondView:currPage];
 		}
 	}
-}
-- (void)animateHorizontalSlide:(NSString *)name dx:(int)dx firstView:(UIWebView *)firstView secondView:(UIWebView *)secondView {
-	
-	[UIView beginAnimations:name context:nil]; {
-		
-		[UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
-		[UIView setAnimationDuration:0.35];
-		[UIView setAnimationDelegate:self];
-		[UIView setAnimationDidStopSelector:@selector(animationDidStop:finished:)];
-	
-		firstView.frame = CGRectOffset(firstView.frame, dx, 0);
-		secondView.frame = CGRectOffset(secondView.frame, dx, 0);
-	}
-	
-	[UIView commitAnimations];
-}
-- (void)animationDidStop:(NSString *)animationID finished:(BOOL)flag {
-	NSLog(@"(animation ended) %@", animationID);
-	
-	// Let's try to avoid the "grey screen" UIWebView bug
-	[self scrollPage:prevPage to:0 animating:NO];
-	//[prevPage reload];
-	[self scrollPage:nextPage to:0 animating:NO];
-	//[nextPage reload];
-	
-	currentPageIsAnimating = NO;
 }
 
 // ****** SYSTEM
