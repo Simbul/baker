@@ -180,15 +180,30 @@
 }
 - (void)initPageNumbersForPages:(int)count {
 	for (int i = 0; i < count; i++) {
+		// ****** Spinner
 		UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
 		
 		CGRect frame = spinner.frame;
-		frame.origin.x = PAGE_WIDTH * i + (PAGE_WIDTH + frame.size.width) / 2;
+		frame.origin.x = PAGE_WIDTH * i + (PAGE_WIDTH + frame.size.width) / 2 - 40;
 		frame.origin.y = (PAGE_HEIGHT + frame.size.height) / 2;
 		spinner.frame = frame;
 		
 		[spinner startAnimating];
 		[[self scrollView] addSubview:spinner];
+		[spinner release];
+		
+		// ****** Number
+		UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(PAGE_WIDTH * i + (PAGE_WIDTH) / 2, PAGE_HEIGHT / 2 - 6, 100, 50)];
+		label.textColor = [UIColor colorWithRed:0.0 green:0.0 blue:0.0 alpha:0.2];
+		NSString *labelText = [[NSString alloc] initWithFormat:@"%d", i];
+		label.font = [UIFont fontWithName:@"Helvetica" size:40.0];
+		label.textAlignment = UITextAlignmentLeft;
+		label.text = labelText;
+		//label.backgroundColor = [UIColor redColor]; //[UIColor clearColor];
+		[labelText release];
+		
+		[[self scrollView] addSubview:label];
+		[label release];
 	}
 }
 - (BOOL)loadSlot:(int)slot withPage:(int)page {
