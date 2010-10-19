@@ -203,7 +203,7 @@
 		// ****** Number
 		UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(PAGE_WIDTH * i + (PAGE_WIDTH) / 2, PAGE_HEIGHT / 2 - 6, 100, 50)];
 		label.textColor = [UIColor colorWithRed:0.0 green:0.0 blue:0.0 alpha:0.2];
-		NSString *labelText = [[NSString alloc] initWithFormat:@"%d", i];
+		NSString *labelText = [[NSString alloc] initWithFormat:@"%d", i + 1];
 		label.font = [UIFont fontWithName:@"Helvetica" size:40.0];
 		label.textAlignment = UITextAlignmentLeft;
 		label.text = labelText;
