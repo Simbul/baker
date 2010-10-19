@@ -84,17 +84,17 @@
 		
 		[self initPageNumbersForPages:totalPages];
 		
-		self.prevPage = [[UIWebView alloc] initWithFrame:[self frameForPage:currentPageNumber - 1]];
+		//self.prevPage = [[UIWebView alloc] initWithFrame:[self frameForPage:currentPageNumber - 1]];
 		self.currPage = [[UIWebView alloc] initWithFrame:[self frameForPage:currentPageNumber]];
-		self.nextPage = [[UIWebView alloc] initWithFrame:[self frameForPage:currentPageNumber + 1]];
+		//self.nextPage = [[UIWebView alloc] initWithFrame:[self frameForPage:currentPageNumber + 1]];
 		
-		[scrollView addSubview:self.prevPage];
+		//[scrollView addSubview:self.prevPage];
 		[scrollView addSubview:self.currPage];
-		[scrollView addSubview:self.nextPage];
+		//[scrollView addSubview:self.nextPage];
 		
-		self.prevPage.delegate = self;
+		//self.prevPage.delegate = self;
 		self.currPage.delegate = self;
-		self.nextPage.delegate = self;
+		//self.nextPage.delegate = self;
 		self.scrollView.delegate = self;
 		
 		[scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:NO];
@@ -137,6 +137,9 @@
 }
 
 // ****** LOADING
+- (void)gotoPageForDelay:(NSNumber *)pageNumber {
+	[self gotoPage:[pageNumber intValue]];
+}
 - (void)gotoPage:(int)pageNumber {
 	/****************************************************************************************************
 	 * Opens a specific page
@@ -147,9 +150,14 @@
 	if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
 		NSLog(@"Goto Page: book/%d.html", pageNumber);
 		
-		//[currPage stopLoading];
+		// ****** METHOD B - Single view
+		currentPageNumber = pageNumber;
+		[currPage stopLoading];
+		currPage.frame = [self frameForPage:currentPageNumber];
+		[self loadSlot:0 withPage:currentPageNumber];
 		
-		if ((pageNumber - currentPageNumber) > 0) {
+		// ****** METHOD A - Three-cards view
+		/*if ((pageNumber - currentPageNumber) > 0) {
 			// ****** Move RIGHT >>>
 			currentPageNumber = pageNumber;
 			prevPage.frame = [self frameForPage:pageNumber + 1];
@@ -175,7 +183,7 @@
 			
 			// Preload
 			[self loadSlot:-1 withPage:currentPageNumber - 1];
-		}
+		}*/
 	}
 }
 - (void)initPageNumbersForPages:(int)count {
@@ -265,7 +273,10 @@
 	return CGRectMake(PAGE_WIDTH * (page - 1), 0, PAGE_WIDTH, PAGE_HEIGHT);
 }
 - (void)scrollViewDidEndDragging:(UIScrollView *)scroll willDecelerate:(BOOL)decelerate {
-	// nothing to see, nothing to do
+	// Nothing to do here...
+}
+- (void)scrollViewWillBeginDecelerating:(UIScrollView *)scrollView {
+	// Nothing to do here either...
 }
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scroll {
 	int gotoPage = (int)(self.scrollView.contentOffset.x / PAGE_WIDTH) + 1;
@@ -375,11 +386,13 @@
 	} else if (tapPoint.x < leftTapHandler.frame.size.width) {
 		NSLog(@"<-- TAP left!");
 		[scrollView scrollRectToVisible:[self frameForPage:currentPageNumber - 1] animated:YES];
-		[self gotoPage:currentPageNumber - 1]; //TODO: handle multipage jumps
+		[self performSelector:@selector(gotoPageForDelay:) withObject:[NSNumber numberWithInt:(currentPageNumber - 1)] afterDelay:0.5];
+		//[self gotoPage:currentPageNumber - 1]; //TODO: handle multipage jumps
 	} else if (tapPoint.x > rightTapHandler.frame.origin.x) {
 		NSLog(@"--> TAP right!");
 		[scrollView scrollRectToVisible:[self frameForPage:currentPageNumber + 1] animated:YES];
-		[self gotoPage:currentPageNumber + 1]; //TODO: handle multipage jumps
+		[self performSelector:@selector(gotoPageForDelay:) withObject:[NSNumber numberWithInt:(currentPageNumber + 1)] afterDelay:0.5];
+		//[self gotoPage:currentPageNumber + 1]; //TODO: handle multipage jumps
 	}
 }
 
@@ -441,16 +454,16 @@
 	[super viewDidUnload];
 	
 	// Set web views delegates to nil, mandatory before releasing UIWebview instances 
-	nextPage.delegate = nil;
+	//nextPage.delegate = nil;
 	currPage.delegate = nil;
-	prevPage.delegate = nil;
+	//prevPage.delegate = nil;
 }
 - (void)dealloc {
 	[swipeRight release];
 	[swipeLeft release];
-	[nextPage release];
+	//[nextPage release];
 	[currPage release];
-	[prevPage release];
+	//[prevPage release];
     [super dealloc];
 }
 
