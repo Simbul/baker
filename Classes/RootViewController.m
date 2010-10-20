@@ -40,6 +40,7 @@
 @implementation RootViewController
 
 @synthesize scrollView;
+@synthesize pageSpinners;
 
 @synthesize prevPage;
 @synthesize currPage;
@@ -78,7 +79,7 @@
 		scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, PAGE_WIDTH, PAGE_HEIGHT)];
 		scrollView.showsHorizontalScrollIndicator = YES;
 		scrollView.showsVerticalScrollIndicator = NO;
-		scrollView.delaysContentTouches = YES;
+		scrollView.delaysContentTouches = NO;
 		scrollView.pagingEnabled = YES;
 		scrollView.contentSize = CGSizeMake(PAGE_WIDTH * totalPages, PAGE_HEIGHT);
 		
@@ -187,8 +188,10 @@
 	}
 }
 - (void)initPageNumbersForPages:(int)count {
+	pageSpinners = [[NSMutableArray alloc] initWithCapacity:count];
+	
 	for (int i = 0; i < count; i++) {
-		// ****** Spinner
+		// ****** Spinners
 		UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
 		
 		CGRect frame = spinner.frame;
@@ -196,11 +199,11 @@
 		frame.origin.y = (PAGE_HEIGHT + frame.size.height) / 2;
 		spinner.frame = frame;
 		
-		[spinner startAnimating];
+		[pageSpinners addObject:spinner];
 		[[self scrollView] addSubview:spinner];
 		[spinner release];
 		
-		// ****** Number
+		// ****** Numbers
 		UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(PAGE_WIDTH * i + (PAGE_WIDTH) / 2, PAGE_HEIGHT / 2 - 6, 100, 50)];
 		label.textColor = [UIColor colorWithRed:0.0 green:0.0 blue:0.0 alpha:0.2];
 		NSString *labelText = [[NSString alloc] initWithFormat:@"%d", i + 1];
@@ -244,6 +247,8 @@
 	[[self view] sendSubviewToBack:webView];*/
 	[self loadWebView:webView withPage:page];
 	
+	[self spinnerForPage:page isAnimating:YES]; // spinner YES
+	
 	// ****** ATTACH
 	/*if (slot == -1) {
 		self.prevPage = webView;
@@ -271,6 +276,25 @@
 // ****** SCROLLVIEW
 - (CGRect)frameForPage:(int)page {
 	return CGRectMake(PAGE_WIDTH * (page - 1), 0, PAGE_WIDTH, PAGE_HEIGHT);
+}
+- (void)spinnerForPage:(int)page isAnimating:(BOOL)isAnimating {
+	UIActivityIndicatorView *spinner = [pageSpinners objectAtIndex:page - 1];
+	
+	if (isAnimating) {
+		spinner.alpha = 0.0;
+		[UIView beginAnimations:@"showSpinner" context:nil]; {
+			//[UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
+			[UIView setAnimationDuration:1.0];
+			//[UIView setAnimationDelegate:self];
+			//[UIView setAnimationDidStopSelector:@selector(animationDidStop:finished:)];
+			
+			spinner.alpha = 1.0;
+		}
+		[UIView commitAnimations];	
+		[spinner startAnimating];
+	} else {
+		[spinner stopAnimating];
+	}
 }
 - (void)scrollViewDidEndDragging:(UIScrollView *)scroll willDecelerate:(BOOL)decelerate {
 	// Nothing to do here...
@@ -306,12 +330,18 @@
 		
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onTouch:) name:@"onTouch" object:nil];
 		
-		[self loadSlot:+1 withPage:currentPageNumber + 1];
-		[self loadSlot:-1 withPage:currentPageNumber - 1];
+		//[self loadSlot:+1 withPage:currentPageNumber + 1];
+		//[self loadSlot:-1 withPage:currentPageNumber - 1];
 		
 		currentPageFirstLoading = NO;
 	}
 	
+	// /!\ hack to make it load at the right time and not too early
+	// source: http://stackoverflow.com/questions/1422146/webviewdidfinishload-firing-too-soon
+	//NSString *javaScript = @"<script type=\"text/javascript\">function myFunction(){return 1+1;}</script>";
+	//[webView stringByEvaluatingJavaScriptFromString:javaScript];
+	
+	[self spinnerForPage:currentPageNumber isAnimating:NO]; // spinner YES
 	[self webView:webView hidden:NO animating:YES];
 }
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {

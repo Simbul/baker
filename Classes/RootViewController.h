@@ -37,6 +37,7 @@
 @interface RootViewController : UIViewController < UIWebViewDelegate, UIScrollViewDelegate > {
 	
 	UIScrollView *scrollView;
+	NSMutableArray *pageSpinners;
 	
 	UIWebView *prevPage;
 	UIWebView *currPage;
@@ -56,6 +57,7 @@
 }
 
 @property (nonatomic, retain) UIScrollView *scrollView;
+@property (nonatomic, retain) NSMutableArray *pageSpinners;
 
 @property (nonatomic, retain) UIWebView *prevPage;
 @property (nonatomic, retain) UIWebView *currPage;
@@ -73,8 +75,9 @@
 - (BOOL)loadSlot:(int)slot withPage:(int)page;
 - (BOOL)loadWebView:(UIWebView*)webview withPage:(int)page;
 
-// ****** SCROLL
+// ****** SCROLLVIEW
 - (CGRect)frameForPage:(int)page;
+- (void)spinnerForPage:(int)page isAnimating:(BOOL)isAnimating;
 
 // ****** WEBVIEW
 - (void)webView:(UIWebView *)webView hidden:(BOOL)status animating:(BOOL)animating;
