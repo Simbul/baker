@@ -54,6 +54,7 @@
 	int totalPages;
 	int currentPageNumber;
 	BOOL currentPageFirstLoading;
+	BOOL currentPageIsDelayingLoading;
 }
 
 @property (nonatomic, retain) UIScrollView *scrollView;
@@ -70,7 +71,9 @@
 @property int currentPageNumber;
 
 // ****** LOADING
-- (void)gotoPage:(int)pageNumber;
+- (BOOL)changePage:(int)page;
+- (void)gotoPageDelayer;
+- (void)gotoPage;
 - (void)initPageNumbersForPages:(int)count;
 - (BOOL)loadSlot:(int)slot withPage:(int)page;
 - (BOOL)loadWebView:(UIWebView*)webview withPage:(int)page;
