@@ -1,3 +1,59 @@
 Project Baker
+HTML5 Ebook framework for iPad
+Copyright (C) 2010, Davide Casali, Marco Colombo, Alessandro Morandi
+Licensed under BSD Opensource License.
 
-Elementary, my dear Watson.
+WHAT IS BAKER
+=============
+
+The ebooks seem today limited by an old standard created in the pre-Kindle and pre-iPad era.
+Baker is the first stepping stone to show that we could already use the powerful HTML5 language
+to create books with real typography, real layouts and high-quality design.
+
+
+HOW TO USE BAKER
+================
+
+To create a ebook in HTML5 to be used with Baker is a three-steps operation. 
+It's longer to be said than done!
+
+1. DESIGN
+. Create you book as one or more HTML5 documents
+. Limit the width to 768px
+. You can keep the height to 1024px to match the page size or make it scrollable if you need longer pages.
+. You can use ANY feature in WebKit: HTML5, CSS3, JavaScript.
+  But remember: it's a book. If you want to build an app, check PhoneGap. 
+. Think about having 1 HTML for each chapter to use the native scrolling.
+
+2. PACKAGE
+. The book must be contained in a single "book/" folder.
+. Each chapter (horizontally swiped on the iPad) should be in a single HTML file inside the "book/" folder.
+. The HTML files must be named with incremental numbers, starting from one: 1.html, 2.html, etc.
+. 1.html is going to be used as the first page of the book, so it's probably your cover.
+. All the assets must be contained (with a relative reference) within the "book/" folder.
+. Subfolders are allowed for assets, but the HTML files will be read only from the "book/" folder itself.
+
+3. PUBLISH
+. Download the Baker Framework Xcode project from http://bakerframework.com or GitHub.
+. Create an Apple iPhone Developer account to publish on the App Store.
+. Download Xcode and the iOS SDK from the Apple Developer website.
+. Open Baker in Xcode.
+. Add all the files of your book from your "book/" folder to the "book/" folder inside Baker.
+. If you used a "width fix" CSS file, remove it.
+. Rename the project to the name of your book: Project -> Rename.
+. Replace the icon file: ios-icon-ipad72.png (check the Apple Guidelines for reference).
+. Change the bundle identifier in the plist file to the one you are going to use for your app.
+. Test your book compiling it. 
+. Follow the instructions on the Apple iPhone Developer website to submit your book to the app store.
+
+
+
+BUGS AND FEEDBACK
+=================
+
+Submit your bugs here: http://github.com/simbul/baker/issues
+Give us your feedback at: info@bakerframework.com
+Follow us on Twitter: http://twitter.com/BakerFramework
+
+
+- Elementary, my dear Watson.
