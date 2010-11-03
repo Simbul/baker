@@ -3,6 +3,7 @@ HTML5 Ebook framework for iPad
 Copyright (C) 2010, Davide Casali, Marco Colombo, Alessandro Morandi
 Licensed under BSD Opensource License.
 
+
 WHAT IS BAKER
 =============
 
@@ -45,7 +46,6 @@ It's longer to be said than done!
 . Change the bundle identifier in the plist file to the one you are going to use for your app.
 . Test your book compiling it. 
 . Follow the instructions on the Apple iPhone Developer website to submit your book to the app store.
-
 
 
 BUGS AND FEEDBACK
