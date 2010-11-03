@@ -74,7 +74,7 @@
 			currentPageNumber = 1;
         
 		currentPageFirstLoading = YES;
-		currentPageIsDelayingLoading = NO;
+		currentPageIsDelayingLoading = YES;
 		
 		// ****** VIEW
 		scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, PAGE_WIDTH, PAGE_HEIGHT)];
@@ -165,9 +165,7 @@
 	/****************************************************************************************************
 	 * Opens a specific page
 	 */
-	
-	currentPageIsDelayingLoading = NO;
-	
+		
 	NSString *file = [NSString stringWithFormat:@"%d", currentPageNumber];
 	NSString *path = [[NSBundle mainBundle] pathForResource:file ofType:@"html" inDirectory:@"book"];
 	
@@ -207,7 +205,7 @@
 			// Preload
 			[self loadSlot:-1 withPage:currentPageNumber - 1];
 		} /**/
-	}
+	}	
 }
 - (void)initPageNumbersForPages:(int)count {
 	pageSpinners = [[NSMutableArray alloc] initWithCapacity:count];
@@ -268,7 +266,6 @@
 	[[self view] addSubview:webView];
 	[[self view] sendSubviewToBack:webView]; /**/
 	[self loadWebView:webView withPage:page];
-	
 	[self spinnerForPage:page isAnimating:YES]; // spinner YES
 	
 	// ****** ATTACH
@@ -378,14 +375,34 @@
 		NSLog(@"nextPage failed to load content with error: %@", error);
 }
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
-	// Sent before a web view begins loading content, useful to trigger actions before the WebView.
-	if ([[[request URL] scheme] isEqualToString:@"x-local"]) {
-		NSLog(@"   x-local!", [[request URL] absoluteString]);
-		//TODO
-		return NO;
-	}
 	
-	return YES; // Return YES to make sure regular navigation works as expected.
+	// Sent before a web view begins loading content, useful to trigger actions before the WebView.
+	if (currentPageIsDelayingLoading) {
+		
+		NSLog(@"Current Page IS delaying loading --> load page");
+		currentPageIsDelayingLoading = NO;
+		return YES;
+		
+	} else {
+		
+		NSLog(@"Current Page IS NOT delaying loading --> handle clicked link");
+		
+		if (![[[request URL] scheme] isEqualToString:@"http"]) {
+						
+			NSString *url = [NSString stringWithFormat:@"%@", [request URL]];
+			NSString *file = [url lastPathComponent];
+			
+			NSLog(@"File number: %@", [file substringToIndex:[file length]-5]);
+			int page = [[file substringToIndex:[file length]-5] intValue];
+			
+			if ([self changePage:page]) {
+				[scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:YES];
+				[self gotoPageDelayer];
+			}
+		}
+		
+		return NO;
+	}	
 }
 - (void)webView:(UIWebView *)webView hidden:(BOOL)status animating:(BOOL)animating {
 	NSLog(@"- - hidden:%d animating:%d", status, animating);
