@@ -297,7 +297,8 @@
 	return CGRectMake(PAGE_WIDTH * (page - 1), 0, PAGE_WIDTH, PAGE_HEIGHT);
 }
 - (void)spinnerForPage:(int)page isAnimating:(BOOL)isAnimating {
-	UIActivityIndicatorView *spinner = [pageSpinners objectAtIndex:page - 1];
+	UIActivityIndicatorView *spinner = nil;
+	if (page <= pageSpinners.count) spinner = [pageSpinners objectAtIndex:page - 1];
 	
 	if (isAnimating) {
 		spinner.alpha = 0.0;
