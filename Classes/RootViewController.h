@@ -70,6 +70,9 @@
 @property int totalPages;
 @property int currentPageNumber;
 
+@property int pageWidth;
+@property int pageHeight;
+
 // ****** LOADING
 - (BOOL)changePage:(int)page;
 - (void)gotoPageDelayer;

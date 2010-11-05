@@ -34,9 +34,6 @@
 #import "RootViewController.h"
 #import "TapHandler.h"
 
-#define PAGE_HEIGHT 1024
-#define PAGE_WIDTH 768
-
 @implementation RootViewController
 
 @synthesize scrollView;
@@ -52,9 +49,15 @@
 @synthesize totalPages;
 @synthesize currentPageNumber;
 
+@synthesize pageWidth;
+@synthesize pageHeight;
+
  // The designated initializer.  Override if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
-    
+
+	self.pageWidth = 768;
+	self.pageHeight = 1024;    
+
 	if ((self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil])) {
 		
 		// ****** CONFIGURATION
@@ -77,12 +80,12 @@
 		currentPageIsDelayingLoading = YES;
 		
 		// ****** VIEW
-		scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, PAGE_WIDTH, PAGE_HEIGHT)];
+		scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, self.pageWidth, self.pageHeight)];
 		scrollView.showsHorizontalScrollIndicator = YES;
 		scrollView.showsVerticalScrollIndicator = NO;
 		scrollView.delaysContentTouches = NO;
 		scrollView.pagingEnabled = YES;
-		scrollView.contentSize = CGSizeMake(PAGE_WIDTH * totalPages, PAGE_HEIGHT);
+		scrollView.contentSize = CGSizeMake(self.pageWidth * totalPages, self.pageHeight);
 		
 		[self initPageNumbersForPages:totalPages];
 		
@@ -110,30 +113,33 @@
 - (void)viewDidLoad {
     
 	[super viewDidLoad];
-	[self loadSlot:0 withPage:currentPageNumber];
-	
+	[self initTapHandlers];
+	[self loadSlot:0 withPage:currentPageNumber];	
+}
+
+- (void)initTapHandlers {
 	// ****** CORNER TAP HANDLERS
-	upTapHandler = [[TapHandler alloc] initWithFrame:CGRectMake(50,0,668,50)];
-	//upTapHandler.backgroundColor = [UIColor redColor];
-	//upTapHandler.alpha = 0.5;
+	upTapHandler = [[TapHandler alloc] initWithFrame:CGRectMake(50,0,(self.pageWidth - 100),50)];
+//	upTapHandler.backgroundColor = [UIColor redColor];
+//	upTapHandler.alpha = 0.5;
 	[[self view] addSubview:upTapHandler];
 	[upTapHandler release];
-	
-	downTapHandler = [[TapHandler alloc] initWithFrame:CGRectMake(50,974,668,50)];
-	//downTapHandler.backgroundColor = [UIColor redColor];
-	//downTapHandler.alpha = 0.5;
+
+	downTapHandler = [[TapHandler alloc] initWithFrame:CGRectMake(50,(self.pageHeight - 50),(self.pageWidth - 100),50)];
+//	downTapHandler.backgroundColor = [UIColor redColor];
+//	downTapHandler.alpha = 0.5;
 	[[self view] addSubview:downTapHandler];
 	[downTapHandler release];
-	
-	leftTapHandler = [[TapHandler alloc] initWithFrame:CGRectMake(0,50,50,924)];
-	//leftTapHandler.backgroundColor = [UIColor redColor];
-	//leftTapHandler.alpha = 0.5;
+
+	leftTapHandler = [[TapHandler alloc] initWithFrame:CGRectMake(0,50,50,(self.pageHeight - 100))];
+//	leftTapHandler.backgroundColor = [UIColor redColor];
+//	leftTapHandler.alpha = 0.5;
 	[[self view] addSubview:leftTapHandler];
 	[leftTapHandler release];
-	
-	rightTapHandler = [[TapHandler alloc] initWithFrame:CGRectMake(718,50,50,924)];
-	//rightTapHandler.backgroundColor = [UIColor redColor];
-	//rightTapHandler.alpha = 0.5;
+
+	rightTapHandler = [[TapHandler alloc] initWithFrame:CGRectMake((self.pageWidth - 50),50,50,(self.pageHeight - 100))];
+//	rightTapHandler.backgroundColor = [UIColor redColor];
+//	rightTapHandler.alpha = 0.5;
 	[[self view] addSubview:rightTapHandler];
 	[rightTapHandler release];
 }
@@ -215,8 +221,8 @@
 		UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
 		
 		CGRect frame = spinner.frame;
-		frame.origin.x = PAGE_WIDTH * i + (PAGE_WIDTH + frame.size.width) / 2 - 40;
-		frame.origin.y = (PAGE_HEIGHT + frame.size.height) / 2;
+		frame.origin.x = self.pageWidth * i + (self.pageWidth + frame.size.width) / 2 - 40;
+		frame.origin.y = (self.pageHeight + frame.size.height) / 2;
 		spinner.frame = frame;
 		
 		[pageSpinners addObject:spinner];
@@ -224,7 +230,7 @@
 		[spinner release];
 		
 		// ****** Numbers
-		UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(PAGE_WIDTH * i + (PAGE_WIDTH) / 2, PAGE_HEIGHT / 2 - 6, 100, 50)];
+		UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(self.pageWidth * i + (self.pageWidth) / 2, self.pageHeight / 2 - 6, 100, 50)];
 		label.textColor = [UIColor colorWithRed:0.0 green:0.0 blue:0.0 alpha:0.2];
 		NSString *labelText = [[NSString alloc] initWithFormat:@"%d", i + 1];
 		label.font = [UIFont fontWithName:@"Helvetica" size:40.0];
@@ -294,7 +300,7 @@
 
 // ****** SCROLLVIEW
 - (CGRect)frameForPage:(int)page {
-	return CGRectMake(PAGE_WIDTH * (page - 1), 0, PAGE_WIDTH, PAGE_HEIGHT);
+	return CGRectMake(self.pageWidth * (page - 1), 0, self.pageWidth, self.pageHeight);
 }
 - (void)spinnerForPage:(int)page isAnimating:(BOOL)isAnimating {
 	UIActivityIndicatorView *spinner = nil;
@@ -323,7 +329,7 @@
 	// Nothing to do here either...
 }
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scroll {
-	int gotoPage = (int)(self.scrollView.contentOffset.x / PAGE_WIDTH) + 1;
+	int gotoPage = (int)(self.scrollView.contentOffset.x / self.pageWidth) + 1;
 	
 	//NSLog(@"DEDe contentOffset: %@", NSStringFromCGPoint(self.scrollView.contentOffset));
 	NSLog(@" <<<>>> Swiping to page: %d", gotoPage);
@@ -531,17 +537,24 @@
     return YES;
 }
 
-// which rotation is the device in?
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
 	NSLog(@"rotated");
 	if (self.interfaceOrientation == UIInterfaceOrientationLandscapeRight || self.interfaceOrientation == UIInterfaceOrientationLandscapeLeft ) {
+		self.pageWidth = 1024;
+		self.pageHeight = 768;
 		NSLog(@"Landscape");
 	}
 	else {
 		NSLog(@"Portrait");
+		self.pageWidth = 768;
+		self.pageHeight = 1024;
 	}
+
+	self.scrollView.frame = CGRectMake(0, 0, self.pageWidth, self.pageHeight);
+	scrollView.contentSize = CGSizeMake(self.pageWidth * totalPages, self.pageHeight);
+	[self initTapHandlers];
 	
-	// reload the page(s) with the new orientation
+	// On rotation change, reload the page
 	[self loadSlot:0 withPage:currentPageNumber];
 }
 
