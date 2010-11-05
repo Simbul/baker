@@ -522,11 +522,29 @@
 }
 
 // ****** SYSTEM
+
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    
+    NSLog(@"rotation enabled");
+	
 	// Overriden to allow any orientation.
-    return NO;
+	// @todo: make this configurable
+    return YES;
 }
+
+// which rotation is the device in?
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
+	NSLog(@"rotated");
+	if (self.interfaceOrientation == UIInterfaceOrientationLandscapeRight || self.interfaceOrientation == UIInterfaceOrientationLandscapeLeft ) {
+		NSLog(@"Landscape");
+	}
+	else {
+		NSLog(@"Portrait");
+	}
+	
+	// reload the page(s) with the new orientation
+	[self loadSlot:0 withPage:currentPageNumber];
+}
+
 - (void)didReceiveMemoryWarning {
     
 	// Releases the view if it doesn't have a superview.
