@@ -87,8 +87,6 @@
 		scrollView.pagingEnabled = YES;
 		scrollView.contentSize = CGSizeMake(self.pageWidth * totalPages, self.pageHeight);
 		
-		[self initPageNumbersForPages:totalPages];
-		
 		//self.prevPage = [[UIWebView alloc] initWithFrame:[self frameForPage:currentPageNumber - 1]];
 		self.currPage = [[UIWebView alloc] initWithFrame:[self frameForPage:currentPageNumber]];
 		//self.nextPage = [[UIWebView alloc] initWithFrame:[self frameForPage:currentPageNumber + 1]];
@@ -213,36 +211,7 @@
 		} /**/
 	}	
 }
-- (void)initPageNumbersForPages:(int)count {
-	pageSpinners = [[NSMutableArray alloc] initWithCapacity:count];
-	
-	for (int i = 0; i < count; i++) {
-		// ****** Spinners
-		UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-		
-		CGRect frame = spinner.frame;
-		frame.origin.x = self.pageWidth * i + (self.pageWidth + frame.size.width) / 2 - 40;
-		frame.origin.y = (self.pageHeight + frame.size.height) / 2;
-		spinner.frame = frame;
-		
-		[pageSpinners addObject:spinner];
-		[[self scrollView] addSubview:spinner];
-		[spinner release];
-		
-		// ****** Numbers
-		UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(self.pageWidth * i + (self.pageWidth) / 2, self.pageHeight / 2 - 6, 100, 50)];
-		label.textColor = [UIColor colorWithRed:0.0 green:0.0 blue:0.0 alpha:0.2];
-		NSString *labelText = [[NSString alloc] initWithFormat:@"%d", i + 1];
-		label.font = [UIFont fontWithName:@"Helvetica" size:40.0];
-		label.textAlignment = UITextAlignmentLeft;
-		label.text = labelText;
-		//label.backgroundColor = [UIColor redColor];
-		[labelText release];
-		
-		[[self scrollView] addSubview:label];
-		[label release];
-	}
-}
+
 - (BOOL)loadSlot:(int)slot withPage:(int)page {
 	
 	UIWebView *webView;
@@ -550,11 +519,14 @@
 		self.pageHeight = 1024;
 	}
 
+	// set the content size correctly
 	self.scrollView.frame = CGRectMake(0, 0, self.pageWidth, self.pageHeight);
 	scrollView.contentSize = CGSizeMake(self.pageWidth * totalPages, self.pageHeight);
+
+	// setup the handlers to the new layout
 	[self initTapHandlers];
 	
-	// On rotation change, reload the page
+	// reload the current page for the new layout
 	[self loadSlot:0 withPage:currentPageNumber];
 }
 
