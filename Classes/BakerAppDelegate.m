@@ -42,7 +42,7 @@
 #pragma mark Application lifecycle
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {    
 	
-	self.rootViewController = [[RootViewController alloc] initWithNibName:@"RootViewController" bundle:[NSBundle mainBundle]];
+	self.rootViewController =[[RootViewController alloc] init]; 
 	[window addSubview:[rootViewController view]];
 	
     [window makeKeyAndVisible];

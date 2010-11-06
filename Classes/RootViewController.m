@@ -52,57 +52,52 @@
 @synthesize totalPages;
 @synthesize currentPageNumber;
 
- // The designated initializer.  Override if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
-    
-	if ((self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil])) {
-		
-		// ****** CONFIGURATION
-		// Permanently hide status bar
-		[[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
-		
-		// Count pages
-		NSArray *pagesArray = [[NSBundle mainBundle] pathsForResourcesOfType:@"html" inDirectory:@"book"];
-		totalPages = [pagesArray count];
-		NSLog(@"Pages in this book: %d", totalPages);
-		
-		// Check if there is a saved starting page
-		NSString *currPageToLoad = [[NSUserDefaults standardUserDefaults] objectForKey:@"lastPageViewed"];
-		if (currPageToLoad != nil)
-			currentPageNumber = [currPageToLoad intValue];
-		else
-			currentPageNumber = 1;
-        
-		currentPageFirstLoading = YES;
-		currentPageIsDelayingLoading = YES;
-		
-		// ****** VIEW
-		scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, PAGE_WIDTH, PAGE_HEIGHT)];
-		scrollView.showsHorizontalScrollIndicator = YES;
-		scrollView.showsVerticalScrollIndicator = NO;
-		scrollView.delaysContentTouches = NO;
-		scrollView.pagingEnabled = YES;
-		scrollView.contentSize = CGSizeMake(PAGE_WIDTH * totalPages, PAGE_HEIGHT);
-		
-		[self initPageNumbersForPages:totalPages];
-		
-		//self.prevPage = [[UIWebView alloc] initWithFrame:[self frameForPage:currentPageNumber - 1]];
-		self.currPage = [[UIWebView alloc] initWithFrame:[self frameForPage:currentPageNumber]];
-		//self.nextPage = [[UIWebView alloc] initWithFrame:[self frameForPage:currentPageNumber + 1]];
-		
-		//[scrollView addSubview:self.prevPage];
-		[scrollView addSubview:self.currPage];
-		//[scrollView addSubview:self.nextPage];
-		
-		//self.prevPage.delegate = self;
-		self.currPage.delegate = self;
-		//self.nextPage.delegate = self;
-		self.scrollView.delegate = self;
-		
-		[scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:NO];
-		[[self view] addSubview:scrollView];
-		[[self view] sendSubviewToBack:scrollView]; // might not be required, test
-	}
+- (id)init {		
+	// ****** CONFIGURATION
+	// Permanently hide status bar
+	[[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
+	
+	// Count pages
+	NSArray *pagesArray = [[NSBundle mainBundle] pathsForResourcesOfType:@"html" inDirectory:@"book"];
+	totalPages = [pagesArray count];
+	NSLog(@"Pages in this book: %d", totalPages);
+	
+	// Check if there is a saved starting page
+	NSString *currPageToLoad = [[NSUserDefaults standardUserDefaults] objectForKey:@"lastPageViewed"];
+	if (currPageToLoad != nil)
+		currentPageNumber = [currPageToLoad intValue];
+	else
+		currentPageNumber = 1;
+	
+	currentPageFirstLoading = YES;
+	currentPageIsDelayingLoading = YES;
+	
+	// ****** VIEW
+	scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, PAGE_WIDTH, PAGE_HEIGHT)];
+	scrollView.showsHorizontalScrollIndicator = YES;
+	scrollView.showsVerticalScrollIndicator = NO;
+	scrollView.delaysContentTouches = NO;
+	scrollView.pagingEnabled = YES;
+	scrollView.contentSize = CGSizeMake(PAGE_WIDTH * totalPages, PAGE_HEIGHT);
+	
+	[self initPageNumbersForPages:totalPages];
+	
+	//self.prevPage = [[UIWebView alloc] initWithFrame:[self frameForPage:currentPageNumber - 1]];
+	self.currPage = [[UIWebView alloc] initWithFrame:[self frameForPage:currentPageNumber]];
+	//self.nextPage = [[UIWebView alloc] initWithFrame:[self frameForPage:currentPageNumber + 1]];
+	
+	//[scrollView addSubview:self.prevPage];
+	[scrollView addSubview:self.currPage];
+	//[scrollView addSubview:self.nextPage];
+	
+	//self.prevPage.delegate = self;
+	self.currPage.delegate = self;
+	//self.nextPage.delegate = self;
+	self.scrollView.delegate = self;
+	
+	[scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:NO];
+	[[self view] addSubview:scrollView];
+	[[self view] sendSubviewToBack:scrollView]; // might not be required, test
     return self;
 }
 

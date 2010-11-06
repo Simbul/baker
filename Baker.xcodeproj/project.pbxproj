@@ -15,7 +15,6 @@
 		28AD733F0D9D9553002E5188 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 28AD733E0D9D9553002E5188 /* MainWindow.xib */; };
 		9F242EDA11FB344D00641757 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F242ED911FB344D00641757 /* QuartzCore.framework */; };
 		9F4F07F411F8DE8200375A8C /* RootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F4F07F211F8DE8200375A8C /* RootViewController.m */; };
-		9F4F07F511F8DE8200375A8C /* RootViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F4F07F311F8DE8200375A8C /* RootViewController.xib */; };
 		9FE8F60D1247F72000D66E4E /* TapHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FE8F60C1247F72000D66E4E /* TapHandler.m */; };
 		BF2F99401269379900E356EF /* book in Resources */ = {isa = PBXBuildFile; fileRef = BF2F993F1269379900E356EF /* book */; };
 		BFBACF331274CD38009D9595 /* ios-icon-ipad72.png in Resources */ = {isa = PBXBuildFile; fileRef = BFBACF321274CD38009D9595 /* ios-icon-ipad72.png */; };
@@ -35,7 +34,6 @@
 		9F242ED911FB344D00641757 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		9F4F07F111F8DE8200375A8C /* RootViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RootViewController.h; sourceTree = "<group>"; };
 		9F4F07F211F8DE8200375A8C /* RootViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RootViewController.m; sourceTree = "<group>"; };
-		9F4F07F311F8DE8200375A8C /* RootViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = RootViewController.xib; sourceTree = "<group>"; };
 		9FE8F60B1247F72000D66E4E /* TapHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TapHandler.h; sourceTree = "<group>"; };
 		9FE8F60C1247F72000D66E4E /* TapHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TapHandler.m; sourceTree = "<group>"; };
 		BF2F993F1269379900E356EF /* book */ = {isa = PBXFileReference; lastKnownFileType = folder; path = book; sourceTree = "<group>"; };
@@ -103,7 +101,6 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				9F4F07F311F8DE8200375A8C /* RootViewController.xib */,
 				28AD733E0D9D9553002E5188 /* MainWindow.xib */,
 				BFBACF321274CD38009D9595 /* ios-icon-ipad72.png */,
 				8D1107310486CEB800E47090 /* Baker-Info.plist */,
@@ -172,7 +169,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				28AD733F0D9D9553002E5188 /* MainWindow.xib in Resources */,
-				9F4F07F511F8DE8200375A8C /* RootViewController.xib in Resources */,
 				BF2F99401269379900E356EF /* book in Resources */,
 				BFBACF331274CD38009D9595 /* ios-icon-ipad72.png in Resources */,
 			);
