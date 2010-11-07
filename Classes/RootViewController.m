@@ -39,6 +39,8 @@
 
 @implementation RootViewController
 
+@synthesize pages;
+
 @synthesize scrollView;
 @synthesize pageSpinners;
 
@@ -58,8 +60,8 @@
 	[[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
 	
 	// Count pages
-	NSArray *pagesArray = [[NSBundle mainBundle] pathsForResourcesOfType:@"html" inDirectory:@"book"];
-	totalPages = [pagesArray count];
+	self.pages = [[NSBundle mainBundle] pathsForResourcesOfType:@"html" inDirectory:@"book"];
+	totalPages = [pages count];
 	NSLog(@"Pages in this book: %d", totalPages);
 	
 	// Check if there is a saved starting page
@@ -161,11 +163,13 @@
 	 * Opens a specific page
 	 */
 		
-	NSString *file = [NSString stringWithFormat:@"%d", currentPageNumber];
-	NSString *path = [[NSBundle mainBundle] pathForResource:file ofType:@"html" inDirectory:@"book"];
-	
+	//NSString *file = [NSString stringWithFormat:@"%d", currentPageNumber];
+	//NSString *path = [[NSBundle mainBundle] pathForResource:file ofType:@"html" inDirectory:@"book"];
+		
+	NSString *path = [pages objectAtIndex:currentPageNumber-1];
+		
 	if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
-		NSLog(@"Goto Page: book/%d.html", currentPageNumber);
+		NSLog(@"Goto Page: book/%@", [[NSFileManager defaultManager] displayNameAtPath:path]);
 		
 		// ****** METHOD B - Single view
 		[currPage stopLoading];
@@ -275,11 +279,14 @@
 	return NO;
 }
 - (BOOL)loadWebView:(UIWebView*)webView withPage:(int)page {
-	NSString *file = [NSString stringWithFormat:@"%d", page];
-	NSString *path = [[NSBundle mainBundle] pathForResource:file ofType:@"html" inDirectory:@"book"];
 	
+	//NSString *file = [NSString stringWithFormat:@"%d", page];
+	//NSString *path = [[NSBundle mainBundle] pathForResource:file ofType:@"html" inDirectory:@"book"];
+	
+	NSString *path = [pages objectAtIndex:page-1];
+		
 	if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
-		NSLog(@"[+] Loading: book/%@.html", file);
+		NSLog(@"[+] Loading: book/%@", [[NSFileManager defaultManager] displayNameAtPath:path]);
 		webView.hidden = YES; // use direct property instead of [self webView:hidden:animating:] otherwise it won't work
 		[webView loadRequest:[NSURLRequest requestWithURL:[NSURL fileURLWithPath:path]]];
 		return YES;

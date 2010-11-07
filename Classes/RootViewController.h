@@ -36,6 +36,8 @@
 
 @interface RootViewController : UIViewController < UIWebViewDelegate, UIScrollViewDelegate > {
 	
+	NSArray *pages;
+	
 	UIScrollView *scrollView;
 	NSMutableArray *pageSpinners;
 	
@@ -56,6 +58,8 @@
 	BOOL currentPageFirstLoading;
 	BOOL currentPageIsDelayingLoading;
 }
+
+@property (nonatomic, retain) NSArray *pages;
 
 @property (nonatomic, retain) UIScrollView *scrollView;
 @property (nonatomic, retain) NSMutableArray *pageSpinners;
