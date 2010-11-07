@@ -32,6 +32,7 @@
 
 #import "BakerAppDelegate.h"
 #import "RootViewController.h"
+#import "InterceptorWindow.h"
 
 @implementation BakerAppDelegate
 
@@ -40,15 +41,16 @@
 
 #pragma mark -
 #pragma mark Application lifecycle
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {	
+	// Create the controller for the root view
+	self.rootViewController =[[RootViewController alloc] init];
+	UIView *scrollView = [rootViewController scrollView];
+	
 	// Create the application window
-	UIWindow *localWindow = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen]bounds]];
+	UIWindow *localWindow = [[InterceptorWindow alloc] initWithTarget:scrollView delegate:self.rootViewController frame:[[UIScreen mainScreen]bounds]];
 	localWindow.backgroundColor = [UIColor whiteColor];
 	self.window = localWindow;
 	[localWindow release];
-	
-	// Create the controller for the root view
-	self.rootViewController =[[RootViewController alloc] init];
 	
 	// Add the root view to the application window
 	[window addSubview:[rootViewController view]];
