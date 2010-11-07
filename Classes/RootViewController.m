@@ -106,10 +106,9 @@
 }
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad {
-    
 	[super viewDidLoad];
 	[self initTapHandlers];
-	[self loadSlot:0 withPage:currentPageNumber];	
+	[self loadSlot:0 withPage:currentPageNumber];
 }
 
 - (void)initTapHandlers {
@@ -530,8 +529,10 @@
 
 	// Overriden to allow any orientation.
 	// @todo: make this configurable
-    return YES;
+	return YES;
 }
+
+- (void)willRotateToInterfaceOrientation:duration:
 
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
 	NSLog(@"rotated");
@@ -550,7 +551,7 @@
 	self.scrollView.frame = CGRectMake(0, 0, self.pageWidth, self.pageHeight);
 	scrollView.contentSize = CGSizeMake(self.pageWidth * totalPages, self.pageHeight);
 
-	// setup the handlers to the new layout
+	// setup the handlers to the new orientation
 	[self initTapHandlers];
 	
 	// reload the current page for the new layout
