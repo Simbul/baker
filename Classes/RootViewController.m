@@ -51,11 +51,11 @@
 @synthesize swipeLeft;
 @synthesize swipeRight;
 
-@synthesize totalPages;
 @synthesize currentPageNumber;
 
+// ****** CONFIGURATION
 - (id)init {		
-	// ****** CONFIGURATION
+	
 	// Permanently hide status bar
 	[[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
 	
@@ -102,7 +102,6 @@
 	[[self view] sendSubviewToBack:scrollView]; // might not be required, test
     return self;
 }
-
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad {
     
@@ -238,7 +237,7 @@
 }
 - (BOOL)loadSlot:(int)slot withPage:(int)page {
 	
-	UIWebView *webView;
+	UIWebView *webView = nil;
 	//CGRect frame;
 	
 	// ****** SELECT
@@ -368,7 +367,6 @@
 	[self webView:webView hidden:NO animating:YES];
 }
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
-	
 	// Sent if a web view failed to load content.
 	if (webView == prevPage)
 		NSLog(@"prevPage failed to load content with error: %@", error);
@@ -378,7 +376,6 @@
 		NSLog(@"nextPage failed to load content with error: %@", error);
 }
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
-	
 	// Sent before a web view begins loading content, useful to trigger actions before the WebView.
 	if (currentPageIsDelayingLoading) {
 		
@@ -431,7 +428,6 @@
 
 // ****** GESTURES
 - (void)swipePage:(UISwipeGestureRecognizer *)sender {
-	
 	// Not needed anymore, since UIScrollView handle the horizontal scrolling, but...
 	
 	int page = 0;
@@ -484,7 +480,6 @@
 
 // ****** PAGE SCROLLING
 - (void)goUpInPage:(NSString *)offset animating:(BOOL)animating {
-	
 	NSLog(@"Scrolling page up");
 	
 	NSString *currPageOffset = [currPage stringByEvaluatingJavaScriptFromString:@"window.scrollY;"];
@@ -493,7 +488,6 @@
 	[self scrollPage:currPage to:offset animating:animating];
 }
 - (void)goDownInPage:(NSString *)offset animating:(BOOL)animating {
-	
 	NSLog(@"Scrolling page down");
 	
 	NSString *currPageOffset = [currPage stringByEvaluatingJavaScriptFromString:@"window.scrollY;"];
@@ -502,7 +496,7 @@
 	[self scrollPage:currPage to:offset animating:animating];
 }
 - (void)scrollPage:(UIWebView *)webView to:(NSString *)offset animating:(BOOL)animating {
-
+	
 	NSString *jsCommand = [NSString stringWithFormat:@"window.scrollTo(0,%@);", offset];
 	
 	if (animating) {
@@ -525,12 +519,10 @@
 
 // ****** SYSTEM
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    
 	// Overriden to allow any orientation.
     return NO;
 }
 - (void)didReceiveMemoryWarning {
-    
 	// Releases the view if it doesn't have a superview.
     [super didReceiveMemoryWarning];
     // Release any cached data, images, etc that aren't in use.
@@ -545,8 +537,8 @@
 	//prevPage.delegate = nil;
 }
 - (void)dealloc {
-	[swipeRight release];
-	[swipeLeft release];
+	//[swipeRight release];
+	//[swipeLeft release];
 	//[nextPage release];
 	[currPage release];
 	//[prevPage release];

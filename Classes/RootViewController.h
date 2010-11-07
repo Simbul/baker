@@ -71,11 +71,9 @@
 @property (nonatomic, retain) UISwipeGestureRecognizer *swipeLeft;
 @property (nonatomic, retain) UISwipeGestureRecognizer *swipeRight;
 
-@property int totalPages;
 @property int currentPageNumber;
 
 // ****** LOADING
-- (id)init;
 - (BOOL)changePage:(int)page;
 - (void)gotoPageDelayer;
 - (void)gotoPage;
