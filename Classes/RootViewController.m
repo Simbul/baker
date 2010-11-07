@@ -36,6 +36,8 @@
 
 @implementation RootViewController
 
+@synthesize pages;
+
 @synthesize scrollView;
 @synthesize pageSpinners;
 
@@ -46,67 +48,62 @@
 @synthesize swipeLeft;
 @synthesize swipeRight;
 
-@synthesize totalPages;
 @synthesize currentPageNumber;
 
 @synthesize pageWidth;
 @synthesize pageHeight;
 
- // The designated initializer.  Override if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
-
+// ****** CONFIGURATION
+- (id)init {
 	self.pageWidth = 768;
-	self.pageHeight = 1024;    
-
-	if ((self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil])) {
-		
-		// ****** CONFIGURATION
-		// Permanently hide status bar
-		[[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
-		
-		// Count pages
-		NSArray *pagesArray = [[NSBundle mainBundle] pathsForResourcesOfType:@"html" inDirectory:@"book"];
-		totalPages = [pagesArray count];
-		NSLog(@"Pages in this book: %d", totalPages);
-		
-		// Check if there is a saved starting page
-		NSString *currPageToLoad = [[NSUserDefaults standardUserDefaults] objectForKey:@"lastPageViewed"];
-		if (currPageToLoad != nil)
-			currentPageNumber = [currPageToLoad intValue];
-		else
-			currentPageNumber = 1;
-        
-		currentPageFirstLoading = YES;
-		currentPageIsDelayingLoading = YES;
-		
-		// ****** VIEW
-		scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, self.pageWidth, self.pageHeight)];
-		scrollView.showsHorizontalScrollIndicator = YES;
-		scrollView.showsVerticalScrollIndicator = NO;
-		scrollView.delaysContentTouches = NO;
-		scrollView.pagingEnabled = YES;
-		scrollView.contentSize = CGSizeMake(self.pageWidth * totalPages, self.pageHeight);
-		
-		//self.prevPage = [[UIWebView alloc] initWithFrame:[self frameForPage:currentPageNumber - 1]];
-		self.currPage = [[UIWebView alloc] initWithFrame:[self frameForPage:currentPageNumber]];
-		//self.nextPage = [[UIWebView alloc] initWithFrame:[self frameForPage:currentPageNumber + 1]];
-		
-		//[scrollView addSubview:self.prevPage];
-		[scrollView addSubview:self.currPage];
-		//[scrollView addSubview:self.nextPage];
-		
-		//self.prevPage.delegate = self;
-		self.currPage.delegate = self;
-		//self.nextPage.delegate = self;
-		self.scrollView.delegate = self;
-		
-		[scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:NO];
-		[[self view] addSubview:scrollView];
-		[[self view] sendSubviewToBack:scrollView]; // might not be required, test
-	}
+	self.pageHeight = 1024;
+	
+	// Permanently hide status bar
+	[[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
+	
+	// Count pages
+	self.pages = [[NSBundle mainBundle] pathsForResourcesOfType:@"html" inDirectory:@"book"];
+	totalPages = [pages count];
+	NSLog(@"Pages in this book: %d", totalPages);
+	
+	// Check if there is a saved starting page
+	NSString *currPageToLoad = [[NSUserDefaults standardUserDefaults] objectForKey:@"lastPageViewed"];
+	if (currPageToLoad != nil)
+		currentPageNumber = [currPageToLoad intValue];
+	else
+		currentPageNumber = 1;
+	
+	currentPageFirstLoading = YES;
+	currentPageIsDelayingLoading = YES;
+	
+	// ****** VIEW
+	scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, self.pageWidth, self.pageHeight)];
+	scrollView.showsHorizontalScrollIndicator = YES;
+	scrollView.showsVerticalScrollIndicator = NO;
+	scrollView.delaysContentTouches = NO;
+	scrollView.pagingEnabled = YES;
+	scrollView.contentSize = CGSizeMake(self.pageWidth * totalPages, self.pageHeight);
+	
+	[self initPageNumbersForPages:totalPages];
+	
+	//self.prevPage = [[UIWebView alloc] initWithFrame:[self frameForPage:currentPageNumber - 1]];
+	self.currPage = [[UIWebView alloc] initWithFrame:[self frameForPage:currentPageNumber]];
+	//self.nextPage = [[UIWebView alloc] initWithFrame:[self frameForPage:currentPageNumber + 1]];
+	
+	//[scrollView addSubview:self.prevPage];
+	[scrollView addSubview:self.currPage];
+	//[scrollView addSubview:self.nextPage];
+	
+	//self.prevPage.delegate = self;
+	self.currPage.delegate = self;
+	//self.nextPage.delegate = self;
+	self.scrollView.delegate = self;
+	
+	[scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:NO];
+	[[self view] addSubview:scrollView];
+	[[self view] sendSubviewToBack:scrollView]; // might not be required, test
     return self;
 }
-
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad {
     
@@ -118,26 +115,26 @@
 - (void)initTapHandlers {
 	// ****** CORNER TAP HANDLERS
 	upTapHandler = [[TapHandler alloc] initWithFrame:CGRectMake(50,0,(self.pageWidth - 100),50)];
-//	upTapHandler.backgroundColor = [UIColor redColor];
-//	upTapHandler.alpha = 0.5;
+	upTapHandler.backgroundColor = [UIColor redColor];
+	upTapHandler.alpha = 0.5;
 	[[self view] addSubview:upTapHandler];
 	[upTapHandler release];
 
 	downTapHandler = [[TapHandler alloc] initWithFrame:CGRectMake(50,(self.pageHeight - 50),(self.pageWidth - 100),50)];
-//	downTapHandler.backgroundColor = [UIColor redColor];
-//	downTapHandler.alpha = 0.5;
+	downTapHandler.backgroundColor = [UIColor redColor];
+	downTapHandler.alpha = 0.5;
 	[[self view] addSubview:downTapHandler];
 	[downTapHandler release];
 
 	leftTapHandler = [[TapHandler alloc] initWithFrame:CGRectMake(0,50,50,(self.pageHeight - 100))];
-//	leftTapHandler.backgroundColor = [UIColor redColor];
-//	leftTapHandler.alpha = 0.5;
+	leftTapHandler.backgroundColor = [UIColor redColor];
+	leftTapHandler.alpha = 0.5;
 	[[self view] addSubview:leftTapHandler];
 	[leftTapHandler release];
 
 	rightTapHandler = [[TapHandler alloc] initWithFrame:CGRectMake((self.pageWidth - 50),50,50,(self.pageHeight - 100))];
-//	rightTapHandler.backgroundColor = [UIColor redColor];
-//	rightTapHandler.alpha = 0.5;
+	rightTapHandler.backgroundColor = [UIColor redColor];
+	rightTapHandler.alpha = 0.5;
 	[[self view] addSubview:rightTapHandler];
 	[rightTapHandler release];
 }
@@ -170,11 +167,13 @@
 	 * Opens a specific page
 	 */
 		
-	NSString *file = [NSString stringWithFormat:@"%d", currentPageNumber];
-	NSString *path = [[NSBundle mainBundle] pathForResource:file ofType:@"html" inDirectory:@"book"];
-	
+	//NSString *file = [NSString stringWithFormat:@"%d", currentPageNumber];
+	//NSString *path = [[NSBundle mainBundle] pathForResource:file ofType:@"html" inDirectory:@"book"];
+		
+	NSString *path = [pages objectAtIndex:currentPageNumber-1];
+		
 	if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
-		NSLog(@"Goto Page: book/%d.html", currentPageNumber);
+		NSLog(@"Goto Page: book/%@", [[NSFileManager defaultManager] displayNameAtPath:path]);
 		
 		// ****** METHOD B - Single view
 		[currPage stopLoading];
@@ -212,9 +211,40 @@
 	}	
 }
 
+- (void)initPageNumbersForPages:(int)count {
+	pageSpinners = [[NSMutableArray alloc] initWithCapacity:count];
+
+	for (int i = 0; i < count; i++) {
+		// ****** Spinners
+		UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+
+		CGRect frame = spinner.frame;
+		frame.origin.x = self.pageWidth * i + (self.pageWidth + frame.size.width) / 2 - 40;
+		frame.origin.y = (self.pageHeight + frame.size.height) / 2;
+		spinner.frame = frame;
+
+		[pageSpinners addObject:spinner];
+		[[self scrollView] addSubview:spinner];
+		[spinner release];
+
+		// ****** Numbers
+		UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(self.pageWidth * i + (self.pageWidth) / 2, self.pageHeight / 2 - 6, 100, 50)];
+		label.textColor = [UIColor colorWithRed:0.0 green:0.0 blue:0.0 alpha:0.2];
+		NSString *labelText = [[NSString alloc] initWithFormat:@"%d", i + 1];
+		label.font = [UIFont fontWithName:@"Helvetica" size:40.0];
+		label.textAlignment = UITextAlignmentLeft;
+		label.text = labelText;
+		//label.backgroundColor = [UIColor redColor];
+		[labelText release];
+
+		[[self scrollView] addSubview:label];
+		[label release];
+	}
+}
+
 - (BOOL)loadSlot:(int)slot withPage:(int)page {
 	
-	UIWebView *webView;
+	UIWebView *webView = nil;
 	//CGRect frame;
 	
 	// ****** SELECT
@@ -255,11 +285,14 @@
 	return NO;
 }
 - (BOOL)loadWebView:(UIWebView*)webView withPage:(int)page {
-	NSString *file = [NSString stringWithFormat:@"%d", page];
-	NSString *path = [[NSBundle mainBundle] pathForResource:file ofType:@"html" inDirectory:@"book"];
 	
+	//NSString *file = [NSString stringWithFormat:@"%d", page];
+	//NSString *path = [[NSBundle mainBundle] pathForResource:file ofType:@"html" inDirectory:@"book"];
+	
+	NSString *path = [pages objectAtIndex:page-1];
+		
 	if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
-		NSLog(@"[+] Loading: book/%@.html", file);
+		NSLog(@"[+] Loading: book/%@", [[NSFileManager defaultManager] displayNameAtPath:path]);
 		webView.hidden = YES; // use direct property instead of [self webView:hidden:animating:] otherwise it won't work
 		[webView loadRequest:[NSURLRequest requestWithURL:[NSURL fileURLWithPath:path]]];
 		return YES;
@@ -341,7 +374,6 @@
 	[self webView:webView hidden:NO animating:YES];
 }
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
-	
 	// Sent if a web view failed to load content.
 	if (webView == prevPage)
 		NSLog(@"prevPage failed to load content with error: %@", error);
@@ -351,7 +383,6 @@
 		NSLog(@"nextPage failed to load content with error: %@", error);
 }
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
-	
 	// Sent before a web view begins loading content, useful to trigger actions before the WebView.
 	if (currentPageIsDelayingLoading) {
 		
@@ -404,7 +435,6 @@
 
 // ****** GESTURES
 - (void)swipePage:(UISwipeGestureRecognizer *)sender {
-	
 	// Not needed anymore, since UIScrollView handle the horizontal scrolling, but...
 	
 	int page = 0;
@@ -457,7 +487,6 @@
 
 // ****** PAGE SCROLLING
 - (void)goUpInPage:(NSString *)offset animating:(BOOL)animating {
-	
 	NSLog(@"Scrolling page up");
 	
 	NSString *currPageOffset = [currPage stringByEvaluatingJavaScriptFromString:@"window.scrollY;"];
@@ -466,7 +495,6 @@
 	[self scrollPage:currPage to:offset animating:animating];
 }
 - (void)goDownInPage:(NSString *)offset animating:(BOOL)animating {
-	
 	NSLog(@"Scrolling page down");
 	
 	NSString *currPageOffset = [currPage stringByEvaluatingJavaScriptFromString:@"window.scrollY;"];
@@ -475,7 +503,7 @@
 	[self scrollPage:currPage to:offset animating:animating];
 }
 - (void)scrollPage:(UIWebView *)webView to:(NSString *)offset animating:(BOOL)animating {
-
+	
 	NSString *jsCommand = [NSString stringWithFormat:@"window.scrollTo(0,%@);", offset];
 	
 	if (animating) {
@@ -497,10 +525,9 @@
 }
 
 // ****** SYSTEM
-
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
     NSLog(@"rotation enabled");
-	
+
 	// Overriden to allow any orientation.
 	// @todo: make this configurable
     return YES;
@@ -531,7 +558,6 @@
 }
 
 - (void)didReceiveMemoryWarning {
-    
 	// Releases the view if it doesn't have a superview.
     [super didReceiveMemoryWarning];
     // Release any cached data, images, etc that aren't in use.
@@ -546,8 +572,8 @@
 	//prevPage.delegate = nil;
 }
 - (void)dealloc {
-	[swipeRight release];
-	[swipeLeft release];
+	//[swipeRight release];
+	//[swipeLeft release];
 	//[nextPage release];
 	[currPage release];
 	//[prevPage release];

@@ -36,6 +36,8 @@
 
 @interface RootViewController : UIViewController < UIWebViewDelegate, UIScrollViewDelegate > {
 	
+	NSArray *pages;
+	
 	UIScrollView *scrollView;
 	NSMutableArray *pageSpinners;
 	
@@ -57,6 +59,8 @@
 	BOOL currentPageIsDelayingLoading;
 }
 
+@property (nonatomic, retain) NSArray *pages;
+
 @property (nonatomic, retain) UIScrollView *scrollView;
 @property (nonatomic, retain) NSMutableArray *pageSpinners;
 
@@ -67,13 +71,13 @@
 @property (nonatomic, retain) UISwipeGestureRecognizer *swipeLeft;
 @property (nonatomic, retain) UISwipeGestureRecognizer *swipeRight;
 
-@property int totalPages;
 @property int currentPageNumber;
 
 @property int pageWidth;
 @property int pageHeight;
 
 // ****** LOADING
+- (void)initTapHandlers;
 - (BOOL)changePage:(int)page;
 - (void)gotoPageDelayer;
 - (void)gotoPage;
