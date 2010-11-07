@@ -60,6 +60,7 @@
 	
 	// Permanently hide status bar
 	[[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
+	[self hideStatusBar];
 	
 	// Count pages
 	self.pages = [[NSBundle mainBundle] pathsForResourcesOfType:@"html" inDirectory:@"book"];
@@ -104,6 +105,21 @@
 	[[self view] sendSubviewToBack:scrollView]; // might not be required, test
     return self;
 }
+
+- (void)userDidSingleTap:(UITouch *)touch {
+	NSLog(@"User did single tap");
+	[self toggleStatusBar];
+}
+
+- (void)toggleStatusBar {
+	UIApplication *sharedApplication = [UIApplication sharedApplication];
+	[sharedApplication setStatusBarHidden:!sharedApplication.statusBarHidden withAnimation:UIStatusBarAnimationSlide];
+}
+
+- (void)hideStatusBar {
+	[[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
+}
+
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad {
 	[super viewDidLoad];
@@ -433,22 +449,26 @@
 }
 
 // ****** GESTURES
-- (void)swipePage:(UISwipeGestureRecognizer *)sender {
-	// Not needed anymore, since UIScrollView handle the horizontal scrolling, but...
-	
-	int page = 0;
-	if (sender.direction == UISwipeGestureRecognizerDirectionRight) {
-		NSLog(@"<<< swipe right!");
-		page = currentPageNumber-1;
-	} else if (sender.direction == UISwipeGestureRecognizerDirectionLeft) {
-		NSLog(@">>> swipe left!");
-		page = currentPageNumber+1;
-	}
-	
-	if ([self changePage:page]) {
-		// ...if needed animate scrolling here.
-		[self gotoPageDelayer];
-	}
+//- (void)swipePage:(UISwipeGestureRecognizer *)sender {
+//	// Not needed anymore, since UIScrollView handles the horizontal scrolling, but...
+//	
+//	int page = 0;
+//	if (sender.direction == UISwipeGestureRecognizerDirectionRight) {
+//		NSLog(@"<<< swipe right!");
+//		page = currentPageNumber-1;
+//	} else if (sender.direction == UISwipeGestureRecognizerDirectionLeft) {
+//		NSLog(@">>> swipe left!");
+//		page = currentPageNumber+1;
+//	}
+//	
+//	if ([self changePage:page]) {
+//		// ...if needed animate scrolling here.
+//		[self gotoPageDelayer];
+//	}
+//}
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
+	// This is called because this controller is the delegate for UIScrollView
+	[self hideStatusBar];
 }
 - (void)onTouch:(NSNotification *)notification {
 	
@@ -478,6 +498,7 @@
 		}
 		
 		if ([self changePage:page]) {
+			[self hideStatusBar];
 			[scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:YES];
 			[self gotoPageDelayer];
 		}
@@ -502,6 +523,7 @@
 	[self scrollPage:currPage to:offset animating:animating];
 }
 - (void)scrollPage:(UIWebView *)webView to:(NSString *)offset animating:(BOOL)animating {
+	[self hideStatusBar];
 	
 	NSString *jsCommand = [NSString stringWithFormat:@"window.scrollTo(0,%@);", offset];
 	

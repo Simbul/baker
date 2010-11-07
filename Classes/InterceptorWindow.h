@@ -1,5 +1,5 @@
 //
-//  main.m
+//  InterceptorWindow.h
 //  Baker
 //
 //  ==========================================================================================
@@ -29,12 +29,19 @@
 //  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //  
 
-#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
+#import	"RootViewController.h"
 
-int main(int argc, char *argv[]) {
-    
-    NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
-    int retVal = UIApplicationMain(argc, argv, nil, @"BakerAppDelegate");
-    [pool release];
-    return retVal;
+
+@interface InterceptorWindow : UIWindow {
+	UIView *target;
+	RootViewController *delegate;
 }
+
+@property (nonatomic, retain) UIView *target;
+@property (nonatomic, retain) UIViewController *delegate;
+
+- (id)initWithTarget:(UIView *)targetView delegate:(UIViewController *)delegateController frame:(CGRect)aRect;
+- (void)forwardTap:(UITouch *)touch;
+
+@end

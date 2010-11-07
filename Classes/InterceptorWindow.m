@@ -1,5 +1,5 @@
 //
-//  main.m
+//  InterceptorWindow.m
 //  Baker
 //
 //  ==========================================================================================
@@ -29,12 +29,38 @@
 //  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //  
 
-#import <UIKit/UIKit.h>
+#import "InterceptorWindow.h"
 
-int main(int argc, char *argv[]) {
-    
-    NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
-    int retVal = UIApplicationMain(argc, argv, nil, @"BakerAppDelegate");
-    [pool release];
-    return retVal;
+@implementation InterceptorWindow
+
+@synthesize target;
+@synthesize delegate;
+
+- (id)initWithTarget:(UIView *)targetView delegate:(UIViewController *)delegateController frame:(CGRect)aRect {
+	self.target = targetView;
+	self.delegate = delegateController;
+	
+	return [super initWithFrame:aRect];
 }
+
+- (void)forwardTap:(UITouch *)touch {
+	[delegate userDidSingleTap:touch];
+}
+
+- (void)sendEvent:(UIEvent *)event {
+	[super sendEvent:event];
+	
+	if (event.type == UIEventTypeTouches) {
+		NSSet *touches = [event allTouches];		
+		if (touches.count == 1) {
+			UITouch *touch = touches.anyObject;
+			if ([touch.view isDescendantOfView:self.target] == YES && touch.tapCount == 1 && touch.phase == UITouchPhaseEnded) {
+				// Touch was on the target view (or one of its descendants)
+				// and a single tap has just been completed
+				NSLog(@"Single Tap");
+				[self performSelector:@selector(forwardTap:) withObject:touch];
+			}
+		}
+	}
+}
+@end

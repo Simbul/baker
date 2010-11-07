@@ -93,12 +93,17 @@
 - (void)webView:(UIWebView *)webView hidden:(BOOL)status animating:(BOOL)animating;
 
 // ****** GESTURES
-- (void)swipePage:(UISwipeGestureRecognizer *)sender;
+//- (void)swipePage:(UISwipeGestureRecognizer *)sender;
 - (void)onTouch:(NSNotification *)notification;
+- (void)userDidSingleTap:(UITouch *)touch;
 
 // ****** SCROLLING
 - (void)goUpInPage:(NSString *)offset animating:(BOOL)animating;
 - (void)goDownInPage:(NSString *)offset animating:(BOOL)animating;
 - (void)scrollPage:(UIWebView *)webView to:(NSString *)offset animating:(BOOL)animating;
+
+// ****** STATUS BAR
+- (void)toggleStatusBar;
+- (void)hideStatusBar;
 
 @end
