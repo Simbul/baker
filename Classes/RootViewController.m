@@ -58,6 +58,10 @@
 	self.pageWidth = 768;
 	self.pageHeight = 1024;
 	
+	// start receiving rotation changes, and handle them with didRotateFromInterfaceOrientation
+	[[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didRotateFromInterfaceOrientation:) name:UIDeviceOrientationDidChangeNotification object:nil];
+	
 	// Permanently hide status bar
 	[[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
 	[self hideStatusBar];
