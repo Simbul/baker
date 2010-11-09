@@ -106,6 +106,11 @@
 	[self toggleStatusBar];
 }
 
+- (void)userDidScroll:(UITouch *)touch {
+	NSLog(@"User did scroll");
+	[self hideStatusBar];
+}
+
 - (void)toggleStatusBar {
 	UIApplication *sharedApplication = [UIApplication sharedApplication];
 	[sharedApplication setStatusBarHidden:!sharedApplication.statusBarHidden withAnimation:UIStatusBarAnimationSlide];
