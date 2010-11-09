@@ -38,7 +38,7 @@
 
 - (id)initWithTarget:(UIView *)targetView delegate:(UIViewController *)delegateController frame:(CGRect)aRect {
 	self.target = targetView;
-	self.delegate = delegateController;
+	self.delegate = delegateController;	
 	
 	return [super initWithFrame:aRect];
 }

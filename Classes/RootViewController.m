@@ -58,29 +58,25 @@
 	self.pageWidth = 768;
 	self.pageHeight = 1024;
 	
-	// start receiving rotation changes, and handle them with didRotateFromInterfaceOrientation
-	[[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didRotateFromInterfaceOrientation:) name:UIDeviceOrientationDidChangeNotification object:nil];
-	
 	// Permanently hide status bar
 	[[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
 	[self hideStatusBar];
-	
+
 	// Count pages
 	self.pages = [[NSBundle mainBundle] pathsForResourcesOfType:@"html" inDirectory:@"book"];
 	totalPages = [pages count];
 	NSLog(@"Pages in this book: %d", totalPages);
-	
+
 	// Check if there is a saved starting page
 	NSString *currPageToLoad = [[NSUserDefaults standardUserDefaults] objectForKey:@"lastPageViewed"];
 	if (currPageToLoad != nil)
 		currentPageNumber = [currPageToLoad intValue];
 	else
 		currentPageNumber = 1;
-	
+
 	currentPageFirstLoading = YES;
 	currentPageIsDelayingLoading = YES;
-	
+
 	// ****** VIEW
 	scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, self.pageWidth, self.pageHeight)];
 	scrollView.showsHorizontalScrollIndicator = YES;
@@ -88,22 +84,23 @@
 	scrollView.delaysContentTouches = NO;
 	scrollView.pagingEnabled = YES;
 	scrollView.contentSize = CGSizeMake(self.pageWidth * totalPages, self.pageHeight);
-	
+	scrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+
 	[self initPageNumbersForPages:totalPages];
-	
+
 	//self.prevPage = [[UIWebView alloc] initWithFrame:[self frameForPage:currentPageNumber - 1]];
 	self.currPage = [[UIWebView alloc] initWithFrame:[self frameForPage:currentPageNumber]];
 	//self.nextPage = [[UIWebView alloc] initWithFrame:[self frameForPage:currentPageNumber + 1]];
-	
+
 	//[scrollView addSubview:self.prevPage];
 	[scrollView addSubview:self.currPage];
 	//[scrollView addSubview:self.nextPage];
-	
+
 	//self.prevPage.delegate = self;
 	self.currPage.delegate = self;
 	//self.nextPage.delegate = self;
 	self.scrollView.delegate = self;
-	
+
 	[scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:NO];
 	[[self view] addSubview:scrollView];
 	[[self view] sendSubviewToBack:scrollView]; // might not be required, test
@@ -530,20 +527,24 @@
 
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
 	NSLog(@"rotated");
-	if (self.interfaceOrientation == UIInterfaceOrientationLandscapeRight || self.interfaceOrientation == UIInterfaceOrientationLandscapeLeft ) {
+
+	UIDeviceOrientation orientation = [[UIDevice currentDevice] orientation];
+	if (orientation == UIInterfaceOrientationLandscapeRight || orientation == UIInterfaceOrientationLandscapeLeft ) {
+		NSLog(@"Landscape");
 		self.pageWidth = 1024;
 		self.pageHeight = 768;
-		NSLog(@"Landscape");
 	}
 	else {
 		NSLog(@"Portrait");
 		self.pageWidth = 768;
 		self.pageHeight = 1024;
 	}
-
+	
+	NSLog(@"%dx%d", self.pageWidth, self.pageHeight);
+	
 	// set the content size correctly
 	self.scrollView.frame = CGRectMake(0, 0, self.pageWidth, self.pageHeight);
-	scrollView.contentSize = CGSizeMake(self.pageWidth * totalPages, self.pageHeight);
+    scrollView.contentSize = CGSizeMake(self.pageWidth * totalPages, self.pageHeight);
 
 	// setup the handlers to the new orientation
 	[self initTapHandlers];
