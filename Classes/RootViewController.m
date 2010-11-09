@@ -554,8 +554,6 @@
 	return YES;
 }
 
-- (void)willRotateToInterfaceOrientation:duration:
-
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
 	NSLog(@"rotated");
 	if (self.interfaceOrientation == UIInterfaceOrientationLandscapeRight || self.interfaceOrientation == UIInterfaceOrientationLandscapeLeft ) {
