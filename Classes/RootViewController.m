@@ -194,39 +194,9 @@
 	if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
 		NSLog(@"Goto Page: book/%@", [[NSFileManager defaultManager] displayNameAtPath:path]);
 		
-		// ****** METHOD B - Single view
 		[currPage stopLoading];
 		currPage.frame = [self frameForPage:currentPageNumber];
 		[self loadSlot:0 withPage:currentPageNumber];
-		
-		// ****** METHOD A - Three-cards view
-		/*if ((pageNumber - currentPageNumber) > 0) {
-			// ****** Move RIGHT >>>
-			currentPageNumber = pageNumber;
-			prevPage.frame = [self frameForPage:pageNumber + 1];
-			
-			// Swap
-			UIWebView *tmpView = prevPage;
-			prevPage = currPage;
-			currPage = nextPage;
-			nextPage = tmpView;
-			
-			// Preload
-			[self loadSlot:+1 withPage:currentPageNumber + 1];
-		} else {
-			// ****** Move LEFT <<<
-			currentPageNumber = pageNumber;
-			nextPage.frame = [self frameForPage:pageNumber - 1];
-			
-			// Swap
-			UIWebView *tmpView = nextPage;
-			nextPage = currPage;
-			currPage = prevPage;
-			prevPage = tmpView;
-			
-			// Preload
-			[self loadSlot:-1 withPage:currentPageNumber - 1];
-		} /**/
 	}	
 }
 
