@@ -22,6 +22,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {    
     
 	self.rootViewController = [[RootViewController alloc] initWithNibName:@"RootViewController" bundle:[NSBundle mainBundle]];
+// @todo: figure out why this doesn't work :(
 //	UIView *scrollView = [rootViewController scrollView];
 //
 //	// Create the application window
