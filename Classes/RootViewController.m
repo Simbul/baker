@@ -57,8 +57,13 @@
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
 	[super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
 
-	self.pageWidth = 768;
-	self.pageHeight = 1024;
+	// get the sizes from the screen
+	UIScreen *MainScreen = [UIScreen mainScreen];
+	UIScreenMode *ScreenMode = [MainScreen currentMode];
+	CGSize size = [ScreenMode size];
+	
+	self.pageWidth = size.width;
+	self.pageHeight = size.height;
 	
 	// Permanently hide status bar
 	[[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
@@ -83,12 +88,12 @@
 	// ****** VIEW
 	scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, self.pageWidth, self.pageHeight)];
 	[self resetScrollView];
+	NSLog(@"init");
     return self;
 }
 
 - (void)resetScrollView {
-	
-	// clear out any old stuff that might be already set
+	// clear out any old stuff that might be already set (eg: page numbers)
 	[[self scrollView].subviews makeObjectsPerformSelector:@selector(removeFromSuperview)]; 
 
 	// set the properties
@@ -138,32 +143,31 @@
 - (void)viewDidLoad {
 	[super viewDidLoad];
 	[self initTapHandlers];
-	[self loadSlot:0 withPage:currentPageNumber];
 }
 
 - (void)initTapHandlers {
 	// ****** CORNER TAP HANDLERS
 	upTapHandler = [[TapHandler alloc] initWithFrame:CGRectMake(50,0,(self.pageWidth - 100),50)];
-	upTapHandler.backgroundColor = [UIColor redColor];
-	upTapHandler.alpha = 0.5;
+	// upTapHandler.backgroundColor = [UIColor redColor];
+	// upTapHandler.alpha = 0.5;
 	[[self view] addSubview:upTapHandler];
 	[upTapHandler release];
 
 	downTapHandler = [[TapHandler alloc] initWithFrame:CGRectMake(50,(self.pageHeight - 50),(self.pageWidth - 100),50)];
-	downTapHandler.backgroundColor = [UIColor redColor];
-	downTapHandler.alpha = 0.5;
+	// downTapHandler.backgroundColor = [UIColor redColor];
+	// downTapHandler.alpha = 0.5;
 	[[self view] addSubview:downTapHandler];
 	[downTapHandler release];
 
 	leftTapHandler = [[TapHandler alloc] initWithFrame:CGRectMake(0,50,50,(self.pageHeight - 100))];
-	leftTapHandler.backgroundColor = [UIColor redColor];
-	leftTapHandler.alpha = 0.5;
+	// leftTapHandler.backgroundColor = [UIColor redColor];
+	// leftTapHandler.alpha = 0.5;
 	[[self view] addSubview:leftTapHandler];
 	[leftTapHandler release];
 
 	rightTapHandler = [[TapHandler alloc] initWithFrame:CGRectMake((self.pageWidth - 50),50,50,(self.pageHeight - 100))];
-	rightTapHandler.backgroundColor = [UIColor redColor];
-	rightTapHandler.alpha = 0.5;
+	// rightTapHandler.backgroundColor = [UIColor redColor];
+	// rightTapHandler.alpha = 0.5;
 	[[self view] addSubview:rightTapHandler];
 	[rightTapHandler release];
 }
@@ -186,9 +190,10 @@
 - (void)gotoPageDelayer {
 	if (currentPageIsDelayingLoading)
 		[NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(gotoPage) object:nil];
-	
+	NSLog(@"foobar1");
 	currentPageIsDelayingLoading = YES;
 	[self performSelector:@selector(gotoPage) withObject:nil afterDelay:0.5];
+	NSLog(@"foobar1111");
 }
 - (void)gotoPage {
 	
@@ -200,13 +205,14 @@
 	//NSString *path = [[NSBundle mainBundle] pathForResource:file ofType:@"html" inDirectory:@"book"];
 		
 	NSString *path = [pages objectAtIndex:currentPageNumber-1];
-		
+		NSLog(@"foobar2");		
 	if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
 		NSLog(@"Goto Page: book/%@", [[NSFileManager defaultManager] displayNameAtPath:path]);
-		
+		NSLog(@"foobar211111");
 		[currPage stopLoading];
 		currPage.frame = [self frameForPage:currentPageNumber];
 		[self loadSlot:0 withPage:currentPageNumber];
+		NSLog(@"foobar2222222");
 	}	
 }
 
@@ -541,31 +547,32 @@
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
 	NSLog(@"rotated");
 
+	// get the sizes from the screen
+	UIScreen *MainScreen = [UIScreen mainScreen];
+	UIScreenMode *ScreenMode = [MainScreen currentMode];
+	CGSize size = [ScreenMode size];
+
+	// set the sizes according to orientation
 	UIDeviceOrientation orientation = [[UIDevice currentDevice] orientation];
 	if (orientation == UIInterfaceOrientationLandscapeRight || orientation == UIInterfaceOrientationLandscapeLeft ) {
 		NSLog(@"Landscape");
-		self.pageWidth = 1024;
-		self.pageHeight = 768;
+		self.pageWidth = size.height;
+		self.pageHeight = size.width;
 	}
 	else {
 		NSLog(@"Portrait");
-		self.pageWidth = 768;
-		self.pageHeight = 1024;
+		self.pageWidth = size.width;
+		self.pageHeight = size.height;
 	}
-	
-	NSLog(@"%dx%d", self.pageWidth, self.pageHeight);
-	
-	// set the content size correctly
 
-//    scrollView.contentSize = CGSizeMake(self.pageWidth * totalPages, self.pageHeight);
+	scrollView.contentSize = CGSizeMake(self.pageWidth * totalPages, self.pageHeight);
+	scrollView.frame = CGRectMake(0, 0, self.pageWidth, self.pageHeight);
 
-	// setup the handlers to the new orientation
+	// // setup the handlers for the new orientation
 	[self initTapHandlers];
-		
+
 	// clear out any old stuff, and add the numbers
 	[self resetScrollView];
-
-	// reload the current page for the new layout, delayed
 	[self gotoPageDelayer];
 }
 
