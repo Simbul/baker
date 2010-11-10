@@ -212,17 +212,15 @@
 }
 
 - (void)initPageNumbersForPages:(int)count {
-	// remove all old labels and spinners
+	// remove all old spinners
 	for(UIActivityIndicatorView *spinner in pageSpinners)
 	{
-		NSLog(@"SPINNER: %@",spinner);
 		[spinner removeFromSuperview];
 	}
 
 	// all page numbers are labels
 	for(UIView *item in scrollView.subviews)
 	{
-		NSLog(@"item: %@", item);
 		if([item isKindOfClass:[UILabel class]])
 		{
 			[item removeFromSuperview];
@@ -256,6 +254,7 @@
 		[labelText release];
 
 		[[self scrollView] addSubview:label];
+		[[self scrollView] sendSubviewToBack:label];
 		[label release];
 	}
 }
@@ -581,7 +580,16 @@
 	self.currPage.frame = [self frameForPage:currentPageNumber];
 	[scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:NO];
 	
+	// render all pagenumbers
 	[self initPageNumbersForPages:totalPages];
+	
+	// upon first launch, if there is a rotate, make sure to wait till the file is loaded
+	// otherwise the page will never get loaded. So only force a reload after the first
+	// page was loaded
+	if(currentPageFirstLoading != YES)
+	{
+		[self gotoPageDelayer];
+	}
 }
 
 - (void)didReceiveMemoryWarning {
