@@ -80,7 +80,6 @@
 		currentPageNumber = [currPageToLoad intValue];
 	else
 		currentPageNumber = 1;
-	currentPageNumber = 1;
 
 	currentPageFirstLoading = YES;
 	currentPageIsDelayingLoading = YES;
@@ -88,7 +87,6 @@
 	// ****** VIEW
 	scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, self.pageWidth, self.pageHeight)];
 	[self resetScrollView];
-	NSLog(@"init");
     return self;
 }
 
@@ -112,6 +110,7 @@
 
 	// set the frame for the currentpage
 	self.currPage = [[UIWebView alloc] initWithFrame:[self frameForPage:currentPageNumber]];
+	self.currPage.autoresizingMask = UIViewAutoresizingFlexibleWidth;
 
 	// add the page to the scrollview
 	[scrollView addSubview:self.currPage];
@@ -143,6 +142,7 @@
 - (void)viewDidLoad {
 	[super viewDidLoad];
 	[self initTapHandlers];
+	[self loadSlot:0 withPage:currentPageNumber];
 }
 
 - (void)initTapHandlers {
@@ -532,9 +532,6 @@
 
 // ****** SYSTEM
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    NSLog(@"rotation enabled");
-
-	// Overriden to allow any orientation.
 	// @todo: make this configurable
 	return YES;
 }
@@ -559,16 +556,10 @@
 		self.pageWidth = size.width;
 		self.pageHeight = size.height;
 	}
-
-	scrollView.contentSize = CGSizeMake(self.pageWidth * totalPages, self.pageHeight);
-	scrollView.frame = CGRectMake(0, 0, self.pageWidth, self.pageHeight);
-
-	// // setup the handlers for the new orientation
-	[self initTapHandlers];
-
-	// clear out any old stuff, and add the numbers
-	[self resetScrollView];
-	[self gotoPageDelayer];
+	
+	// set the new window size
+	self.scrollView.frame = CGRectMake(0, 0, self.pageWidth, self.pageHeight);
+	self.currPage.frame = [self frameForPage:currentPageNumber];
 }
 
 - (void)didReceiveMemoryWarning {
