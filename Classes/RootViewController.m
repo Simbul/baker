@@ -54,7 +54,9 @@
 @synthesize pageHeight;
 
 // ****** CONFIGURATION
-- (id)init {
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
+	[super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+
 	self.pageWidth = 768;
 	self.pageHeight = 1024;
 	
@@ -73,6 +75,7 @@
 		currentPageNumber = [currPageToLoad intValue];
 	else
 		currentPageNumber = 1;
+	currentPageNumber = 1;
 
 	currentPageFirstLoading = YES;
 	currentPageIsDelayingLoading = YES;
@@ -85,7 +88,7 @@
 	scrollView.pagingEnabled = YES;
 	scrollView.contentSize = CGSizeMake(self.pageWidth * totalPages, self.pageHeight);
 	scrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-
+NSLog(@"%@", scrollView);
 	[self initPageNumbersForPages:totalPages];
 
 	//self.prevPage = [[UIWebView alloc] initWithFrame:[self frameForPage:currentPageNumber - 1]];
@@ -96,6 +99,7 @@
 	[scrollView addSubview:self.currPage];
 	//[scrollView addSubview:self.nextPage];
 
+	
 	//self.prevPage.delegate = self;
 	self.currPage.delegate = self;
 	//self.nextPage.delegate = self;
@@ -523,6 +527,10 @@
 	// Overriden to allow any orientation.
 	// @todo: make this configurable
 	return YES;
+}
+
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
+	NSLog(@"willrotate?");
 }
 
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {

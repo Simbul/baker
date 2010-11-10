@@ -41,7 +41,7 @@
 }
 
 @property (nonatomic, retain) IBOutlet UIWindow *window;
-@property (nonatomic, retain) RootViewController *rootViewController;
+@property (nonatomic, retain) IBOutlet RootViewController *rootViewController;
 
 @end
 
