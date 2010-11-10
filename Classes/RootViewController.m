@@ -190,10 +190,8 @@
 - (void)gotoPageDelayer {
 	if (currentPageIsDelayingLoading)
 		[NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(gotoPage) object:nil];
-	NSLog(@"foobar1");
 	currentPageIsDelayingLoading = YES;
 	[self performSelector:@selector(gotoPage) withObject:nil afterDelay:0.5];
-	NSLog(@"foobar1111");
 }
 - (void)gotoPage {
 	
@@ -205,14 +203,11 @@
 	//NSString *path = [[NSBundle mainBundle] pathForResource:file ofType:@"html" inDirectory:@"book"];
 		
 	NSString *path = [pages objectAtIndex:currentPageNumber-1];
-		NSLog(@"foobar2");		
 	if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
 		NSLog(@"Goto Page: book/%@", [[NSFileManager defaultManager] displayNameAtPath:path]);
-		NSLog(@"foobar211111");
 		[currPage stopLoading];
 		currPage.frame = [self frameForPage:currentPageNumber];
 		[self loadSlot:0 withPage:currentPageNumber];
-		NSLog(@"foobar2222222");
 	}	
 }
 
