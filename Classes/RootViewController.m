@@ -212,6 +212,24 @@
 }
 
 - (void)initPageNumbersForPages:(int)count {
+	// remove all old labels and spinners
+	for(UIActivityIndicatorView *spinner in pageSpinners)
+	{
+		NSLog(@"SPINNER: %@",spinner);
+		[spinner removeFromSuperview];
+	}
+
+	// all page numbers are labels
+	for(UIView *item in scrollView.subviews)
+	{
+		NSLog(@"item: %@", item);
+		if([item isKindOfClass:[UILabel class]])
+		{
+			[item removeFromSuperview];
+		}
+	}
+	
+	
 	pageSpinners = [[NSMutableArray alloc] initWithCapacity:count];
 
 	for (int i = 0; i < count; i++) {
@@ -558,8 +576,12 @@
 	}
 	
 	// set the new window size
-	self.scrollView.frame = CGRectMake(0, 0, self.pageWidth, self.pageHeight);
+	scrollView.frame = CGRectMake(0, 0, self.pageWidth, self.pageHeight);
+	scrollView.contentSize = CGSizeMake(self.pageWidth * totalPages, self.pageHeight);
 	self.currPage.frame = [self frameForPage:currentPageNumber];
+	[scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:NO];
+	
+	[self initPageNumbersForPages:totalPages];
 }
 
 - (void)didReceiveMemoryWarning {
