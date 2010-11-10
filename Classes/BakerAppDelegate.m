@@ -46,13 +46,13 @@
     
 	self.rootViewController = [[RootViewController alloc] initWithNibName:@"RootViewController" bundle:[NSBundle mainBundle]];
 // @todo: figure out why this doesn't work :(
-	UIView *scrollView = [rootViewController scrollView];
-//
-//	// Create the application window
-	UIWindow *localWindow = [[InterceptorWindow alloc] initWithTarget:scrollView delegate:self.rootViewController frame:[[UIScreen mainScreen]bounds]];
-	localWindow.backgroundColor = [UIColor whiteColor];
-	self.window = localWindow;
-	[localWindow release];
+// 	UIView *scrollView = [rootViewController scrollView];
+// //
+// //	// Create the application window
+// 	UIWindow *localWindow = [[InterceptorWindow alloc] initWithTarget:scrollView delegate:self.rootViewController frame:[[UIScreen mainScreen]bounds]];
+// 	localWindow.backgroundColor = [UIColor whiteColor];
+// 	self.window = localWindow;
+// 	[localWindow release];
 	
     // Override point for customization after app launch. 
     [window addSubview:self.rootViewController.view];
