@@ -82,33 +82,42 @@
 
 	// ****** VIEW
 	scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, self.pageWidth, self.pageHeight)];
+	[self resetScrollView];
+    return self;
+}
+
+- (void)resetScrollView {
+	
+	// clear out any old stuff that might be already set
+	[[self scrollView].subviews makeObjectsPerformSelector:@selector(removeFromSuperview)]; 
+
+	// set the properties
 	scrollView.showsHorizontalScrollIndicator = YES;
 	scrollView.showsVerticalScrollIndicator = NO;
 	scrollView.delaysContentTouches = NO;
 	scrollView.pagingEnabled = YES;
-	scrollView.contentSize = CGSizeMake(self.pageWidth * totalPages, self.pageHeight);
 	scrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-NSLog(@"%@", scrollView);
+
+	// set the size according to the current size/orientation
+	scrollView.contentSize = CGSizeMake(self.pageWidth * totalPages, self.pageHeight);
+	self.scrollView.frame = CGRectMake(0, 0, self.pageWidth, self.pageHeight);
+
+	// add the page numbers
 	[self initPageNumbersForPages:totalPages];
 
-	//self.prevPage = [[UIWebView alloc] initWithFrame:[self frameForPage:currentPageNumber - 1]];
+	// set the frame for the currentpage
 	self.currPage = [[UIWebView alloc] initWithFrame:[self frameForPage:currentPageNumber]];
-	//self.nextPage = [[UIWebView alloc] initWithFrame:[self frameForPage:currentPageNumber + 1]];
 
-	//[scrollView addSubview:self.prevPage];
+	// add the page to the scrollview
 	[scrollView addSubview:self.currPage];
-	//[scrollView addSubview:self.nextPage];
 
-	
-	//self.prevPage.delegate = self;
+	// delegate to ourselves
 	self.currPage.delegate = self;
-	//self.nextPage.delegate = self;
 	self.scrollView.delegate = self;
 
 	[scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:NO];
 	[[self view] addSubview:scrollView];
 	[[self view] sendSubviewToBack:scrollView]; // might not be required, test
-    return self;
 }
 
 - (void)userDidSingleTap:(UITouch *)touch {
@@ -529,10 +538,6 @@ NSLog(@"%@", scrollView);
 	return YES;
 }
 
-- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
-	NSLog(@"willrotate?");
-}
-
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
 	NSLog(@"rotated");
 
@@ -551,14 +556,17 @@ NSLog(@"%@", scrollView);
 	NSLog(@"%dx%d", self.pageWidth, self.pageHeight);
 	
 	// set the content size correctly
-	self.scrollView.frame = CGRectMake(0, 0, self.pageWidth, self.pageHeight);
-    scrollView.contentSize = CGSizeMake(self.pageWidth * totalPages, self.pageHeight);
+
+//    scrollView.contentSize = CGSizeMake(self.pageWidth * totalPages, self.pageHeight);
 
 	// setup the handlers to the new orientation
 	[self initTapHandlers];
-	
-	// reload the current page for the new layout
-	[self loadSlot:0 withPage:currentPageNumber];
+		
+	// clear out any old stuff, and add the numbers
+	[self resetScrollView];
+
+	// reload the current page for the new layout, delayed
+	[self gotoPageDelayer];
 }
 
 - (void)didReceiveMemoryWarning {
