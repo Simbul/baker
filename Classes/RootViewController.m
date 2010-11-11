@@ -582,6 +582,9 @@
 	
 	// render all pagenumbers
 	[self initPageNumbersForPages:totalPages];
+
+	// setup the handlers for the new orientation
+	[self initTapHandlers];
 	
 	// upon first launch, if there is a rotate, make sure to wait till the file is loaded
 	// otherwise the page will never get loaded. So only force a reload after the first
@@ -589,7 +592,7 @@
 	if(currentPageFirstLoading != YES)
 	{
 		[self gotoPageDelayer];
-	}
+	}	
 }
 
 - (void)didReceiveMemoryWarning {
