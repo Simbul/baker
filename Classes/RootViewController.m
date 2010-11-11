@@ -389,7 +389,7 @@
 		NSLog(@"nextPage failed to load content with error: %@", error);
 }
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
-	// Sent before a web view begins loading content, useful to trigger actions before the WebView.
+	// Sent before a web view begins loading content, useful to trigger actions before the WebView.	
 	if (currentPageIsDelayingLoading) {
 		
 		NSLog(@"Current Page IS delaying loading --> load page");
@@ -400,8 +400,11 @@
 		
 		NSLog(@"Current Page IS NOT delaying loading --> handle clicked link");
 		
-		if (![[[request URL] scheme] isEqualToString:@"http"]) {
-						
+		NSLog(@"Current URL: %@", [request URL]);
+		NSLog(@"Current URL Scheme: %@", [[request URL] scheme]);
+		
+		if ([[[request URL] scheme] isEqualToString:@"file"]) {
+			
 			NSString *url = [NSString stringWithFormat:@"%@", [request URL]];
 			NSString *file = [url lastPathComponent];
 			
@@ -412,6 +415,9 @@
 				[scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:YES];
 				[self gotoPageDelayer];
 			}
+		} else {
+			
+			[[UIApplication sharedApplication] openURL:[request URL]];
 		}
 		
 		return NO;
