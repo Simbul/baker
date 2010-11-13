@@ -49,7 +49,7 @@
 
 	// Create the application window
 	InterceptorWindow *localWindow = [[InterceptorWindow alloc] initWithTarget:scrollView delegate:self.rootViewController frame:[[UIScreen mainScreen]bounds]];
-	localWindow.backgroundColor = [UIColor redColor];
+	localWindow.backgroundColor = [UIColor whiteColor];
 	self.window = localWindow;
 	[localWindow release];
 	
