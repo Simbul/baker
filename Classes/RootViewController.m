@@ -80,7 +80,6 @@
 		currentPageNumber = [currPageToLoad intValue];
 	else
 		currentPageNumber = 1;
-	currentPageNumber = 1;
 
 	currentPageFirstLoading = YES;
 	currentPageIsDelayingLoading = YES;
@@ -207,7 +206,6 @@
 		
 	//NSString *file = [NSString stringWithFormat:@"%d", currentPageNumber];
 	//NSString *path = [[NSBundle mainBundle] pathForResource:file ofType:@"html" inDirectory:@"book"];
-		NSLog(@"foobar");
 	NSString *path = [pages objectAtIndex:currentPageNumber-1];
 	if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
 		NSLog(@"Goto Page: book/%@", [[NSFileManager defaultManager] displayNameAtPath:path]);
