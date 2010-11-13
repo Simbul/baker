@@ -81,6 +81,12 @@
 	else
 		currentPageNumber = 1;
 	
+	// check if the currentPageNumber is within the total pages range
+	if(currentPageNumber > totalPages)
+	{
+		currentPageNumber = 1;
+	}
+
 	currentPageFirstLoading = YES;
 	currentPageIsDelayingLoading = YES;
 
