@@ -96,6 +96,7 @@
 //- (void)swipePage:(UISwipeGestureRecognizer *)sender;
 - (void)onTouch:(NSNotification *)notification;
 - (void)userDidSingleTap:(UITouch *)touch;
+- (void)userDidScroll:(UITouch *)touch;
 
 // ****** SCROLLING
 - (void)goUpInPage:(NSString *)offset animating:(BOOL)animating;

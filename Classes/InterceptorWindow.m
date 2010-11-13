@@ -47,6 +47,10 @@
 	[delegate userDidSingleTap:touch];
 }
 
+- (void)forwardScroll:(UITouch *)touch {
+	[delegate userDidScroll:touch];
+}
+
 - (void)sendEvent:(UIEvent *)event {
 	[super sendEvent:event];
 	
@@ -54,13 +58,33 @@
 		NSSet *touches = [event allTouches];		
 		if (touches.count == 1) {
 			UITouch *touch = touches.anyObject;
-			if ([touch.view isDescendantOfView:self.target] == YES && touch.tapCount == 1 && touch.phase == UITouchPhaseEnded) {
-				// Touch was on the target view (or one of its descendants)
-				// and a single tap has just been completed
-				NSLog(@"Single Tap");
-				[self performSelector:@selector(forwardTap:) withObject:touch];
+			
+			if (touch.phase == UITouchPhaseBegan) {
+				scrolling = NO;
+			}
+			if (touch.phase == UITouchPhaseMoved) {
+				scrolling = YES;
+				NSLog(@"yessing");
+			}
+			
+			if ([touch.view isDescendantOfView:self.target] == YES && touch.tapCount == 1) {
+				if (scrolling) {
+					NSLog(@"Scrolling");
+					[self performSelector:@selector(forwardScroll:) withObject:touch];
+				} else if (touch.phase == UITouchPhaseEnded) {
+					// Touch was on the target view (or one of its descendants)
+					// and a single tap has just been completed
+					NSLog(@"Single Tap");
+					[self performSelector:@selector(forwardTap:) withObject:touch];										
+				}
 			}
 		}
 	}
 }
+
+- (void)dealloc {
+	[target release];
+	[super dealloc];
+}
+
 @end
