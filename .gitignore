@@ -15,3 +15,5 @@ xcuserdata
 .DS_Store
 profile
 *.moved-aside
+Baker.xcodeproj/*.mode1v3
+Baker.xcodeproj/*.pbxuser
