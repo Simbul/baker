@@ -34,21 +34,21 @@
 @implementation InterceptorWindow
 
 @synthesize target;
-@synthesize delegate;
+@synthesize iDelegate;
 
 - (id)initWithTarget:(UIView *)targetView delegate:(UIViewController *)delegateController frame:(CGRect)aRect {
 	self.target = targetView;
-	self.delegate = delegateController;	
+	self.iDelegate = delegateController;	
 	
 	return [super initWithFrame:aRect];
 }
 
 - (void)forwardTap:(UITouch *)touch {
-	[delegate userDidSingleTap:touch];
+	[iDelegate userDidSingleTap:touch];
 }
 
 - (void)forwardScroll:(UITouch *)touch {
-	[delegate userDidScroll:touch];
+	[iDelegate userDidScroll:touch];
 }
 
 - (void)sendEvent:(UIEvent *)event {

@@ -35,12 +35,12 @@
 
 @interface InterceptorWindow : UIWindow {
 	UIView *target;
-	RootViewController *delegate;
+	RootViewController *iDelegate;
 	BOOL scrolling;
 }
 
 @property (nonatomic, retain) UIView *target;
-@property (nonatomic, retain) UIViewController *delegate;
+@property (nonatomic, retain) UIViewController *iDelegate;
 
 - (id)initWithTarget:(UIView *)targetView delegate:(UIViewController *)delegateController frame:(CGRect)aRect;
 - (void)forwardTap:(UITouch *)touch;

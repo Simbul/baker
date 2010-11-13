@@ -31,16 +31,17 @@
 
 
 #import <UIKit/UIKit.h>
+#import "InterceptorWindow.h"
 
 @class RootViewController;
 
 @interface BakerAppDelegate : NSObject <UIApplicationDelegate> {
     
-	UIWindow *window;
+	InterceptorWindow *window;
 	RootViewController *rootViewController;
 }
 
-@property (nonatomic, retain) IBOutlet UIWindow *window;
+@property (nonatomic, retain) IBOutlet InterceptorWindow *window;
 @property (nonatomic, retain) IBOutlet RootViewController *rootViewController;
 
 @end
