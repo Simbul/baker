@@ -80,7 +80,7 @@
 		currentPageNumber = [currPageToLoad intValue];
 	else
 		currentPageNumber = 1;
-
+	
 	currentPageFirstLoading = YES;
 	currentPageIsDelayingLoading = YES;
 
@@ -110,7 +110,7 @@
 
 	// set the frame for the currentpage
 	self.currPage = [[UIWebView alloc] initWithFrame:[self frameForPage:currentPageNumber]];
-	self.currPage.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+	self.currPage.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;;
 
 	// add the page to the scrollview
 	[scrollView addSubview:self.currPage];
@@ -564,8 +564,6 @@
 }
 
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
-	NSLog(@"rotated");
-
 	// get the sizes from the screen
 	UIScreen *MainScreen = [UIScreen mainScreen];
 	UIScreenMode *ScreenMode = [MainScreen currentMode];
@@ -602,7 +600,7 @@
 	if(currentPageFirstLoading != YES)
 	{
 		[self gotoPageDelayer];
-	}	
+	}
 }
 
 - (void)didReceiveMemoryWarning {
