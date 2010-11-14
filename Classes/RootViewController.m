@@ -576,8 +576,38 @@
 
 // ****** SYSTEM
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-	// @todo: make this configurable
-	return YES;
+	NSString *path = [NSString stringWithFormat:@"%@/%@", [[NSBundle mainBundle] resourcePath], @"Info.plist"];// pathForResource:@"Baker-Info" ofType:@"plist"];
+	NSDictionary *myDic = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
+	NSString *currentOrientation;
+	// there must be a better way to get the string version of the orientation
+	switch(interfaceOrientation) {
+        case UIInterfaceOrientationLandscapeRight:
+            currentOrientation = @"UIInterfaceOrientationLandscapeRight";
+            break;
+        case UIInterfaceOrientationLandscapeLeft:
+            currentOrientation = @"UIInterfaceOrientationLandscapeLeft";
+            break;
+        case UIInterfaceOrientationPortraitUpsideDown:
+            currentOrientation = @"UIInterfaceOrientationPortraitUpsideDown";
+            break;
+        case UIInterfaceOrientationPortrait:
+            currentOrientation = @"UIInterfaceOrientationPortrait";
+            break;
+		default:
+			currentOrientation = @"UIInterfaceOrientationLandscapeRight";
+    }
+	
+	// check if the requested orientation is in the plist
+	NSArray *supportedOrientations = [myDic objectForKey:@"UISupportedInterfaceOrientations"];
+	for (NSString *s in supportedOrientations) {
+		NSLog(@"%@::%@", currentOrientation, s);
+		if ([s isEqualToString:currentOrientation]) {
+			return YES;
+		}
+	}
+	
+	// default
+	return NO;
 }
 
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
