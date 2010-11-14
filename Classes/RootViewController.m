@@ -54,8 +54,9 @@
 @synthesize pageHeight;
 
 // ****** CONFIGURATION
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
-	[super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+- (id)init {
+	// we need the super init to load orientation
+	[super initWithNibName:nil bundle:nil];
 
 	// get the sizes from the screen
 	UIScreen *MainScreen = [UIScreen mainScreen];
