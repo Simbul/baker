@@ -41,7 +41,24 @@
 
 #pragma mark -
 #pragma mark Application lifecycle
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {	
+
+// IOS 3 BUG
+// IF "(BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions"
+// THEN "(BOOL) application:(UIApplication*)application handleOpenURL:(NSURL*)url" is never called
+// check http://stackoverflow.com/questions/3612460/lauching-app-with-url-via-uiapplicationdelegates-handleopenurl-working-under-i for hints
+
+//- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+- (void)applicationDidFinishLaunching:(UIApplication *)application {    
+	
+	/*
+	if ([launchOptions objectForKey:UIApplicationLaunchOptionsURLKey] != nil) {
+		NSURL *url = [launchOptions objectForKey:UIApplicationLaunchOptionsURLKey];
+		UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"App did finish launch" message:[url absoluteString] delegate:nil cancelButtonTitle:@"close" otherButtonTitles:nil]; 
+		[alert show];
+		[alert release];
+	}
+	*/
+	
 	// Create the controller for the root view
 	self.rootViewController =[[RootViewController alloc] init];
 	UIView *scrollView = [rootViewController scrollView];
@@ -57,6 +74,26 @@
 	
     [window makeKeyAndVisible];
 	
+	//return YES;
+}
+- (BOOL) application:(UIApplication*)application handleOpenURL:(NSURL*)url {
+	
+	NSString *URLString = [url absoluteString];
+	NSLog(@"handleOpenURL -> %@", URLString);
+	
+	/*
+	UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"App handle open url" message:URLString delegate:nil cancelButtonTitle:@"close" otherButtonTitles:nil]; 
+	[alert show];
+	[alert release];
+	 */
+	
+	// STOP IF: url || URLString is nil
+	if (!url || !URLString) { return NO; }
+	
+	// STOP IF: not my scheme
+	if (![[url scheme] isEqualToString:@"book"]) { return NO; }
+	
+	NSLog(@"HPub scheme found! -> %@", [url scheme]);
 	return YES;
 }
 - (void)applicationWillResignActive:(UIApplication *)application {
