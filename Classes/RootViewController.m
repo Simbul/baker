@@ -58,14 +58,6 @@
 	// we need the super init to load orientation
 	[super initWithNibName:nil bundle:nil];
 
-	// get the sizes from the screen
-	UIScreen *MainScreen = [UIScreen mainScreen];
-	UIScreenMode *ScreenMode = [MainScreen currentMode];
-	CGSize size = [ScreenMode size];
-	
-	self.pageWidth = size.width;
-	self.pageHeight = size.height;
-	
 	// Permanently hide status bar
 	[[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
 	[self hideStatusBar];
@@ -91,9 +83,6 @@
 	currentPageFirstLoading = YES;
 	currentPageIsDelayingLoading = YES;
 
-	// ****** VIEW
-	scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, self.pageWidth, self.pageHeight)];
-	[self resetScrollView];
     return self;
 }
 
@@ -117,7 +106,7 @@
 
 	// set the frame for the currentpage
 	self.currPage = [[UIWebView alloc] initWithFrame:[self frameForPage:currentPageNumber]];
-	self.currPage.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;;
+	self.currPage.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 
 	// add the page to the scrollview
 	[scrollView addSubview:self.currPage];
@@ -153,6 +142,15 @@
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad {
 	[super viewDidLoad];
+
+	// get the sizes from the view
+	self.pageWidth = self.view.frame.size.width;
+	self.pageHeight = self.view.frame.size.height;
+
+	// ****** VIEW
+	scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, self.pageWidth, self.pageHeight)];
+	[self resetScrollView];
+
 	[self initTapHandlers];
 	[self loadSlot:0 withPage:currentPageNumber];
 }
@@ -170,26 +168,26 @@
 	
 	// ****** CORNER TAP HANDLERS
 	upTapHandler = [[TapHandler alloc] initWithFrame:CGRectMake(50,0,(self.pageWidth - 100),50)];
-	// upTapHandler.backgroundColor = [UIColor redColor];
-	// upTapHandler.alpha = 0.5;
+	upTapHandler.backgroundColor = [UIColor redColor];
+	upTapHandler.alpha = 0.5;
 	[[self view] addSubview:upTapHandler];
 	[upTapHandler release];
 
 	downTapHandler = [[TapHandler alloc] initWithFrame:CGRectMake(50,(self.pageHeight - 50),(self.pageWidth - 100),50)];
-	// downTapHandler.backgroundColor = [UIColor redColor];
-	// downTapHandler.alpha = 0.5;
+	downTapHandler.backgroundColor = [UIColor redColor];
+	downTapHandler.alpha = 0.5;
 	[[self view] addSubview:downTapHandler];
 	[downTapHandler release];
 
 	leftTapHandler = [[TapHandler alloc] initWithFrame:CGRectMake(0,50,50,(self.pageHeight - 100))];
-	// leftTapHandler.backgroundColor = [UIColor redColor];
-	// leftTapHandler.alpha = 0.5;
+	leftTapHandler.backgroundColor = [UIColor redColor];
+	leftTapHandler.alpha = 0.5;
 	[[self view] addSubview:leftTapHandler];
 	[leftTapHandler release];
 
 	rightTapHandler = [[TapHandler alloc] initWithFrame:CGRectMake((self.pageWidth - 50),50,50,(self.pageHeight - 100))];
-	// rightTapHandler.backgroundColor = [UIColor redColor];
-	// rightTapHandler.alpha = 0.5;
+	rightTapHandler.backgroundColor = [UIColor redColor];
+	rightTapHandler.alpha = 0.5;
 	[[self view] addSubview:rightTapHandler];
 	[rightTapHandler release];
 }
@@ -611,22 +609,18 @@
 }
 
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
-	// get the sizes from the screen
-	UIScreen *MainScreen = [UIScreen mainScreen];
-	UIScreenMode *ScreenMode = [MainScreen currentMode];
-	CGSize size = [ScreenMode size];
 
-	// set the sizes according to orientation
+	//set the sizes according to orientation
 	UIDeviceOrientation orientation = [[UIDevice currentDevice] orientation];
 	if (orientation == UIInterfaceOrientationLandscapeRight || orientation == UIInterfaceOrientationLandscapeLeft ) {
 		NSLog(@"Landscape");
-		self.pageWidth = size.width;
-		self.pageHeight = size.height;
+		self.pageWidth = self.view.frame.size.height;
+		self.pageHeight = self.view.frame.size.width;
 	}
-	if (orientation == UIDeviceOrientationPortrait || orientation == UIDeviceOrientationPortraitUpsideDown) {
+	else {
 		NSLog(@"Portrait");
-		self.pageWidth = size.height;
-		self.pageHeight = size.width;
+		self.pageWidth = self.view.frame.size.width;
+		self.pageHeight = self.view.frame.size.height;
 	}
 	
 	NSLog(@"%d x %d", self.pageWidth, self.pageHeight);
