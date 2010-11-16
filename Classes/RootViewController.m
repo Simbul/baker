@@ -168,26 +168,26 @@
 	
 	// ****** CORNER TAP HANDLERS
 	upTapHandler = [[TapHandler alloc] initWithFrame:CGRectMake(50,0,(self.pageWidth - 100),50)];
-	upTapHandler.backgroundColor = [UIColor redColor];
-	upTapHandler.alpha = 0.5;
+	// upTapHandler.backgroundColor = [UIColor redColor];
+	// upTapHandler.alpha = 0.5;
 	[[self view] addSubview:upTapHandler];
 	[upTapHandler release];
 
 	downTapHandler = [[TapHandler alloc] initWithFrame:CGRectMake(50,(self.pageHeight - 50),(self.pageWidth - 100),50)];
-	downTapHandler.backgroundColor = [UIColor redColor];
-	downTapHandler.alpha = 0.5;
+	// downTapHandler.backgroundColor = [UIColor redColor];
+	// downTapHandler.alpha = 0.5;
 	[[self view] addSubview:downTapHandler];
 	[downTapHandler release];
 
 	leftTapHandler = [[TapHandler alloc] initWithFrame:CGRectMake(0,50,50,(self.pageHeight - 100))];
-	leftTapHandler.backgroundColor = [UIColor redColor];
-	leftTapHandler.alpha = 0.5;
+	// leftTapHandler.backgroundColor = [UIColor redColor];
+	// leftTapHandler.alpha = 0.5;
 	[[self view] addSubview:leftTapHandler];
 	[leftTapHandler release];
 
 	rightTapHandler = [[TapHandler alloc] initWithFrame:CGRectMake((self.pageWidth - 50),50,50,(self.pageHeight - 100))];
-	rightTapHandler.backgroundColor = [UIColor redColor];
-	rightTapHandler.alpha = 0.5;
+	// rightTapHandler.backgroundColor = [UIColor redColor];
+	// rightTapHandler.alpha = 0.5;
 	[[self view] addSubview:rightTapHandler];
 	[rightTapHandler release];
 }
