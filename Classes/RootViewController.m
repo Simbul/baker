@@ -620,14 +620,16 @@
 	UIDeviceOrientation orientation = [[UIDevice currentDevice] orientation];
 	if (orientation == UIInterfaceOrientationLandscapeRight || orientation == UIInterfaceOrientationLandscapeLeft ) {
 		NSLog(@"Landscape");
-		self.pageWidth = size.height;
-		self.pageHeight = size.width;
-	}
-	else {
-		NSLog(@"Portrait");
 		self.pageWidth = size.width;
 		self.pageHeight = size.height;
 	}
+	if (orientation == UIDeviceOrientationPortrait || orientation == UIDeviceOrientationPortraitUpsideDown) {
+		NSLog(@"Portrait");
+		self.pageWidth = size.height;
+		self.pageHeight = size.width;
+	}
+	
+	NSLog(@"%d x %d", self.pageWidth, self.pageHeight);
 	
 	// set the new window size
 	scrollView.frame = CGRectMake(0, 0, self.pageWidth, self.pageHeight);
