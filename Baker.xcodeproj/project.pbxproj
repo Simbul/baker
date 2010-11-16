@@ -201,6 +201,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Baker_Prefix.pch;
 				INFOPLIST_FILE = "Baker-Info.plist";
+				OTHER_CFLAGS = "-DDEBUG";
 				PRODUCT_NAME = Baker;
 			};
 			name = Debug;
