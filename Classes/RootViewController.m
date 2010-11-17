@@ -107,6 +107,7 @@
 	// set the frame for the currentpage
 	self.currPage = [[UIWebView alloc] initWithFrame:[self frameForPage:currentPageNumber]];
 	self.currPage.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+	self.currPage.backgroundColor = [UIColor scrollViewTexturedBackgroundColor];
 
 	// add the page to the scrollview
 	[scrollView addSubview:self.currPage];
@@ -280,7 +281,8 @@
 		label.font = [UIFont fontWithName:@"Helvetica" size:40.0];
 		label.textAlignment = UITextAlignmentLeft;
 		label.text = labelText;
-		//label.backgroundColor = [UIColor redColor];
+		label.opaque = YES;
+		label.backgroundColor = [UIColor clearColor];
 		[labelText release];
 
 		[[self scrollView] addSubview:label];
