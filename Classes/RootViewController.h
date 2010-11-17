@@ -57,6 +57,7 @@
 	int currentPageNumber;
 	BOOL currentPageFirstLoading;
 	BOOL currentPageIsDelayingLoading;
+	BOOL discardNextStatusBarToggle;
 }
 
 @property (nonatomic, retain) NSArray *pages;
@@ -102,5 +103,6 @@
 // ****** STATUS BAR
 - (void)toggleStatusBar;
 - (void)hideStatusBar;
+- (void)hideStatusBarDiscardingToggle:(BOOL)discardToggle;
 
 @end

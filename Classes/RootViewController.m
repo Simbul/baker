@@ -55,6 +55,7 @@
 
 // ****** CONFIGURATION
 - (id)init {
+	discardNextStatusBarToggle = NO;
 	[self hideStatusBar];
 	
 	// Count pages
@@ -112,11 +113,22 @@
 }
 
 - (void)toggleStatusBar {
-	UIApplication *sharedApplication = [UIApplication sharedApplication];
-	[sharedApplication setStatusBarHidden:!sharedApplication.statusBarHidden withAnimation:UIStatusBarAnimationSlide];
+	if (discardNextStatusBarToggle) {
+		// do nothing, but reset the variable
+		discardNextStatusBarToggle = NO;
+	} else {
+		NSLog(@"TOGGLE status bar");
+		UIApplication *sharedApplication = [UIApplication sharedApplication];
+		[sharedApplication setStatusBarHidden:!sharedApplication.statusBarHidden withAnimation:UIStatusBarAnimationSlide];
+	}
 }
 
 - (void)hideStatusBar {
+	[self hideStatusBarDiscardingToggle:NO];
+}
+- (void)hideStatusBarDiscardingToggle:(BOOL)discardToggle {
+	NSLog(@"HIDE status bar %@", (discardToggle ? @"discarding toggle" : @""));
+	discardNextStatusBarToggle = discardToggle;
 	[[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
 }
 
@@ -402,7 +414,7 @@
 		return YES;
 		
 	} else {
-		
+		[self hideStatusBarDiscardingToggle:YES];
 		NSLog(@"Current Page IS NOT delaying loading --> handle clicked link");
 		
 		NSLog(@"Current URL: %@", [request URL]);
