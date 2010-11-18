@@ -629,6 +629,12 @@
 		NSLog(@"Landscape");
 		self.pageWidth = self.view.frame.size.height;
 		self.pageHeight = self.view.frame.size.width;
+		
+		// if the app started in landscape, we need to force the reload on the next rotation
+		if(currentPageFirstLoading)
+		{
+			needsRepaint = YES;
+		}
 	}
 	else {
 		NSLog(@"Portrait");
@@ -653,9 +659,11 @@
 	// upon first launch, if there is a rotate, make sure to wait till the file is loaded
 	// otherwise the page will never get loaded. So only force a reload after the first
 	// page was loaded
-	if(currentPageFirstLoading != YES)
+	if(needsRepaint == YES && currentPageFirstLoading == NO)
 	{
+//		NSLog(@"first!");
 		[self gotoPageDelayer];
+		needsRepaint = NO;
 	}
 }
 

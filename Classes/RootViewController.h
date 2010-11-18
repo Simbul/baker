@@ -54,6 +54,7 @@
 
 	int totalPages;
 	int currentPageNumber;
+	BOOL needsRepaint;
 	BOOL currentPageFirstLoading;
 	BOOL currentPageIsDelayingLoading;
 }
