@@ -47,17 +47,8 @@
 // THEN "(BOOL) application:(UIApplication*)application handleOpenURL:(NSURL*)url" is never called
 // check http://stackoverflow.com/questions/3612460/lauching-app-with-url-via-uiapplicationdelegates-handleopenurl-working-under-i for hints
 
-//- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-- (void)applicationDidFinishLaunching:(UIApplication *)application {    
-	
-	/*
-	if ([launchOptions objectForKey:UIApplicationLaunchOptionsURLKey] != nil) {
-		NSURL *url = [launchOptions objectForKey:UIApplicationLaunchOptionsURLKey];
-		UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"App did finish launch" message:[url absoluteString] delegate:nil cancelButtonTitle:@"close" otherButtonTitles:nil]; 
-		[alert show];
-		[alert release];
-	}
-	*/
+//- (void)applicationDidFinishLaunching:(UIApplication *)application {    
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 	
 	// Create the controller for the root view
 	self.rootViewController =[[RootViewController alloc] init];
@@ -74,26 +65,35 @@
 	
     [window makeKeyAndVisible];
 	
-	//return YES;
+	NSString *reqSysVer = @"3.2";
+	NSString *currSysVer = [[UIDevice currentDevice] systemVersion];
+	if ([currSysVer compare:reqSysVer options:NSNumericSearch] != NSOrderedDescending && [launchOptions objectForKey:UIApplicationLaunchOptionsURLKey] != nil) {
+		NSURL *url = [launchOptions objectForKey:UIApplicationLaunchOptionsURLKey];
+		[self application:application handleOpenURL:url];
+	}
+	
+	return YES;
 }
-- (BOOL) application:(UIApplication*)application handleOpenURL:(NSURL*)url {
+- (BOOL)application:(UIApplication*)application handleOpenURL:(NSURL*)url {
 	
 	NSString *URLString = [url absoluteString];
 	NSLog(@"handleOpenURL -> %@", URLString);
 	
-	/*
-	UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"App handle open url" message:URLString delegate:nil cancelButtonTitle:@"close" otherButtonTitles:nil]; 
-	[alert show];
-	[alert release];
-	 */
-	
 	// STOP IF: url || URLString is nil
-	if (!url || !URLString) { return NO; }
+	if (!url || !URLString)
+		return NO;
 	
 	// STOP IF: not my scheme
-	if (![[url scheme] isEqualToString:@"book"]) { return NO; }
+	if (![[url scheme] isEqualToString:@"book"])
+		return NO;
 	
 	NSLog(@"HPub scheme found! -> %@", [url scheme]);
+	
+	NSArray *URLSections = [URLString componentsSeparatedByCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@":"]];
+	NSString *URLDownload = [@"http:" stringByAppendingString:[URLSections objectAtIndex:1]];
+	
+	[[NSNotificationCenter defaultCenter] postNotificationName:@"downloadNotification" object:URLDownload];
+	
 	return YES;
 }
 - (void)applicationWillResignActive:(UIApplication *)application {

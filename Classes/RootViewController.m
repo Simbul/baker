@@ -55,6 +55,10 @@
 
 // ****** CONFIGURATION
 - (id)init {
+	
+	// Set up listener to download notification from application delegate
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(downloadBook:) name:@"downloadNotification" object:nil];
+	
 	discardNextStatusBarToggle = NO;
 	[self hideStatusBar];
 	
@@ -557,6 +561,21 @@
 	} else {
 		[webView stringByEvaluatingJavaScriptFromString:jsCommand];
 	}
+}
+
+// ****** DOWNLOAD BOOKS
+- (void)downloadBook:(NSNotification *)notification {
+	
+	NSString *URLDownload = (NSString *)[notification object];
+	NSLog(@"Download file %@", URLDownload);
+	
+	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"New book request"
+													message:[NSString stringWithFormat:@"Do you want to download %@?", URLDownload]
+												   delegate:self
+										  cancelButtonTitle:@"Cancel"
+										  otherButtonTitles:nil];
+	[alert show];
+	[alert release];
 }
 
 // ****** SYSTEM
