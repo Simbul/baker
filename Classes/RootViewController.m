@@ -376,6 +376,16 @@
 - (void)webViewDidFinishLoad:(UIWebView *)webView {
 	// Sent after a web view finishes loading content.
 	
+	// Get current page max scroll offset
+	for (id subview in webView.subviews) {
+		if ([[subview class] isSubclassOfClass:[UIScrollView class]]) {
+			CGSize size = ((UIScrollView *)subview).contentSize;
+			
+			currentPageMaxScroll = size.height - 1024;
+			NSLog(@"Current page max scroll: %d", currentPageMaxScroll);
+		}
+	}
+	
 	// If is the first time i load something in the currPage web view...
 	if (webView == currPage && currentPageFirstLoading) {
 		NSLog(@"(1) currPage finished first loading");
@@ -525,20 +535,39 @@
 
 // ****** PAGE SCROLLING
 - (void)goUpInPage:(NSString *)offset animating:(BOOL)animating {
-	NSLog(@"Scrolling page up");
 	
 	NSString *currPageOffset = [currPage stringByEvaluatingJavaScriptFromString:@"window.scrollY;"];
-	offset = [NSString stringWithFormat:@"%d", ([currPageOffset intValue]-[offset intValue])];
 	
-	[self scrollPage:currPage to:offset animating:animating];
+	int currentPageOffset = [currPageOffset intValue];
+	if (currentPageOffset > 0) {
+		
+		int targetOffset = currentPageOffset-[offset intValue];
+		if (targetOffset < 0)
+			targetOffset = 0;
+		
+		NSLog(@"Scrolling page up to %d", targetOffset);
+		
+		offset = [NSString stringWithFormat:@"%d", targetOffset];
+		[self scrollPage:currPage to:offset animating:animating];
+	}
 }
 - (void)goDownInPage:(NSString *)offset animating:(BOOL)animating {
-	NSLog(@"Scrolling page down");
 	
 	NSString *currPageOffset = [currPage stringByEvaluatingJavaScriptFromString:@"window.scrollY;"];
-	offset = [NSString stringWithFormat:@"%d", ([currPageOffset intValue]+[offset intValue])];
 	
-	[self scrollPage:currPage to:offset animating:animating];
+	int currentPageOffset = [currPageOffset intValue];
+	if (currentPageOffset < currentPageMaxScroll) {
+		
+		int targetOffset = currentPageOffset+[offset intValue];
+		if (targetOffset > currentPageMaxScroll)
+			targetOffset = currentPageMaxScroll;
+		
+		NSLog(@"Scrolling page down to %d", targetOffset);
+		
+		offset = [NSString stringWithFormat:@"%d", targetOffset];
+		[self scrollPage:currPage to:offset animating:animating];
+	}
+
 }
 - (void)scrollPage:(UIWebView *)webView to:(NSString *)offset animating:(BOOL)animating {
 	[self hideStatusBar];

@@ -64,7 +64,6 @@
 			}
 			if (touch.phase == UITouchPhaseMoved) {
 				scrolling = YES;
-				NSLog(@"yessing");
 			}
 			
 			if ([touch.view isDescendantOfView:self.target] == YES && touch.tapCount == 1) {
