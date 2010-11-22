@@ -381,8 +381,8 @@
 		if ([[subview class] isSubclassOfClass:[UIScrollView class]]) {
 			CGSize size = ((UIScrollView *)subview).contentSize;
 			
-			currentPageMaxScroll = size.height - 1024;
-			NSLog(@"Current page max scroll: %d", currentPageMaxScroll);
+			currentPageHeight = size.height;
+			NSLog(@"Current page height: %d", currentPageHeight);
 		}
 	}
 	
@@ -555,7 +555,9 @@
 	
 	NSString *currPageOffset = [currPage stringByEvaluatingJavaScriptFromString:@"window.scrollY;"];
 	
+	int currentPageMaxScroll = currentPageHeight - PAGE_HEIGHT;	
 	int currentPageOffset = [currPageOffset intValue];
+	
 	if (currentPageOffset < currentPageMaxScroll) {
 		
 		int targetOffset = currentPageOffset+[offset intValue];
