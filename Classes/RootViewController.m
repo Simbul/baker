@@ -32,6 +32,7 @@
 
 #import <QuartzCore/QuartzCore.h>
 #import "RootViewController.h"
+#import "Downloader.h"
 #import "TapHandler.h"
 
 #define PAGE_HEIGHT 1024
@@ -604,9 +605,16 @@
 													message:[NSString stringWithFormat:@"Do you want to download %@?", URLDownload]
 												   delegate:self
 										  cancelButtonTitle:@"Cancel"
-										  otherButtonTitles:nil];
+										  otherButtonTitles:@"Continue", nil];
 	[alert show];
 	[alert release];
+}
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+
+	if (buttonIndex == 1) {
+		Downloader *downloader = [[Downloader alloc] init];
+		[downloader release];
+	}
 }
 
 // ****** SYSTEM
