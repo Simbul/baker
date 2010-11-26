@@ -32,6 +32,7 @@
 
 #import <UIKit/UIKit.h>
 
+@class Downloader;
 @class TapHandler;
 
 @interface RootViewController : UIViewController < UIWebViewDelegate, UIScrollViewDelegate > {
@@ -59,6 +60,9 @@
 	BOOL currentPageFirstLoading;
 	BOOL currentPageIsDelayingLoading;
 	BOOL discardNextStatusBarToggle;
+	
+	NSString *URLDownload;
+	Downloader *downloader;
 }
 
 @property (nonatomic, retain) NSArray *pages;
@@ -74,6 +78,8 @@
 @property (nonatomic, retain) UISwipeGestureRecognizer *swipeRight;
 
 @property int currentPageNumber;
+
+@property (nonatomic, retain) NSString *URLDownload;
 
 // ****** LOADING
 - (BOOL)changePage:(int)page;
@@ -108,5 +114,7 @@
 
 // ****** DOWNLOAD BOOKS
 - (void)downloadBook:(NSNotification *)notification;
+- (void)startDownloadRequest;
+- (void)handleDownloadResult:(NSNotification *)notification;
 
 @end

@@ -9,7 +9,20 @@
 #import <Foundation/Foundation.h>
 
 @interface Downloader : NSObject {
-
+	
+	NSString *notificationName;
+	NSMutableDictionary *requestSummary;
+	
+	long long expectedData;
+	NSMutableData *receivedData;
+	
+	NSURLConnection *connectionRef;
 }
+
+@property (nonatomic, retain) NSURLConnection *connectionRef;
+
+- (Downloader *)initDownloader:(NSString *)observerName;
+- (void)makeHTTPRequest:(NSString *)urlAddress;
+- (void)cancelConnection;
 
 @end

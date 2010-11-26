@@ -54,6 +54,8 @@
 
 @synthesize currentPageNumber;
 
+@synthesize URLDownload;
+
 // ****** CONFIGURATION
 - (id)init {
 	
@@ -598,7 +600,7 @@
 // ****** DOWNLOAD BOOKS
 - (void)downloadBook:(NSNotification *)notification {
 	
-	NSString *URLDownload = (NSString *)[notification object];
+	self.URLDownload = (NSString *)[notification object];
 	NSLog(@"Download file %@", URLDownload);
 	
 	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"New book request"
@@ -610,11 +612,25 @@
 	[alert release];
 }
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-
-	if (buttonIndex == 1) {
-		Downloader *downloader = [[Downloader alloc] init];
-		[downloader release];
-	}
+	if (buttonIndex == 1)
+		[self startDownloadRequest];
+}
+- (void)startDownloadRequest {
+	
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleDownloadResult:) name:@"handleDownloadResult" object:nil];
+	downloader = [[Downloader alloc] initDownloader:@"handleDownloadResult"];
+	[downloader makeHTTPRequest:URLDownload];
+}
+- (void)handleDownloadResult:(NSNotification *)notification {
+	
+	NSLog(@"Download Finished");
+	
+	NSMutableDictionary *resultSummary = (NSMutableDictionary *)[notification object];
+	if ([resultSummary objectForKey:@"data"] != nil)
+		NSLog(@"Data received succesfully");
+	
+	[[NSNotificationCenter defaultCenter] removeObserver:self name:@"handleDownloadResults" object:nil];
+	[downloader release];
 }
 
 // ****** SYSTEM
