@@ -43,5 +43,7 @@
 @property (nonatomic, retain) IBOutlet UIWindow *window;
 @property (nonatomic, retain) RootViewController *rootViewController;
 
+- (void)saveLastPageReference;
+
 @end
 

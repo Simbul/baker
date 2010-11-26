@@ -101,6 +101,8 @@
      Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
      Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
      */
+	
+	[self saveLastPageReference];
 }
 - (void)applicationDidBecomeActive:(UIApplication *)application {
     /*
@@ -108,10 +110,16 @@
      */
 }
 - (void)applicationWillTerminate:(UIApplication *)application {
+	/*
+	 Sent when the main button is pressed in iOS < 4
+	 */
 	
-	NSLog(@"Terminating...");
+	[self saveLastPageReference];
+}
+
+- (void)saveLastPageReference {
 	
-	// Saving last page viewed index
+	// Save last page references
 	NSString *lastPageViewed = [NSString stringWithFormat:@"%d", rootViewController.currentPageNumber];
 	NSString *lastScrollIndex = [rootViewController.currPage stringByEvaluatingJavaScriptFromString:@"window.scrollY;"];
 	
