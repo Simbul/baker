@@ -597,13 +597,13 @@
 	}
 }
 
-// ****** DOWNLOAD BOOKS
+// ****** DOWNLOAD NEW BOOKS
 - (void)downloadBook:(NSNotification *)notification {
 	
 	self.URLDownload = (NSString *)[notification object];
 	NSLog(@"Download file %@", URLDownload);
 	
-	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"New book request"
+	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"New Book Detected"
 													message:[NSString stringWithFormat:@"Do you want to download %@?", URLDownload]
 												   delegate:self
 										  cancelButtonTitle:@"Cancel"
@@ -612,6 +612,7 @@
 	[alert release];
 }
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+	
 	if (buttonIndex == 1)
 		[self startDownloadRequest];
 }
@@ -622,15 +623,41 @@
 	[downloader makeHTTPRequest:URLDownload];
 }
 - (void)handleDownloadResult:(NSNotification *)notification {
+		
+	NSMutableDictionary *requestSummary = (NSMutableDictionary *)[notification object];
+	[[NSNotificationCenter defaultCenter] removeObserver:self name:@"handleDownloadResult" object:nil];
 	
-	NSLog(@"Download Finished");
-	
-	NSMutableDictionary *resultSummary = (NSMutableDictionary *)[notification object];
-	if ([resultSummary objectForKey:@"data"] != nil)
-		NSLog(@"Data received succesfully");
-	
-	[[NSNotificationCenter defaultCenter] removeObserver:self name:@"handleDownloadResults" object:nil];
 	[downloader release];
+				
+	if ([requestSummary objectForKey:@"error"] != nil) {
+		
+		NSLog(@"Error while downloading data");
+		NSString *errorMessage = [NSString stringWithFormat:@"Connection failed, error:\n\"%@\".",[requestSummary objectForKey:@"error"]];
+		UIAlertView *errorAlert = [[UIAlertView alloc] initWithTitle:@"HTTP Error"
+														message:errorMessage
+													   delegate:self
+											  cancelButtonTitle:@"Cancel"
+											  otherButtonTitles:@"Retry", nil];
+		[errorAlert show];
+		[errorAlert release];
+			
+	} else if ([requestSummary objectForKey:@"data"] != nil) {
+		
+		NSLog(@"Data received succesfully");
+		[self manageDownloadData:[requestSummary objectForKey:@"data"]];
+	}
+}
+- (void)manageDownloadData:(NSData *)data {
+	
+	NSArray *URLSections = [URLDownload componentsSeparatedByCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"/"]];
+	NSString *targetPath = [NSTemporaryDirectory() stringByAppendingString:[URLSections lastObject]];
+	
+	[data writeToFile:targetPath atomically:YES];
+			
+	if ([[NSFileManager defaultManager] fileExistsAtPath:targetPath]) {
+		NSLog(@"File create successfully! Path: %@", targetPath);
+		[[NSFileManager defaultManager] removeItemAtPath:targetPath error:NULL];
+	}
 }
 
 // ****** SYSTEM

@@ -112,9 +112,10 @@
 - (void)hideStatusBar;
 - (void)hideStatusBarDiscardingToggle:(BOOL)discardToggle;
 
-// ****** DOWNLOAD BOOKS
+// ****** DOWNLOAD NEW BOOKS
 - (void)downloadBook:(NSNotification *)notification;
 - (void)startDownloadRequest;
 - (void)handleDownloadResult:(NSNotification *)notification;
+- (void)manageDownloadData:(NSData *)data;
 
 @end
