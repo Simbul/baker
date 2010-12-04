@@ -33,6 +33,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import "RootViewController.h"
 #import "Downloader.h"
+#import "SSZipArchive.h"
 #import "TapHandler.h"
 
 #define PAGE_HEIGHT 1024
