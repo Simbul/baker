@@ -649,7 +649,7 @@
 	}
 }
 - (void)manageDownloadData:(NSData *)data {
-	
+		
 	NSArray *URLSections = [URLDownload componentsSeparatedByCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"/"]];
 	NSString *targetPath = [NSTemporaryDirectory() stringByAppendingString:[URLSections lastObject]];
 	
@@ -657,6 +657,20 @@
 			
 	if ([[NSFileManager defaultManager] fileExistsAtPath:targetPath]) {
 		NSLog(@"File create successfully! Path: %@", targetPath);
+		
+		NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+		NSString *documentsPath = ([paths count] > 0) ? [paths objectAtIndex:0] : nil;
+		NSString *bookPath = [documentsPath stringByAppendingString:@"/book"];
+		
+		NSLog(@"Book destination path: %@", bookPath);
+		
+		// If a "book" directory already exists remove it (quick solution, improvement needed) 
+		if ([[NSFileManager defaultManager] fileExistsAtPath:bookPath])
+			[[NSFileManager defaultManager] removeItemAtPath:bookPath error:NULL];
+		
+		[SSZipArchive unzipFileAtPath:targetPath toDestination:bookPath];
+		
+		NSLog(@"Book successfully unzipped. Removing .hpub file");
 		[[NSFileManager defaultManager] removeItemAtPath:targetPath error:NULL];
 	}
 }
