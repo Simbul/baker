@@ -95,14 +95,14 @@
 	self.currPage = [[UIWebView alloc] initWithFrame:[self frameForPage:currentPageNumber]];
 	//self.nextPage = [[UIWebView alloc] initWithFrame:[self frameForPage:currentPageNumber + 1]];
 	
-	//[scrollView addSubview:self.prevPage];
-	[scrollView addSubview:self.currPage];
-	//[scrollView addSubview:self.nextPage];
-	
 	//self.prevPage.delegate = self;
 	self.currPage.delegate = self;
 	//self.nextPage.delegate = self;
 	self.scrollView.delegate = self;
+	
+	//[scrollView addSubview:self.prevPage];
+	[scrollView addSubview:self.currPage];
+	//[scrollView addSubview:self.nextPage];
 	
 	[scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:NO];
 	[[self view] addSubview:scrollView];
@@ -386,7 +386,7 @@
 			CGSize size = ((UIScrollView *)subview).contentSize;
 			
 			currentPageHeight = size.height;
-			NSLog(@"Current page height: %d", currentPageHeight);
+			NSLog(@"Current page height: %d", currentPageHeight);			
 		}
 	}
 	
@@ -604,48 +604,65 @@
 	self.URLDownload = (NSString *)[notification object];
 	NSLog(@"Download file %@", URLDownload);
 	
-	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"New Book Detected"
-													message:[NSString stringWithFormat:@"Do you want to download %@?", URLDownload]
-												   delegate:self
-										  cancelButtonTitle:@"Cancel"
-										  otherButtonTitles:@"Continue", nil];
-	[alert show];
-	[alert release];
+	feedbackAlert = [[UIAlertView alloc] initWithTitle:@"New Book Detected"
+											   message:[NSString stringWithFormat:@"Do you want to download %@?", URLDownload]
+											  delegate:self
+									 cancelButtonTitle:@"Cancel"
+									 otherButtonTitles:@"Continue", nil];
+	[feedbackAlert show];
+	[feedbackAlert release];
 }
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
 	
-	if (buttonIndex == 1)
+	if (buttonIndex != alertView.cancelButtonIndex)
 		[self startDownloadRequest];
 }
 - (void)startDownloadRequest {
 	
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleDownloadResult:) name:@"handleDownloadResult" object:nil];
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleDownloadResult:) name:@"handleDownloadResult" object:nil];	
 	downloader = [[Downloader alloc] initDownloader:@"handleDownloadResult"];
 	[downloader makeHTTPRequest:URLDownload];
 }
 - (void)handleDownloadResult:(NSNotification *)notification {
-		
+	
 	NSMutableDictionary *requestSummary = (NSMutableDictionary *)[notification object];
 	[[NSNotificationCenter defaultCenter] removeObserver:self name:@"handleDownloadResult" object:nil];
 	
 	[downloader release];
-				
+		
 	if ([requestSummary objectForKey:@"error"] != nil) {
 		
 		NSLog(@"Error while downloading data");
-		NSString *errorMessage = [NSString stringWithFormat:@"Connection failed, error:\n\"%@\".",[requestSummary objectForKey:@"error"]];
-		UIAlertView *errorAlert = [[UIAlertView alloc] initWithTitle:@"HTTP Error"
-														message:errorMessage
-													   delegate:self
-											  cancelButtonTitle:@"Cancel"
-											  otherButtonTitles:@"Retry", nil];
-		[errorAlert show];
-		[errorAlert release];
+		NSString *feedbackMessage = [NSString stringWithFormat:@"Connection failed, error:\n\"%@\".",[requestSummary objectForKey:@"error"]];
+		feedbackAlert = [[UIAlertView alloc] initWithTitle:@"HTTP Error"
+												   message:feedbackMessage
+												  delegate:self
+										 cancelButtonTitle:@"Cancel"
+										 otherButtonTitles:@"Retry", nil];
+		[feedbackAlert show];
+		[feedbackAlert release];
 			
 	} else if ([requestSummary objectForKey:@"data"] != nil) {
 		
 		NSLog(@"Data received succesfully");
-		[self manageDownloadData:[requestSummary objectForKey:@"data"]];
+		
+		feedbackAlert = [[UIAlertView alloc] initWithTitle:@"Extracting..."
+												   message:nil
+												  delegate:self
+										 cancelButtonTitle:nil
+										 otherButtonTitles:nil];
+				
+		UIActivityIndicatorView *extractingWheel = [[UIActivityIndicatorView alloc] initWithFrame:CGRectMake(124,50,37,37)];
+		extractingWheel.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhiteLarge;
+		[extractingWheel startAnimating];
+		
+		[feedbackAlert addSubview:extractingWheel];
+		[feedbackAlert show];
+		
+		[extractingWheel release];
+		[feedbackAlert release];
+		
+		[self performSelector:@selector(manageDownloadData:) withObject:[requestSummary objectForKey:@"data"] afterDelay:0.1];
 	}
 }
 - (void)manageDownloadData:(NSData *)data {
@@ -657,7 +674,7 @@
 			
 	if ([[NSFileManager defaultManager] fileExistsAtPath:targetPath]) {
 		NSLog(@"File create successfully! Path: %@", targetPath);
-		
+				
 		NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
 		NSString *documentsPath = ([paths count] > 0) ? [paths objectAtIndex:0] : nil;
 		NSString *bookPath = [documentsPath stringByAppendingString:@"/book"];
@@ -673,6 +690,8 @@
 		NSLog(@"Book successfully unzipped. Removing .hpub file");
 		[[NSFileManager defaultManager] removeItemAtPath:targetPath error:NULL];
 	}
+	
+	[feedbackAlert dismissWithClickedButtonIndex:feedbackAlert.cancelButtonIndex animated:YES];
 }
 
 // ****** SYSTEM

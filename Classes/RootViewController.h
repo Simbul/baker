@@ -62,6 +62,8 @@
 	
 	NSString *URLDownload;
 	Downloader *downloader;
+	
+	UIAlertView *feedbackAlert;
 }
 
 @property (nonatomic, retain) NSArray *pages;

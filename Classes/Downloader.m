@@ -16,11 +16,10 @@
 	
 	[super init];
 	
-	notificationName = observerName;
-	
+	notificationName = observerName;	
 	requestSummary = [[NSMutableDictionary alloc] init];
 	receivedData = [[NSMutableData alloc] init];
-	
+		
 	return self;
 }
 
@@ -28,8 +27,8 @@
 	
 	NSLog(@"HTTP Request to %@", urlAddress);
 	
-	urlAddress = [urlAddress stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-	NSURL *url = [NSURL URLWithString:urlAddress];
+	NSString *urlString = [urlAddress stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];	
+	NSURL *url = [NSURL URLWithString:urlString];
 		
 	NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:url];
 	[request setTimeoutInterval:30.0];
@@ -68,6 +67,29 @@
 		} else {
 			
 			expectedData = [response expectedContentLength];
+			fakeProgress = 0.1;
+			
+			progressWheel = [[UIActivityIndicatorView alloc] initWithFrame:CGRectMake(124,45,37,37)];
+			progressWheel.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhiteLarge;
+			[progressWheel startAnimating];
+			
+			progressBar = [[UIProgressView alloc] initWithFrame:CGRectMake(30,95,225,9)];
+			progressBar.progressViewStyle = UIProgressViewStyleBar;
+			progressBar.progress = 0;
+			
+			progressAlert = [[UIAlertView alloc] initWithTitle:@"Downloading..."
+													   message:@"\n\n\n"
+													  delegate:self
+											 cancelButtonTitle:@"Cancel"
+											 otherButtonTitles:nil];
+			
+			[progressAlert addSubview:progressWheel];
+			[progressAlert addSubview:progressBar];
+			[progressAlert show];
+			
+			[progressWheel release];
+			[progressBar release];
+			[progressAlert release];
 		}
 	}
 }
@@ -80,7 +102,8 @@
     NSLog(@"Connection failed! Error - %@", [error localizedDescription]);
 	[requestSummary setObject:[error localizedDescription] forKey:@"error"];
 	
-	[[NSNotificationCenter defaultCenter] postNotificationName:notificationName object:requestSummary];
+	[progressAlert dismissWithClickedButtonIndex:progressAlert.cancelButtonIndex animated:YES];
+	[self performSelector:@selector(postNotification) withObject:nil afterDelay:0.1];
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
@@ -88,6 +111,18 @@
     // Append received data to receivedData.
 	NSLog(@"Connection received %d bytes of data", [data length]);
 	[receivedData appendData:data];
+	
+	if (expectedData > -1) {
+		
+		long long receivedDataLength = (long long)[receivedData length];
+		float progress = (float)receivedDataLength/(float)expectedData;
+		progressBar.progress = progress;
+	
+	} else {
+		
+		progressBar.progress = progressBar.progress + fakeProgress;
+		fakeProgress = fakeProgress/2;
+	}
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
@@ -98,8 +133,20 @@
     NSLog(@"Succeeded! Received %d bytes of data",[receivedData length]);
 	[requestSummary setObject:receivedData forKey:@"data"];
 	
-	[[NSNotificationCenter defaultCenter] postNotificationName:notificationName object:requestSummary];
+	[progressAlert dismissWithClickedButtonIndex:progressAlert.cancelButtonIndex animated:YES];
+	[self performSelector:@selector(postNotification) withObject:nil afterDelay:0.1];
 }
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+	
+	[self cancelConnection];
+	[self performSelector:@selector(postNotification) withObject:nil afterDelay:0.1];
+}
+
+- (void)postNotification {
+	
+	[[NSNotificationCenter defaultCenter] postNotificationName:notificationName object:requestSummary];
+}	
 
 - (void)cancelConnection {
 	

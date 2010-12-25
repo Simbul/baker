@@ -15,8 +15,13 @@
 	
 	long long expectedData;
 	NSMutableData *receivedData;
+	float fakeProgress;
 	
 	NSURLConnection *connectionRef;
+	
+	UIActivityIndicatorView * progressWheel;
+	UIProgressView *progressBar;
+	UIAlertView *progressAlert;
 }
 
 @property (nonatomic, retain) NSURLConnection *connectionRef;
