@@ -33,7 +33,6 @@
 #import <UIKit/UIKit.h>
 
 @class Downloader;
-@class TapHandler;
 
 @interface RootViewController : UIViewController < UIWebViewDelegate, UIScrollViewDelegate > {
 	
@@ -49,10 +48,10 @@
 	UISwipeGestureRecognizer *swipeLeft;
 	UISwipeGestureRecognizer *swipeRight;
 	
-	TapHandler *rightTapHandler;
-	TapHandler *leftTapHandler;
-	TapHandler *downTapHandler;
-	TapHandler *upTapHandler;
+	CGRect upTapArea;
+	CGRect downTapArea;
+	CGRect leftTapArea;
+	CGRect rightTapArea;
 
 	int totalPages;
 	int currentPageNumber;
@@ -98,7 +97,6 @@
 
 // ****** GESTURES
 //- (void)swipePage:(UISwipeGestureRecognizer *)sender;
-- (void)onTouch:(NSNotification *)notification;
 - (void)userDidSingleTap:(UITouch *)touch;
 - (void)userDidScroll:(UITouch *)touch;
 

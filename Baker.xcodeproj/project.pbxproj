@@ -21,7 +21,6 @@
 		9F6E6B5912AAA0950019EFB6 /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F6E6B5212AAA0950019EFB6 /* unzip.c */; };
 		9F6E6B5A12AAA0950019EFB6 /* zip.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F6E6B5412AAA0950019EFB6 /* zip.c */; };
 		9F6E6B6012AAA1BE0019EFB6 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F6E6B5F12AAA1BE0019EFB6 /* libz.dylib */; };
-		9FE8F60D1247F72000D66E4E /* TapHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FE8F60C1247F72000D66E4E /* TapHandler.m */; };
 		BF2F99401269379900E356EF /* book in Resources */ = {isa = PBXBuildFile; fileRef = BF2F993F1269379900E356EF /* book */; };
 		BFBACF331274CD38009D9595 /* ios-icon-ipad72.png in Resources */ = {isa = PBXBuildFile; fileRef = BFBACF321274CD38009D9595 /* ios-icon-ipad72.png */; };
 		F4EC203812862D4D008E94D1 /* InterceptorWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = F4EC203712862D4D008E94D1 /* InterceptorWindow.m */; };
@@ -54,8 +53,6 @@
 		9F6E6B5412AAA0950019EFB6 /* zip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = zip.c; sourceTree = "<group>"; };
 		9F6E6B5512AAA0950019EFB6 /* zip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = zip.h; sourceTree = "<group>"; };
 		9F6E6B5F12AAA1BE0019EFB6 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = /usr/lib/libz.dylib; sourceTree = "<absolute>"; };
-		9FE8F60B1247F72000D66E4E /* TapHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TapHandler.h; sourceTree = "<group>"; };
-		9FE8F60C1247F72000D66E4E /* TapHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TapHandler.m; sourceTree = "<group>"; };
 		BF2F993F1269379900E356EF /* book */ = {isa = PBXFileReference; lastKnownFileType = folder; path = book; sourceTree = "<group>"; };
 		BFBACF321274CD38009D9595 /* ios-icon-ipad72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ios-icon-ipad72.png"; sourceTree = "<group>"; };
 		F4EC203612862D4D008E94D1 /* InterceptorWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InterceptorWindow.h; sourceTree = "<group>"; };
@@ -84,8 +81,6 @@
 				9F6E6B4A12AAA0950019EFB6 /* SSZipArchive.m */,
 				9F6E6B4B12AAA0950019EFB6 /* SSZipArchive.h */,
 				9F6E6B4C12AAA0950019EFB6 /* minizip */,
-				9FE8F60B1247F72000D66E4E /* TapHandler.h */,
-				9FE8F60C1247F72000D66E4E /* TapHandler.m */,
 				9F4F07F111F8DE8200375A8C /* RootViewController.h */,
 				9F4F07F211F8DE8200375A8C /* RootViewController.m */,
 				1D3623240D0F684500981E51 /* BakerAppDelegate.h */,
@@ -229,7 +224,6 @@
 				1D60589B0D05DD56006BFB54 /* main.m in Sources */,
 				1D3623260D0F684500981E51 /* BakerAppDelegate.m in Sources */,
 				9F4F07F411F8DE8200375A8C /* RootViewController.m in Sources */,
-				9FE8F60D1247F72000D66E4E /* TapHandler.m in Sources */,
 				F4EC203812862D4D008E94D1 /* InterceptorWindow.m in Sources */,
 				9F123763129F133700B7E8C8 /* Downloader.m in Sources */,
 				9F6E6B5612AAA0950019EFB6 /* SSZipArchive.m in Sources */,
