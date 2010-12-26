@@ -34,7 +34,6 @@
 #import "RootViewController.h"
 #import "Downloader.h"
 #import "SSZipArchive.h"
-#import "TapHandler.h"
 
 #define PAGE_HEIGHT 1024
 #define PAGE_WIDTH 768
@@ -112,7 +111,38 @@
 
 - (void)userDidSingleTap:(UITouch *)touch {
 	NSLog(@"User did single tap");
-	[self toggleStatusBar];
+	
+	CGPoint tapPoint = [touch locationInView:currPage];
+	
+	NSLog(@"  .  1 tap [%f, %f]", tapPoint.x, tapPoint.y);
+	
+	// ...and swipe or scroll the page.
+	if (CGRectContainsPoint(upTapArea, tapPoint)) {
+		NSLog(@" /\\ TAP up!");
+		[self goUpInPage:@"1004" animating:YES];
+	} else if (CGRectContainsPoint(downTapArea, tapPoint)) {
+		NSLog(@" \\/ TAP down!");
+		[self goDownInPage:@"1004" animating:YES];
+	} else if (CGRectContainsPoint(leftTapArea, tapPoint) || CGRectContainsPoint(rightTapArea, tapPoint)) {
+		int page = 0;
+		if (CGRectContainsPoint(leftTapArea, tapPoint)) {
+			NSLog(@"<-- TAP left!");
+			page = currentPageNumber-1;
+		} else if (CGRectContainsPoint(rightTapArea, tapPoint)) {
+			NSLog(@"--> TAP right!");
+			page = currentPageNumber+1;
+		}
+		
+		if ([self changePage:page]) {
+			[self hideStatusBar];
+			[scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:YES];
+			[self gotoPageDelayer];
+		}
+	} else {
+		[self toggleStatusBar];
+	}
+
+	
 }
 
 - (void)userDidScroll:(UITouch *)touch {
@@ -146,30 +176,11 @@
 	[super viewDidLoad];
 	[self loadSlot:0 withPage:currentPageNumber];
 	
-	// ****** CORNER TAP HANDLERS
-	upTapHandler = [[TapHandler alloc] initWithFrame:CGRectMake(50,0,668,50)];
-	//upTapHandler.backgroundColor = [UIColor redColor];
-	//upTapHandler.alpha = 0.5;
-	[[self view] addSubview:upTapHandler];
-	[upTapHandler release];
-	
-	downTapHandler = [[TapHandler alloc] initWithFrame:CGRectMake(50,974,668,50)];
-	//downTapHandler.backgroundColor = [UIColor redColor];
-	//downTapHandler.alpha = 0.5;
-	[[self view] addSubview:downTapHandler];
-	[downTapHandler release];
-	
-	leftTapHandler = [[TapHandler alloc] initWithFrame:CGRectMake(0,50,50,924)];
-	//leftTapHandler.backgroundColor = [UIColor redColor];
-	//leftTapHandler.alpha = 0.5;
-	[[self view] addSubview:leftTapHandler];
-	[leftTapHandler release];
-	
-	rightTapHandler = [[TapHandler alloc] initWithFrame:CGRectMake(718,50,50,924)];
-	//rightTapHandler.backgroundColor = [UIColor redColor];
-	//rightTapHandler.alpha = 0.5;
-	[[self view] addSubview:rightTapHandler];
-	[rightTapHandler release];
+	// ****** TAPPABLE AREAS
+	upTapArea = CGRectMake(50, 0, 668, 50);
+	downTapArea = CGRectMake(50,974,668,50);
+	leftTapArea = CGRectMake(0,50,50,924);
+	rightTapArea = CGRectMake(718,50,50,924);
 }
 
 // ****** LOADING
@@ -398,7 +409,7 @@
 		NSString *currPageScrollIndex = [[NSUserDefaults standardUserDefaults] objectForKey:@"lastScrollIndex"];
 		if (currPageScrollIndex != nil) [self goDownInPage:currPageScrollIndex animating:NO];
 		
-		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onTouch:) name:@"onTouch" object:nil];
+		//[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onTouch:) name:@"onTouch" object:nil];
 		
 		//[self loadSlot:+1 withPage:currentPageNumber + 1];
 		//[self loadSlot:-1 withPage:currentPageNumber - 1];
@@ -501,40 +512,6 @@
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
 	// This is called because this controller is the delegate for UIScrollView
 	[self hideStatusBar];
-}
-- (void)onTouch:(NSNotification *)notification {
-	
-	// Get the coordinates of the tap with the currPage as reference...
-	UITouch *tap = (UITouch *)[notification object];
-	NSUInteger tapCount = [tap tapCount];
-	CGPoint tapPoint = [tap locationInView:currPage];
-	
-	NSLog(@"  .  %d tap(s) [%f, %f]", tapCount, tapPoint.x, tapPoint.y);
-	
-	// ...and swipe or scroll the page.
-	if (tapPoint.y < upTapHandler.frame.size.height) {
-		NSLog(@" /\\ TAP up!");
-		[self goUpInPage:@"1004" animating:YES];
-	} else if (tapPoint.y > (downTapHandler.frame.origin.y - 20)) {
-		NSLog(@" \\/ TAP down!");
-		[self goDownInPage:@"1004" animating:YES];
-	} else {		
-		
-		int page = 0;
-		if (tapPoint.x < leftTapHandler.frame.size.width) {
-			NSLog(@"<-- TAP left!");
-			page = currentPageNumber-1;
-		} else if (tapPoint.x > rightTapHandler.frame.origin.x) {
-			NSLog(@"--> TAP right!");
-			page = currentPageNumber+1;
-		}
-		
-		if ([self changePage:page]) {
-			[self hideStatusBar];
-			[scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:YES];
-			[self gotoPageDelayer];
-		}
-	}
 }
 
 // ****** PAGE SCROLLING
