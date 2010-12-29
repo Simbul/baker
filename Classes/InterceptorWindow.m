@@ -42,15 +42,6 @@
 	
 	return [super initWithFrame:aRect];
 }
-
-- (void)forwardTap:(UITouch *)touch {
-	[delegate userDidSingleTap:touch];
-}
-
-- (void)forwardScroll:(UITouch *)touch {
-	[delegate userDidScroll:touch];
-}
-
 - (void)sendEvent:(UIEvent *)event {
 	[super sendEvent:event];
 	
@@ -79,6 +70,13 @@
 			}
 		}
 	}
+}
+
+- (void)forwardTap:(UITouch *)touch {
+	[delegate userDidSingleTap:touch];
+}
+- (void)forwardScroll:(UITouch *)touch {
+	[delegate userDidScroll:touch];
 }
 
 - (void)dealloc {

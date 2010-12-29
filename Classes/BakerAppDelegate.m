@@ -46,7 +46,6 @@
 // IF "(BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions"
 // THEN "(BOOL) application:(UIApplication*)application handleOpenURL:(NSURL*)url" is never called
 // check http://stackoverflow.com/questions/3612460/lauching-app-with-url-via-uiapplicationdelegates-handleopenurl-working-under-i for hints
-
 //- (void)applicationDidFinishLaunching:(UIApplication *)application {    
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 	
@@ -74,6 +73,7 @@
 	
 	return YES;
 }
+
 - (BOOL)application:(UIApplication*)application handleOpenURL:(NSURL*)url {
 	
 	NSString *URLString = [url absoluteString];

@@ -22,7 +22,6 @@
 		
 	return self;
 }
-
 - (void)makeHTTPRequest:(NSString *)urlAddress {
 	
 	NSLog(@"HTTP Request to %@", urlAddress);
@@ -69,31 +68,10 @@
 			expectedData = [response expectedContentLength];
 			fakeProgress = 0.1;
 			
-			progressWheel = [[UIActivityIndicatorView alloc] initWithFrame:CGRectMake(124,45,37,37)];
-			progressWheel.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhiteLarge;
-			[progressWheel startAnimating];
-			
-			progressBar = [[UIProgressView alloc] initWithFrame:CGRectMake(30,95,225,9)];
-			progressBar.progressViewStyle = UIProgressViewStyleBar;
-			progressBar.progress = 0;
-			
-			progressAlert = [[UIAlertView alloc] initWithTitle:@"Downloading..."
-													   message:@"\n\n\n"
-													  delegate:self
-											 cancelButtonTitle:@"Cancel"
-											 otherButtonTitles:nil];
-			
-			[progressAlert addSubview:progressWheel];
-			[progressAlert addSubview:progressBar];
-			[progressAlert show];
-			
-			[progressWheel release];
-			[progressBar release];
-			[progressAlert release];
+			[self initProgress];
 		}
 	}
 }
-
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
 	
     // Connection error, inform the user
@@ -105,7 +83,6 @@
 	[progressAlert dismissWithClickedButtonIndex:progressAlert.cancelButtonIndex animated:YES];
 	[self performSelector:@selector(postNotification) withObject:nil afterDelay:0.1];
 }
-
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
 	
     // Append received data to receivedData.
@@ -124,7 +101,6 @@
 		fakeProgress = fakeProgress/2;
 	}
 }
-
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
 	
     // Connection finished, do something with the data
@@ -137,17 +113,39 @@
 	[self performSelector:@selector(postNotification) withObject:nil afterDelay:0.1];
 }
 
+- (void)initProgress {
+	
+	progressWheel = [[UIActivityIndicatorView alloc] initWithFrame:CGRectMake(124,45,37,37)];
+	progressWheel.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhiteLarge;
+	[progressWheel startAnimating];
+	
+	progressBar = [[UIProgressView alloc] initWithFrame:CGRectMake(30,95,225,9)];
+	progressBar.progressViewStyle = UIProgressViewStyleBar;
+	progressBar.progress = 0;
+	
+	progressAlert = [[UIAlertView alloc] initWithTitle:@"Downloading..."
+											   message:@"\n\n\n"
+											  delegate:self
+									 cancelButtonTitle:@"Cancel"
+									 otherButtonTitles:nil];
+	
+	[progressAlert addSubview:progressWheel];
+	[progressAlert addSubview:progressBar];
+	[progressAlert show];
+	
+	[progressWheel release];
+	[progressBar release];
+	[progressAlert release];
+}
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
 	
 	[self cancelConnection];
 	[self performSelector:@selector(postNotification) withObject:nil afterDelay:0.1];
 }
-
 - (void)postNotification {
 	
 	[[NSNotificationCenter defaultCenter] postNotificationName:notificationName object:requestSummary];
-}	
-
+}
 - (void)cancelConnection {
 	
 	[connectionRef cancel];

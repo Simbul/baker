@@ -45,9 +45,6 @@
 	UIWebView *currPage;
 	UIWebView *nextPage;
 	
-	UISwipeGestureRecognizer *swipeLeft;
-	UISwipeGestureRecognizer *swipeRight;
-	
 	CGRect upTapArea;
 	CGRect downTapArea;
 	CGRect leftTapArea;
@@ -75,9 +72,6 @@
 @property (nonatomic, retain) UIWebView *currPage;
 @property (nonatomic, retain) UIWebView *nextPage;
 
-@property (nonatomic, retain) UISwipeGestureRecognizer *swipeLeft;
-@property (nonatomic, retain) UISwipeGestureRecognizer *swipeRight;
-
 @property int currentPageNumber;
 
 @property (nonatomic, retain) NSString *URLDownload;
@@ -98,11 +92,10 @@
 - (void)webView:(UIWebView *)webView hidden:(BOOL)status animating:(BOOL)animating;
 
 // ****** GESTURES
-//- (void)swipePage:(UISwipeGestureRecognizer *)sender;
 - (void)userDidSingleTap:(UITouch *)touch;
 - (void)userDidScroll:(UITouch *)touch;
 
-// ****** SCROLLING
+// ****** PAGE SCROLLING
 - (void)goUpInPage:(NSString *)offset animating:(BOOL)animating;
 - (void)goDownInPage:(NSString *)offset animating:(BOOL)animating;
 - (void)scrollPage:(UIWebView *)webView to:(NSString *)offset animating:(BOOL)animating;

@@ -28,6 +28,9 @@
 
 - (Downloader *)initDownloader:(NSString *)observerName;
 - (void)makeHTTPRequest:(NSString *)urlAddress;
+
+- (void)initProgress;
+- (void)postNotification;
 - (void)cancelConnection;
 
 @end
