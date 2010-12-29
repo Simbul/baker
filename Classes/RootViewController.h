@@ -76,6 +76,9 @@
 
 @property (nonatomic, retain) NSString *URLDownload;
 
+// ****** INIT
+- (void)initBook:(NSString *)path;
+
 // ****** LOADING
 - (BOOL)changePage:(int)page;
 - (void)gotoPageDelayer;

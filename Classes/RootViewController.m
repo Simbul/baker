@@ -53,7 +53,7 @@
 
 @synthesize URLDownload;
 
-// ****** CONFIGURATION
+// ****** INIT
 - (id)init {
 	
 	// Set up listener to download notification from application delegate
@@ -62,48 +62,93 @@
 	discardNextStatusBarToggle = NO;
 	[self hideStatusBar];
 	
-	// Count pages
-	self.pages = [[NSBundle mainBundle] pathsForResourcesOfType:@"html" inDirectory:@"book"];
-	totalPages = [pages count];
-	NSLog(@"Pages in this book: %d", totalPages);
-	
-	// Check if there is a saved starting page
-	NSString *currPageToLoad = [[NSUserDefaults standardUserDefaults] objectForKey:@"lastPageViewed"];
-	if (currPageToLoad != nil)
-		currentPageNumber = [currPageToLoad intValue];
-	else
-		currentPageNumber = 1;
-	
-	currentPageFirstLoading = YES;
-	currentPageIsDelayingLoading = YES;
-	
-	// ****** VIEW
+	// ****** SCROLLVIEW INIT
 	scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, PAGE_WIDTH, PAGE_HEIGHT)];
 	scrollView.showsHorizontalScrollIndicator = YES;
 	scrollView.showsVerticalScrollIndicator = NO;
 	scrollView.delaysContentTouches = NO;
 	scrollView.pagingEnabled = YES;
-	scrollView.contentSize = CGSizeMake(PAGE_WIDTH * totalPages, PAGE_HEIGHT);
+	scrollView.delegate = self;
 	
+	// ****** PREV WEBVIEW INIT
+	//prevPage = [[UIWebView alloc] init];
+	//prevPage.delegate = self;
+	
+	// ****** CURR WEBVIEW INIT
+	currPage = [[UIWebView alloc] init];
+	currPage.delegate = self;
+	
+	// ****** NEXT WEBVIEW INIT
+	//nextPage = [[UIWebView alloc] init];
+	//nextPage.delegate = self;
+	
+	currentPageFirstLoading = YES;
+	currentPageIsDelayingLoading = YES;
+	
+	[self initBook:@"book"];
+	[[self view] addSubview:scrollView];
+	
+    return self;
+}
+- (void)initBook:(NSString *)path {
+	
+	for (id subview in scrollView.subviews)
+		[subview removeFromSuperview];
+	
+	// Count pages
+	self.pages = [[NSBundle mainBundle] pathsForResourcesOfType:@"html" inDirectory:path];
+	totalPages = [pages count];
+	NSLog(@"Pages in this book: %d", totalPages);
+	
+	scrollView.contentSize = CGSizeMake(PAGE_WIDTH * totalPages, PAGE_HEIGHT);
 	[self initPageNumbersForPages:totalPages];
 	
-	//self.prevPage = [[UIWebView alloc] initWithFrame:[self frameForPage:currentPageNumber - 1]];
-	self.currPage = [[UIWebView alloc] initWithFrame:[self frameForPage:currentPageNumber]];
-	//self.nextPage = [[UIWebView alloc] initWithFrame:[self frameForPage:currentPageNumber + 1]];
+	// Check if there is a saved starting page
+	NSString *currPageToLoad = [[NSUserDefaults standardUserDefaults] objectForKey:@"lastPageViewed"];
+	if (currentPageFirstLoading && currPageToLoad != nil)
+		currentPageNumber = [currPageToLoad intValue];
+	else
+		currentPageNumber = 1;
 	
-	//self.prevPage.delegate = self;
-	self.currPage.delegate = self;
-	//self.nextPage.delegate = self;
-	self.scrollView.delegate = self;
+	//prevPage.frame = [self frameForPage:currentPageNumber-1];
+	currPage.frame = [self frameForPage:currentPageNumber];
+	//nextPage.frame = [self frameForPage:currentPageNumber+1];
 	
-	//[scrollView addSubview:self.prevPage];
-	[scrollView addSubview:self.currPage];
-	//[scrollView addSubview:self.nextPage];
+	//[scrollView addSubview:prevPage];
+	[scrollView addSubview:currPage];
+	//[scrollView addSubview:nextPage];
 	
 	[scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:NO];
-	[[self view] addSubview:scrollView];
-	[[self view] sendSubviewToBack:scrollView]; // might not be required, test
-    return self;
+}
+- (void)initPageNumbersForPages:(int)count {
+	pageSpinners = [[NSMutableArray alloc] initWithCapacity:count];
+	
+	for (int i = 0; i < count; i++) {
+		// ****** Spinners
+		UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+		
+		CGRect frame = spinner.frame;
+		frame.origin.x = PAGE_WIDTH * i + (PAGE_WIDTH + frame.size.width) / 2 - 40;
+		frame.origin.y = (PAGE_HEIGHT + frame.size.height) / 2;
+		spinner.frame = frame;
+		
+		[pageSpinners addObject:spinner];
+		[[self scrollView] addSubview:spinner];
+		[spinner release];
+		
+		// ****** Numbers
+		UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(PAGE_WIDTH * i + (PAGE_WIDTH) / 2, PAGE_HEIGHT / 2 - 6, 100, 50)];
+		label.textColor = [UIColor colorWithRed:0.0 green:0.0 blue:0.0 alpha:0.2];
+		NSString *labelText = [[NSString alloc] initWithFormat:@"%d", i + 1];
+		label.font = [UIFont fontWithName:@"Helvetica" size:40.0];
+		label.textAlignment = UITextAlignmentLeft;
+		label.text = labelText;
+		//label.backgroundColor = [UIColor redColor];
+		[labelText release];
+		
+		[[self scrollView] addSubview:label];
+		[label release];
+	}
 }
 - (void)viewDidLoad {
     
@@ -189,36 +234,6 @@
 			[self loadSlot:-1 withPage:currentPageNumber - 1];
 		} /**/
 	}	
-}
-- (void)initPageNumbersForPages:(int)count {
-	pageSpinners = [[NSMutableArray alloc] initWithCapacity:count];
-	
-	for (int i = 0; i < count; i++) {
-		// ****** Spinners
-		UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-		
-		CGRect frame = spinner.frame;
-		frame.origin.x = PAGE_WIDTH * i + (PAGE_WIDTH + frame.size.width) / 2 - 40;
-		frame.origin.y = (PAGE_HEIGHT + frame.size.height) / 2;
-		spinner.frame = frame;
-		
-		[pageSpinners addObject:spinner];
-		[[self scrollView] addSubview:spinner];
-		[spinner release];
-		
-		// ****** Numbers
-		UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(PAGE_WIDTH * i + (PAGE_WIDTH) / 2, PAGE_HEIGHT / 2 - 6, 100, 50)];
-		label.textColor = [UIColor colorWithRed:0.0 green:0.0 blue:0.0 alpha:0.2];
-		NSString *labelText = [[NSString alloc] initWithFormat:@"%d", i + 1];
-		label.font = [UIFont fontWithName:@"Helvetica" size:40.0];
-		label.textAlignment = UITextAlignmentLeft;
-		label.text = labelText;
-		//label.backgroundColor = [UIColor redColor];
-		[labelText release];
-		
-		[[self scrollView] addSubview:label];
-		[label release];
-	}
 }
 - (BOOL)loadSlot:(int)slot withPage:(int)page {
 	
