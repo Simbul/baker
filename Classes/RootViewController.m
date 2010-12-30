@@ -84,11 +84,26 @@
 	
 	currentPageFirstLoading = YES;
 	currentPageIsDelayingLoading = YES;
-	
-	[self initBook:@"book"];
+		
 	[[self view] addSubview:scrollView];
 	
-    return self;
+	NSString *bundleBook = [[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"book"];
+	if ([[NSFileManager defaultManager] fileExistsAtPath:bundleBook]) {
+		[self initBook:bundleBook];	
+	} else {
+		NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+		NSString *documentsPath = ([paths count] > 0) ? [paths objectAtIndex:0] : nil;
+		NSString *documentsBook = [documentsPath stringByAppendingPathComponent:@"book"];
+		
+		if ([[NSFileManager defaultManager] fileExistsAtPath:documentsBook]) {
+			[self initBook:documentsBook];
+		} /* else {
+		   Do something if there are no books available	   
+		} /**/
+	}
+	
+	return self;
+
 }
 - (void)initBook:(NSString *)path {
 	
@@ -96,29 +111,47 @@
 		[subview removeFromSuperview];
 	
 	// Count pages
-	self.pages = [[NSBundle mainBundle] pathsForResourcesOfType:@"html" inDirectory:path];
+	if (self.pages != nil)
+		[self.pages removeAllObjects];
+	else
+		self.pages = [NSMutableArray array];
+	
+	NSDirectoryEnumerator *fileEnumerator = [[NSFileManager defaultManager] enumeratorAtPath:path];
+	NSString *fileName = nil;	
+	while (fileName = [fileEnumerator nextObject]) {
+		if ([[fileName pathExtension] isEqualToString: @"html"])
+			[self.pages addObject:[path stringByAppendingPathComponent:fileName]];
+	}
+	
 	totalPages = [pages count];
 	NSLog(@"Pages in this book: %d", totalPages);
 	
-	scrollView.contentSize = CGSizeMake(PAGE_WIDTH * totalPages, PAGE_HEIGHT);
-	[self initPageNumbersForPages:totalPages];
-	
-	// Check if there is a saved starting page
-	NSString *currPageToLoad = [[NSUserDefaults standardUserDefaults] objectForKey:@"lastPageViewed"];
-	if (currentPageFirstLoading && currPageToLoad != nil)
-		currentPageNumber = [currPageToLoad intValue];
-	else
-		currentPageNumber = 1;
-	
-	//prevPage.frame = [self frameForPage:currentPageNumber-1];
-	currPage.frame = [self frameForPage:currentPageNumber];
-	//nextPage.frame = [self frameForPage:currentPageNumber+1];
-	
-	//[scrollView addSubview:prevPage];
-	[scrollView addSubview:currPage];
-	//[scrollView addSubview:nextPage];
-	
-	[scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:NO];
+	if (totalPages > 0) {	
+		
+		scrollView.contentSize = CGSizeMake(PAGE_WIDTH * totalPages, PAGE_HEIGHT);
+		[self initPageNumbersForPages:totalPages];
+		
+		// Check if there is a saved starting page
+		NSString *currPageToLoad = [[NSUserDefaults standardUserDefaults] objectForKey:@"lastPageViewed"];
+		if (currentPageFirstLoading && currPageToLoad != nil)
+			currentPageNumber = [currPageToLoad intValue];
+		else
+			currentPageNumber = 1;
+		
+		//prevPage.frame = [self frameForPage:currentPageNumber-1];
+		currPage.frame = [self frameForPage:currentPageNumber];
+		//nextPage.frame = [self frameForPage:currentPageNumber+1];
+		
+		//[scrollView addSubview:prevPage];
+		[scrollView addSubview:currPage];
+		//[scrollView addSubview:nextPage];
+		
+		[scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:NO];
+		[self loadSlot:0 withPage:currentPageNumber];
+		
+	} /*else {
+	   Do something if the book dir has no html file to show (is it possible?)
+	} /**/
 }
 - (void)initPageNumbersForPages:(int)count {
 	pageSpinners = [[NSMutableArray alloc] initWithCapacity:count];
@@ -645,21 +678,21 @@
 				
 		NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
 		NSString *documentsPath = ([paths count] > 0) ? [paths objectAtIndex:0] : nil;
-		NSString *bookPath = [documentsPath stringByAppendingString:@"/book"];
+		NSString *documentsBook = [documentsPath stringByAppendingPathComponent:@"book"];
 		
-		NSLog(@"Book destination path: %@", bookPath);
+		NSLog(@"Book destination path: %@", documentsBook);
 		
 		// If a "book" directory already exists remove it (quick solution, improvement needed) 
-		if ([[NSFileManager defaultManager] fileExistsAtPath:bookPath])
-			[[NSFileManager defaultManager] removeItemAtPath:bookPath error:NULL];
+		if ([[NSFileManager defaultManager] fileExistsAtPath:documentsBook])
+			[[NSFileManager defaultManager] removeItemAtPath:documentsBook error:NULL];
 		
-		[SSZipArchive unzipFileAtPath:targetPath toDestination:bookPath];
+		[SSZipArchive unzipFileAtPath:targetPath toDestination:documentsBook];
 		
 		NSLog(@"Book successfully unzipped. Removing .hpub file");
-		[[NSFileManager defaultManager] removeItemAtPath:targetPath error:NULL];
+		[[NSFileManager defaultManager] removeItemAtPath:targetPath error:NULL];		
 	}
 	
-	[feedbackAlert dismissWithClickedButtonIndex:feedbackAlert.cancelButtonIndex animated:YES];
+	[feedbackAlert dismissWithClickedButtonIndex:feedbackAlert.cancelButtonIndex animated:YES];	
 }
 
 // ****** SYSTEM

@@ -36,7 +36,7 @@
 
 @interface RootViewController : UIViewController < UIWebViewDelegate, UIScrollViewDelegate > {
 	
-	NSArray *pages;
+	NSMutableArray *pages;
 	
 	UIScrollView *scrollView;
 	NSMutableArray *pageSpinners;
@@ -63,7 +63,7 @@
 	UIAlertView *feedbackAlert;
 }
 
-@property (nonatomic, retain) NSArray *pages;
+@property (nonatomic, retain) NSMutableArray *pages;
 
 @property (nonatomic, retain) UIScrollView *scrollView;
 @property (nonatomic, retain) NSMutableArray *pageSpinners;
