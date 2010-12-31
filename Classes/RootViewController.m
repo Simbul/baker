@@ -98,7 +98,7 @@
 		if ([[NSFileManager defaultManager] fileExistsAtPath:documentsBook]) {
 			[self initBook:documentsBook];
 		} /* else {
-		   Do something if there are no books available	   
+		   Do something if there are no books available to show...   
 		} /**/
 	}
 	
@@ -150,7 +150,7 @@
 		[self loadSlot:0 withPage:currentPageNumber];
 		
 	} /*else {
-	   Do something if the book dir has no html file to show (is it possible?)
+	   Do something if the book dir has no html file to show...
 	} /**/
 }
 - (void)initPageNumbersForPages:(int)count {
@@ -689,10 +689,15 @@
 		[SSZipArchive unzipFileAtPath:targetPath toDestination:documentsBook];
 		
 		NSLog(@"Book successfully unzipped. Removing .hpub file");
-		[[NSFileManager defaultManager] removeItemAtPath:targetPath error:NULL];		
-	}
+		[[NSFileManager defaultManager] removeItemAtPath:targetPath error:NULL];
+		
+		currentPageIsDelayingLoading = YES;
+		[self initBook:documentsBook];
+	} /* else {
+	   Do something if it was not possible to write the book file on the iPhone/iPad file system...
+	} /**/
 	
-	[feedbackAlert dismissWithClickedButtonIndex:feedbackAlert.cancelButtonIndex animated:YES];	
+	[feedbackAlert dismissWithClickedButtonIndex:feedbackAlert.cancelButtonIndex animated:YES];
 }
 
 // ****** SYSTEM
