@@ -527,7 +527,7 @@
 			[self gotoPageDelayer];
 		}
 	} else {
-		[self toggleStatusBar];
+		[self performSelector:@selector(toggleStatusBar) withObject:nil afterDelay:0.5];
 	}
 }
 - (void)userDidScroll:(UITouch *)touch {

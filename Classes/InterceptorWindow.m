@@ -65,7 +65,7 @@
 					// Touch was on the target view (or one of its descendants)
 					// and a single tap has just been completed
 					NSLog(@"Single Tap");
-					[self performSelector:@selector(forwardTap:) withObject:touch afterDelay:0.3];
+					[self performSelector:@selector(forwardTap:) withObject:touch];
 				}
 			}
 		}
