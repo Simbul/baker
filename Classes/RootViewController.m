@@ -605,11 +605,11 @@
 	self.URLDownload = (NSString *)[notification object];
 	NSLog(@"Download file %@", URLDownload);
 	
-	feedbackAlert = [[UIAlertView alloc] initWithTitle:@"New Book Detected"
+	feedbackAlert = [[UIAlertView alloc] initWithTitle:@""
 											   message:[NSString stringWithFormat:@"Do you want to download %@?", URLDownload]
 											  delegate:self
 									 cancelButtonTitle:@"Cancel"
-									 otherButtonTitles:@"Continue", nil];
+									 otherButtonTitles:@"Open book", nil];
 	[feedbackAlert show];
 	[feedbackAlert release];
 }
@@ -634,8 +634,9 @@
 	if ([requestSummary objectForKey:@"error"] != nil) {
 		
 		NSLog(@"Error while downloading data");
-		NSString *feedbackMessage = [NSString stringWithFormat:@"Connection failed, error:\n\"%@\".",[requestSummary objectForKey:@"error"]];
-		feedbackAlert = [[UIAlertView alloc] initWithTitle:@"HTTP Error"
+		//NSString *feedbackMessage = [NSString stringWithFormat:@"Connection failed, error:\n\"%@\".",[requestSummary objectForKey:@"error"]];
+		NSString *feedbackMessage = [NSString stringWithFormat:@"There was a problem downloading the book."];
+		feedbackAlert = [[UIAlertView alloc] initWithTitle:@"Whoops!"
 												   message:feedbackMessage
 												  delegate:self
 										 cancelButtonTitle:@"Cancel"
