@@ -30,9 +30,7 @@
 			<key>CFBundleURLName</key>
 			<string>com.baker</string>
 			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>book</string>
-			</array>
+			<array/>
 		</dict>
 	</array>
 	<key>UISupportedInterfaceOrientations</key>
