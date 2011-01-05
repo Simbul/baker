@@ -67,6 +67,12 @@
 					NSLog(@"Single Tap");
 					[self performSelector:@selector(forwardTap:) withObject:touch];
 				}
+			} else if (touch.tapCount > 1) {
+				if (touch.phase == UITouchPhaseEnded && !scrolling) {
+					// Touch is not the first of multiple subsequent touches
+					NSLog(@"Multi Tap");
+					[self performSelector:@selector(forwardTap:) withObject:touch];
+				}
 			}
 		}
 	}

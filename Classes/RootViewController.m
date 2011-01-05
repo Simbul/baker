@@ -63,6 +63,7 @@
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(downloadBook:) name:@"downloadNotification" object:nil];
 	
 	discardNextStatusBarToggle = NO;
+	stackedScrollingAnimations = 0;
 	[self hideStatusBar];
 	
 	// ****** SCROLLVIEW INIT
@@ -373,6 +374,12 @@
 		[self gotoPageDelayer];
 	}
 }
+- (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView {
+	stackedScrollingAnimations--;
+	if (stackedScrollingAnimations == 0) {
+		self.scrollView.scrollEnabled = YES;
+	}
+}
 
 // ****** WEBVIEW
 - (void)webViewDidStartLoad:(UIWebView *)webView {
@@ -500,7 +507,7 @@
 - (void)userDidSingleTap:(UITouch *)touch {
 	NSLog(@"User did single tap");
 	
-	CGPoint tapPoint = [touch locationInView:currPage];
+	CGPoint tapPoint = [touch locationInView:self.view];
 	
 	NSLog(@"  .  1 tap [%f, %f]", tapPoint.x, tapPoint.y);
 	
@@ -523,6 +530,9 @@
 		
 		if ([self changePage:page]) {
 			[self hideStatusBar];
+			// While we are tapping, we don't want scrolling event to get in the way
+			scrollView.scrollEnabled = NO;
+			stackedScrollingAnimations++;
 			[scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:YES];
 			[self gotoPageDelayer];
 		}

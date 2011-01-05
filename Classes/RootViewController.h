@@ -56,6 +56,7 @@
 	int totalPages;
 	int currentPageNumber;
 	int currentPageHeight;
+	int stackedScrollingAnimations;
 	BOOL currentPageFirstLoading;
 	BOOL currentPageIsDelayingLoading;
 	BOOL discardNextStatusBarToggle;
