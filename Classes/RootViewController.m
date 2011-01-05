@@ -40,6 +40,9 @@
 
 @implementation RootViewController
 
+@synthesize documentsBookPath;
+@synthesize bundleBookPath;
+
 @synthesize pages;
 
 @synthesize scrollView;
@@ -90,9 +93,9 @@
 	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
 	NSString *documentsPath = ([paths count] > 0) ? [paths objectAtIndex:0] : nil;
 	
-	documentsBookPath = [documentsPath stringByAppendingPathComponent:@"book"];
-	bundleBookPath = [[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"book"];
-	
+	self.documentsBookPath = [documentsPath stringByAppendingPathComponent:@"book"];
+	self.bundleBookPath = [[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"book"];
+		
 	if ([[NSFileManager defaultManager] fileExistsAtPath:documentsBookPath]) {
 		[self initBook:documentsBookPath];
 	} else {
@@ -106,7 +109,7 @@
 	return self;
 }
 - (void)initBook:(NSString *)path {
-	
+		
 	for (id subview in scrollView.subviews)
 		[subview removeFromSuperview];
 	
@@ -122,7 +125,7 @@
 		if ([[fileName pathExtension] isEqualToString: @"html"])
 			[self.pages addObject:[path stringByAppendingPathComponent:fileName]];
 	}
-	
+		
 	totalPages = [pages count];
 	NSLog(@"Pages in this book: %d", totalPages);
 	
@@ -443,14 +446,12 @@
 			return NO;
 		
 		NSString *URLScheme = [url scheme];
+		NSArray *URLSections = [URLString componentsSeparatedByString:@"://"];
 		
 		if ([URLScheme isEqualToString:@"file"]) {
-			
-			NSString *file = [URLString lastPathComponent];
-			
-			NSLog(@"File number: %@", [file substringToIndex:[file length]-5]);
-			int page = [[file substringToIndex:[file length]-5] intValue];
-			
+		
+			NSString *file = [[URLSections objectAtIndex:1] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];			
+			int page = (int)[pages indexOfObject:file]+1;
 			if ([self changePage:page]) {
 				[scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:YES];
 				[self gotoPageDelayer];
@@ -458,8 +459,7 @@
 			
 		} else if ([URLScheme isEqualToString:@"book"]) {
 			
-			NSArray *URLSections = [URLString componentsSeparatedByCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@":"]];
-			self.URLDownload = [@"http:" stringByAppendingString:[URLSections objectAtIndex:1]];
+			self.URLDownload = [@"http://" stringByAppendingString:[URLSections objectAtIndex:1]];
 			[self downloadBook:nil];
 			
 		} else {
@@ -683,27 +683,29 @@
 	}
 }
 - (void)manageDownloadData:(NSData *)data {
-		
-	NSArray *URLSections = [URLDownload componentsSeparatedByCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"/"]];
+			
+	NSArray *URLSections = [URLDownload pathComponents];
 	NSString *targetPath = [NSTemporaryDirectory() stringByAppendingString:[URLSections lastObject]];
-	
+		
 	[data writeToFile:targetPath atomically:YES];
 			
 	if ([[NSFileManager defaultManager] fileExistsAtPath:targetPath]) {
 		NSLog(@"File create successfully! Path: %@", targetPath);
-		NSLog(@"Book destination path: %@", documentsBookPath);
+		
+		NSString *destinationPath = self.documentsBookPath;
+		NSLog(@"Book destination path: %@", destinationPath);
 		
 		// If a "book" directory already exists remove it (quick solution, improvement needed) 
-		if ([[NSFileManager defaultManager] fileExistsAtPath:documentsBookPath])
-			[[NSFileManager defaultManager] removeItemAtPath:documentsBookPath error:NULL];
+		if ([[NSFileManager defaultManager] fileExistsAtPath:destinationPath])
+			[[NSFileManager defaultManager] removeItemAtPath:destinationPath error:NULL];
 		
-		[SSZipArchive unzipFileAtPath:targetPath toDestination:documentsBookPath];
+		[SSZipArchive unzipFileAtPath:targetPath toDestination:destinationPath];
 		
 		NSLog(@"Book successfully unzipped. Removing .hpub file");
 		[[NSFileManager defaultManager] removeItemAtPath:targetPath error:NULL];
 		
 		currentPageIsDelayingLoading = YES;
-		[self initBook:documentsBookPath];
+		[self initBook:destinationPath];
 	} /* else {
 	   Do something if it was not possible to write the book file on the iPhone/iPad file system...
 	} /**/
