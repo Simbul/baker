@@ -119,10 +119,9 @@
 	else
 		self.pages = [NSMutableArray array];
 	
-	NSDirectoryEnumerator *fileEnumerator = [[NSFileManager defaultManager] enumeratorAtPath:path];
-	NSString *fileName = nil;	
-	while (fileName = [fileEnumerator nextObject]) {
-		if ([[fileName pathExtension] isEqualToString: @"html"])
+	NSArray *dirContent = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:path error:nil];
+	for (NSString *fileName in dirContent) {
+		if ([[fileName pathExtension] isEqualToString:@"html"])
 			[self.pages addObject:[path stringByAppendingPathComponent:fileName]];
 	}
 		
