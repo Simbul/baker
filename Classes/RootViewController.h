@@ -36,6 +36,9 @@
 
 @interface RootViewController : UIViewController < UIWebViewDelegate, UIScrollViewDelegate > {
 	
+	NSString *documentsBookPath;
+	NSString *bundleBookPath;
+	
 	NSMutableArray *pages;
 	
 	UIScrollView *scrollView;

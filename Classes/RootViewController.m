@@ -87,23 +87,23 @@
 		
 	[[self view] addSubview:scrollView];
 	
-	NSString *bundleBook = [[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"book"];
-	if ([[NSFileManager defaultManager] fileExistsAtPath:bundleBook]) {
-		[self initBook:bundleBook];	
+	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+	NSString *documentsPath = ([paths count] > 0) ? [paths objectAtIndex:0] : nil;
+	
+	documentsBookPath = [documentsPath stringByAppendingPathComponent:@"book"];
+	bundleBookPath = [[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"book"];
+	
+	if ([[NSFileManager defaultManager] fileExistsAtPath:documentsBookPath]) {
+		[self initBook:documentsBookPath];
 	} else {
-		NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-		NSString *documentsPath = ([paths count] > 0) ? [paths objectAtIndex:0] : nil;
-		NSString *documentsBook = [documentsPath stringByAppendingPathComponent:@"book"];
-		
-		if ([[NSFileManager defaultManager] fileExistsAtPath:documentsBook]) {
-			[self initBook:documentsBook];
+		if ([[NSFileManager defaultManager] fileExistsAtPath:bundleBookPath]) {
+			[self initBook:bundleBookPath];
 		} /* else {
 		   Do something if there are no books available to show...   
 		} /**/
 	}
 	
 	return self;
-
 }
 - (void)initBook:(NSString *)path {
 	
@@ -691,24 +691,19 @@
 			
 	if ([[NSFileManager defaultManager] fileExistsAtPath:targetPath]) {
 		NSLog(@"File create successfully! Path: %@", targetPath);
-				
-		NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-		NSString *documentsPath = ([paths count] > 0) ? [paths objectAtIndex:0] : nil;
-		NSString *documentsBook = [documentsPath stringByAppendingPathComponent:@"book"];
-		
-		NSLog(@"Book destination path: %@", documentsBook);
+		NSLog(@"Book destination path: %@", documentsBookPath);
 		
 		// If a "book" directory already exists remove it (quick solution, improvement needed) 
-		if ([[NSFileManager defaultManager] fileExistsAtPath:documentsBook])
-			[[NSFileManager defaultManager] removeItemAtPath:documentsBook error:NULL];
+		if ([[NSFileManager defaultManager] fileExistsAtPath:documentsBookPath])
+			[[NSFileManager defaultManager] removeItemAtPath:documentsBookPath error:NULL];
 		
-		[SSZipArchive unzipFileAtPath:targetPath toDestination:documentsBook];
+		[SSZipArchive unzipFileAtPath:targetPath toDestination:documentsBookPath];
 		
 		NSLog(@"Book successfully unzipped. Removing .hpub file");
 		[[NSFileManager defaultManager] removeItemAtPath:targetPath error:NULL];
 		
 		currentPageIsDelayingLoading = YES;
-		[self initBook:documentsBook];
+		[self initBook:documentsBookPath];
 	} /* else {
 	   Do something if it was not possible to write the book file on the iPhone/iPad file system...
 	} /**/
