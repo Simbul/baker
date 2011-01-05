@@ -444,12 +444,13 @@
 		if (!url || !URLString)
 			return NO;
 		
-		NSString *URLScheme = [url scheme];
 		NSArray *URLSections = [URLString componentsSeparatedByString:@"://"];
+		NSString *URLBody = [URLSections objectAtIndex:1];
 		
+		NSString *URLScheme = [url scheme];
 		if ([URLScheme isEqualToString:@"file"]) {
-		
-			NSString *file = [[URLSections objectAtIndex:1] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];			
+			
+			NSString *file = [URLBody stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];			
 			int page = (int)[pages indexOfObject:file]+1;
 			if ([self changePage:page]) {
 				[scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:YES];
@@ -458,9 +459,13 @@
 			
 		} else if ([URLScheme isEqualToString:@"book"]) {
 			
-			self.URLDownload = [@"http://" stringByAppendingString:[URLSections objectAtIndex:1]];
-			[self downloadBook:nil];
-			
+			if ([URLBody isEqualToString:@"default"] && [[NSFileManager defaultManager] fileExistsAtPath:bundleBookPath]) {
+				[self initBook:bundleBookPath];
+			} else {
+				self.URLDownload = [@"http://" stringByAppendingString:URLBody];
+				[self downloadBook:nil];
+			}
+		
 		} else {
 			
 			[[UIApplication sharedApplication] openURL:[request URL]];
