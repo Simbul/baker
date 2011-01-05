@@ -431,16 +431,22 @@
 		return YES;
 		
 	} else {
+		
 		[self hideStatusBarDiscardingToggle:YES];
-		NSLog(@"Current Page IS NOT delaying loading --> handle clicked link");
 		
-		NSLog(@"Current URL: %@", [request URL]);
-		NSLog(@"Current URL Scheme: %@", [[request URL] scheme]);
+		NSURL *url = [request URL]; 
+		NSString *URLString = [url absoluteString];
+		NSLog(@"Current Page IS NOT delaying loading --> handle clicked link: %@", URLString);
 		
-		if ([[[request URL] scheme] isEqualToString:@"file"]) {
+		// STOP IF: url || URLString is nil
+		if (!url || !URLString)
+			return NO;
+		
+		NSString *URLScheme = [url scheme];
+		
+		if ([URLScheme isEqualToString:@"file"]) {
 			
-			NSString *url = [NSString stringWithFormat:@"%@", [request URL]];
-			NSString *file = [url lastPathComponent];
+			NSString *file = [URLString lastPathComponent];
 			
 			NSLog(@"File number: %@", [file substringToIndex:[file length]-5]);
 			int page = [[file substringToIndex:[file length]-5] intValue];
@@ -449,6 +455,13 @@
 				[scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:YES];
 				[self gotoPageDelayer];
 			}
+			
+		} else if ([URLScheme isEqualToString:@"book"]) {
+			
+			NSArray *URLSections = [URLString componentsSeparatedByCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@":"]];
+			self.URLDownload = [@"http:" stringByAppendingString:[URLSections objectAtIndex:1]];
+			[self downloadBook:nil];
+			
 		} else {
 			
 			[[UIApplication sharedApplication] openURL:[request URL]];
@@ -602,7 +615,9 @@
 // ****** DOWNLOAD NEW BOOKS
 - (void)downloadBook:(NSNotification *)notification {
 	
-	self.URLDownload = (NSString *)[notification object];
+	if (notification != nil)
+		self.URLDownload = (NSString *)[notification object];
+	
 	NSLog(@"Download file %@", URLDownload);
 	
 	feedbackAlert = [[UIAlertView alloc] initWithTitle:@""
