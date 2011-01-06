@@ -138,7 +138,7 @@
 		NSString *currPageToLoad = [[NSUserDefaults standardUserDefaults] objectForKey:@"lastPageViewed"];
 		if (currentPageFirstLoading && currPageToLoad != nil)
 			currentPageNumber = [currPageToLoad intValue];
-		else
+		if (currentPageNumber == 0)
 			currentPageNumber = 1;
 		
 		//prevPage.frame = [self frameForPage:currentPageNumber-1];
