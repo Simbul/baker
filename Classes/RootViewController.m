@@ -138,7 +138,7 @@
 		NSString *currPageToLoad = [[NSUserDefaults standardUserDefaults] objectForKey:@"lastPageViewed"];
 		if (currentPageFirstLoading && currPageToLoad != nil)
 			currentPageNumber = [currPageToLoad intValue];
-		if (currentPageNumber == 0)
+		else
 			currentPageNumber = 1;
 		
 		//prevPage.frame = [self frameForPage:currentPageNumber-1];
@@ -451,10 +451,19 @@
 		if (!url || !URLString)
 			return NO;
 		
-		NSArray *URLSections = [URLString componentsSeparatedByString:@"://"];
-		NSString *URLBody = [URLSections objectAtIndex:1];
-		
 		NSString *URLScheme = [url scheme];
+		if (![URLScheme isEqualToString:@"file"] && ![URLScheme isEqualToString:@"book"]) {
+			[[UIApplication sharedApplication] openURL:[request URL]];
+			return NO;
+		}
+		
+		NSArray *URLSections = [URLString componentsSeparatedByString:@"://"];
+		NSString *URLBody = nil;
+		if ([URLSections count] == 2)
+			URLBody = [URLSections objectAtIndex:1];
+		else
+			return NO;
+
 		if ([URLScheme isEqualToString:@"file"]) {
 			
 			NSString *file = [URLBody stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];			
@@ -463,7 +472,7 @@
 				[scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:YES];
 				[self gotoPageDelayer];
 			}
-			
+		
 		} else if ([URLScheme isEqualToString:@"book"]) {
 			
 			if ([URLBody isEqualToString:@"default"] && [[NSFileManager defaultManager] fileExistsAtPath:bundleBookPath]) {
@@ -471,11 +480,7 @@
 			} else {
 				self.URLDownload = [@"http://" stringByAppendingString:URLBody];
 				[self downloadBook:nil];
-			}
-		
-		} else {
-			
-			[[UIApplication sharedApplication] openURL:[request URL]];
+			}		
 		}
 		
 		return NO;

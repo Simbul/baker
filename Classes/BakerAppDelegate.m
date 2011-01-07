@@ -122,14 +122,14 @@
 	// Save last page references
 	NSString *lastPageViewed = [NSString stringWithFormat:@"%d", rootViewController.currentPageNumber];
 	NSString *lastScrollIndex = [rootViewController.currPage stringByEvaluatingJavaScriptFromString:@"window.scrollY;"];
-	
 	NSUserDefaults *userDefs = [NSUserDefaults standardUserDefaults];
+	
 	if (lastPageViewed != 0) {
 		[userDefs setObject:lastPageViewed forKey:@"lastPageViewed"];
 		NSLog(@"Saved last page viewed: %@", lastPageViewed);
 	}
-	[userDefs setObject:lastScrollIndex forKey:@"lastScrollIndex"];
-	
+
+	[userDefs setObject:lastScrollIndex forKey:@"lastScrollIndex"];	
 	NSLog(@"Saved last scroll index: %@", lastScrollIndex);
 }
 
