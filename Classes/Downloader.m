@@ -8,6 +8,9 @@
 
 #import "Downloader.h"
 
+#define DOWNLOAD_FEEDBACK_TITLE @"Downloading..."
+#define DOWNLOAD_FEEDBACK_CANCEL @"Cancel"
+
 @implementation Downloader
 
 @synthesize connectionRef;
@@ -123,10 +126,10 @@
 	progressBar.progressViewStyle = UIProgressViewStyleBar;
 	progressBar.progress = 0;
 	
-	progressAlert = [[UIAlertView alloc] initWithTitle:@"Downloading..."
+	progressAlert = [[UIAlertView alloc] initWithTitle:DOWNLOAD_FEEDBACK_TITLE
 											   message:@"\n\n\n"
 											  delegate:self
-									 cancelButtonTitle:@"Cancel"
+									 cancelButtonTitle:DOWNLOAD_FEEDBACK_CANCEL
 									 otherButtonTitles:nil];
 	
 	[progressAlert addSubview:progressWheel];

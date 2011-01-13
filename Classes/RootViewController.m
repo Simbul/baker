@@ -29,7 +29,6 @@
 //  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //  
 
-
 #import <QuartzCore/QuartzCore.h>
 #import "RootViewController.h"
 #import "Downloader.h"
@@ -37,6 +36,20 @@
 
 #define PAGE_HEIGHT 1024
 #define PAGE_WIDTH 768
+
+#define OPEN_BOOK_MESSAGE @"Do you want to download "
+#define OPEN_BOOK_CONFIRM @"Open book"
+
+#define CLOSE_BOOK_MESSAGE @"Do you want to close this book?"
+#define CLOSE_BOOK_CONFIRM @"Close book"
+
+#define ERROR_FEEDBACK_TITLE @"Whoops!"
+#define ERROR_FEEDBACK_MESSAGE @"There was a problem downloading the book."
+#define ERROR_FEEDBACK_CONFIRM @"Retry"
+
+#define EXTRACT_FEEDBACK_TITLE @"Extracting..."
+
+#define ALERT_FEEDBACK_CANCEL @"Cancel"
 
 @implementation RootViewController
 
@@ -476,7 +489,15 @@
 		} else if ([URLScheme isEqualToString:@"book"]) {
 			
 			if ([URLBody isEqualToString:@"default"] && [[NSFileManager defaultManager] fileExistsAtPath:bundleBookPath]) {
-				[self initBook:bundleBookPath];
+				
+				feedbackAlert = [[UIAlertView alloc] initWithTitle:@""
+														   message:[NSString stringWithFormat:CLOSE_BOOK_MESSAGE]
+														  delegate:self
+												 cancelButtonTitle:ALERT_FEEDBACK_CANCEL
+												 otherButtonTitles:CLOSE_BOOK_CONFIRM, nil];
+				[feedbackAlert show];
+				[feedbackAlert release];
+				
 			} else {
 				self.URLDownload = [@"http://" stringByAppendingString:URLBody];
 				[self downloadBook:nil];
@@ -640,17 +661,21 @@
 	NSLog(@"Download file %@", URLDownload);
 	
 	feedbackAlert = [[UIAlertView alloc] initWithTitle:@""
-											   message:[NSString stringWithFormat:@"Do you want to download %@?", URLDownload]
+											   message:[OPEN_BOOK_MESSAGE stringByAppendingFormat:@"%@?", URLDownload]
 											  delegate:self
-									 cancelButtonTitle:@"Cancel"
-									 otherButtonTitles:@"Open book", nil];
+									 cancelButtonTitle:ALERT_FEEDBACK_CANCEL
+									 otherButtonTitles:OPEN_BOOK_CONFIRM, nil];
 	[feedbackAlert show];
 	[feedbackAlert release];
 }
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
 	
-	if (buttonIndex != alertView.cancelButtonIndex)
-		[self startDownloadRequest];
+	if (buttonIndex != alertView.cancelButtonIndex) {
+		if ([[alertView buttonTitleAtIndex:buttonIndex] isEqualToString:CLOSE_BOOK_CONFIRM])
+			[self initBook:bundleBookPath];
+		else
+			[self startDownloadRequest];
+	}
 }
 - (void)startDownloadRequest {
 	
@@ -668,13 +693,12 @@
 	if ([requestSummary objectForKey:@"error"] != nil) {
 		
 		NSLog(@"Error while downloading data");
-		//NSString *feedbackMessage = [NSString stringWithFormat:@"Connection failed, error:\n\"%@\".",[requestSummary objectForKey:@"error"]];
-		NSString *feedbackMessage = [NSString stringWithFormat:@"There was a problem downloading the book."];
-		feedbackAlert = [[UIAlertView alloc] initWithTitle:@"Whoops!"
-												   message:feedbackMessage
+		
+		feedbackAlert = [[UIAlertView alloc] initWithTitle:ERROR_FEEDBACK_TITLE
+												   message:ERROR_FEEDBACK_MESSAGE
 												  delegate:self
-										 cancelButtonTitle:@"Cancel"
-										 otherButtonTitles:@"Retry", nil];
+										 cancelButtonTitle:ALERT_FEEDBACK_CANCEL
+										 otherButtonTitles:ERROR_FEEDBACK_CONFIRM, nil];
 		[feedbackAlert show];
 		[feedbackAlert release];
 			
@@ -682,7 +706,7 @@
 		
 		NSLog(@"Data received succesfully");
 		
-		feedbackAlert = [[UIAlertView alloc] initWithTitle:@"Extracting..."
+		feedbackAlert = [[UIAlertView alloc] initWithTitle:EXTRACT_FEEDBACK_TITLE
 												   message:nil
 												  delegate:self
 										 cancelButtonTitle:nil
