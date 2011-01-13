@@ -43,6 +43,9 @@
 #define CLOSE_BOOK_MESSAGE @"Do you want to close this book?"
 #define CLOSE_BOOK_CONFIRM @"Close book"
 
+#define ZERO_PAGES_TITLE @"Whoops!"
+#define ZERO_PAGES_MESSAGE @"Sorry, that book had no pages."
+
 #define ERROR_FEEDBACK_TITLE @"Whoops!"
 #define ERROR_FEEDBACK_MESSAGE @"There was a problem downloading the book."
 #define ERROR_FEEDBACK_CONFIRM @"Retry"
@@ -123,9 +126,6 @@
 	return self;
 }
 - (void)initBook:(NSString *)path {
-		
-	for (id subview in scrollView.subviews)
-		[subview removeFromSuperview];
 	
 	// Count pages
 	if (self.pages != nil)
@@ -143,6 +143,9 @@
 	NSLog(@"Pages in this book: %d", totalPages);
 	
 	if (totalPages > 0) {	
+		
+		for (id subview in scrollView.subviews)
+			[subview removeFromSuperview];
 		
 		scrollView.contentSize = CGSizeMake(PAGE_WIDTH * totalPages, PAGE_HEIGHT);
 		[self initPageNumbersForPages:totalPages];
@@ -165,9 +168,20 @@
 		[scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:NO];
 		[self loadSlot:0 withPage:currentPageNumber];
 		
-	} /*else {
-	   Do something if the book dir has no html file to show...
-	} /**/
+	} else {
+		
+		[[NSFileManager defaultManager] removeItemAtPath:path error:NULL];
+		
+ 		feedbackAlert = [[UIAlertView alloc] initWithTitle:ZERO_PAGES_TITLE
+												   message:ZERO_PAGES_MESSAGE
+												  delegate:self
+										 cancelButtonTitle:ALERT_FEEDBACK_CANCEL
+										 otherButtonTitles:nil];
+		[feedbackAlert show];
+		[feedbackAlert release];
+		
+		[self initBook:bundleBookPath];
+	}
 }
 - (void)initPageNumbersForPages:(int)count {
 	pageSpinners = [[NSMutableArray alloc] initWithCapacity:count];
@@ -748,12 +762,12 @@
 		[[NSFileManager defaultManager] removeItemAtPath:targetPath error:NULL];
 		
 		currentPageIsDelayingLoading = YES;
+		
+		[feedbackAlert dismissWithClickedButtonIndex:feedbackAlert.cancelButtonIndex animated:YES];
 		[self initBook:destinationPath];
 	} /* else {
 	   Do something if it was not possible to write the book file on the iPhone/iPad file system...
 	} /**/
-	
-	[feedbackAlert dismissWithClickedButtonIndex:feedbackAlert.cancelButtonIndex animated:YES];
 }
 
 // ****** SYSTEM
