@@ -479,56 +479,50 @@
 		
 		[self hideStatusBarDiscardingToggle:YES];
 		
-		NSURL *url = [request URL]; 
-		NSString *URLString = [url absoluteString];
-		NSLog(@"Current Page IS NOT delaying loading --> handle clicked link: %@", URLString);
+		NSURL *url = [request URL];
+		NSLog(@"Current Page IS NOT delaying loading --> handle clicked link: %@", [url absoluteString]);
 		
-		// STOP IF: url || URLString is nil
-		if (!url || !URLString)
-			return NO;
-		
-		NSString *URLScheme = [url scheme];
-		if (![URLScheme isEqualToString:@"file"] && ![URLScheme isEqualToString:@"book"]) {
-			[[UIApplication sharedApplication] openURL:[request URL]];
-			return NO;
-		}
-		
-		NSArray *URLSections = [URLString componentsSeparatedByString:@"://"];
-		NSString *URLBody = nil;
-		if ([URLSections count] == 2)
-			URLBody = [URLSections objectAtIndex:1];
-		else
-			return NO;
-
-		if ([URLScheme isEqualToString:@"file"]) {
+		// ****** Handle URI schemes
+		if (url) {
+			// Existing, checking schemes...
 			
-			NSString *file = [URLBody stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];			
-			int page = (int)[pages indexOfObject:file]+1;
-			if ([self changePage:page]) {
-				[scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:YES];
-				[self gotoPageDelayer];
-			}
-		
-		} else if ([URLScheme isEqualToString:@"book"]) {
-			
-			if ([URLBody isEqualToString:@"default"] && [[NSFileManager defaultManager] fileExistsAtPath:bundleBookPath]) {
+			if ([[url scheme] isEqualToString:@"file"]) {
+				// ****** Handle: file://
+				NSLog(@"file:// ->");
 				
-				feedbackAlert = [[UIAlertView alloc] initWithTitle:@""
-														   message:[NSString stringWithFormat:CLOSE_BOOK_MESSAGE]
-														  delegate:self
-												 cancelButtonTitle:ALERT_FEEDBACK_CANCEL
-												 otherButtonTitles:CLOSE_BOOK_CONFIRM, nil];
-				[feedbackAlert show];
-				[feedbackAlert release];
+				NSString *file = [[url relativePath] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+				int page = (int)[pages indexOfObject:file] + 1;
+				if ([self changePage:page]) {
+					[scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:YES];
+					[self gotoPageDelayer];
+				}
 				
+			} else if ([[url scheme] isEqualToString:@"book"]) {
+				// ****** Handle: book://
+				NSLog(@"book:// ->");
+				
+				if ([[url host] isEqualToString:@"local"] && [[NSFileManager defaultManager] fileExistsAtPath:bundleBookPath]) {
+					// *** Back to bundled book
+					feedbackAlert = [[UIAlertView alloc] initWithTitle:@""
+															   message:[NSString stringWithFormat:CLOSE_BOOK_MESSAGE]
+															  delegate:self
+													 cancelButtonTitle:ALERT_FEEDBACK_CANCEL
+													 otherButtonTitles:CLOSE_BOOK_CONFIRM, nil];
+					[feedbackAlert show];
+					[feedbackAlert release];
+				} else {
+					// *** Download book
+					self.URLDownload = [@"http:" stringByAppendingString:[url resourceSpecifier]];
+					[self downloadBook:nil];
+				}
 			} else {
-				self.URLDownload = [@"http://" stringByAppendingString:URLBody];
-				[self downloadBook:nil];
-			}		
+				// ****** Handle: *
+				[[UIApplication sharedApplication] openURL:[request URL]];
+			}
 		}
 		
 		return NO;
-	}	
+	}
 }
 - (void)webView:(UIWebView *)webView hidden:(BOOL)status animating:(BOOL)animating {
 	NSLog(@"- - hidden:%d animating:%d", status, animating);
