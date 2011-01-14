@@ -37,6 +37,10 @@
 #define PAGE_HEIGHT 1024
 #define PAGE_WIDTH 768
 
+#define SCROLLVIEW_BGCOLOR whiteColor
+#define PAGE_NUMBERS_COLOR blackColor
+#define PAGE_NUMBERS_ALPHA 0.2
+
 #define OPEN_BOOK_MESSAGE @"Do you want to download "
 #define OPEN_BOOK_CONFIRM @"Open book"
 
@@ -84,6 +88,7 @@
 	
 	// ****** SCROLLVIEW INIT
 	scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, PAGE_WIDTH, PAGE_HEIGHT)];
+	scrollView.backgroundColor = [UIColor SCROLLVIEW_BGCOLOR];
 	scrollView.showsHorizontalScrollIndicator = YES;
 	scrollView.showsVerticalScrollIndicator = NO;
 	scrollView.delaysContentTouches = NO;
@@ -189,6 +194,7 @@
 	for (int i = 0; i < count; i++) {
 		// ****** Spinners
 		UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+		spinner.backgroundColor = [UIColor clearColor];
 		
 		CGRect frame = spinner.frame;
 		frame.origin.x = PAGE_WIDTH * i + (PAGE_WIDTH + frame.size.width) / 2 - 40;
@@ -201,7 +207,10 @@
 		
 		// ****** Numbers
 		UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(PAGE_WIDTH * i + (PAGE_WIDTH) / 2, PAGE_HEIGHT / 2 - 6, 100, 50)];
-		label.textColor = [UIColor colorWithRed:0.0 green:0.0 blue:0.0 alpha:0.2];
+		label.backgroundColor = [UIColor clearColor];
+		label.textColor = [UIColor PAGE_NUMBERS_COLOR];
+		label.alpha = PAGE_NUMBERS_ALPHA;
+				
 		NSString *labelText = [[NSString alloc] initWithFormat:@"%d", i + 1];
 		label.font = [UIFont fontWithName:@"Helvetica" size:40.0];
 		label.textAlignment = UITextAlignmentLeft;
