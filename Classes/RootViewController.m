@@ -513,6 +513,11 @@
 				} else {
 					// *** Download book
 					self.URLDownload = [@"http:" stringByAppendingString:[url resourceSpecifier]];
+					
+					if ([[[NSURL URLWithString:self.URLDownload] pathExtension] isEqualToString:@""]) {
+						self.URLDownload = [self.URLDownload stringByAppendingString:@".hpub"];
+					}
+					
 					[self downloadBook:nil];
 				}
 			} else {
