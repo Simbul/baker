@@ -100,6 +100,7 @@
 
 // ****** WEBVIEW
 - (void)webView:(UIWebView *)webView hidden:(BOOL)status animating:(BOOL)animating;
+- (void)revealWebView:(UIWebView *)webView;
 
 // ****** GESTURES
 - (void)userDidSingleTap:(UITouch *)touch;

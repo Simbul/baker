@@ -456,7 +456,7 @@
 	//[webView stringByEvaluatingJavaScriptFromString:javaScript];
 	
 	[self spinnerForPage:currentPageNumber isAnimating:NO]; // spinner YES
-	[self webView:webView hidden:NO animating:YES];
+	[self performSelector:@selector(revealWebView:) withObject:webView afterDelay:0.1];
 }
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
 	// Sent if a web view failed to load content.
@@ -544,6 +544,9 @@
 		webView.alpha = 1.0;
 		webView.hidden = NO;
 	}
+}
+- (void)revealWebView:(UIWebView *)webView {
+	[self webView:webView hidden:NO animating:YES];
 }
 
 // ****** GESTURES
