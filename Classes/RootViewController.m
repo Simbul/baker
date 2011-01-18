@@ -34,13 +34,19 @@
 #import "Downloader.h"
 #import "SSZipArchive.h"
 
-#define PAGE_HEIGHT 1024
-#define PAGE_WIDTH 768
-
+// LOADER STYLE
+// Configure this to change the color of the loader
 #define SCROLLVIEW_BGCOLOR whiteColor
 #define PAGE_NUMBERS_COLOR blackColor
 #define PAGE_NUMBERS_ALPHA 0.2
 
+// PINCH-TO-ZOOM
+// Enable pinch-to-zoom on the book page.
+//   NO (Default) - Because it creates a more uniform reading experience: you should zoom only specific items with JavaScript.
+//   YES - Not recommended. You have to handle manually set the zoom in EACH of your HTML files.
+#define PAGE_ZOOM_GESTURE NO
+
+// TEXT LABELS
 #define OPEN_BOOK_MESSAGE @"Do you want to download "
 #define OPEN_BOOK_CONFIRM @"Open book"
 
@@ -57,6 +63,12 @@
 #define EXTRACT_FEEDBACK_TITLE @"Extracting..."
 
 #define ALERT_FEEDBACK_CANCEL @"Cancel"
+
+// PAGE SIZE (IPAD)
+#define PAGE_HEIGHT 1024
+#define PAGE_WIDTH 768
+
+//  ==========================================================================================
 
 @implementation RootViewController
 
@@ -102,6 +114,7 @@
 	// ****** CURR WEBVIEW INIT
 	currPage = [[UIWebView alloc] init];
 	currPage.delegate = self;
+	currPage.scalesPageToFit = PAGE_ZOOM_GESTURE;
 	
 	// ****** NEXT WEBVIEW INIT
 	//nextPage = [[UIWebView alloc] init];
