@@ -252,6 +252,9 @@
 	return pageChanged;	
 }
 - (void)gotoPageDelayer {
+	// This delay is required in order to avoid stuttering when the animation runs.
+	// The animation lasts 0.5 seconds: so we start loading after that.
+	
 	if (currentPageIsDelayingLoading)
 		[NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(gotoPage) object:nil];
 	
@@ -456,7 +459,7 @@
 	//[webView stringByEvaluatingJavaScriptFromString:javaScript];
 	
 	[self spinnerForPage:currentPageNumber isAnimating:NO]; // spinner YES
-	[self performSelector:@selector(revealWebView:) withObject:webView afterDelay:0.1];
+	[self performSelector:@selector(revealWebView:) withObject:webView afterDelay:0.1]; // This seems fixing the WebView-Flash-Of-Old-Content-Bug
 }
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
 	// Sent if a web view failed to load content.
@@ -546,7 +549,7 @@
 	}
 }
 - (void)revealWebView:(UIWebView *)webView {
-	[self webView:webView hidden:NO animating:YES];
+	[self webView:webView hidden:NO animating:YES];  // Delayed run to fix the WebView-Flash-Of-Old-Content-Bug
 }
 
 // ****** GESTURES
