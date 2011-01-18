@@ -1,7 +1,9 @@
 Project Baker
 HTML5 Ebook framework for iPad
+http://bakerframework.com/
 Copyright (C) 2010, Davide Casali, Marco Colombo, Alessandro Morandi
 Licensed under BSD Opensource License.
+
 
 
 WHAT IS BAKER
@@ -10,6 +12,7 @@ WHAT IS BAKER
 To this day, ebooks have been limited by an old standard created in the pre-Kindle and pre-iPad era.
 Baker is the first stepping stone to show that we could already be using the powerful HTML5 language
 to create books with real typography, real layouts and high-quality design.
+
 
 
 HOW TO USE BAKER
@@ -22,15 +25,15 @@ It's easier done than said! ;)
 . Create you book as one or more HTML5 documents
 . Limit the width to 768px
 . You can constrain the height to 1024px to match the page size or make it scrollable if you need longer pages.
-. You can use ANY feature in WebKit: HTML5, CSS3, JavaScript.
-  But remember: it's a book. If you want to build an app, check PhoneGap. 
-. Consider having 1 HTML for each chapter to use the native scrolling.
+. You can use ANY feature in WebKit: HTML5, CSS3, JavaScript (video, audio, fonts, jQuery, Google Maps, etc).
+  But remember: it's a book. If you want to build an app, check PhoneGap.
+. Consider having 1 HTML for each chapter/section/article to use the native scrolling.
 
 2. PACKAGE
 . The book must be contained in a single "book/" folder.
 . Each chapter (horizontally swiped on the iPad) should be in a single HTML file inside the "book/" folder.
-. The HTML files must be named with incremental numbers, starting from one: 1.html, 2.html, etc.
-. 1.html is going to be used as the first page of the book, so it'll probably be your cover.
+. The HTML files are alphabetically ordered. You can for example do: 01.html, 02.html, etc. or A.html, B.html, etc.
+. In this case, 01.html (or A.html) is going to be used as the first page of the book, so it'll probably be your cover.
 . All the assets must be contained (with a relative reference) within the "book/" folder.
 . Subfolders are allowed for assets, but the HTML files will be read only from the root of the "book/" folder itself.
 
@@ -48,12 +51,53 @@ It's easier done than said! ;)
 . Follow the instructions on the Apple iPhone Developer website to submit your book to the app store.
 
 
+
+DOWNLOADABLE BOOKS
+==================
+
+From inside an existing book you make with Baker you can download other books, in the HPub format.
+
+A book in the HPub format is like the book inside Baker:
+. All the files must be at root level (no subfolder, otherwise you get empty books).
+. The HTML files are alphabetically ordered. You can for example do: 01.html, 02.html, etc.
+. In this case, 01.html is going to be used as the first page of the book, so it'll probably be your cover.
+. All the assets must be contained (with a relative reference) within the folder.
+. Subfolders are allowed for assets, but the HTML files will be read only from the root of the folder itself.
+
+When it's ready:
+1. Zip all the files (not the folder, remember!).
+2. Change the extension of the file from ".zip" to ".hpub".
+3. Upload the .hpub file on a server.
+4. Link from a Baker book the book on the server, with the syntax: book://example.org/path/bookname
+   (with or without extension, Baker will add ".hpub" by itself).
+
+
+
 BUGS AND FEEDBACK
 =================
 
 Submit your bugs here: http://github.com/simbul/baker/issues
 Give us your feedback at: info@bakerframework.com
 Follow us on Twitter: http://twitter.com/BakerFramework
+
+
+
+CHANGELOG
+=========
+
+1.1
+. Support for zipped HPub books
+. Added book:// protocol to allow downloadable HPub books
+. Link support (internal/external)
+. Multitap page navigation
+. Alphabetical ordering (WARNING: breaks previous books, check before upgrading)
+. Statusbar on tap
+. Full screen swipes
+. Minor fixes
+
+1.0
+. First release
+
 
 
 - Elementary, my dear Watson.
