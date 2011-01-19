@@ -57,12 +57,12 @@ DOWNLOADABLE BOOKS
 
 From inside an existing book you make with Baker you can download other books, in the HPub format.
 
-A book in the HPub format is like the book inside Baker:
-. All the files must be at root level (no subfolder, otherwise you get empty books).
+A book in the HPub format is like the default book that's inside Baker:
+. All the HTML files must be at root level (not in a subfolder, otherwise you'll get an empty book).
 . The HTML files are alphabetically ordered. You can for example do: 01.html, 02.html, etc.
 . In this case, 01.html is going to be used as the first page of the book, so it'll probably be your cover.
-. All the assets must be contained (with a relative reference) within the folder.
-. Subfolders are allowed for assets, but the HTML files will be read only from the root of the folder itself.
+. All the assets must be contained (with a relative reference) within the root folder.
+. Subfolders are allowed for assets, but the HTML files will only be read from the root of the folder itself.
 
 When it's ready:
 1. Zip all the files (not the folder, remember!).
