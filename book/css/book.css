@@ -6,10 +6,12 @@ body {
 }
 
 #wrapper {
-	width: 726px;
+	border: 1px solid #e0e0e0;
+	-webkit-box-shadow: 0px 5px 5px #cccccc;
+	
+	width: 705px;
 	margin: 10px;
-	padding: 10px;
-	border: 1px solid black;
+	padding: 20px;
 }
 
 #wrapper h1 {
@@ -35,4 +37,9 @@ body {
 #wrapper img.right {
 	float: right;
 	padding: 7px 0 0 10px;
+}
+
+#wrapper.cover {
+  padding-top: 300px;
+  min-height: 680px;
 }
