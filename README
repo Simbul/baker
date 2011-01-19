@@ -86,13 +86,14 @@ CHANGELOG
 =========
 
 1.1
-. Support for zipped HPub books
 . Added book:// protocol to allow downloadable HPub books
+. Support for zipped HPub books (to allow downloading)
 . Link support (internal/external)
 . Multitap page navigation
 . Alphabetical ordering (WARNING: breaks previous books, check before upgrading)
 . Statusbar on tap
 . Full screen swipes
+. Fix: now the previous page doesn't flash anymore when you change page
 . Minor fixes
 
 1.0
