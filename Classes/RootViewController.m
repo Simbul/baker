@@ -129,7 +129,7 @@
 	NSString *documentsPath = ([paths count] > 0) ? [paths objectAtIndex:0] : nil;
 	
 	self.documentsBookPath = [documentsPath stringByAppendingPathComponent:@"book"];
-	self.bundleBookPath = [[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"book"];
+	self.bundleBookPath = [[NSBundle mainBundle] pathForResource:@"book" ofType:nil];
 		
 	if ([[NSFileManager defaultManager] fileExistsAtPath:documentsBookPath]) {
 		[self initBook:documentsBookPath];
