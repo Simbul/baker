@@ -509,6 +509,7 @@
 				NSString *file = [[url relativePath] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 				int page = (int)[pages indexOfObject:file] + 1;
 				if ([self changePage:page]) {
+					stackedScrollingAnimations++;
 					[scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:YES];
 					[self gotoPageDelayer];
 				}
