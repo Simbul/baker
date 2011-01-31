@@ -54,7 +54,7 @@
 	UIView *scrollView = [rootViewController scrollView];
 	
 	// Create the application window
-	UIWindow *localWindow = [[InterceptorWindow alloc] initWithTarget:scrollView delegate:self.rootViewController frame:[[UIScreen mainScreen]bounds]];
+	UIWindow *localWindow = [[InterceptorWindow alloc] initWithTarget:scrollView eventsDelegate:self.rootViewController frame:[[UIScreen mainScreen]bounds]];
 	localWindow.backgroundColor = [UIColor whiteColor];
 	self.window = localWindow;
 	[localWindow release];

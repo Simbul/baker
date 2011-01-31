@@ -57,6 +57,9 @@
 	int currentPageNumber;
 	int currentPageHeight;
 	int stackedScrollingAnimations;
+	int pageWidth;
+	int pageHeight;
+	int tappableAreaSize;
 	BOOL currentPageFirstLoading;
 	BOOL currentPageIsDelayingLoading;
 	BOOL discardNextStatusBarToggle;
@@ -85,6 +88,7 @@
 
 // ****** INIT
 - (void)initBook:(NSString *)path;
+- (void)initPageSize;
 
 // ****** LOADING
 - (BOOL)changePage:(int)page;
@@ -97,6 +101,7 @@
 // ****** SCROLLVIEW
 - (CGRect)frameForPage:(int)page;
 - (void)spinnerForPage:(int)page isAnimating:(BOOL)isAnimating;
+- (void)resetScrollView;
 
 // ****** WEBVIEW
 - (void)webView:(UIWebView *)webView hidden:(BOOL)status animating:(BOOL)animating;

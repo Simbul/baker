@@ -64,9 +64,9 @@
 
 #define ALERT_FEEDBACK_CANCEL @"Cancel"
 
-// PAGE SIZE (IPAD)
-#define PAGE_HEIGHT 1024
-#define PAGE_WIDTH 768
+// DEVICE SIZE (IPAD)
+#define DEVICE_HEIGHT 1024
+#define DEVICE_WIDTH 768
 
 //  ==========================================================================================
 
@@ -90,16 +90,21 @@
 
 // ****** INIT
 - (id)init {
+	[super initWithNibName:nil bundle:nil];
 	
 	// Set up listener to download notification from application delegate
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(downloadBook:) name:@"downloadNotification" object:nil];
 	
+	[self initPageSize];
+	
 	discardNextStatusBarToggle = NO;
 	stackedScrollingAnimations = 0;
+	tappableAreaSize = 50;
 	[self hideStatusBar];
 	
 	// ****** SCROLLVIEW INIT
-	scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, PAGE_WIDTH, PAGE_HEIGHT)];
+	scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, pageWidth, pageHeight)];
+	scrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 	scrollView.backgroundColor = [UIColor SCROLLVIEW_BGCOLOR];
 	scrollView.showsHorizontalScrollIndicator = YES;
 	scrollView.showsVerticalScrollIndicator = NO;
@@ -113,6 +118,7 @@
 	
 	// ****** CURR WEBVIEW INIT
 	currPage = [[UIWebView alloc] init];
+	currPage.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 	currPage.delegate = self;
 	currPage.scalesPageToFit = PAGE_ZOOM_GESTURE;
 	
@@ -143,6 +149,46 @@
 	
 	return self;
 }
+
+- (void)initPageSize {
+	UIDeviceOrientation orientation = [[UIDevice currentDevice] orientation];
+	if (orientation == UIInterfaceOrientationLandscapeRight || orientation == UIInterfaceOrientationLandscapeLeft ) {
+		NSLog(@"Landscape");
+		pageWidth = DEVICE_HEIGHT;
+		pageHeight = DEVICE_WIDTH;
+	} else {
+		NSLog(@"Portrait");
+		pageWidth = DEVICE_WIDTH;
+		pageHeight = DEVICE_HEIGHT;
+	}
+}
+
+- (void)resetScrollView {
+	for (id subview in scrollView.subviews)
+		[subview removeFromSuperview];
+
+	scrollView.contentSize = CGSizeMake(pageWidth * totalPages, pageHeight);
+	scrollView.frame = CGRectMake(0, 0, pageWidth, pageHeight);
+	[self initPageNumbersForPages:totalPages];
+	
+	//prevPage.frame = [self frameForPage:currentPageNumber-1];
+	currPage.frame = [self frameForPage:currentPageNumber];
+	//nextPage.frame = [self frameForPage:currentPageNumber+1];
+	
+	//[scrollView addSubview:prevPage];
+	[scrollView addSubview:currPage];
+	//[scrollView addSubview:nextPage];
+	
+	[scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:NO];
+	[self loadSlot:0 withPage:currentPageNumber];
+	
+	// ****** TAPPABLE AREAS
+	upTapArea = CGRectMake(tappableAreaSize, 0, pageWidth - (tappableAreaSize * 2), tappableAreaSize);
+	downTapArea = CGRectMake(tappableAreaSize, pageHeight - tappableAreaSize, pageWidth - (tappableAreaSize * 2), tappableAreaSize);
+	leftTapArea = CGRectMake(0, tappableAreaSize, tappableAreaSize, pageHeight - (tappableAreaSize * 2));
+	rightTapArea = CGRectMake(pageWidth - tappableAreaSize, tappableAreaSize, tappableAreaSize, pageHeight - (tappableAreaSize * 2));
+}
+
 - (void)initBook:(NSString *)path {
 	
 	// Count pages
@@ -160,32 +206,16 @@
 	totalPages = [pages count];
 	NSLog(@"Pages in this book: %d", totalPages);
 	
-	if (totalPages > 0) {	
-		
-		for (id subview in scrollView.subviews)
-			[subview removeFromSuperview];
-		
-		scrollView.contentSize = CGSizeMake(PAGE_WIDTH * totalPages, PAGE_HEIGHT);
-		[self initPageNumbersForPages:totalPages];
-		
+	if (totalPages > 0) {
 		// Check if there is a saved starting page
 		NSString *currPageToLoad = [[NSUserDefaults standardUserDefaults] objectForKey:@"lastPageViewed"];
+		
 		if (currentPageFirstLoading && currPageToLoad != nil)
 			currentPageNumber = [currPageToLoad intValue];
 		else
 			currentPageNumber = 1;
 		
-		//prevPage.frame = [self frameForPage:currentPageNumber-1];
-		currPage.frame = [self frameForPage:currentPageNumber];
-		//nextPage.frame = [self frameForPage:currentPageNumber+1];
-		
-		//[scrollView addSubview:prevPage];
-		[scrollView addSubview:currPage];
-		//[scrollView addSubview:nextPage];
-		
-		[scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:NO];
-		[self loadSlot:0 withPage:currentPageNumber];
-		
+		[self resetScrollView];
 	} else {
 		
 		[[NSFileManager defaultManager] removeItemAtPath:path error:NULL];
@@ -210,8 +240,8 @@
 		spinner.backgroundColor = [UIColor clearColor];
 		
 		CGRect frame = spinner.frame;
-		frame.origin.x = PAGE_WIDTH * i + (PAGE_WIDTH + frame.size.width) / 2 - 40;
-		frame.origin.y = (PAGE_HEIGHT + frame.size.height) / 2;
+		frame.origin.x = pageWidth * i + (pageWidth + frame.size.width) / 2 - 40;
+		frame.origin.y = (pageHeight + frame.size.height) / 2;
 		spinner.frame = frame;
 		
 		[pageSpinners addObject:spinner];
@@ -219,7 +249,7 @@
 		[spinner release];
 		
 		// ****** Numbers
-		UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(PAGE_WIDTH * i + (PAGE_WIDTH) / 2, PAGE_HEIGHT / 2 - 6, 100, 50)];
+		UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(pageWidth * i + (pageWidth) / 2, pageHeight / 2 - 6, 100, 50)];
 		label.backgroundColor = [UIColor clearColor];
 		label.textColor = [UIColor PAGE_NUMBERS_COLOR];
 		label.alpha = PAGE_NUMBERS_ALPHA;
@@ -234,19 +264,6 @@
 		[[self scrollView] addSubview:label];
 		[label release];
 	}
-}
-- (void)viewDidLoad {
-    
-	// Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
-	
-	[super viewDidLoad];
-	[self loadSlot:0 withPage:currentPageNumber];
-	
-	// ****** TAPPABLE AREAS
-	upTapArea = CGRectMake(50, 0, 668, 50);
-	downTapArea = CGRectMake(50,974,668,50);
-	leftTapArea = CGRectMake(0,50,50,924);
-	rightTapArea = CGRectMake(718,50,50,924);
 }
 
 // ****** LOADING
@@ -383,7 +400,7 @@
 
 // ****** SCROLLVIEW
 - (CGRect)frameForPage:(int)page {
-	return CGRectMake(PAGE_WIDTH * (page - 1), 0, PAGE_WIDTH, PAGE_HEIGHT);
+	return CGRectMake(pageWidth * (page - 1), 0, pageWidth, pageHeight);
 }
 - (void)spinnerForPage:(int)page isAnimating:(BOOL)isAnimating {
 	UIActivityIndicatorView *spinner = nil;
@@ -416,7 +433,7 @@
 	// Nothing to do here either...
 }
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scroll {
-	int gotoPage = (int)(self.scrollView.contentOffset.x / PAGE_WIDTH) + 1;
+	int gotoPage = (int)(self.scrollView.contentOffset.x / pageWidth) + 1;
 	
 	//NSLog(@"DEDe contentOffset: %@", NSStringFromCGPoint(self.scrollView.contentOffset));
 	NSLog(@" <<<>>> Swiping to page: %d", gotoPage);
@@ -635,7 +652,7 @@
 	
 	NSString *currPageOffset = [currPage stringByEvaluatingJavaScriptFromString:@"window.scrollY;"];
 	
-	int currentPageMaxScroll = currentPageHeight - PAGE_HEIGHT;	
+	int currentPageMaxScroll = currentPageHeight - pageHeight;
 	int currentPageOffset = [currPageOffset intValue];
 	
 	if (currentPageOffset < currentPageMaxScroll) {
@@ -801,7 +818,11 @@
 // ****** SYSTEM
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
 	// Overriden to allow any orientation.
-    return NO;
+    return YES;
+}
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
+	[self initPageSize];
+	[self resetScrollView];
 }
 - (void)didReceiveMemoryWarning {
 	// Releases the view if it doesn't have a superview.
