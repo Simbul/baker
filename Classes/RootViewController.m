@@ -90,6 +90,7 @@
 
 // ****** INIT
 - (id)init {
+	
 	[super initWithNibName:nil bundle:nil];
 	
 	// Set up listener to download notification from application delegate
@@ -121,6 +122,7 @@
 	currPage.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 	currPage.delegate = self;
 	currPage.scalesPageToFit = PAGE_ZOOM_GESTURE;
+	currPage.alpha = 0.5;
 	
 	// ****** NEXT WEBVIEW INIT
 	//nextPage = [[UIWebView alloc] init];
@@ -149,7 +151,6 @@
 	
 	return self;
 }
-
 - (void)initPageSize {
 	UIDeviceOrientation orientation = [[UIDevice currentDevice] orientation];
 	if (orientation == UIInterfaceOrientationLandscapeRight || orientation == UIInterfaceOrientationLandscapeLeft ) {
@@ -162,33 +163,30 @@
 		pageHeight = DEVICE_HEIGHT;
 	}
 }
-
 - (void)resetScrollView {
-	for (id subview in scrollView.subviews)
-		[subview removeFromSuperview];
+	for (id subview in scrollView.subviews) {
+		if (![subview isKindOfClass:[UIWebView class]]) {
+			[subview removeFromSuperview];
+		}
+	}
 
 	scrollView.contentSize = CGSizeMake(pageWidth * totalPages, pageHeight);
 	scrollView.frame = CGRectMake(0, 0, pageWidth, pageHeight);
 	[self initPageNumbersForPages:totalPages];
-	
+
 	//prevPage.frame = [self frameForPage:currentPageNumber-1];
 	currPage.frame = [self frameForPage:currentPageNumber];
 	//nextPage.frame = [self frameForPage:currentPageNumber+1];
 	
-	//[scrollView addSubview:prevPage];
-	[scrollView addSubview:currPage];
-	//[scrollView addSubview:nextPage];
-	
+	[scrollView bringSubviewToFront:currPage];
 	[scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:NO];
-	[self loadSlot:0 withPage:currentPageNumber];
-	
+
 	// ****** TAPPABLE AREAS
 	upTapArea = CGRectMake(tappableAreaSize, 0, pageWidth - (tappableAreaSize * 2), tappableAreaSize);
 	downTapArea = CGRectMake(tappableAreaSize, pageHeight - tappableAreaSize, pageWidth - (tappableAreaSize * 2), tappableAreaSize);
 	leftTapArea = CGRectMake(0, tappableAreaSize, tappableAreaSize, pageHeight - (tappableAreaSize * 2));
 	rightTapArea = CGRectMake(pageWidth - tappableAreaSize, tappableAreaSize, tappableAreaSize, pageHeight - (tappableAreaSize * 2));
 }
-
 - (void)initBook:(NSString *)path {
 	
 	// Count pages
@@ -216,6 +214,11 @@
 			currentPageNumber = 1;
 		
 		[self resetScrollView];
+		//[scrollView addSubview:prevPage];
+		[scrollView addSubview:currPage];
+		//[scrollView addSubview:nextPage];
+		[self loadSlot:0 withPage:currentPageNumber];
+		
 	} else {
 		
 		[[NSFileManager defaultManager] removeItemAtPath:path error:NULL];
@@ -823,6 +826,7 @@
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
 	[self initPageSize];
 	[self resetScrollView];
+	[currPage setNeedsDisplay];
 }
 - (void)didReceiveMemoryWarning {
 	// Releases the view if it doesn't have a superview.
