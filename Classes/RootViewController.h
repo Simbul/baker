@@ -87,8 +87,9 @@
 @property (nonatomic, retain) NSString *URLDownload;
 
 // ****** INIT
+- (void)checkPageSize;
+- (void)setPageSize:(NSString *)orientation;
 - (void)initBook:(NSString *)path;
-- (void)initPageSize;
 
 // ****** LOADING
 - (BOOL)changePage:(int)page;

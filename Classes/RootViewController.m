@@ -43,7 +43,7 @@
 // PINCH-TO-ZOOM
 // Enable pinch-to-zoom on the book page.
 //   NO (Default) - Because it creates a more uniform reading experience: you should zoom only specific items with JavaScript.
-//   YES - Not recommended. You have to handle manually set the zoom in EACH of your HTML files.
+//   YES - Not recommended. You have to manually set the zoom in EACH of your HTML files.
 #define PAGE_ZOOM_GESTURE NO
 
 // TEXT LABELS
@@ -67,6 +67,13 @@
 // DEVICE SIZE (IPAD)
 #define DEVICE_HEIGHT 1024
 #define DEVICE_WIDTH 768
+
+// AVAILABLE ORIENTATION
+// Define the available orientation of the book
+//	@"Any" (Default) - Book is available in both orientation
+//	@"Portrait" - Book is available only in portrait orientation
+//	@"Landscape" - Book is available only in landscape orientation
+#define	AVAILABLE_ORIENTATION @"Any"
 
 //  ==========================================================================================
 
@@ -96,7 +103,7 @@
 	// Set up listener to download notification from application delegate
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(downloadBook:) name:@"downloadNotification" object:nil];
 	
-	[self initPageSize];
+	[self checkPageSize];
 	
 	discardNextStatusBarToggle = NO;
 	stackedScrollingAnimations = 0;
@@ -151,16 +158,28 @@
 	
 	return self;
 }
-- (void)initPageSize {
-	UIDeviceOrientation orientation = [[UIDevice currentDevice] orientation];
-	if (orientation == UIInterfaceOrientationLandscapeRight || orientation == UIInterfaceOrientationLandscapeLeft ) {
-		NSLog(@"Landscape");
-		pageWidth = DEVICE_HEIGHT;
-		pageHeight = DEVICE_WIDTH;
+- (void)checkPageSize {
+	if ([AVAILABLE_ORIENTATION isEqualToString:@"Portrait"] || [AVAILABLE_ORIENTATION isEqualToString:@"Landscape"]) {
+		[self setPageSize:AVAILABLE_ORIENTATION];
 	} else {
-		NSLog(@"Portrait");
+		UIDeviceOrientation orientation = [[UIDevice currentDevice] orientation];
+		// WARNING! Seems like checking [[UIDevice currentDevice] orientation] against "UIInterfaceOrientationPortrait" is broken (return FALSE with the device in portrait orientation)
+		// Safe solution: always check if the device is in landscape orientation, if FALSE then it's in portrait.
+		if (orientation == UIInterfaceOrientationLandscapeLeft || orientation == UIInterfaceOrientationLandscapeRight)
+			[self setPageSize:@"Landscape"];
+		else
+			[self setPageSize:@"Portrait"];
+	}
+}
+- (void)setPageSize:(NSString *)orientation {
+	
+	NSLog(@"Set size for orientation: %@", orientation);
+	if ([orientation isEqualToString:@"Portrait"]) {
 		pageWidth = DEVICE_WIDTH;
 		pageHeight = DEVICE_HEIGHT;
+	} else if ([orientation isEqualToString:@"Landscape"]) {
+		pageWidth = DEVICE_HEIGHT;
+		pageHeight = DEVICE_WIDTH;
 	}
 }
 - (void)resetScrollView {
@@ -821,10 +840,17 @@
 // ****** SYSTEM
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
 	// Overriden to allow any orientation.
-    return YES;
+	
+	if ([AVAILABLE_ORIENTATION isEqualToString:@"Portrait"]) {
+		return (interfaceOrientation == UIInterfaceOrientationPortrait || interfaceOrientation == UIInterfaceOrientationPortraitUpsideDown);
+	} else if ([AVAILABLE_ORIENTATION isEqualToString:@"Landscape"]) {
+		return (interfaceOrientation == UIInterfaceOrientationLandscapeRight || interfaceOrientation == UIInterfaceOrientationLandscapeLeft);
+	} else {
+		return YES;
+	}	
 }
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
-	[self initPageSize];
+	[self checkPageSize];
 	[self resetScrollView];
 	[currPage setNeedsDisplay];
 }
