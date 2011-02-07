@@ -64,10 +64,6 @@
 
 #define ALERT_FEEDBACK_CANCEL @"Cancel"
 
-// DEVICE SIZE (IPAD)
-#define DEVICE_HEIGHT 1024
-#define DEVICE_WIDTH 768
-
 // AVAILABLE ORIENTATION
 // Define the available orientation of the book
 //	@"Any" (Default) - Book is available in both orientation
@@ -100,6 +96,11 @@
 	
 	[super initWithNibName:nil bundle:nil];
 	
+	// Get device screen bounds
+	screenBounds = [[UIScreen mainScreen] bounds];
+	NSLog(@"Device Width: %f", screenBounds.size.width);
+	NSLog(@"Device Height: %f", screenBounds.size.height);
+		
 	// Set up listener to download notification from application delegate
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(downloadBook:) name:@"downloadNotification" object:nil];
 	
@@ -107,7 +108,6 @@
 	
 	discardNextStatusBarToggle = NO;
 	stackedScrollingAnimations = 0;
-	tappableAreaSize = 50;
 	[self hideStatusBar];
 	
 	// ****** SCROLLVIEW INIT
@@ -175,11 +175,11 @@
 	
 	NSLog(@"Set size for orientation: %@", orientation);
 	if ([orientation isEqualToString:@"Portrait"]) {
-		pageWidth = DEVICE_WIDTH;
-		pageHeight = DEVICE_HEIGHT;
+		pageWidth = screenBounds.size.width;
+		pageHeight = screenBounds.size.height;
 	} else if ([orientation isEqualToString:@"Landscape"]) {
-		pageWidth = DEVICE_HEIGHT;
-		pageHeight = DEVICE_WIDTH;
+		pageWidth = screenBounds.size.height;
+		pageHeight = screenBounds.size.width;
 	}
 }
 - (void)resetScrollView {
@@ -201,6 +201,10 @@
 	[scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:NO];
 
 	// ****** TAPPABLE AREAS
+	int tappableAreaSize = screenBounds.size.width/16;
+	if (screenBounds.size.width < 768)
+		tappableAreaSize = screenBounds.size.width/8;
+	
 	upTapArea = CGRectMake(tappableAreaSize, 0, pageWidth - (tappableAreaSize * 2), tappableAreaSize);
 	downTapArea = CGRectMake(tappableAreaSize, pageHeight - tappableAreaSize, pageWidth - (tappableAreaSize * 2), tappableAreaSize);
 	leftTapArea = CGRectMake(0, tappableAreaSize, tappableAreaSize, pageHeight - (tappableAreaSize * 2));

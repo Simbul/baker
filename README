@@ -52,6 +52,21 @@ It's easier done than said! ;)
 
 
 
+TARGETING IPHONE DEVICE
+=======================
+
+Now Baker can even target iPhone devices.
+
+To compile your application for iPhone follow these steps:
+. Open the Baker Framework Xcode project with Xcode.
+. Open the Project Settings panel.
+. In the Build tab locate the section Deployment for the configuration you would like to use for compiling.
+. Under the Deployment section change the Target Device Family entry to match the devices you would like to target (only iPhone, only iPad or iPhone/iPad).
+. Close the Project Settings panel.
+. Compile the application.
+
+
+
 DOWNLOADABLE BOOKS
 ==================
 

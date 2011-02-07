@@ -36,6 +36,8 @@
 
 @interface RootViewController : UIViewController < UIWebViewDelegate, UIScrollViewDelegate > {
 	
+	CGRect screenBounds;
+	
 	NSString *documentsBookPath;
 	NSString *bundleBookPath;
 	
@@ -59,7 +61,7 @@
 	int stackedScrollingAnimations;
 	int pageWidth;
 	int pageHeight;
-	int tappableAreaSize;
+	
 	BOOL currentPageFirstLoading;
 	BOOL currentPageIsDelayingLoading;
 	BOOL discardNextStatusBarToggle;
