@@ -36,28 +36,64 @@ body {
 	padding: 7px 0 0 10px;
 }
 
-#wrapper.cover {
-  padding-top: 300px;
-}
 
-@media all and (orientation:portrait) { 
+
+/* iPad [portrait] */
+@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) and (orientation:portrait) { 
 	#wrapper {
 		width: 708px;
 		border: 1px solid red;
 	}
 	
 	#wrapper.cover {
+		padding-top: 300px;
 		min-height: 680px;
 	}
 }
 
-@media all and (orientation:landscape) {
+/* iPad [landscape] */
+@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) and (orientation:landscape) {
 	#wrapper {
-		width: 968px;
+		width: 964px;
 		border: 1px solid green;
 	}
 	
 	#wrapper.cover {
+		padding-top: 300px;
 		min-height: 424px;
+	}
+}
+
+/* iPhone [portrait] */
+@media only screen and (min-device-width: 320px) and (max-device-width: 480px) and (orientation:portrait) { 
+	#wrapper {
+		width: 260px;
+		border: 1px solid red;
+	}
+	
+	#wrapper img {
+		width: 120px;
+	}
+	
+	#wrapper.cover {
+		padding-top: 100px;
+		min-height: 336px;
+	}
+}
+
+/* iPhone [landscape] */
+@media only screen and (min-device-width: 320px) and (max-device-width: 480px) and (orientation:landscape) {
+	#wrapper {
+		width: 420px;
+		border: 1px solid green;
+	}
+	
+	#wrapper img {
+		width: 200px;
+	}
+	
+	#wrapper.cover {
+		padding-top: 100px;
+		min-height: 176px;
 	}
 }

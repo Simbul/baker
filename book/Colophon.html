@@ -11,16 +11,38 @@
 		}
 		
 		#page {
-			width: 500px;
 			margin: 0 auto;
-			padding: 100px 10px;
 			text-align: center;
 		}
 		
 		a.about {
-			margin: 500px 0 0;
 			display: inline-block;
 		}
+		
+		/* iPad [portrait + landscape] */
+		@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) { 
+			#page {
+				width: 500px;
+				padding: 100px 10px;
+			}
+			
+			a.about {
+				margin: 400px 0 0;
+			}
+		}
+
+		/* iPhone [portrait + landscape] */
+		@media only screen and (min-device-width: 320px) and (max-device-width: 480px) { 
+			#page {
+				width: 260px;
+				padding: 52px 10px;
+			}
+			
+			a.about {
+				margin: 208px 0 0;
+			}
+		}
+		
 	</style>
 </head>
 <body>
