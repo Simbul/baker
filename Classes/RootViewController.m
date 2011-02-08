@@ -190,7 +190,14 @@
 	}
 
 	scrollView.contentSize = CGSizeMake(pageWidth * totalPages, pageHeight);
-	scrollView.frame = CGRectMake(0, 0, pageWidth, pageHeight);
+	
+	UIApplication *sharedApplication = [UIApplication sharedApplication];
+	int scrollViewY = 0;
+	if (!sharedApplication.statusBarHidden) {
+		scrollViewY = -20;
+	}
+	scrollView.frame = CGRectMake(0, scrollViewY, pageWidth, pageHeight);
+	
 	[self initPageNumbersForPages:totalPages];
 
 	//prevPage.frame = [self frameForPage:currentPageNumber-1];
