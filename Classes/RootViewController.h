@@ -111,7 +111,7 @@
 - (void)revealWebView:(UIWebView *)webView;
 
 // ****** GESTURES
-- (void)userDidSingleTap:(UITouch *)touch;
+- (void)userDidTap:(UITouch *)touch;
 - (void)userDidScroll:(UITouch *)touch;
 
 // ****** PAGE SCROLLING

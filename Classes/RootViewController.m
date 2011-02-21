@@ -622,7 +622,7 @@
 }
 
 // ****** GESTURES
-- (void)userDidSingleTap:(UITouch *)touch {
+- (void)userDidTap:(UITouch *)touch {
 	NSLog(@"User did single tap");
 	
 	CGPoint tapPoint = [touch locationInView:self.view];
@@ -654,8 +654,8 @@
 			[scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:YES];
 			[self gotoPageDelayer];
 		}
-	} else {
-		[self performSelector:@selector(toggleStatusBar) withObject:nil afterDelay:0.5];
+	} else if (touch.tapCount == 2) {
+		[self performSelector:@selector(toggleStatusBar) withObject:nil];
 	}
 }
 - (void)userDidScroll:(UITouch *)touch {

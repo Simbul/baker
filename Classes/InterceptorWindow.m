@@ -43,7 +43,10 @@
 	return [super initWithFrame:aRect];
 }
 - (void)sendEvent:(UIEvent *)event {
-	[super sendEvent:event];
+	// At the moment, all the events are propagated (by calling the sendEvent method
+	// in the parent class) except single-finger multitaps.
+	
+	BOOL shouldCallParent = YES;
 	
 	if (event.type == UIEventTypeTouches) {
 		NSSet *touches = [event allTouches];		
@@ -52,12 +55,18 @@
 			
 			if (touch.phase == UITouchPhaseBegan) {
 				scrolling = NO;
-			}
-			if (touch.phase == UITouchPhaseMoved) {
+			} else if (touch.phase == UITouchPhaseMoved) {
 				scrolling = YES;
 			}
 			
-			if ([touch.view isDescendantOfView:self.target] == YES && touch.tapCount == 1) {
+			if (touch.tapCount > 1) {
+				if (touch.phase == UITouchPhaseEnded && !scrolling) {
+					// Touch is not the first of multiple subsequent touches
+					NSLog(@"Multi Tap");
+					[self performSelector:@selector(forwardTap:) withObject:touch];
+				}
+				shouldCallParent = NO;
+			} else if ([touch.view isDescendantOfView:self.target] == YES) {
 				if (scrolling) {
 					NSLog(@"Scrolling");
 					[self performSelector:@selector(forwardScroll:) withObject:touch];
@@ -67,19 +76,17 @@
 					NSLog(@"Single Tap");
 					[self performSelector:@selector(forwardTap:) withObject:touch];
 				}
-			} else if (touch.tapCount > 1) {
-				if (touch.phase == UITouchPhaseEnded && !scrolling) {
-					// Touch is not the first of multiple subsequent touches
-					NSLog(@"Multi Tap");
-					[self performSelector:@selector(forwardTap:) withObject:touch];
-				}
 			}
 		}
+	}
+	
+	if (shouldCallParent) {
+		[super sendEvent:event];
 	}
 }
 
 - (void)forwardTap:(UITouch *)touch {
-	[eventsDelegate userDidSingleTap:touch];
+	[eventsDelegate userDidTap:touch];
 }
 - (void)forwardScroll:(UITouch *)touch {
 	[eventsDelegate userDidScroll:touch];
