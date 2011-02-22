@@ -79,6 +79,7 @@
 @synthesize bundleBookPath;
 
 @synthesize pages;
+@synthesize pageNameFromURL;
 
 @synthesize scrollView;
 @synthesize pageSpinners;
@@ -135,6 +136,7 @@
 	//nextPage = [[UIWebView alloc] init];
 	//nextPage.delegate = self;
 	
+	self.pageNameFromURL = nil;
 	currentPageFirstLoading = YES;
 	currentPageIsDelayingLoading = YES;
 		
@@ -145,7 +147,7 @@
 	
 	self.documentsBookPath = [documentsPath stringByAppendingPathComponent:@"book"];
 	self.bundleBookPath = [[NSBundle mainBundle] pathForResource:@"book" ofType:nil];
-		
+	
 	if ([[NSFileManager defaultManager] fileExistsAtPath:documentsBookPath]) {
 		[self initBook:documentsBookPath];
 	} else {
@@ -238,10 +240,22 @@
 		// Check if there is a saved starting page
 		NSString *currPageToLoad = [[NSUserDefaults standardUserDefaults] objectForKey:@"lastPageViewed"];
 		
-		if (currentPageFirstLoading && currPageToLoad != nil)
+		if (currentPageFirstLoading && currPageToLoad != nil) {
 			currentPageNumber = [currPageToLoad intValue];
-		else
+		} else {
+			
 			currentPageNumber = 1;
+			if (self.pageNameFromURL != nil) { 
+				NSString *fileNameFromURL = [path stringByAppendingPathComponent:self.pageNameFromURL];
+				self.pageNameFromURL = nil;
+				for (int i = 0; i < totalPages; i++) {
+					if ([[pages objectAtIndex:i] isEqualToString:fileNameFromURL]) {
+						currentPageNumber = i+1;
+						break;
+					}
+				}
+			}
+		}
 		
 		[self resetScrollView];
 		//[scrollView addSubview:prevPage];
@@ -578,6 +592,13 @@
 					[feedbackAlert show];
 					[feedbackAlert release];
 				} else {
+					
+					if ([[url pathExtension] isEqualToString:@"html"]) {
+						self.pageNameFromURL = [[url lastPathComponent] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+						NSString *tmpUrl = [[url URLByDeletingLastPathComponent] absoluteString];
+						url = [NSURL URLWithString:[tmpUrl stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"/"]]];						
+					}
+					
 					// *** Download book
 					self.URLDownload = [@"http:" stringByAppendingString:[url resourceSpecifier]];
 					

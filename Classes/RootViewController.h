@@ -42,6 +42,7 @@
 	NSString *bundleBookPath;
 	
 	NSMutableArray *pages;
+	NSString *pageNameFromURL;
 	
 	UIScrollView *scrollView;
 	NSMutableArray *pageSpinners;
@@ -76,6 +77,7 @@
 @property (nonatomic, retain) NSString *bundleBookPath;
 
 @property (nonatomic, retain) NSMutableArray *pages;
+@property (nonatomic, retain) NSString *pageNameFromURL;
 
 @property (nonatomic, retain) UIScrollView *scrollView;
 @property (nonatomic, retain) NSMutableArray *pageSpinners;
