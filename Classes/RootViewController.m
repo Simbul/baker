@@ -46,6 +46,11 @@
 //   YES - Not recommended. You have to manually set the zoom in EACH of your HTML files.
 #define PAGE_ZOOM_GESTURE NO
 
+// VERTICAL BOUNCE
+// Enable bounce effect on vertical scrolls.
+// Should be set to NO only when the book pages don't need any vertical scrolling.
+#define PAGE_VERTICAL_BOUNCE YES
+
 // TEXT LABELS
 #define OPEN_BOOK_MESSAGE @"Do you want to download "
 #define OPEN_BOOK_CONFIRM @"Open book"
@@ -131,6 +136,11 @@
 	currPage.delegate = self;
 	currPage.scalesPageToFit = PAGE_ZOOM_GESTURE;
 	currPage.alpha = 0.5;
+	if (!PAGE_VERTICAL_BOUNCE) {
+		for (id subview in currPage.subviews)
+			if ([[subview class] isSubclassOfClass: [UIScrollView class]])
+				((UIScrollView *)subview).bounces = NO;
+	}
 	
 	// ****** NEXT WEBVIEW INIT
 	//nextPage = [[UIWebView alloc] init];
