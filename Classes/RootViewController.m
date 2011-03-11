@@ -85,6 +85,7 @@
 
 @synthesize pages;
 @synthesize pageNameFromURL;
+@synthesize anchorFromURL;
 
 @synthesize scrollView;
 @synthesize pageSpinners;
@@ -147,6 +148,8 @@
 	//nextPage.delegate = self;
 	
 	self.pageNameFromURL = nil;
+	self.anchorFromURL = nil;
+	
 	currentPageFirstLoading = YES;
 	currentPageIsDelayingLoading = YES;
 		
@@ -331,7 +334,7 @@
 		currentPageNumber = 1;
 	} else if (page > totalPages) {
 		currentPageNumber = totalPages;
-	} else {
+	} else if (page != currentPageNumber) {
 		currentPageNumber = page;
 		pageChanged = YES;
 	}
@@ -540,13 +543,15 @@
 		currentPageFirstLoading = NO;
 	}
 	
+	[self handleAnchor:NO];
+	
 	// /!\ hack to make it load at the right time and not too early
 	// source: http://stackoverflow.com/questions/1422146/webviewdidfinishload-firing-too-soon
 	//NSString *javaScript = @"<script type=\"text/javascript\">function myFunction(){return 1+1;}</script>";
 	//[webView stringByEvaluatingJavaScriptFromString:javaScript];
 	
 	[self spinnerForPage:currentPageNumber isAnimating:NO]; // spinner YES
-	[self performSelector:@selector(revealWebView:) withObject:webView afterDelay:0.1]; // This seems fixing the WebView-Flash-Of-Old-Content-Bug
+	[self performSelector:@selector(revealWebView:) withObject:webView afterDelay:0.1]; // This seems fixing the WebView-Flash-Of-Old-Content-webBug
 }
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
 	// Sent if a web view failed to load content.
@@ -580,12 +585,15 @@
 				// ****** Handle: file://
 				NSLog(@"file:// ->");
 				
+				self.anchorFromURL = [url fragment];
 				NSString *file = [[url relativePath] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 				int page = (int)[pages indexOfObject:file] + 1;
 				if ([self changePage:page]) {
 					stackedScrollingAnimations++;
 					[scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:YES];
 					[self gotoPageDelayer];
+				} else {
+					[self handleAnchor:YES];
 				}
 				
 			} else if ([[url scheme] isEqualToString:@"book"]) {
@@ -604,6 +612,7 @@
 				} else {
 					
 					if ([[url pathExtension] isEqualToString:@"html"]) {
+						self.anchorFromURL = [url fragment];
 						self.pageNameFromURL = [[url lastPathComponent] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 						NSString *tmpUrl = [[url URLByDeletingLastPathComponent] absoluteString];
 						url = [NSURL URLWithString:[tmpUrl stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"/"]]];						
@@ -695,6 +704,13 @@
 }
 
 // ****** PAGE SCROLLING
+- (void)handleAnchor:(BOOL)animating {
+	if (self.anchorFromURL != nil) {
+		NSString *offset = [currPage stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:@"document.getElementsByName('%@')[0].offsetTop;", self.anchorFromURL]];
+		[self goDownInPage:offset animating:animating];
+		self.anchorFromURL = nil;
+	}
+}
 - (void)goUpInPage:(NSString *)offset animating:(BOOL)animating {
 	
 	NSString *currPageOffset = [currPage stringByEvaluatingJavaScriptFromString:@"window.scrollY;"];
@@ -740,11 +756,10 @@
 	if (animating) {
 		
 		[UIView beginAnimations:@"scrollPage" context:nil]; {
-		
-			[UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
+			//[UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
 			[UIView setAnimationDuration:0.35];
-			[UIView setAnimationDelegate:self];
-			[UIView setAnimationDidStopSelector:@selector(animationDidStop:finished:)];
+			//[UIView setAnimationDelegate:self];
+			//[UIView setAnimationDidStopSelector:@selector(animationDidStop:finished:)];
 		
 			[webView stringByEvaluatingJavaScriptFromString:jsCommand];
 		}

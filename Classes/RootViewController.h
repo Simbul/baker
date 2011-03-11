@@ -43,6 +43,7 @@
 	
 	NSMutableArray *pages;
 	NSString *pageNameFromURL;
+	NSString *anchorFromURL;
 	
 	UIScrollView *scrollView;
 	NSMutableArray *pageSpinners;
@@ -78,6 +79,7 @@
 
 @property (nonatomic, retain) NSMutableArray *pages;
 @property (nonatomic, retain) NSString *pageNameFromURL;
+@property (nonatomic, retain) NSString *anchorFromURL;
 
 @property (nonatomic, retain) UIScrollView *scrollView;
 @property (nonatomic, retain) NSMutableArray *pageSpinners;
@@ -117,6 +119,7 @@
 - (void)userDidScroll:(UITouch *)touch;
 
 // ****** PAGE SCROLLING
+- (void)handleAnchor:(BOOL)animating;
 - (void)goUpInPage:(NSString *)offset animating:(BOOL)animating;
 - (void)goDownInPage:(NSString *)offset animating:(BOOL)animating;
 - (void)scrollPage:(UIWebView *)webView to:(NSString *)offset animating:(BOOL)animating;
