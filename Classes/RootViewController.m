@@ -515,35 +515,30 @@
 	// Sent before a web view begins loading content.
 }
 - (void)webViewDidFinishLoad:(UIWebView *)webView {
-	// Sent after a web view finishes loading content.
+	// Sent after a web view finishes loading content.	
 	
-	// Get current page max scroll offset
-	for (id subview in webView.subviews) {
-		if ([[subview class] isSubclassOfClass:[UIScrollView class]]) {
-			CGSize size = ((UIScrollView *)subview).contentSize;
+	if (webView == currPage) {
+		// Get current page max scroll offset
+		[self getPageHeight];
+		
+		// If is the first time i load something in the currPage web view...
+		if (currentPageFirstLoading) {
+			NSLog(@"(1) currPage finished first loading");
 			
-			currentPageHeight = size.height;
-			NSLog(@"Current page height: %d", currentPageHeight);			
+			// ...check if there is a saved starting scroll index and set it
+			NSString *currPageScrollIndex = [[NSUserDefaults standardUserDefaults] objectForKey:@"lastScrollIndex"];
+			if (currPageScrollIndex != nil) [self goDownInPage:currPageScrollIndex animating:NO];
+			
+			//[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onTouch:) name:@"onTouch" object:nil];
+			//[self loadSlot:+1 withPage:currentPageNumber + 1];
+			//[self loadSlot:-1 withPage:currentPageNumber - 1];
+			
+			currentPageFirstLoading = NO;
 		}
+		
+		// Handle saved hash reference (if any)
+		[self handleAnchor:NO];
 	}
-	
-	// If is the first time i load something in the currPage web view...
-	if (webView == currPage && currentPageFirstLoading) {
-		NSLog(@"(1) currPage finished first loading");
-		
-		// ...check if there is a saved starting scroll index and set it
-		NSString *currPageScrollIndex = [[NSUserDefaults standardUserDefaults] objectForKey:@"lastScrollIndex"];
-		if (currPageScrollIndex != nil) [self goDownInPage:currPageScrollIndex animating:NO];
-		
-		//[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onTouch:) name:@"onTouch" object:nil];
-		
-		//[self loadSlot:+1 withPage:currentPageNumber + 1];
-		//[self loadSlot:-1 withPage:currentPageNumber - 1];
-		
-		currentPageFirstLoading = NO;
-	}
-	
-	[self handleAnchor:NO];
 	
 	// /!\ hack to make it load at the right time and not too early
 	// source: http://stackoverflow.com/questions/1422146/webviewdidfinishload-firing-too-soon
@@ -704,22 +699,13 @@
 }
 
 // ****** PAGE SCROLLING
-- (void)handleAnchor:(BOOL)animating {
-	if (self.anchorFromURL != nil) {
-		
-		NSString *jsAnchorHandler = [NSString stringWithFormat:@"(function() {\
-																 	var target = '%@';\
-																 	var elem = document.getElementById(target);\
-																 	if (!elem) elem = document.getElementsByName(target)[0];\
-																 	return elem.offsetTop;\
-																 })();", self.anchorFromURL];
-		
-		NSString *offset = [currPage stringByEvaluatingJavaScriptFromString:jsAnchorHandler];
-		
-		if (![offset isEqualToString:@""])
-			[self goDownInPage:offset animating:animating];
-		
-		self.anchorFromURL = nil;
+- (void)getPageHeight {
+	for (id subview in currPage.subviews) {
+		if ([[subview class] isSubclassOfClass:[UIScrollView class]]) {
+			CGSize size = ((UIScrollView *)subview).contentSize;
+			NSLog(@"Current page height: %d", currentPageHeight);
+			currentPageHeight = size.height;
+		}
 	}
 }
 - (void)goUpInPage:(NSString *)offset animating:(BOOL)animating {
@@ -778,6 +764,24 @@
 	
 	} else {
 		[webView stringByEvaluatingJavaScriptFromString:jsCommand];
+	}
+}
+- (void)handleAnchor:(BOOL)animating {
+	if (self.anchorFromURL != nil) {
+		
+		NSString *jsAnchorHandler = [NSString stringWithFormat:@"(function() {\
+									 var target = '%@';\
+									 var elem = document.getElementById(target);\
+									 if (!elem) elem = document.getElementsByName(target)[0];\
+									 return elem.offsetTop;\
+									 })();", self.anchorFromURL];
+		
+		NSString *offset = [currPage stringByEvaluatingJavaScriptFromString:jsAnchorHandler];
+		
+		if (![offset isEqualToString:@""])
+			[self goDownInPage:offset animating:animating];
+		
+		self.anchorFromURL = nil;
 	}
 }
 
@@ -919,6 +923,7 @@
 }
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
 	[self checkPageSize];
+	[self getPageHeight];
 	[self resetScrollView];
 	[currPage setNeedsDisplay];
 }

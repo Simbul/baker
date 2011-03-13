@@ -119,10 +119,11 @@
 - (void)userDidScroll:(UITouch *)touch;
 
 // ****** PAGE SCROLLING
-- (void)handleAnchor:(BOOL)animating;
+- (void)getPageHeight;
 - (void)goUpInPage:(NSString *)offset animating:(BOOL)animating;
 - (void)goDownInPage:(NSString *)offset animating:(BOOL)animating;
 - (void)scrollPage:(UIWebView *)webView to:(NSString *)offset animating:(BOOL)animating;
+- (void)handleAnchor:(BOOL)animating;
 
 // ****** STATUS BAR
 - (void)toggleStatusBar;
