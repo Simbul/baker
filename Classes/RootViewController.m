@@ -125,7 +125,7 @@
 	scrollView.showsVerticalScrollIndicator = NO;
 	scrollView.delaysContentTouches = NO;
 	scrollView.pagingEnabled = YES;
-	scrollView.delegate = self;
+	scrollView.delegate = self;	
 	
 	// ****** PREV WEBVIEW INIT
 	//prevPage = [[UIWebView alloc] init];
@@ -551,7 +551,7 @@
 	//[webView stringByEvaluatingJavaScriptFromString:javaScript];
 	
 	[self spinnerForPage:currentPageNumber isAnimating:NO]; // spinner YES
-	[self performSelector:@selector(revealWebView:) withObject:webView afterDelay:0.1]; // This seems fixing the WebView-Flash-Of-Old-Content-webBug
+	[self performSelector:@selector(revealWebView:) withObject:webView afterDelay:0.1]; // This seems fixing the WebView-Flash-Of-Old-Content-webBug    
 }
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
 	// Sent if a web view failed to load content.
@@ -593,7 +593,7 @@
 					[scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:YES];
 					[self gotoPageDelayer];
 				} else {
-					[self handleAnchor:YES];
+					[self handleAnchor:NO];
 				}
 				
 			} else if ([[url scheme] isEqualToString:@"book"]) {
@@ -706,8 +706,19 @@
 // ****** PAGE SCROLLING
 - (void)handleAnchor:(BOOL)animating {
 	if (self.anchorFromURL != nil) {
-		NSString *offset = [currPage stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:@"document.getElementsByName('%@')[0].offsetTop;", self.anchorFromURL]];
-		[self goDownInPage:offset animating:animating];
+		
+		NSString *jsAnchorHandler = [NSString stringWithFormat:@"(function() {\
+																 	var target = '%@';\
+																 	var elem = document.getElementById(target);\
+																 	if (!elem) elem = document.getElementsByName(target)[0];\
+																 	return elem.offsetTop;\
+																 })();", self.anchorFromURL];
+		
+		NSString *offset = [currPage stringByEvaluatingJavaScriptFromString:jsAnchorHandler];
+		
+		if (![offset isEqualToString:@""])
+			[self goDownInPage:offset animating:animating];
+		
 		self.anchorFromURL = nil;
 	}
 }
