@@ -256,6 +256,7 @@
 				GCC_PREFIX_HEADER = Baker_Prefix.pch;
 				INFOPLIST_FILE = "Baker-Info.plist";
 				PRODUCT_NAME = Baker;
+				SDKROOT = iphoneos;
 			};
 			name = Debug;
 		};
@@ -268,6 +269,7 @@
 				GCC_PREFIX_HEADER = Baker_Prefix.pch;
 				INFOPLIST_FILE = "Baker-Info.plist";
 				PRODUCT_NAME = Baker;
+				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -298,6 +300,7 @@
 				GCC_PREFIX_HEADER = Baker_Prefix.pch;
 				INFOPLIST_FILE = "Baker-Info.plist";
 				PRODUCT_NAME = Baker;
+				SDKROOT = iphoneos;
 			};
 			name = Analyze;
 		};
