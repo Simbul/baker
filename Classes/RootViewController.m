@@ -330,13 +330,22 @@
 - (BOOL)changePage:(int)page {
 
 	BOOL pageChanged = NO;
-	if (page < 1) {
+	
+    if (page < 1) {
 		currentPageNumber = 1;
 	} else if (page > totalPages) {
 		currentPageNumber = totalPages;
 	} else if (page != currentPageNumber) {
 		currentPageNumber = page;
-		pageChanged = YES;
+		
+        // While we are tapping, we don't want scrolling event to get in the way
+        scrollView.scrollEnabled = NO;
+        stackedScrollingAnimations++;
+        
+        [scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:YES];
+        [self gotoPageDelayer];
+        
+        pageChanged = YES;
 	}
 	
 	return pageChanged;	
@@ -583,11 +592,7 @@
 				self.anchorFromURL = [url fragment];
 				NSString *file = [[url relativePath] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 				int page = (int)[pages indexOfObject:file] + 1;
-				if ([self changePage:page]) {
-					stackedScrollingAnimations++;
-					[scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:YES];
-					[self gotoPageDelayer];
-				} else {
+				if (![self changePage:page]) {
 					[self handleAnchor:NO];
 				}
 				
@@ -681,14 +686,8 @@
 			page = currentPageNumber+1;
 		}
 		
-		if ([self changePage:page]) {
-			[self hideStatusBar];
-			// While we are tapping, we don't want scrolling event to get in the way
-			scrollView.scrollEnabled = NO;
-			stackedScrollingAnimations++;
-			[scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:YES];
-			[self gotoPageDelayer];
-		}
+        [self changePage:page];
+        
 	} else if (touch.tapCount == 2) {
 		[self performSelector:@selector(toggleStatusBar) withObject:nil];
 	}

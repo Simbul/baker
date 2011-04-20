@@ -130,9 +130,9 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
-				D281CE9B13545C0E009F1B11 /* Tests */,
 				BF2F993F1269379900E356EF /* book */,
 				080E96DDFE201D6D7F000001 /* Classes */,
+				D281CE9B13545C0E009F1B11 /* Tests */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
