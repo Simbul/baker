@@ -337,11 +337,12 @@
 		currentPageNumber = totalPages;
 	} else if (page != currentPageNumber) {
 		currentPageNumber = page;
-		
+        
         // While we are tapping, we don't want scrolling event to get in the way
         scrollView.scrollEnabled = NO;
         stackedScrollingAnimations++;
         
+        [self hideStatusBar];
         [scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:YES];
         [self gotoPageDelayer];
         
