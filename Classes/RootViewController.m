@@ -911,7 +911,6 @@
 // ****** SYSTEM
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
 	// Overriden to allow any orientation.
-	
 	if ([AVAILABLE_ORIENTATION isEqualToString:@"Portrait"]) {
 		return (interfaceOrientation == UIInterfaceOrientationPortrait || interfaceOrientation == UIInterfaceOrientationPortraitUpsideDown);
 	} else if ([AVAILABLE_ORIENTATION isEqualToString:@"Landscape"]) {
@@ -920,11 +919,42 @@
 		return YES;
 	}	
 }
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
+    // Since the UIWebView doesn't handle orientationchange events correctly we have to do handle them ourselves 
+    // 1. Set the correct value for window.orientation property
+    NSString *jsOrientationGetter;
+    switch (toInterfaceOrientation) {
+        case UIDeviceOrientationPortrait:
+            jsOrientationGetter = @"window.__defineGetter__('orientation', function() { return 0; });";
+            break;
+        case UIDeviceOrientationLandscapeLeft:
+            jsOrientationGetter = @"window.__defineGetter__('orientation', function() { return 90; });";
+            break;
+        case UIDeviceOrientationLandscapeRight:
+            jsOrientationGetter = @"window.__defineGetter__('orientation', function() { return -90; });";
+            break;
+        case UIDeviceOrientationPortraitUpsideDown:
+            jsOrientationGetter = @"window.__defineGetter__('orientation', function() { return 180; });";
+            break;
+        default:
+            break;
+    }
+    
+    // 2. Create and dispatch a orientationchange event    
+    NSString *jsOrientationChange = @"if (typeof bakerOrientationChangeEvent === 'undefined') {\
+                                          var bakerOrientationChangeEvent = document.createEvent('Events');\
+                                              bakerOrientationChangeEvent.initEvent('orientationchange', true, false);\
+                                      }; window.dispatchEvent(bakerOrientationChangeEvent)";
+    
+    // 3. Merge the scripts and load them on the current UIWebView
+    NSString *jsCommand = [jsOrientationGetter stringByAppendingString:jsOrientationChange];
+    [currPage stringByEvaluatingJavaScriptFromString:jsCommand];
+}
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
 	[self checkPageSize];
 	[self getPageHeight];
 	[self resetScrollView];
-	[currPage setNeedsDisplay];
+    [currPage setNeedsDisplay];
 }
 - (void)didReceiveMemoryWarning {
 	// Releases the view if it doesn't have a superview.
