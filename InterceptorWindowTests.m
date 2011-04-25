@@ -29,6 +29,7 @@
 //  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // 
 
+#import <OCMock/OCMock.h>
 #import "InterceptorWindowTests.h"
 #import "InterceptorWindow.h"
 
@@ -37,6 +38,16 @@
 - (void) testInitInterceptorWindow {
 	UIWindow *iWindow = [[InterceptorWindow alloc] initWithFrame:CGRectMake(0,0,100,100)];
 	STAssertNotNil(iWindow, @"Failed to initialize InterceptorWindow");
+}
+
+- (void)testReturnsStubbedReturnValue {
+    id returnValue;
+    
+    id mock = [OCMockObject mockForClass:[UIViewController class]];
+    [[[mock stub] andReturn:@"megamock"] title];
+    returnValue = [mock title];
+    
+    STAssertEqualObjects(@"megamock", returnValue, @"Should have returned stubbed value.");
 }
 
 // Uncomment this to force a failure

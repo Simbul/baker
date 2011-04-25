@@ -25,6 +25,9 @@
 		BFBACF331274CD38009D9595 /* ios-icon-ipad72.png in Resources */ = {isa = PBXBuildFile; fileRef = BFBACF321274CD38009D9595 /* ios-icon-ipad72.png */; };
 		BFEC41E61309D9CA00628DF3 /* ios-icon-iphone57.png in Resources */ = {isa = PBXBuildFile; fileRef = BFEC41E51309D9CA00628DF3 /* ios-icon-iphone57.png */; };
 		BFEC41E81309D9CE00628DF3 /* ios-icon-iphone114.png in Resources */ = {isa = PBXBuildFile; fileRef = BFEC41E71309D9CE00628DF3 /* ios-icon-iphone114.png */; };
+		D21A0B86135CF1F2005D6E8A /* libOCMock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D21A0B85135CF1F2005D6E8A /* libOCMock.a */; };
+		D2700BD81355BC3100889DD8 /* OCMock.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2700BD71355BC3100889DD8 /* OCMock.framework */; };
+		D2700BDB1356048800889DD8 /* OCMock.framework in Copy OCMock */ = {isa = PBXBuildFile; fileRef = D2700BD71355BC3100889DD8 /* OCMock.framework */; };
 		D281D06913549EF4009F1B11 /* InterceptorWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = F4EC203712862D4D008E94D1 /* InterceptorWindow.m */; };
 		D281D06A13549EF4009F1B11 /* InterceptorWindowTests.m in Sources */ = {isa = PBXBuildFile; fileRef = D281D02E13546BB1009F1B11 /* InterceptorWindowTests.m */; };
 		D281D06B13549F08009F1B11 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
@@ -33,6 +36,20 @@
 		D281D06E13549F08009F1B11 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F242ED911FB344D00641757 /* QuartzCore.framework */; };
 		F4EC203812862D4D008E94D1 /* InterceptorWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = F4EC203712862D4D008E94D1 /* InterceptorWindow.m */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		D2700BDA1356041800889DD8 /* Copy OCMock */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(BUILT_PRODUCTS_DIR)";
+			dstSubfolderSpec = 0;
+			files = (
+				D2700BDB1356048800889DD8 /* OCMock.framework in Copy OCMock */,
+			);
+			name = "Copy OCMock";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -65,6 +82,8 @@
 		BFBACF321274CD38009D9595 /* ios-icon-ipad72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ios-icon-ipad72.png"; sourceTree = "<group>"; };
 		BFEC41E51309D9CA00628DF3 /* ios-icon-iphone57.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ios-icon-iphone57.png"; sourceTree = "<group>"; };
 		BFEC41E71309D9CE00628DF3 /* ios-icon-iphone114.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ios-icon-iphone114.png"; sourceTree = "<group>"; };
+		D21A0B85135CF1F2005D6E8A /* libOCMock.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libOCMock.a; sourceTree = "<group>"; };
+		D2700BD71355BC3100889DD8 /* OCMock.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = OCMock.framework; sourceTree = "<group>"; };
 		D281D02D13546BB1009F1B11 /* InterceptorWindowTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InterceptorWindowTests.h; sourceTree = "<group>"; };
 		D281D02E13546BB1009F1B11 /* InterceptorWindowTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InterceptorWindowTests.m; sourceTree = "<group>"; };
 		D281D06313549EDC009F1B11 /* UnitTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UnitTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -94,6 +113,8 @@
 				D281D06C13549F08009F1B11 /* UIKit.framework in Frameworks */,
 				D281D06D13549F08009F1B11 /* CoreGraphics.framework in Frameworks */,
 				D281D06E13549F08009F1B11 /* QuartzCore.framework in Frameworks */,
+				D2700BD81355BC3100889DD8 /* OCMock.framework in Frameworks */,
+				D21A0B86135CF1F2005D6E8A /* libOCMock.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -190,9 +211,19 @@
 			path = minizip;
 			sourceTree = "<group>";
 		};
+		D2700BD61355BC0800889DD8 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				D21A0B85135CF1F2005D6E8A /* libOCMock.a */,
+				D2700BD71355BC3100889DD8 /* OCMock.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		D281CE9B13545C0E009F1B11 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				D2700BD61355BC0800889DD8 /* Frameworks */,
 				D281D02D13546BB1009F1B11 /* InterceptorWindowTests.h */,
 				D281D02E13546BB1009F1B11 /* InterceptorWindowTests.m */,
 			);
@@ -225,6 +256,7 @@
 			buildPhases = (
 				D281D05E13549EDC009F1B11 /* Resources */,
 				D281D05F13549EDC009F1B11 /* Sources */,
+				D2700BDA1356041800889DD8 /* Copy OCMock */,
 				D281D06013549EDC009F1B11 /* Frameworks */,
 				D281D06113549EDC009F1B11 /* ShellScript */,
 			);
@@ -251,6 +283,7 @@
 				Japanese,
 				French,
 				German,
+				en,
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* CustomTemplate */;
 			projectDirPath = "";
@@ -334,11 +367,16 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Baker_Prefix.pch;
 				INFOPLIST_FILE = "Baker-Info.plist";
+				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = Baker;
 				SDKROOT = iphoneos;
 			};
@@ -349,9 +387,14 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Baker_Prefix.pch;
 				INFOPLIST_FILE = "Baker-Info.plist";
+				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = Baker;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
@@ -379,11 +422,16 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Baker_Prefix.pch;
 				INFOPLIST_FILE = "Baker-Info.plist";
+				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = Baker;
 				SDKROOT = iphoneos;
 			};
@@ -429,13 +477,21 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
 					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+					"\"$(SRCROOT)\"",
 				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INFOPLIST_FILE = "UnitTests-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+				);
 				OTHER_LDFLAGS = (
+					"-OjbC",
+					"-force_load",
+					"$(PROJECT_DIR)/libOCMock.a",
 					"-framework",
 					Foundation,
 					"-framework",
@@ -458,11 +514,19 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
 					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+					"\"$(SRCROOT)\"",
 				);
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				INFOPLIST_FILE = "UnitTests-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+				);
 				OTHER_LDFLAGS = (
+					"-OjbC",
+					"-force_load",
+					"$(PROJECT_DIR)/libOCMock.a",
 					"-framework",
 					Foundation,
 					"-framework",
@@ -487,11 +551,19 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
 					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+					"\"$(SRCROOT)\"",
 				);
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				INFOPLIST_FILE = "UnitTests-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+				);
 				OTHER_LDFLAGS = (
+					"-OjbC",
+					"-force_load",
+					"$(PROJECT_DIR)/libOCMock.a",
 					"-framework",
 					Foundation,
 					"-framework",
