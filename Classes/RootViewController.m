@@ -330,13 +330,23 @@
 - (BOOL)changePage:(int)page {
 
 	BOOL pageChanged = NO;
-	if (page < 1) {
+	
+    if (page < 1) {
 		currentPageNumber = 1;
 	} else if (page > totalPages) {
 		currentPageNumber = totalPages;
 	} else if (page != currentPageNumber) {
 		currentPageNumber = page;
-		pageChanged = YES;
+        
+        // While we are tapping, we don't want scrolling event to get in the way
+        scrollView.scrollEnabled = NO;
+        stackedScrollingAnimations++;
+        
+        [self hideStatusBar];
+        [scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:YES];
+        [self gotoPageDelayer];
+        
+        pageChanged = YES;
 	}
 	
 	return pageChanged;	
@@ -583,11 +593,7 @@
 				self.anchorFromURL = [url fragment];
 				NSString *file = [[url relativePath] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 				int page = (int)[pages indexOfObject:file] + 1;
-				if ([self changePage:page]) {
-					stackedScrollingAnimations++;
-					[scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:YES];
-					[self gotoPageDelayer];
-				} else {
+				if (![self changePage:page]) {
 					[self handleAnchor:NO];
 				}
 				
@@ -681,14 +687,8 @@
 			page = currentPageNumber+1;
 		}
 		
-		if ([self changePage:page]) {
-			[self hideStatusBar];
-			// While we are tapping, we don't want scrolling event to get in the way
-			scrollView.scrollEnabled = NO;
-			stackedScrollingAnimations++;
-			[scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:YES];
-			[self gotoPageDelayer];
-		}
+        [self changePage:page];
+        
 	} else if (touch.tapCount == 2) {
 		[self performSelector:@selector(toggleStatusBar) withObject:nil];
 	}
@@ -912,7 +912,6 @@
 // ****** SYSTEM
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
 	// Overriden to allow any orientation.
-	
 	if ([AVAILABLE_ORIENTATION isEqualToString:@"Portrait"]) {
 		return (interfaceOrientation == UIInterfaceOrientationPortrait || interfaceOrientation == UIInterfaceOrientationPortraitUpsideDown);
 	} else if ([AVAILABLE_ORIENTATION isEqualToString:@"Landscape"]) {
@@ -921,11 +920,42 @@
 		return YES;
 	}	
 }
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
+    // Since the UIWebView doesn't handle orientationchange events correctly we have to do handle them ourselves 
+    // 1. Set the correct value for window.orientation property
+    NSString *jsOrientationGetter;
+    switch (toInterfaceOrientation) {
+        case UIDeviceOrientationPortrait:
+            jsOrientationGetter = @"window.__defineGetter__('orientation', function() { return 0; });";
+            break;
+        case UIDeviceOrientationLandscapeLeft:
+            jsOrientationGetter = @"window.__defineGetter__('orientation', function() { return 90; });";
+            break;
+        case UIDeviceOrientationLandscapeRight:
+            jsOrientationGetter = @"window.__defineGetter__('orientation', function() { return -90; });";
+            break;
+        case UIDeviceOrientationPortraitUpsideDown:
+            jsOrientationGetter = @"window.__defineGetter__('orientation', function() { return 180; });";
+            break;
+        default:
+            break;
+    }
+    
+    // 2. Create and dispatch a orientationchange event    
+    NSString *jsOrientationChange = @"if (typeof bakerOrientationChangeEvent === 'undefined') {\
+                                          var bakerOrientationChangeEvent = document.createEvent('Events');\
+                                              bakerOrientationChangeEvent.initEvent('orientationchange', true, false);\
+                                      }; window.dispatchEvent(bakerOrientationChangeEvent)";
+    
+    // 3. Merge the scripts and load them on the current UIWebView
+    NSString *jsCommand = [jsOrientationGetter stringByAppendingString:jsOrientationChange];
+    [currPage stringByEvaluatingJavaScriptFromString:jsCommand];
+}
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
 	[self checkPageSize];
 	[self getPageHeight];
 	[self resetScrollView];
-	[currPage setNeedsDisplay];
+    [currPage setNeedsDisplay];
 }
 - (void)didReceiveMemoryWarning {
 	// Releases the view if it doesn't have a superview.
