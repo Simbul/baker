@@ -51,6 +51,12 @@
 // Should be set to NO only when the book pages don't need any vertical scrolling.
 #define PAGE_VERTICAL_BOUNCE YES
 
+// MEDIA PLAYBACK REQUIRES USER ACTION
+// Enable automatic HTML5 media playback
+//   YES (Default) - Media required user action to be started.
+//   NO - Media can be played automatically.
+#define MEDIA_PLAYBACK_REQUIRES_USER_ACTION YES
+
 // TEXT LABELS
 #define OPEN_BOOK_MESSAGE @"Do you want to download "
 #define OPEN_BOOK_CONFIRM @"Open book"
@@ -134,8 +140,9 @@
 	// ****** CURR WEBVIEW INIT
 	currPage = [[UIWebView alloc] init];
 	currPage.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-	currPage.delegate = self;
+	currPage.mediaPlaybackRequiresUserAction = MEDIA_PLAYBACK_REQUIRES_USER_ACTION;
 	currPage.scalesPageToFit = PAGE_ZOOM_GESTURE;
+    currPage.delegate = self;
 	currPage.alpha = 0.5;
 	if (!PAGE_VERTICAL_BOUNCE) {
 		for (id subview in currPage.subviews)
