@@ -1,7 +1,7 @@
 Project Baker
-HTML5 Ebook framework for iPad
+HTML5 Ebook framework for iPad/iPhone
 http://bakerframework.com/
-Copyright (C) 2010, Davide Casali, Marco Colombo, Alessandro Morandi
+Copyright (C) 2011, Davide Casali, Marco Colombo, Alessandro Morandi
 Licensed under BSD Opensource License.
 
 
@@ -23,11 +23,11 @@ It's easier done than said! ;)
 
 1. DESIGN
 . Create you book as one or more HTML5 documents
-. Limit the width to 768px
-. You can constrain the height to 1024px to match the page size or make it scrollable if you need longer pages.
+. Limit the width to 768px (for portrait books) or 1024px (for landscape books)
+. You can constrain the height to match the page size or make it scrollable if you need longer pages.
 . You can use ANY feature in WebKit: HTML5, CSS3, JavaScript (video, audio, fonts, jQuery, Google Maps, etc).
   But remember: it's a book. If you want to build an app, check PhoneGap.
-. Consider having 1 HTML for each chapter/section/article to use the native scrolling.
+. Consider having 1 HTML for each chapter/section/article and use the native scrolling.
 
 2. PACKAGE
 . The book must be contained in a single "book/" folder.
@@ -36,34 +36,35 @@ It's easier done than said! ;)
 . In this case, 01.html (or A.html) is going to be used as the first page of the book, so it'll probably be your cover.
 . All the assets must be contained (with a relative reference) within the "book/" folder.
 . Subfolders are allowed for assets, but the HTML files will be read only from the root of the "book/" folder itself.
+. Check the example book from the website for an hands-on example.
 
 3. PUBLISH
 . Download the Baker Framework Xcode project from http://bakerframework.com or GitHub.
 . Create an Apple iPhone Developer account to publish on the App Store.
-. Download Xcode and the iOS SDK from the Apple Developer website.
+. Download Xcode 4 from the Mac App Store or from the Apple Developer website.
 . Open Baker in Xcode.
 . Add all the files of your book from your "book/" folder to the "book/" folder inside Baker.
 . If you used a CSS file to limit the width during testing, remove it.
-. Rename the project to the name of your book: Project -> Rename.
-. Replace the icon file: ios-icon-ipad72.png (check the Apple Guidelines for reference).
+. Rename the project to the name of your book: click on the "Baker" name in the leftmost column of the project navigator.
+. Replace the icon files (ios-icon-*.png, check the Apple Guidelines for reference).
 . Change the bundle identifier in the plist file to the one you are going to use for your app.
 . Test your book compiling it. 
 . Follow the instructions on the Apple iPhone Developer website to submit your book to the app store.
 
 
 
-TARGETING IPHONE DEVICE
-=======================
+CREATE A BOOK FOR BOTH IPAD AND IPHONE
+======================================
 
-Now Baker can even target iPhone devices.
+Since Baker Framework 2.0 you can create books and magazines for the iPhone too.
 
 To compile your application for iPhone follow these steps:
 . Open the Baker Framework Xcode project with Xcode.
-. Open the Project Settings panel.
-. In the Build tab locate the section Deployment for the configuration you would like to use for compiling.
+. Click on the "Baker" project in the leftmost column of the project navigator.
+. On the column just left, click under Projects on "Baker"
+. In the "Build Settings" tab locate the section Deployment for the configuration you would like to use for compiling.
 . Under the Deployment section change the Target Device Family entry to match the devices you would like to target (only iPhone, only iPad or iPhone/iPad).
-. Close the Project Settings panel.
-. Compile the application.
+. Compile and test the application.
 
 
 
@@ -99,6 +100,17 @@ Follow us on Twitter: http://twitter.com/BakerFramework
 
 CHANGELOG
 =========
+
+2.0
+. Multi-orientation books support (portrait, landscape, both) - thanks to @svdgraaf
+. iPhone support
+. Xcode 4
+. Added support to open a specific page of a downloaded book
+. Added support to remove vertical bounce (for non-scrolling books)
+. Changed the gesture to open the status bar to the more reliable doubletap
+. Fix: page anchors now handled in internal links
+. Fix: orientationchange event now fires
+. Minor fixes
 
 1.1
 . Added book:// protocol to allow downloadable HPub books
