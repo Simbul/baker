@@ -39,7 +39,7 @@ It's easier done than said! ;)
 . Check the example book from the website for an hands-on example.
 
 3. PUBLISH
-. Download the Baker Framework Xcode project from http://bakerframework.com or GitHub.
+. Download the Baker Framework Xcode project from http://bakerframework.com (or GitHub).
 . Create an Apple iPhone Developer account to publish on the App Store.
 . Download Xcode 4 from the Mac App Store or from the Apple Developer website.
 . Open Baker in Xcode.
@@ -48,7 +48,8 @@ It's easier done than said! ;)
 . Rename the project to the name of your book: click on the "Baker" name in the leftmost column of the project navigator.
 . Replace the icon files (ios-icon-*.png, check the Apple Guidelines for reference).
 . Change the bundle identifier in the plist file to the one you are going to use for your app.
-. Test your book compiling it. 
+. Select the Baker Scheme (Simulator or Device) from the toolbar dropdown.
+. Run and check that everything works correctly both on simulator and device.
 . Follow the instructions on the Apple iPhone Developer website to submit your book to the app store.
 
 
