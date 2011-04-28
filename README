@@ -107,6 +107,7 @@ CHANGELOG
 . Xcode 4
 . Added support to open a specific page of a downloaded book
 . Added support to remove vertical bounce (for non-scrolling books)
+. Added support to enable automatic media playback
 . Changed the gesture to open the status bar to the more reliable doubletap
 . Fix: page anchors now handled in internal links
 . Fix: orientationchange event now fires
