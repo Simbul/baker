@@ -33,6 +33,7 @@
 #import "RootViewController.h"
 #import "Downloader.h"
 #import "SSZipArchive.h"
+#import "IndexViewController.h"
 
 // LOADER STYLE
 // Configure this to change the color of the loader
@@ -167,6 +168,10 @@
 	
 	self.documentsBookPath = [documentsPath stringByAppendingPathComponent:@"book"];
 	self.bundleBookPath = [[NSBundle mainBundle] pathForResource:@"book" ofType:nil];
+    
+    // ****** INDEX WEBVIEW INIT
+    IndexViewController *indexViewController = [[IndexViewController alloc] initWithBookBundlePath:self.bundleBookPath fileName:@"index.html"];
+    [[self view] addSubview:indexViewController.view];
 	
 	if ([[NSFileManager defaultManager] fileExistsAtPath:documentsBookPath]) {
 		[self initBook:documentsBookPath];
