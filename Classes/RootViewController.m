@@ -83,6 +83,8 @@
 //	@"Landscape" - Book is available only in landscape orientation
 #define	AVAILABLE_ORIENTATION @"Any"
 
+#define INDEX_FILE_NAME @"index.html"
+
 //  ==========================================================================================
 
 @implementation RootViewController
@@ -170,7 +172,7 @@
 	self.bundleBookPath = [[NSBundle mainBundle] pathForResource:@"book" ofType:nil];
     
     // ****** INDEX WEBVIEW INIT
-    IndexViewController *indexViewController = [[IndexViewController alloc] initWithBookBundlePath:self.bundleBookPath fileName:@"index.html"];
+    IndexViewController *indexViewController = [[IndexViewController alloc] initWithBookBundlePath:self.bundleBookPath fileName:INDEX_FILE_NAME];
     [[self view] addSubview:indexViewController.view];
 	
 	if ([[NSFileManager defaultManager] fileExistsAtPath:documentsBookPath]) {
@@ -254,7 +256,7 @@
 	
 	NSArray *dirContent = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:path error:nil];
 	for (NSString *fileName in dirContent) {
-		if ([[fileName pathExtension] isEqualToString:@"html"])
+		if ([[fileName pathExtension] isEqualToString:@"html"] && ![fileName isEqualToString:INDEX_FILE_NAME])
 			[self.pages addObject:[path stringByAppendingPathComponent:fileName]];
 	}
 		
