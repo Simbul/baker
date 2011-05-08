@@ -35,9 +35,10 @@
 @interface IndexViewController : UIViewController <UIWebViewDelegate> {
     NSString *bookBundlePath;
     NSString *fileName;
+    UIViewController<UIWebViewDelegate> *webViewDelegate;
 }
 
-- (id)initWithBookBundlePath:(NSString *)path fileName:(NSString *)name;
+- (id)initWithBookBundlePath:(NSString *)path fileName:(NSString *)name webViewDelegate:(UIViewController *)delegate;
 - (void)loadContent;
 
 @end
