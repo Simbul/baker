@@ -172,7 +172,7 @@
 	self.bundleBookPath = [[NSBundle mainBundle] pathForResource:@"book" ofType:nil];
     
     // ****** INDEX WEBVIEW INIT
-    IndexViewController *indexViewController = [[IndexViewController alloc] initWithBookBundlePath:self.bundleBookPath fileName:INDEX_FILE_NAME];
+    IndexViewController *indexViewController = [[IndexViewController alloc] initWithBookBundlePath:self.bundleBookPath fileName:INDEX_FILE_NAME webViewDelegate:self];
     [[self view] addSubview:indexViewController.view];
 	
 	if ([[NSFileManager defaultManager] fileExistsAtPath:documentsBookPath]) {

@@ -36,9 +36,11 @@
 
 @implementation IndexViewController
 
-- (id)initWithBookBundlePath:(NSString *)path fileName:(NSString *)name {
+- (id)initWithBookBundlePath:(NSString *)path fileName:(NSString *)name webViewDelegate:(UIViewController *)delegate {
     bookBundlePath = path;
     fileName = name;
+    webViewDelegate = delegate;
+    
     return [self initWithNibName:nil bundle:nil];
 }
 
@@ -85,6 +87,11 @@
 	if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
 		[(UIWebView *)self.view loadRequest:[NSURLRequest requestWithURL:[NSURL fileURLWithPath:path]]];
 	}
+}
+
+-(void)webViewDidFinishLoad:(UIWebView *)webView {
+    // After the first load, point the delegate to the main view controller
+    webView.delegate = webViewDelegate;
 }
 
 /*
