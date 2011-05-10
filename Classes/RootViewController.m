@@ -504,7 +504,7 @@
         if (navigation != nil && !navigation.hidden)
             return CGRectMake(pageWidth * (page - 1), 0, pageWidth, pageHeight - 200);
         else
-            return CGRectMake(pageWidth * (page - 1), 0, pageWidth, pageHeight - 200);
+            return CGRectMake(pageWidth * (page - 1), 0, pageWidth, pageHeight);
     }
     else return CGRectMake(pageWidth * (page - 1), 0, pageWidth, pageHeight);
 }
