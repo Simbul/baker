@@ -500,7 +500,13 @@
 
 // ****** SCROLLVIEW
 - (CGRect)frameForPage:(int)page {
-	return CGRectMake(pageWidth * (page - 1), 0, pageWidth, pageHeight);
+    if (LAKER_NAVIGATION) {
+        if (navigation != nil && !navigation.hidden)
+            return CGRectMake(pageWidth * (page - 1), 0, pageWidth, pageHeight - 200);
+        else
+            return CGRectMake(pageWidth * (page - 1), 0, pageWidth, pageHeight - 200);
+    }
+    else return CGRectMake(pageWidth * (page - 1), 0, pageWidth, pageHeight);
 }
 - (void)spinnerForPage:(int)page isAnimating:(BOOL)isAnimating {
 	UIActivityIndicatorView *spinner = nil;
