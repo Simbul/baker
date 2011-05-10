@@ -36,11 +36,14 @@
     NSString *bookBundlePath;
     NSString *fileName;
     UIViewController<UIWebViewDelegate> *webViewDelegate;
-    UIInterfaceOrientation currentOrientation;
+    
+    int pageWidth;
+	int pageHeight;
 }
 
 - (id)initWithBookBundlePath:(NSString *)path fileName:(NSString *)name webViewDelegate:(UIViewController *)delegate;
 - (void)loadContent;
+- (void)setPageSizeForOrientation:(UIInterfaceOrientation)orientation;
 - (BOOL)isIndexViewHidden;
 - (void)setIndexViewHidden:(BOOL)hidden withAnimation:(BOOL)animation;
 - (void)rotateFromOrientation:(UIInterfaceOrientation)fromInterfaceOrientation toOrientation:(UIInterfaceOrientation)toInterfaceOrientation;
