@@ -31,7 +31,7 @@
 
 #import "IndexViewController.h"
 
-
+#define NAVIGATION_HEIGHT 150
 
 
 @implementation IndexViewController
@@ -40,6 +40,7 @@
     bookBundlePath = path;
     fileName = name;
     webViewDelegate = delegate;
+    currentOrientation = UIInterfaceOrientationPortrait;
     
     return [self initWithNibName:nil bundle:nil];
 }
@@ -71,7 +72,7 @@
 // Implement loadView to create a view hierarchy programmatically, without using a nib.
 - (void)loadView
 {
-    UIWebView *webView = [[UIWebView alloc] initWithFrame:CGRectMake(0, 0, 768, 300)];
+    UIWebView *webView = [[UIWebView alloc] initWithFrame:CGRectMake(0, 1024, 768, NAVIGATION_HEIGHT)];
     webView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
     webView.delegate = self;
     
@@ -79,6 +80,48 @@
     [webView release];
     
     [self loadContent];
+}
+
+- (BOOL)isIndexViewHidden {
+    if (currentOrientation == UIInterfaceOrientationPortrait || currentOrientation == UIInterfaceOrientationPortraitUpsideDown) {
+        return self.view.frame.origin.y > 1024 - NAVIGATION_HEIGHT;
+    } else {
+        return self.view.frame.origin.y > 768 - NAVIGATION_HEIGHT;
+    }
+
+}
+
+- (void)setIndexViewHidden:(BOOL)hidden withAnimation:(BOOL)animation {
+    if (currentOrientation == UIInterfaceOrientationPortrait || currentOrientation == UIInterfaceOrientationPortraitUpsideDown) {
+        if (hidden) {
+            self.view.frame = CGRectMake(0, 1024, 768, NAVIGATION_HEIGHT);
+        } else {
+            self.view.frame = CGRectMake(0, 1024 - NAVIGATION_HEIGHT, 768, NAVIGATION_HEIGHT);
+        }
+    } else {
+        if (hidden) {
+            self.view.frame = CGRectMake(0, 768, 1024, NAVIGATION_HEIGHT);
+        } else {
+            self.view.frame = CGRectMake(0, 768 - NAVIGATION_HEIGHT, 1024, NAVIGATION_HEIGHT);
+        }
+    }
+}
+
+- (void)rotateFromOrientation:(UIInterfaceOrientation)fromInterfaceOrientation toOrientation:(UIInterfaceOrientation)toInterfaceOrientation {
+    if (toInterfaceOrientation == UIInterfaceOrientationLandscapeLeft || toInterfaceOrientation == UIInterfaceOrientationLandscapeRight) {
+        if ([self isIndexViewHidden]) {
+            self.view.frame = CGRectMake(0, 768, 1024, NAVIGATION_HEIGHT);
+        } else {
+            self.view.frame = CGRectMake(0, 768 - NAVIGATION_HEIGHT, 1024, NAVIGATION_HEIGHT);
+        }
+    } else {
+        if ([self isIndexViewHidden]) {
+            self.view.frame = CGRectMake(0, 1024, 768, NAVIGATION_HEIGHT);
+        } else {
+            self.view.frame = CGRectMake(0, 1024 - NAVIGATION_HEIGHT, 768, NAVIGATION_HEIGHT);
+        }
+    }
+    currentOrientation = toInterfaceOrientation;
 }
 
 - (void)loadContent {

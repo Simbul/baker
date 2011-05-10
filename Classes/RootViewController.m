@@ -33,7 +33,6 @@
 #import "RootViewController.h"
 #import "Downloader.h"
 #import "SSZipArchive.h"
-#import "IndexViewController.h"
 
 // LOADER STYLE
 // Configure this to change the color of the loader
@@ -172,7 +171,8 @@
 	self.bundleBookPath = [[NSBundle mainBundle] pathForResource:@"book" ofType:nil];
     
     // ****** INDEX WEBVIEW INIT
-    IndexViewController *indexViewController = [[IndexViewController alloc] initWithBookBundlePath:self.bundleBookPath fileName:INDEX_FILE_NAME webViewDelegate:self];
+    indexViewController = [[IndexViewController alloc] initWithBookBundlePath:self.bundleBookPath fileName:INDEX_FILE_NAME webViewDelegate:self];
+    
     [[self view] addSubview:indexViewController.view];
 	
 	if ([[NSFileManager defaultManager] fileExistsAtPath:documentsBookPath]) {
@@ -808,6 +808,7 @@
 		NSLog(@"TOGGLE status bar");
 		UIApplication *sharedApplication = [UIApplication sharedApplication];
 		[sharedApplication setStatusBarHidden:!sharedApplication.statusBarHidden withAnimation:UIStatusBarAnimationSlide];
+        [indexViewController setIndexViewHidden:![indexViewController isIndexViewHidden] withAnimation:YES];
 	}
 }
 - (void)hideStatusBar {
@@ -817,6 +818,7 @@
 	NSLog(@"HIDE status bar %@", (discardToggle ? @"discarding toggle" : @""));
 	discardNextStatusBarToggle = discardToggle;
 	[[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
+    [indexViewController setIndexViewHidden:YES withAnimation:YES];
 }
 
 // ****** DOWNLOAD NEW BOOKS
@@ -966,6 +968,9 @@
     [currPage stringByEvaluatingJavaScriptFromString:jsCommand];
 }
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
+    UIDeviceOrientation orientation = [[UIDevice currentDevice] orientation];
+    [indexViewController rotateFromOrientation:fromInterfaceOrientation toOrientation:orientation];
+     
 	[self checkPageSize];
 	[self getPageHeight];
 	[self resetScrollView];
