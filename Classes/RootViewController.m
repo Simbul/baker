@@ -617,7 +617,7 @@
         }
         
         if (navigation == webView) {
-            [self performSelector:@selector(toggleNavigationBar) withObject:nil];
+            [self performSelector:@selector(hideNavigationBar) withObject:nil];
         }
     }
     
@@ -931,7 +931,9 @@
 }
 
 -(void)hideNavigationBar{
-    [UIView animateWithDuration:0.1
+    scrollView.frame = CGRectMake(0, 0, self.pageWidth, self.pageHeight);
+    scrollView.contentSize = CGSizeMake(pageWidth * totalPages, pageHeight);
+    [UIView animateWithDuration:0.3
                      animations:^{
                          navigation.frame = CGRectMake(0,self.pageHeight,self.pageWidth, 200);
                      }
