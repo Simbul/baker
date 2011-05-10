@@ -220,9 +220,10 @@
 			[subview removeFromSuperview];
 		}
 	}
-
-	scrollView.contentSize = CGSizeMake(pageWidth * totalPages, pageHeight);
-	
+    if (LAKER_NAVIGATION && navigation != nil && !navigation.hidden)
+        scrollView.contentSize = CGSizeMake(pageWidth * totalPages, pageHeight - 200);
+	else
+        scrollView.contentSize = CGSizeMake(pageWidth * totalPages, pageHeight);
 	UIApplication *sharedApplication = [UIApplication sharedApplication];
 	int scrollViewY = 0;
 	if (!sharedApplication.statusBarHidden) {
@@ -905,6 +906,7 @@
                                  animations:^{
                                      navigation.hidden = NO;
                                      scrollView.frame = CGRectMake(0, 0, self.pageWidth, self.pageHeight - 200);
+                                     scrollView.contentSize = CGSizeMake(pageWidth * totalPages, pageHeight - 200);
                                      navigation.frame = CGRectMake(0,self.pageHeight - 200,self.pageWidth, 200);
                                  }
                                  completion:^(BOOL finished){
@@ -920,6 +922,7 @@
                                  }
                                  completion:^(BOOL finished){
                                      navigation.hidden = YES;
+                                     [self resetScrollView];
                                  }];
                 
             }
