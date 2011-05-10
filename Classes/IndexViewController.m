@@ -31,7 +31,7 @@
 
 #import "IndexViewController.h"
 
-#define NAVIGATION_HEIGHT 150
+#define INDEX_HEIGHT 150
 
 
 @implementation IndexViewController
@@ -40,7 +40,8 @@
     bookBundlePath = path;
     fileName = name;
     webViewDelegate = delegate;
-    currentOrientation = UIInterfaceOrientationPortrait;
+    
+    [self setPageSizeForOrientation:UIInterfaceOrientationPortrait];
     
     return [self initWithNibName:nil bundle:nil];
 }
@@ -72,7 +73,7 @@
 // Implement loadView to create a view hierarchy programmatically, without using a nib.
 - (void)loadView
 {
-    UIWebView *webView = [[UIWebView alloc] initWithFrame:CGRectMake(0, 1024, 768, NAVIGATION_HEIGHT)];
+    UIWebView *webView = [[UIWebView alloc] initWithFrame:CGRectMake(0, 1024, 768, INDEX_HEIGHT)];
     webView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
     webView.delegate = self;
     
@@ -82,46 +83,36 @@
     [self loadContent];
 }
 
-- (BOOL)isIndexViewHidden {
-    if (currentOrientation == UIInterfaceOrientationPortrait || currentOrientation == UIInterfaceOrientationPortraitUpsideDown) {
-        return self.view.frame.origin.y > 1024 - NAVIGATION_HEIGHT;
+- (void)setPageSizeForOrientation:(UIInterfaceOrientation)orientation {
+	CGRect screenBounds = [[UIScreen mainScreen] bounds];
+	
+	if (orientation == UIInterfaceOrientationLandscapeLeft || orientation == UIInterfaceOrientationLandscapeRight) {
+		pageWidth = screenBounds.size.height;
+		pageHeight = screenBounds.size.width;
     } else {
-        return self.view.frame.origin.y > 768 - NAVIGATION_HEIGHT;
-    }
+        pageWidth = screenBounds.size.width;
+		pageHeight = screenBounds.size.height;
+	}
+    NSLog(@"Set IndexView size to %dx%d", pageWidth, pageHeight);
+}
 
+- (BOOL)isIndexViewHidden {
+    return self.view.frame.origin.y > pageHeight - INDEX_HEIGHT;
 }
 
 - (void)setIndexViewHidden:(BOOL)hidden withAnimation:(BOOL)animation {
-    if (currentOrientation == UIInterfaceOrientationPortrait || currentOrientation == UIInterfaceOrientationPortraitUpsideDown) {
-        if (hidden) {
-            self.view.frame = CGRectMake(0, 1024, 768, NAVIGATION_HEIGHT);
-        } else {
-            self.view.frame = CGRectMake(0, 1024 - NAVIGATION_HEIGHT, 768, NAVIGATION_HEIGHT);
-        }
+    if (hidden) {
+        self.view.frame = CGRectMake(0, pageHeight, pageWidth, INDEX_HEIGHT);
     } else {
-        if (hidden) {
-            self.view.frame = CGRectMake(0, 768, 1024, NAVIGATION_HEIGHT);
-        } else {
-            self.view.frame = CGRectMake(0, 768 - NAVIGATION_HEIGHT, 1024, NAVIGATION_HEIGHT);
-        }
+        self.view.frame = CGRectMake(0, pageHeight - INDEX_HEIGHT, pageWidth, INDEX_HEIGHT);
     }
 }
 
 - (void)rotateFromOrientation:(UIInterfaceOrientation)fromInterfaceOrientation toOrientation:(UIInterfaceOrientation)toInterfaceOrientation {
-    if (toInterfaceOrientation == UIInterfaceOrientationLandscapeLeft || toInterfaceOrientation == UIInterfaceOrientationLandscapeRight) {
-        if ([self isIndexViewHidden]) {
-            self.view.frame = CGRectMake(0, 768, 1024, NAVIGATION_HEIGHT);
-        } else {
-            self.view.frame = CGRectMake(0, 768 - NAVIGATION_HEIGHT, 1024, NAVIGATION_HEIGHT);
-        }
-    } else {
-        if ([self isIndexViewHidden]) {
-            self.view.frame = CGRectMake(0, 1024, 768, NAVIGATION_HEIGHT);
-        } else {
-            self.view.frame = CGRectMake(0, 1024 - NAVIGATION_HEIGHT, 768, NAVIGATION_HEIGHT);
-        }
-    }
-    currentOrientation = toInterfaceOrientation;
+    BOOL hidden = [self isIndexViewHidden]; // cache hidden status before setting page size
+    
+    [self setPageSizeForOrientation:toInterfaceOrientation];
+    [self setIndexViewHidden:hidden withAnimation:NO];
 }
 
 - (void)loadContent {
