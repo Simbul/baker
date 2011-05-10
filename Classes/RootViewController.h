@@ -44,6 +44,7 @@
 	NSMutableArray *pages;
 	NSString *pageNameFromURL;
 	NSString *anchorFromURL;
+    NSString *navigationURL;
 	
 	UIScrollView *scrollView;
 	NSMutableArray *pageSpinners;
@@ -51,6 +52,7 @@
 	UIWebView *prevPage;
 	UIWebView *currPage;
 	UIWebView *nextPage;
+    UIWebView *navigation;
 	
 	CGRect upTapArea;
 	CGRect downTapArea;
@@ -80,6 +82,7 @@
 @property (nonatomic, retain) NSMutableArray *pages;
 @property (nonatomic, retain) NSString *pageNameFromURL;
 @property (nonatomic, retain) NSString *anchorFromURL;
+@property (nonatomic, retain) NSString *navigationURL;
 
 @property (nonatomic, retain) UIScrollView *scrollView;
 @property (nonatomic, retain) NSMutableArray *pageSpinners;
@@ -87,8 +90,11 @@
 @property (nonatomic, retain) UIWebView *prevPage;
 @property (nonatomic, retain) UIWebView *currPage;
 @property (nonatomic, retain) UIWebView *nextPage;
+@property (nonatomic, retain) UIWebView *navigation;
 
 @property int currentPageNumber;
+@property int pageWidth;
+@property int pageHeight;
 
 @property (nonatomic, retain) NSString *URLDownload;
 
@@ -96,6 +102,7 @@
 - (void)checkPageSize;
 - (void)setPageSize:(NSString *)orientation;
 - (void)initBook:(NSString *)path;
+- (void)initPageSize;
 
 // ****** LOADING
 - (BOOL)changePage:(int)page;

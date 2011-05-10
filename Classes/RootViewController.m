@@ -51,6 +51,12 @@
 // Should be set to NO only when the book pages don't need any vertical scrolling.
 #define PAGE_VERTICAL_BOUNCE YES
 
+// LAKER NAVIGATION
+// Enable Laker-based navigation on double tap. Navigation url is a
+// relative path pointing to the html file to be used for navigation.
+#define LAKER_NAVIGATION YES
+#define LAKER_NAVIGATION_URL @"inc/navigation.html"
+
 // MEDIA PLAYBACK REQUIRES USER ACTION
 // Enable automatic HTML5 media playback
 //   YES (Default) - Media required user action to be started.
@@ -92,6 +98,7 @@
 @synthesize pages;
 @synthesize pageNameFromURL;
 @synthesize anchorFromURL;
+@synthesize navigationURL;
 
 @synthesize scrollView;
 @synthesize pageSpinners;
@@ -99,8 +106,11 @@
 @synthesize prevPage;
 @synthesize currPage;
 @synthesize nextPage;
+@synthesize navigation;
 
 @synthesize currentPageNumber;
+@synthesize pageWidth;
+@synthesize pageHeight;
 
 @synthesize URLDownload;
 
@@ -246,12 +256,22 @@
 		[self.pages removeAllObjects];
 	else
 		self.pages = [NSMutableArray array];
+    
+    if(LAKER_NAVIGATION){
+        if(self.navigation != nil){
+            self.navigation = nil;
+            self.navigationURL = nil;
+        }
+    }
 	
 	NSArray *dirContent = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:path error:nil];
 	for (NSString *fileName in dirContent) {
 		if ([[fileName pathExtension] isEqualToString:@"html"])
 			[self.pages addObject:[path stringByAppendingPathComponent:fileName]];
 	}
+    if(LAKER_NAVIGATION){
+        self.navigationURL = [path stringByAppendingPathComponent:LAKER_NAVIGATION_URL];
+    }
 		
 	totalPages = [pages count];
 	NSLog(@"Pages in this book: %d", totalPages);
@@ -297,6 +317,9 @@
 		
 		[self initBook:bundleBookPath];
 	}
+}
+- (void)initPageSize {
+    
 }
 - (void)initPageNumbersForPages:(int)count {
 	pageSpinners = [[NSMutableArray alloc] initWithCapacity:count];
@@ -532,38 +555,41 @@
 	// Sent before a web view begins loading content.
 }
 - (void)webViewDidFinishLoad:(UIWebView *)webView {
-	// Sent after a web view finishes loading content.	
-	
-	if (webView == currPage) {
-		// Get current page max scroll offset
-		[self getPageHeight];
-		
-		// If is the first time i load something in the currPage web view...
-		if (currentPageFirstLoading) {
-			NSLog(@"(1) currPage finished first loading");
-			
-			// ...check if there is a saved starting scroll index and set it
-			NSString *currPageScrollIndex = [[NSUserDefaults standardUserDefaults] objectForKey:@"lastScrollIndex"];
-			if (currPageScrollIndex != nil) [self goDownInPage:currPageScrollIndex animating:NO];
-			
-			//[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onTouch:) name:@"onTouch" object:nil];
-			//[self loadSlot:+1 withPage:currentPageNumber + 1];
-			//[self loadSlot:-1 withPage:currentPageNumber - 1];
-			
-			currentPageFirstLoading = NO;
-		}
-		
-		// Handle saved hash reference (if any)
-		[self handleAnchor:NO];
-	}
-	
-	// /!\ hack to make it load at the right time and not too early
-	// source: http://stackoverflow.com/questions/1422146/webviewdidfinishload-firing-too-soon
-	//NSString *javaScript = @"<script type=\"text/javascript\">function myFunction(){return 1+1;}</script>";
-	//[webView stringByEvaluatingJavaScriptFromString:javaScript];
-	
-	[self spinnerForPage:currentPageNumber isAnimating:NO]; // spinner YES
-	[self performSelector:@selector(revealWebView:) withObject:webView afterDelay:0.1]; // This seems fixing the WebView-Flash-Of-Old-Content-webBug    
+	// Sent after a web view finishes loading content.
+    // Don't do anything if this view is the laker navigation view
+	if (webView == navigation) {}
+	else{
+        if (webView == currPage) {
+            // Get current page max scroll offset
+            [self getPageHeight];
+            
+            // If is the first time i load something in the currPage web view...
+            if (currentPageFirstLoading) {
+                NSLog(@"(1) currPage finished first loading");
+                
+                // ...check if there is a saved starting scroll index and set it
+                NSString *currPageScrollIndex = [[NSUserDefaults standardUserDefaults] objectForKey:@"lastScrollIndex"];
+                if (currPageScrollIndex != nil) [self goDownInPage:currPageScrollIndex animating:NO];
+                
+                //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onTouch:) name:@"onTouch" object:nil];
+                //[self loadSlot:+1 withPage:currentPageNumber + 1];
+                //[self loadSlot:-1 withPage:currentPageNumber - 1];
+                
+                currentPageFirstLoading = NO;
+            }
+            
+            // Handle saved hash reference (if any)
+            [self handleAnchor:NO];
+        }
+        
+        // /!\ hack to make it load at the right time and not too early
+        // source: http://stackoverflow.com/questions/1422146/webviewdidfinishload-firing-too-soon
+        //NSString *javaScript = @"<script type=\"text/javascript\">function myFunction(){return 1+1;}</script>";
+        //[webView stringByEvaluatingJavaScriptFromString:javaScript];
+        
+        [self spinnerForPage:currentPageNumber isAnimating:NO]; // spinner YES
+        [self performSelector:@selector(revealWebView:) withObject:webView afterDelay:0.1]; // This seems fixing the WebView-Flash-Of-Old-Content-webBug   
+    }
 }
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
 	// Sent if a web view failed to load content.
@@ -575,6 +601,19 @@
 		NSLog(@"nextPage failed to load content with error: %@", error);
 }
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
+    if(LAKER_NAVIGATION){
+        NSURL *url = [request URL];
+        NSURL *navUrl = [NSURL URLWithString:LAKER_NAVIGATION_URL];
+        
+        if ([[url lastPathComponent] isEqualToString:[navUrl lastPathComponent]]) {
+            return YES;
+        }
+        
+        if (navigation == webView) {
+            [self performSelector:@selector(toggleNavigationBar) withObject:nil];
+        }
+    }
+    
 	// Sent before a web view begins loading content, useful to trigger actions before the WebView.	
 	if (currentPageIsDelayingLoading) {
 		
@@ -645,25 +684,28 @@
 	}
 }
 - (void)webView:(UIWebView *)webView hidden:(BOOL)status animating:(BOOL)animating {
-	NSLog(@"- - hidden:%d animating:%d", status, animating);
-	
-	if (animating) {
-		webView.alpha = 0.0;
-		webView.hidden = NO;
-		
-		[UIView beginAnimations:@"webViewVisibility" context:nil]; {
-			//[UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
-			[UIView setAnimationDuration:0.5];
-			//[UIView setAnimationDelegate:self];
-			//[UIView setAnimationDidStopSelector:@selector(animationDidStop:finished:)];
-			
-			webView.alpha = 1.0;	
-		}
-		[UIView commitAnimations];		
-	} else {
-		webView.alpha = 1.0;
-		webView.hidden = NO;
-	}
+    if (webView == navigation){}
+    else{
+        NSLog(@"- - hidden:%d animating:%d", status, animating);
+        
+        if (animating) {
+            webView.alpha = 0.0;
+            webView.hidden = NO;
+            
+            [UIView beginAnimations:@"webViewVisibility" context:nil]; {
+                //[UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
+                [UIView setAnimationDuration:0.5];
+                //[UIView setAnimationDelegate:self];
+                //[UIView setAnimationDidStopSelector:@selector(animationDidStop:finished:)];
+                
+                webView.alpha = 1.0;	
+            }
+            [UIView commitAnimations];		
+        } else {
+            webView.alpha = 1.0;
+            webView.hidden = NO;
+        }
+    }
 }
 - (void)revealWebView:(UIWebView *)webView {
 	[self webView:webView hidden:NO animating:YES];  // Delayed run to fix the WebView-Flash-Of-Old-Content-Bug
@@ -697,7 +739,13 @@
         [self changePage:page];
         
 	} else if (touch.tapCount == 2) {
-		[self performSelector:@selector(toggleStatusBar) withObject:nil];
+        NSLog(@"User did doubleTap");
+        if(LAKER_NAVIGATION){
+            [self performSelector:@selector(toggleNavigationBar) withObject:nil];
+        }
+        else{
+            [self performSelector:@selector(toggleStatusBar) withObject:nil];
+        }
 	}
 }
 - (void)userDidScroll:(UITouch *)touch {
@@ -811,6 +859,79 @@
 	discardNextStatusBarToggle = discardToggle;
 	[[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
 }
+
+// ****** NAVIGATION BAR
+- (void)toggleNavigationBar {
+    // This should theoretically only be called if LAKER_NAV is on,
+    // but never hurts to double check.
+    if (LAKER_NAVIGATION){
+        if(navigation == nil)
+        {
+            // setup the navigation bar if it doesn't exist yet
+            NSString *path =	self.navigationURL;
+            if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
+                navigation = [[UIWebView alloc] initWithFrame:CGRectMake(0, self.pageHeight,self.pageWidth, 200)];
+                
+                // bouncing oben und unten ausschalten
+                for (id subview in navigation.subviews)
+                    if ([[subview class] isSubclassOfClass: [UIScrollView class]])
+                        ((UIScrollView *)subview).bounces = NO;
+                
+                // set a clear background, so users can define what it looks like
+                [navigation setOpaque:NO];
+                navigation.backgroundColor = [UIColor blackColor];
+                navigation.hidden = YES;
+                
+                NSLog(@"[+] Loading navigation %@", self.navigationURL);
+                [navigation loadRequest:[NSURLRequest requestWithURL:[NSURL fileURLWithPath:path]]];
+                navigation.delegate = self;
+                [[self view] addSubview:navigation];
+                [[self view] sendSubviewToBack:navigation];
+            }
+        }
+        
+        if(navigation != nil)
+        {
+            if (navigation.hidden == YES)
+            {
+                navigation.frame = CGRectMake(0,self.pageHeight,self.pageWidth, 200);
+                [UIView animateWithDuration:0.3
+                                 animations:^{
+                                     navigation.hidden = NO;
+                                     scrollView.frame = CGRectMake(0, 0, self.pageWidth, self.pageHeight - 200);
+                                     navigation.frame = CGRectMake(0,self.pageHeight - 200,self.pageWidth, 200);
+                                 }
+                                 completion:^(BOOL finished){
+                                     
+                                 }];
+                
+            }
+            else {
+                [UIView animateWithDuration:0.3
+                                 animations:^{
+                                     scrollView.frame = CGRectMake(0, 0, self.pageWidth, self.pageHeight);
+                                     navigation.frame = CGRectMake(0,self.pageHeight,self.pageWidth, 200);
+                                 }
+                                 completion:^(BOOL finished){
+                                     navigation.hidden = YES;
+                                 }];
+                
+            }
+        }
+    }
+}
+
+-(void)hideNavigationBar{
+    [UIView animateWithDuration:0.1
+                     animations:^{
+                         navigation.frame = CGRectMake(0,self.pageHeight,self.pageWidth, 200);
+                     }
+                     completion:^(BOOL finished){
+                         navigation.hidden = YES;
+                     }];
+}
+
+
 
 // ****** DOWNLOAD NEW BOOKS
 - (void)downloadBook:(NSNotification *)notification {
@@ -957,12 +1078,18 @@
     // 3. Merge the scripts and load them on the current UIWebView
     NSString *jsCommand = [jsOrientationGetter stringByAppendingString:jsOrientationChange];
     [currPage stringByEvaluatingJavaScriptFromString:jsCommand];
+    
+	[self hideNavigationBar];
 }
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
 	[self checkPageSize];
 	[self getPageHeight];
 	[self resetScrollView];
     [currPage setNeedsDisplay];
+    // Fire rotation event in webview
+    // Laker mod - necessary?
+    // [currPage stringByEvaluatingJavaScriptFromString:@"var e = document.createEvent('Events'); e.initEvent('orientationchange', true, false); document.dispatchEvent(e);"];  
+
 }
 - (void)didReceiveMemoryWarning {
 	// Releases the view if it doesn't have a superview.
