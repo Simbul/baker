@@ -32,6 +32,7 @@
 #import "IndexViewController.h"
 
 #define INDEX_HEIGHT 150
+#define INDEX_VIEW_BOUNCE NO
 
 
 @implementation IndexViewController
@@ -77,10 +78,18 @@
     webView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
     webView.delegate = self;
     
+    [self setBounceForWebView:webView bounces:INDEX_VIEW_BOUNCE];
+    
     self.view = webView;
     [webView release];
     
     [self loadContent];
+}
+
+- (void)setBounceForWebView:(UIWebView *)webView bounces:(BOOL)bounces {
+    for (id subview in webView.subviews)
+        if ([[subview class] isSubclassOfClass: [UIScrollView class]])
+            ((UIScrollView *)subview).bounces = bounces;
 }
 
 - (void)setPageSizeForOrientation:(UIInterfaceOrientation)orientation {
