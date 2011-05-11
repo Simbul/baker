@@ -101,11 +101,24 @@
 }
 
 - (void)setIndexViewHidden:(BOOL)hidden withAnimation:(BOOL)animation {
+    CGRect frame;
     if (hidden) {
-        self.view.frame = CGRectMake(0, pageHeight, pageWidth, INDEX_HEIGHT);
+        frame = CGRectMake(0, pageHeight, pageWidth, INDEX_HEIGHT);
     } else {
-        self.view.frame = CGRectMake(0, pageHeight - INDEX_HEIGHT, pageWidth, INDEX_HEIGHT);
+        frame = CGRectMake(0, pageHeight - INDEX_HEIGHT, pageWidth, INDEX_HEIGHT);
     }
+    
+    if (animation) {
+        [UIView beginAnimations:@"slideIndexView" context:nil]; {
+            [UIView setAnimationDuration:0.3];
+            
+            self.view.frame = frame;
+        }
+        [UIView commitAnimations];
+    } else {
+        self.view.frame = frame;
+    }
+    
 }
 
 - (void)rotateFromOrientation:(UIInterfaceOrientation)fromInterfaceOrientation toOrientation:(UIInterfaceOrientation)toInterfaceOrientation {
