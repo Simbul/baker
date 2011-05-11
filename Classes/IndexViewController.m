@@ -121,11 +121,34 @@
     
 }
 
+- (void)fadeOut {
+    [UIView beginAnimations:@"fadeOutIndexView" context:nil]; {
+        [UIView setAnimationDuration:0.0];
+        
+        self.view.alpha = 0.0;
+    }
+    [UIView commitAnimations];
+}
+
+- (void)fadeIn {
+    [UIView beginAnimations:@"fadeInIndexView" context:nil]; {
+        [UIView setAnimationDuration:0.2];
+        
+        self.view.alpha = 1.0;
+    }
+    [UIView commitAnimations];
+}
+
+- (void)willRotate {
+    [self fadeOut];
+}
+
 - (void)rotateFromOrientation:(UIInterfaceOrientation)fromInterfaceOrientation toOrientation:(UIInterfaceOrientation)toInterfaceOrientation {
     BOOL hidden = [self isIndexViewHidden]; // cache hidden status before setting page size
     
     [self setPageSizeForOrientation:toInterfaceOrientation];
     [self setIndexViewHidden:hidden withAnimation:NO];
+    [self fadeIn];
 }
 
 - (void)loadContent {

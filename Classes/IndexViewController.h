@@ -46,6 +46,9 @@
 - (void)setPageSizeForOrientation:(UIInterfaceOrientation)orientation;
 - (BOOL)isIndexViewHidden;
 - (void)setIndexViewHidden:(BOOL)hidden withAnimation:(BOOL)animation;
+- (void)willRotate;
 - (void)rotateFromOrientation:(UIInterfaceOrientation)fromInterfaceOrientation toOrientation:(UIInterfaceOrientation)toInterfaceOrientation;
+- (void)fadeOut;
+- (void)fadeIn;
 
 @end
