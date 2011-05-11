@@ -937,6 +937,9 @@
 	}	
 }
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
+    // Notify the index view
+    [indexViewController willRotate];
+    
     // Since the UIWebView doesn't handle orientationchange events correctly we have to do handle them ourselves 
     // 1. Set the correct value for window.orientation property
     NSString *jsOrientationGetter;
