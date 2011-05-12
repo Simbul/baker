@@ -171,12 +171,12 @@
 	self.bundleBookPath = [[NSBundle mainBundle] pathForResource:@"book" ofType:nil];
     
     // ****** INDEX WEBVIEW INIT
-    indexViewController = [[IndexViewController alloc] initWithBookBundlePath:self.bundleBookPath fileName:INDEX_FILE_NAME webViewDelegate:self];
+    indexViewController = [[IndexViewController alloc] initWithBookBundlePath:self.bundleBookPath documentsBookPath:self.documentsBookPath fileName:INDEX_FILE_NAME webViewDelegate:self];
     
     [[self view] addSubview:indexViewController.view];
 	
 	if ([[NSFileManager defaultManager] fileExistsAtPath:documentsBookPath]) {
-		[self initBook:documentsBookPath];
+        [self initBook:documentsBookPath];
 	} else {
 		if ([[NSFileManager defaultManager] fileExistsAtPath:bundleBookPath]) {
 			[self initBook:bundleBookPath];
@@ -289,7 +289,8 @@
 		[scrollView addSubview:currPage];
 		//[scrollView addSubview:nextPage];
 		[self loadSlot:0 withPage:currentPageNumber];
-		
+        [indexViewController loadContentFromBundle:[path isEqualToString:bundleBookPath]];
+        
 	} else {
 		
 		[[NSFileManager defaultManager] removeItemAtPath:path error:NULL];
@@ -599,7 +600,10 @@
 		// ****** Handle URI schemes
 		if (url) {
 			// Existing, checking schemes...
-			
+			if([[url lastPathComponent] isEqualToString:INDEX_FILE_NAME]){
+                NSLog(@"Matches index file name.");
+                return YES; // Let the index view load
+            }
 			if ([[url scheme] isEqualToString:@"file"]) {
 				// ****** Handle: file://
 				NSLog(@"file:// ->");
@@ -838,12 +842,14 @@
 	[feedbackAlert release];
 }
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-	
 	if (buttonIndex != alertView.cancelButtonIndex) {
-		if ([[alertView buttonTitleAtIndex:buttonIndex] isEqualToString:CLOSE_BOOK_CONFIRM])
+		if ([[alertView buttonTitleAtIndex:buttonIndex] isEqualToString:CLOSE_BOOK_CONFIRM]){
+            currentPageIsDelayingLoading = YES;
 			[self initBook:bundleBookPath];
-		else
+        }
+		else{
 			[self startDownloadRequest];
+        }
 	}
 }
 - (void)startDownloadRequest {
