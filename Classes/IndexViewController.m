@@ -37,8 +37,9 @@
 
 @implementation IndexViewController
 
-- (id)initWithBookBundlePath:(NSString *)path fileName:(NSString *)name webViewDelegate:(UIViewController *)delegate {
+- (id)initWithBookBundlePath:(NSString *)path documentsBookPath:(NSString *)docpath fileName:(NSString *)name webViewDelegate:(UIViewController *)delegate {
     bookBundlePath = path;
+    documentsBookPath = docpath;
     fileName = name;
     webViewDelegate = delegate;
     
@@ -159,13 +160,26 @@
     [self setIndexViewHidden:hidden withAnimation:NO];
     [self fadeIn];
 }
+- (void)loadContent{
+    [self loadContentFromBundle:true];
+}
 
-- (void)loadContent {
-    NSString *path = [bookBundlePath stringByAppendingPathComponent:fileName];
-    
-	if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
+- (void)loadContentFromBundle:(BOOL)fromBundle{
+    NSString* path;
+    if(fromBundle){
+        NSLog(@"Reloading index from bundle");
+        path = [bookBundlePath stringByAppendingPathComponent:fileName];
+    }else{
+        
+        path = [documentsBookPath stringByAppendingPathComponent:fileName];
+    }
+    NSLog(@"Path to index view is %@", path);
+    if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
 		[(UIWebView *)self.view loadRequest:[NSURLRequest requestWithURL:[NSURL fileURLWithPath:path]]];
 	}
+    else{
+        NSLog(@"Could not find index view at that path");
+    }
 }
 
 -(void)webViewDidFinishLoad:(UIWebView *)webView {
