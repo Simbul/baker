@@ -812,7 +812,8 @@
 		NSLog(@"TOGGLE status bar");
 		UIApplication *sharedApplication = [UIApplication sharedApplication];
 		[sharedApplication setStatusBarHidden:!sharedApplication.statusBarHidden withAnimation:UIStatusBarAnimationSlide];
-        [indexViewController setIndexViewHidden:![indexViewController isIndexViewHidden] withAnimation:YES];
+        if(![indexViewController isDisabled]) 
+            [indexViewController setIndexViewHidden:![indexViewController isIndexViewHidden] withAnimation:YES];
 	}
 }
 - (void)hideStatusBar {
@@ -822,7 +823,8 @@
 	NSLog(@"HIDE status bar %@", (discardToggle ? @"discarding toggle" : @""));
 	discardNextStatusBarToggle = discardToggle;
 	[[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
-    [indexViewController setIndexViewHidden:YES withAnimation:YES];
+    if(![indexViewController isDisabled]) 
+        [indexViewController setIndexViewHidden:YES withAnimation:YES];
 }
 
 // ****** DOWNLOAD NEW BOOKS

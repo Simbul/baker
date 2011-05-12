@@ -42,6 +42,7 @@
     documentsBookPath = docpath;
     fileName = name;
     webViewDelegate = delegate;
+    disabled = NO;
     
     [self setPageSizeForOrientation:UIInterfaceOrientationPortrait];
     
@@ -110,6 +111,10 @@
     return self.view.frame.origin.y > pageHeight - INDEX_HEIGHT;
 }
 
+- (BOOL)isDisabled {
+    return disabled;
+}
+
 - (void)setIndexViewHidden:(BOOL)hidden withAnimation:(BOOL)animation {
     CGRect frame;
     if (hidden) {
@@ -175,10 +180,12 @@
     }
     NSLog(@"Path to index view is %@", path);
     if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
+        disabled = NO;
 		[(UIWebView *)self.view loadRequest:[NSURLRequest requestWithURL:[NSURL fileURLWithPath:path]]];
 	}
     else{
         NSLog(@"Could not find index view at that path");
+        disabled = YES;
     }
 }
 
