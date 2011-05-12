@@ -82,6 +82,8 @@
 //	@"Landscape" - Book is available only in landscape orientation
 #define	AVAILABLE_ORIENTATION @"Any"
 
+#define INDEX_FILE_NAME @"index.html"
+
 //  ==========================================================================================
 
 @implementation RootViewController
@@ -167,6 +169,11 @@
 	
 	self.documentsBookPath = [documentsPath stringByAppendingPathComponent:@"book"];
 	self.bundleBookPath = [[NSBundle mainBundle] pathForResource:@"book" ofType:nil];
+    
+    // ****** INDEX WEBVIEW INIT
+    indexViewController = [[IndexViewController alloc] initWithBookBundlePath:self.bundleBookPath fileName:INDEX_FILE_NAME webViewDelegate:self];
+    
+    [[self view] addSubview:indexViewController.view];
 	
 	if ([[NSFileManager defaultManager] fileExistsAtPath:documentsBookPath]) {
 		[self initBook:documentsBookPath];
@@ -249,7 +256,7 @@
 	
 	NSArray *dirContent = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:path error:nil];
 	for (NSString *fileName in dirContent) {
-		if ([[fileName pathExtension] isEqualToString:@"html"])
+		if ([[fileName pathExtension] isEqualToString:@"html"] && ![fileName isEqualToString:INDEX_FILE_NAME])
 			[self.pages addObject:[path stringByAppendingPathComponent:fileName]];
 	}
 		
@@ -801,6 +808,7 @@
 		NSLog(@"TOGGLE status bar");
 		UIApplication *sharedApplication = [UIApplication sharedApplication];
 		[sharedApplication setStatusBarHidden:!sharedApplication.statusBarHidden withAnimation:UIStatusBarAnimationSlide];
+        [indexViewController setIndexViewHidden:![indexViewController isIndexViewHidden] withAnimation:YES];
 	}
 }
 - (void)hideStatusBar {
@@ -810,6 +818,7 @@
 	NSLog(@"HIDE status bar %@", (discardToggle ? @"discarding toggle" : @""));
 	discardNextStatusBarToggle = discardToggle;
 	[[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
+    [indexViewController setIndexViewHidden:YES withAnimation:YES];
 }
 
 // ****** DOWNLOAD NEW BOOKS
@@ -928,6 +937,9 @@
 	}	
 }
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
+    // Notify the index view
+    [indexViewController willRotate];
+    
     // Since the UIWebView doesn't handle orientationchange events correctly we have to do handle them ourselves 
     // 1. Set the correct value for window.orientation property
     NSString *jsOrientationGetter;
@@ -959,6 +971,9 @@
     [currPage stringByEvaluatingJavaScriptFromString:jsCommand];
 }
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
+    UIDeviceOrientation orientation = [[UIDevice currentDevice] orientation];
+    [indexViewController rotateFromOrientation:fromInterfaceOrientation toOrientation:orientation];
+     
 	[self checkPageSize];
 	[self getPageHeight];
 	[self resetScrollView];

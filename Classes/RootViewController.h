@@ -31,6 +31,7 @@
 
 
 #import <UIKit/UIKit.h>
+#import "IndexViewController.h"
 
 @class Downloader;
 
@@ -72,6 +73,8 @@
 	Downloader *downloader;
 	
 	UIAlertView *feedbackAlert;
+    
+    IndexViewController *indexViewController;
 }
 
 @property (nonatomic, retain) NSString *documentsBookPath;
