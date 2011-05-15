@@ -133,27 +133,18 @@
 	scrollView.pagingEnabled = YES;
 	scrollView.delegate = self;	
 	
-	// ****** PREV WEBVIEW INIT
-	//prevPage = [[UIWebView alloc] init];
-	//prevPage.delegate = self;
-	
-	// ****** CURR WEBVIEW INIT
+    // ****** CURR WEBVIEW INIT
 	currPage = [[UIWebView alloc] init];
-	currPage.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-	currPage.mediaPlaybackRequiresUserAction = MEDIA_PLAYBACK_REQUIRES_USER_ACTION;
-	currPage.scalesPageToFit = PAGE_ZOOM_GESTURE;
-    currPage.delegate = self;
-	currPage.alpha = 0.5;
-	if (!PAGE_VERTICAL_BOUNCE) {
-		for (id subview in currPage.subviews)
-			if ([[subview class] isSubclassOfClass: [UIScrollView class]])
-				((UIScrollView *)subview).bounces = NO;
-	}
-	
+    [self setupWebView:currPage];
+
+	// ****** PREV WEBVIEW INIT
+	prevPage = [[UIWebView alloc] init];
+    [self setupWebView:prevPage];
+
 	// ****** NEXT WEBVIEW INIT
-	//nextPage = [[UIWebView alloc] init];
-	//nextPage.delegate = self;
-	
+	nextPage = [[UIWebView alloc] init];
+    [self setupWebView:nextPage];
+
 	self.pageNameFromURL = nil;
 	self.anchorFromURL = nil;
 	
@@ -180,8 +171,22 @@
 	
 	return self;
 }
+- (void)setupWebView:(UIWebView *)webView {
+    
+    webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+	webView.mediaPlaybackRequiresUserAction = MEDIA_PLAYBACK_REQUIRES_USER_ACTION;
+	webView.scalesPageToFit = PAGE_ZOOM_GESTURE;
+    webView.delegate = self;
+	webView.alpha = 0.5;
+	if (!PAGE_VERTICAL_BOUNCE) {
+		for (id subview in webView.subviews)
+			if ([[subview class] isSubclassOfClass: [UIScrollView class]])
+				((UIScrollView *)subview).bounces = NO;
+	}        
+}
+
 - (void)checkPageSize {
-	if ([AVAILABLE_ORIENTATION isEqualToString:@"Portrait"] || [AVAILABLE_ORIENTATION isEqualToString:@"Landscape"]) {
+    if ([AVAILABLE_ORIENTATION isEqualToString:@"Portrait"] || [AVAILABLE_ORIENTATION isEqualToString:@"Landscape"]) {
 		[self setPageSize:AVAILABLE_ORIENTATION];
 	} else {
 		UIDeviceOrientation orientation = [[UIDevice currentDevice] orientation];

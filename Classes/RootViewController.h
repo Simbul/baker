@@ -93,6 +93,7 @@
 @property (nonatomic, retain) NSString *URLDownload;
 
 // ****** INIT
+- (void)setupWebView:(UIWebView *)webView;
 - (void)checkPageSize;
 - (void)setPageSize:(NSString *)orientation;
 - (void)initBook:(NSString *)path;
