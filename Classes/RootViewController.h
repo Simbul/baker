@@ -58,12 +58,16 @@
 	CGRect rightTapArea;
 
 	int totalPages;
+    int lastPageNumber;
 	int currentPageNumber;
-	int currentPageHeight;
-	int stackedScrollingAnimations;
-	int pageWidth;
-	int pageHeight;
 	
+    int pageWidth;
+	int pageHeight;
+    int currentPageHeight;
+	
+    int tapNumber;
+    int stackedScrollingAnimations;
+    
 	BOOL currentPageFirstLoading;
 	BOOL currentPageIsDelayingLoading;
 	BOOL discardNextStatusBarToggle;
@@ -84,10 +88,12 @@
 @property (nonatomic, retain) UIScrollView *scrollView;
 @property (nonatomic, retain) NSMutableArray *pageSpinners;
 
-@property (nonatomic, retain) UIWebView *prevPage;
 @property (nonatomic, retain) UIWebView *currPage;
+@property (nonatomic, retain) UIWebView *prevPage;
 @property (nonatomic, retain) UIWebView *nextPage;
 
+@property int tapNumber;
+@property int lastPageNumber;
 @property int currentPageNumber;
 
 @property (nonatomic, retain) NSString *URLDownload;
@@ -103,7 +109,7 @@
 - (void)gotoPageDelayer;
 - (void)gotoPage;
 - (void)initPageNumbersForPages:(int)count;
-- (BOOL)loadSlot:(int)slot withPage:(int)page;
+- (void)loadSlot:(int)slot withPage:(int)page;
 - (BOOL)loadWebView:(UIWebView*)webview withPage:(int)page;
 
 // ****** SCROLLVIEW
