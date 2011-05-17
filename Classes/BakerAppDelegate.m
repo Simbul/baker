@@ -49,6 +49,9 @@
 //- (void)applicationDidFinishLaunching:(UIApplication *)application {    
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 	
+    // Disable Shake to undo
+	application.applicationSupportsShakeToEdit = NO;
+    
 	// Create the controller for the root view
 	self.rootViewController =[[RootViewController alloc] init];
 	UIView *scrollView = [rootViewController scrollView];

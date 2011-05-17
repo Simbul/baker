@@ -33,6 +33,7 @@
 #import <UIKit/UIKit.h>
 #import "IndexViewController.h"
 
+
 @class Downloader;
 
 @interface RootViewController : UIViewController < UIWebViewDelegate, UIScrollViewDelegate > {
@@ -101,6 +102,7 @@
 - (void)initBook:(NSString *)path;
 
 // ****** LOADING
+- (NSDictionary*)loadManifest:(NSString*)file;
 - (BOOL)changePage:(int)page;
 - (void)gotoPageDelayer;
 - (void)gotoPage;
