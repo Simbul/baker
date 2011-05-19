@@ -359,11 +359,11 @@
 	} else if (page > totalPages) {
 		currentPageNumber = totalPages;
 	} else if (page != currentPageNumber) {
-        
-        tapNumber++;
-        
+                
         lastPageNumber = currentPageNumber;
 		currentPageNumber = page;
+        
+        tapNumber = tapNumber + (lastPageNumber - currentPageNumber);
         
         // While we are tapping, we don't want scrolling event to get in the way
         scrollView.scrollEnabled = NO;
@@ -382,8 +382,7 @@
 	// This delay is required in order to avoid stuttering when the animation runs.
 	// The animation lasts 0.5 seconds: so we start loading after that.
 	
-	if (currentPageIsDelayingLoading)
-		[NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(gotoPage) object:nil];
+	if (currentPageIsDelayingLoading) [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(gotoPage) object:nil];
 	
 	currentPageIsDelayingLoading = YES;
 	[self performSelector:@selector(gotoPage) withObject:nil afterDelay:0.5];
@@ -396,12 +395,13 @@
     
 	//NSString *file = [NSString stringWithFormat:@"%d", currentPageNumber];
 	//NSString *path = [[NSBundle mainBundle] pathForResource:file ofType:@"html" inDirectory:@"book"];
+            
+    NSString *path = [pages objectAtIndex:currentPageNumber - 1];
     
-	NSString *path = [pages objectAtIndex:currentPageNumber - 1];
-    
-	if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
-		NSLog(@"Goto Page: book/%@", [[NSFileManager defaultManager] displayNameAtPath:path]);
-		
+    if ([[NSFileManager defaultManager] fileExistsAtPath:path] && tapNumber != 0) {
+        
+        NSLog(@"Goto Page: book/%@", [[NSFileManager defaultManager] displayNameAtPath:path]);
+        
         // ****** THREE CARD VIEW METHOD
         if (currentPageNumber != totalPages && nextPage.superview == nil) {
             [scrollView addSubview:nextPage];
@@ -413,6 +413,13 @@
             [scrollView addSubview:prevPage];
         } else if (currentPageNumber == 1 && prevPage.superview != nil) {
             [prevPage removeFromSuperview];
+        }
+        
+        // ****** Calculate move direction and normalize tapNumber
+        int direction = 1;
+        if (tapNumber < 0) {
+            direction = -direction;
+            tapNumber = -tapNumber;
         }
         
         NSLog(@">>>>> TAP NUMBER: %d <<<<<", tapNumber);
@@ -435,65 +442,59 @@
                 [self loadSlot:-1 withPage:currentPageNumber - 1];
             }
             
-        } else if ((lastPageNumber - currentPageNumber) < 0) {
-            
-			// ****** Move RIGHT >>>
-            UIWebView *tmpView = prevPage;
-			
-            // Moved away for 2 pages: RELOAD CURRENT page
-            if (tapNumber == 2) {
-            
-                self.prevPage = nextPage;
-                self.nextPage = tmpView;
-                
-                if (currPage.loading) [currPage stopLoading];
-                [self loadSlot:0 withPage:currentPageNumber];
-            
-            } else {
-                
-                prevPage = currPage;
-                currPage = nextPage;
-                nextPage = tmpView;
-            }
-            
-            tapNumber = 0;
-            
-			// PRELOAD NEXT page
-            if (currentPageNumber < totalPages) {
-                if (nextPage.loading) [nextPage stopLoading];
-                [self loadSlot:+1 withPage:currentPageNumber + 1];
-            }
-            
         } else {
             
-			// ****** Move LEFT <<<
-            UIWebView *tmpView = nextPage;            
-            
-            // Moved away for 2 pages: RELOAD CURRENT page
             if (tapNumber == 2) {
-                
-                self.nextPage = prevPage;
-                self.prevPage = tmpView;
-                
+            
+                // ****** Moved away for 2 pages: RELOAD CURRENT page
                 if (currPage.loading) [currPage stopLoading];
                 [self loadSlot:0 withPage:currentPageNumber];
             
-            } else {
+                if (direction < 0) {
+                    // ****** Move RIGHT >>>
+                    UIWebView *tmpView = prevPage;
+                    prevPage = nextPage;
+                    nextPage = tmpView;
+                } else {
+                    // ****** Move LEFT <<<
+                    UIWebView *tmpView = nextPage; 
+                    nextPage = prevPage;
+                    prevPage = tmpView;
+                }
+            
+            } else if (tapNumber == 1) {
                 
-                self.nextPage = currPage;
-                self.currPage = prevPage;
-                self.prevPage = tmpView;
+                if (direction < 0) { 
+                    // ****** Move RIGHT >>>
+                    UIWebView *tmpView = prevPage;
+                    prevPage = currPage;
+                    currPage = nextPage;
+                    nextPage = tmpView;
+                } else { 
+                    // ****** Move LEFT <<<
+                    UIWebView *tmpView = nextPage;
+                    nextPage = currPage;
+                    currPage = prevPage;
+                    prevPage = tmpView;
+                }
             }
             
             tapNumber = 0;
-            
-			// PRELOAD PREV page
-            if (currentPageNumber > 1) {
-                if (prevPage.loading) [prevPage stopLoading];
-                [self loadSlot:-1 withPage:currentPageNumber - 1];
-            }            
-		}
-	}	
+            if (direction < 0) {
+                // PRELOAD NEXT page
+                if (currentPageNumber < totalPages) {
+                    if (nextPage.loading) [nextPage stopLoading];
+                    [self loadSlot:+1 withPage:currentPageNumber + 1];
+                }
+            } else {
+                // PRELOAD PREV page
+                if (currentPageNumber > 1) {
+                    if (prevPage.loading) [prevPage stopLoading];
+                    [self loadSlot:-1 withPage:currentPageNumber - 1];
+                }  
+            }
+        }
+    }
 }
 - (void)loadSlot:(int)slot withPage:(int)page {
 	
@@ -573,9 +574,7 @@
         lastPageNumber = currentPageNumber;
         currentPageNumber = page;
         
-        tapNumber = (lastPageNumber - currentPageNumber);
-        if (tapNumber < 0) tapNumber = -tapNumber;
-       
+        tapNumber = tapNumber + (lastPageNumber - currentPageNumber);
         [self gotoPageDelayer];
     }
 }
@@ -666,9 +665,6 @@
 				NSString *file = [[url relativePath] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 				
                 int page = (int)[pages indexOfObject:file] + 1;
-                int pageDiff = (currentPageNumber - page);
-                if (pageDiff < 0) pageDiff = -pageDiff;
-                tapNumber = tapNumber + pageDiff - 1;
                 
 				if (![self changePage:page]) {
 					[self handleAnchor:NO];
