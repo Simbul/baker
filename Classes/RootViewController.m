@@ -230,11 +230,18 @@
 	
 	[self initPageNumbersForPages:totalPages];
     
+    if (prevPage.superview == scrollView) {
+        prevPage.frame = [self frameForPage:currentPageNumber - 1];
+        [scrollView bringSubviewToFront:prevPage];
+    }
+    
+    if (nextPage.superview == scrollView) {
+        nextPage.frame = [self frameForPage:currentPageNumber + 1];
+        [scrollView bringSubviewToFront:nextPage];
+    }
+    
     currPage.frame = [self frameForPage:currentPageNumber];
-	prevPage.frame = [self frameForPage:currentPageNumber-1];
-	nextPage.frame = [self frameForPage:currentPageNumber+1];
-	
-	[scrollView bringSubviewToFront:currPage];
+    [scrollView bringSubviewToFront:currPage];
 	[scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:NO];
 
 	// ****** TAPPABLE AREAS
@@ -278,7 +285,7 @@
 				self.pageNameFromURL = nil;
 				for (int i = 0; i < totalPages; i++) {
 					if ([[pages objectAtIndex:i] isEqualToString:fileNameFromURL]) {
-						currentPageNumber = i+1;
+						currentPageNumber = i + 1;
 						break;
 					}
 				}
@@ -488,15 +495,15 @@
             }
         }
         
-        if (currentPageNumber != totalPages && nextPage.superview == nil) {
+        if (currentPageNumber != totalPages && nextPage.superview != scrollView) {
             [scrollView addSubview:nextPage];
-        } else if (currentPageNumber == totalPages && nextPage != nil) {
+        } else if (currentPageNumber == totalPages && nextPage.superview == scrollView) {
             [nextPage removeFromSuperview];
         }
         
-        if (currentPageNumber != 1 && prevPage.superview == nil) {
+        if (currentPageNumber != 1 && prevPage.superview != scrollView) {
             [scrollView addSubview:prevPage];
-        } else if (currentPageNumber == 1 && prevPage.superview != nil) {
+        } else if (currentPageNumber == 1 && prevPage.superview == scrollView) {
             [prevPage removeFromSuperview];
         }
     }
@@ -757,10 +764,10 @@
 		int page = 0;
 		if (CGRectContainsPoint(leftTapArea, tapPoint)) {
 			NSLog(@"<-- TAP left!");
-			page = currentPageNumber-1;
+			page = currentPageNumber - 1;
 		} else if (CGRectContainsPoint(rightTapArea, tapPoint)) {
 			NSLog(@"--> TAP right!");
-			page = currentPageNumber+1;
+			page = currentPageNumber + 1;
 		}
 		
         [self changePage:page];
@@ -1031,7 +1038,6 @@
 	[self checkPageSize];
 	[self getPageHeight];
 	[self resetScrollView];
-    [currPage setNeedsDisplay];
 }
 - (void)didReceiveMemoryWarning {
 	// Releases the view if it doesn't have a superview.
