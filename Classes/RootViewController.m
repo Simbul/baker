@@ -402,19 +402,6 @@
         
         NSLog(@"Goto Page: book/%@", [[NSFileManager defaultManager] displayNameAtPath:path]);
         
-        // ****** THREE CARD VIEW METHOD
-        if (currentPageNumber != totalPages && nextPage.superview == nil) {
-            [scrollView addSubview:nextPage];
-        } else if (currentPageNumber == totalPages && nextPage != nil) {
-            [nextPage removeFromSuperview];
-        }
-        
-        if (currentPageNumber != 1 && prevPage.superview == nil) {
-            [scrollView addSubview:prevPage];
-        } else if (currentPageNumber == 1 && prevPage.superview != nil) {
-            [prevPage removeFromSuperview];
-        }
-        
         // ****** Calculate move direction and normalize tapNumber
         int direction = 1;
         if (tapNumber < 0) {
@@ -493,6 +480,19 @@
                     [self loadSlot:-1 withPage:currentPageNumber - 1];
                 }  
             }
+        }
+        
+        // ****** THREE CARD VIEW METHOD
+        if (currentPageNumber != totalPages && nextPage.superview == nil) {
+            [scrollView addSubview:nextPage];
+        } else if (currentPageNumber == totalPages && nextPage != nil) {
+            [nextPage removeFromSuperview];
+        }
+        
+        if (currentPageNumber != 1 && prevPage.superview == nil) {
+            [scrollView addSubview:prevPage];
+        } else if (currentPageNumber == 1 && prevPage.superview != nil) {
+            [prevPage removeFromSuperview];
         }
     }
 }
