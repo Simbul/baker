@@ -382,7 +382,9 @@
 	// This delay is required in order to avoid stuttering when the animation runs.
 	// The animation lasts 0.5 seconds: so we start loading after that.
 	
-	if (currentPageIsDelayingLoading) [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(gotoPage) object:nil];
+	if (currentPageIsDelayingLoading) {
+        [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(gotoPage) object:nil];
+    }
 	
 	currentPageIsDelayingLoading = YES;
 	[self performSelector:@selector(gotoPage) withObject:nil afterDelay:0.5];
@@ -401,6 +403,8 @@
     if ([[NSFileManager defaultManager] fileExistsAtPath:path] && tapNumber != 0) {
         
         NSLog(@"Goto Page: book/%@", [[NSFileManager defaultManager] displayNameAtPath:path]);
+        
+        // ****** THREE CARD VIEW METHOD
         
         // ****** Calculate move direction and normalize tapNumber
         int direction = 1;
@@ -464,6 +468,8 @@
                     currPage = prevPage;
                     prevPage = tmpView;
                 }
+                
+                currentPageIsDelayingLoading = NO; // since we are not loading anything so we have to reset the delayer flag here
             }
             
             tapNumber = 0;
@@ -482,7 +488,6 @@
             }
         }
         
-        // ****** THREE CARD VIEW METHOD
         if (currentPageNumber != totalPages && nextPage.superview == nil) {
             [scrollView addSubview:nextPage];
         } else if (currentPageNumber == totalPages && nextPage != nil) {
@@ -515,9 +520,6 @@
 	[self spinnerForPage:page isAnimating:YES]; // spinner YES	
 }
 - (BOOL)loadWebView:(UIWebView*)webView withPage:(int)page {
-	
-	//NSString *file = [NSString stringWithFormat:@"%d", page];
-	//NSString *path = [[NSBundle mainBundle] pathForResource:file ofType:@"html" inDirectory:@"book"];
 	
 	NSString *path = [pages objectAtIndex:page-1];
 		
@@ -625,12 +627,13 @@
 }
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
 	// Sent if a web view failed to load content.
-    if (webView == currPage)
+    if (webView == currPage) {
 		NSLog(@"currPage failed to load content with error: %@", error);
-	else if (webView == prevPage)
+	} else if (webView == prevPage) {
 		NSLog(@"prevPage failed to load content with error: %@", error);
-	else if (webView == nextPage)
+	} else if (webView == nextPage) {
 		NSLog(@"nextPage failed to load content with error: %@", error);
+    }
 }
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
 	// Sent before a web view begins loading content, useful to trigger actions before the WebView.	
