@@ -296,15 +296,19 @@
         [scrollView addSubview:currPage];
         [self loadSlot:0 withPage:currentPageNumber];
         
-        if (currentPageNumber < totalPages){
-            [scrollView addSubview:nextPage];
+        if (currentPageNumber != totalPages) {
+            if (nextPage.superview != scrollView) [scrollView addSubview:nextPage];
             [self loadSlot:+1 withPage:currentPageNumber + 1];
+        } else if (currentPageNumber == totalPages && nextPage.superview == scrollView) {
+            [nextPage removeFromSuperview];
         }
-		
-        if (currentPageNumber > 1) {
-            [scrollView addSubview:prevPage];
+        
+        if (currentPageNumber != 1) {
+            if (prevPage.superview != scrollView) [scrollView addSubview:prevPage];
             [self loadSlot:-1 withPage:currentPageNumber - 1];
-        }
+        } else if (currentPageNumber == 1 && prevPage.superview == scrollView) {
+            [prevPage removeFromSuperview];
+        }        
 		
 	} else {
 		
