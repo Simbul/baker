@@ -292,6 +292,8 @@
 			}
 		}
 		
+        currentPageIsDelayingLoading = YES;
+        
 		[self resetScrollView];        
         [scrollView addSubview:currPage];
         [self loadSlot:0 withPage:currentPageNumber];
@@ -697,6 +699,7 @@
 													 otherButtonTitles:CLOSE_BOOK_CONFIRM, nil];
 					[feedbackAlert show];
 					[feedbackAlert release];
+                    
 				} else {
 					
 					if ([[url pathExtension] isEqualToString:@"html"]) {
@@ -986,9 +989,7 @@
 		
 		NSLog(@"Book successfully unzipped. Removing .hpub file");
 		[[NSFileManager defaultManager] removeItemAtPath:targetPath error:NULL];
-		
-		currentPageIsDelayingLoading = YES;
-		
+				
 		[feedbackAlert dismissWithClickedButtonIndex:feedbackAlert.cancelButtonIndex animated:YES];
 		[self initBook:destinationPath];
 	} /* else {
