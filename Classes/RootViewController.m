@@ -192,7 +192,7 @@
 	if ([AVAILABLE_ORIENTATION isEqualToString:@"Portrait"] || [AVAILABLE_ORIENTATION isEqualToString:@"Landscape"]) {
 		[self setPageSize:AVAILABLE_ORIENTATION];
 	} else {
-		UIDeviceOrientation orientation = [[UIDevice currentDevice] orientation];
+		UIDeviceOrientation orientation = [self interfaceOrientation];
 		// WARNING! Seems like checking [[UIDevice currentDevice] orientation] against "UIInterfaceOrientationPortrait" is broken (return FALSE with the device in portrait orientation)
 		// Safe solution: always check if the device is in landscape orientation, if FALSE then it's in portrait.
 		if (orientation == UIInterfaceOrientationLandscapeLeft || orientation == UIInterfaceOrientationLandscapeRight)
@@ -1009,7 +1009,7 @@
     [currPage stringByEvaluatingJavaScriptFromString:jsCommand];
 }
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
-    UIDeviceOrientation orientation = [[UIDevice currentDevice] orientation];
+    UIDeviceOrientation orientation = [self interfaceOrientation];
     [indexViewController rotateFromOrientation:fromInterfaceOrientation toOrientation:orientation];
      
 	[self checkPageSize];
