@@ -80,6 +80,9 @@
     webView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
     webView.delegate = self;
     
+    webView.backgroundColor = [UIColor clearColor];
+    [webView setOpaque:NO];
+    
     [self setBounceForWebView:webView bounces:INDEX_VIEW_BOUNCE];
     
     self.view = webView;
