@@ -234,7 +234,9 @@
 	if (!sharedApplication.statusBarHidden) {
 		scrollViewY = -20;
 	}
-	scrollView.frame = CGRectMake(0, scrollViewY, pageWidth, pageHeight);
+    [UIView animateWithDuration:0.2 animations:^{
+        scrollView.frame = CGRectMake(0, scrollViewY, pageWidth, pageHeight);
+    }];
 	
 	[self initPageNumbersForPages:totalPages];
     
