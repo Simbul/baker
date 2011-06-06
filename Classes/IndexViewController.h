@@ -38,6 +38,7 @@
     NSString *fileName;
     UIViewController<UIWebViewDelegate> *webViewDelegate;
     
+    int pageY;
     int pageWidth;
 	int pageHeight;
     BOOL disabled;

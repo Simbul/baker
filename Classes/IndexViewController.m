@@ -107,7 +107,15 @@
         pageWidth = screenBounds.size.width;
 		pageHeight = screenBounds.size.height;
 	}
-    NSLog(@"Set IndexView size to %dx%d", pageWidth, pageHeight);
+    
+    UIApplication *sharedApplication = [UIApplication sharedApplication];
+    if (sharedApplication.statusBarHidden) {
+        pageY = 0;
+    } else {
+        pageY = -20;
+    }
+    
+    NSLog(@"Set IndexView size to %dx%d, with pageY set to %d", pageWidth, pageHeight, pageY);
 }
 
 - (BOOL)isIndexViewHidden {
@@ -121,9 +129,9 @@
 - (void)setIndexViewHidden:(BOOL)hidden withAnimation:(BOOL)animation {
     CGRect frame;
     if (hidden) {
-        frame = CGRectMake(0, pageHeight, pageWidth, INDEX_HEIGHT);
+        frame = CGRectMake(0, pageHeight + pageY, pageWidth, INDEX_HEIGHT);
     } else {
-        frame = CGRectMake(0, pageHeight - INDEX_HEIGHT, pageWidth, INDEX_HEIGHT);
+        frame = CGRectMake(0, pageHeight + pageY - INDEX_HEIGHT, pageWidth, INDEX_HEIGHT);
     }
     
     if (animation) {
