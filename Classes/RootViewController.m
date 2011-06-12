@@ -93,6 +93,7 @@
 @synthesize bundleBookPath;
 
 @synthesize pages;
+@synthesize toLoad;
 @synthesize pageNameFromURL;
 @synthesize anchorFromURL;
 
@@ -153,6 +154,7 @@
 
 	self.pageNameFromURL = nil;
 	self.anchorFromURL = nil;
+    self.toLoad = [NSMutableArray array];
 	
 	currentPageFirstLoading = YES;
 	currentPageIsDelayingLoading = YES;
@@ -195,7 +197,6 @@
 				((UIScrollView *)subview).bounces = NO;
 	}        
 }
-
 - (void)checkPageSize {
     if ([AVAILABLE_ORIENTATION isEqualToString:@"Portrait"] || [AVAILABLE_ORIENTATION isEqualToString:@"Landscape"]) {
 		[self setPageSize:AVAILABLE_ORIENTATION];
@@ -303,25 +304,31 @@
 		}
 		
         currentPageIsDelayingLoading = YES;
-        
-		[self resetScrollView];        
+        [self.toLoad removeAllObjects];
+		
+        [self resetScrollView];        
         [scrollView addSubview:currPage];
-        [self loadSlot:0 withPage:currentPageNumber];
+        [toLoad addObject:[NSNumber numberWithInt:0]];
         
         if (currentPageNumber != totalPages) {
-            if (nextPage.superview != scrollView) [scrollView addSubview:nextPage];
-            [self loadSlot:+1 withPage:currentPageNumber + 1];
+            if (nextPage.superview != scrollView) {
+                [scrollView addSubview:nextPage];
+            }
+            [toLoad addObject:[NSNumber numberWithInt:+1]];
         } else if (currentPageNumber == totalPages && nextPage.superview == scrollView) {
             [nextPage removeFromSuperview];
         }
         
         if (currentPageNumber != 1) {
-            if (prevPage.superview != scrollView) [scrollView addSubview:prevPage];
-            [self loadSlot:-1 withPage:currentPageNumber - 1];
+            if (prevPage.superview != scrollView) {
+                [scrollView addSubview:prevPage];
+            }
+            [toLoad addObject:[NSNumber numberWithInt:-1]];
         } else if (currentPageNumber == 1 && prevPage.superview == scrollView) {
             [prevPage removeFromSuperview];
         }
         
+        [self handlePageLoading];
         [indexViewController loadContentFromBundle:[path isEqualToString:bundleBookPath]];
 		
 	} else {
@@ -460,6 +467,8 @@
         
         // ****** THREE CARD VIEW METHOD
         
+        [self.toLoad removeAllObjects];
+        
         // ****** Calculate move direction and normalize tapNumber
         int direction = 1;
         if (tapNumber < 0) {
@@ -473,27 +482,20 @@
             
             // ****** Moved away for more than 2 pages: RELOAD ALL pages
             tapNumber = 0;
-            
-            if (currPage.loading) [currPage stopLoading];
-            [self loadSlot:0 withPage:currentPageNumber];
-            
+            [toLoad addObject:[NSNumber numberWithInt:0]];
             if (currentPageNumber < totalPages) {
-                if (nextPage.loading) [nextPage stopLoading];
-                [self loadSlot:+1 withPage:currentPageNumber + 1];
+                [toLoad addObject:[NSNumber numberWithInt:+1]];
             }
-            
             if (currentPageNumber > 1) {
-                if (prevPage.loading) [prevPage stopLoading];
-                [self loadSlot:-1 withPage:currentPageNumber - 1];
+                [toLoad addObject:[NSNumber numberWithInt:-1]];
             }
-            
+                        
         } else {
             
             if (tapNumber == 2) {
             
                 // ****** Moved away for 2 pages: RELOAD CURRENT page
-                if (currPage.loading) [currPage stopLoading];
-                [self loadSlot:0 withPage:currentPageNumber];
+                [toLoad addObject:[NSNumber numberWithInt:0]];
             
                 if (direction < 0) {
                     // ****** Move RIGHT >>>
@@ -523,22 +525,20 @@
                     prevPage = tmpView;
                 }
                 
-                currentPageIsDelayingLoading = NO; // since we are not loading anything so we have to reset the delayer flag here
+                currentPageIsDelayingLoading = NO; // since we are not loading anything we have to reset the delayer flag here
             }
             
             tapNumber = 0;
             if (direction < 0) {
                 // PRELOAD NEXT page
                 if (currentPageNumber < totalPages) {
-                    if (nextPage.loading) [nextPage stopLoading];
-                    [self loadSlot:+1 withPage:currentPageNumber + 1];
+                    [toLoad addObject:[NSNumber numberWithInt:+1]];
                 }
             } else {
                 // PRELOAD PREV page
                 if (currentPageNumber > 1) {
-                    if (prevPage.loading) [prevPage stopLoading];
-                    [self loadSlot:-1 withPage:currentPageNumber - 1];
-                }  
+                    [toLoad addObject:[NSNumber numberWithInt:-1]];
+                }
             }
         }
         
@@ -553,6 +553,19 @@
         } else if (currentPageNumber == 1 && prevPage.superview == scrollView) {
             [prevPage removeFromSuperview];
         }
+        
+        [self handlePageLoading];
+    }
+}
+- (void)handlePageLoading {
+    if ([self.toLoad count] != 0) {
+        int i = [[self.toLoad objectAtIndex:0] intValue];
+        
+        NSLog(@">>>>> HANDLE LOADING OF SLOT %d WITH PAGE %d <<<<<", i, currentPageNumber + i);
+        
+        [self.toLoad removeObjectAtIndex:0];
+        [self loadSlot:i withPage:currentPageNumber + i];
+        
     }
 }
 - (void)loadSlot:(int)slot withPage:(int)page {
@@ -677,7 +690,8 @@
 	//[webView stringByEvaluatingJavaScriptFromString:javaScript];
 	
 	[self spinnerForPage:currentPageNumber isAnimating:NO]; // spinner YES
-	[self performSelector:@selector(revealWebView:) withObject:webView afterDelay:0.1]; // This seems fixing the WebView-Flash-Of-Old-Content-webBug    
+	[self performSelector:@selector(revealWebView:) withObject:webView afterDelay:0.1]; // This seems fixing the WebView-Flash-Of-Old-Content-webBug
+    [self handlePageLoading];
 }
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
 	// Sent if a web view failed to load content.
@@ -692,17 +706,16 @@
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
 	// Sent before a web view begins loading content, useful to trigger actions before the WebView.	
 	
-    if (webView == self.prevPage || webView == self.nextPage) {
-        
-        NSLog(@"Loading Prev or Next Page --> load page");
+    if (webView == self.prevPage) {
+        NSLog(@"Loading Prev Page --> load page");
         return YES;
-        
-    } else if (currentPageIsDelayingLoading) {
-		
+    } else if (webView == self.nextPage) {
+        NSLog(@"Loading Next Page --> load page");
+        return YES;
+    } else if (currentPageIsDelayingLoading) {		
 		NSLog(@"Current Page IS delaying loading --> load page");
 		currentPageIsDelayingLoading = NO;
 		return YES;
-		
 	} else {
 		
 		[self hideStatusBarDiscardingToggle:YES];
