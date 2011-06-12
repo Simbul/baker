@@ -44,6 +44,7 @@
 	NSString *bundleBookPath;
 	
 	NSMutableArray *pages;
+    NSMutableArray *toLoad;
 	NSString *pageNameFromURL;
 	NSString *anchorFromURL;
 	
@@ -86,6 +87,7 @@
 @property (nonatomic, retain) NSString *bundleBookPath;
 
 @property (nonatomic, retain) NSMutableArray *pages;
+@property (nonatomic, retain) NSMutableArray *toLoad;
 @property (nonatomic, retain) NSString *pageNameFromURL;
 @property (nonatomic, retain) NSString *anchorFromURL;
 
@@ -107,15 +109,16 @@
 - (void)checkPageSize;
 - (void)setPageSize:(NSString *)orientation;
 - (void)initBook:(NSString *)path;
+- (void)initPageNumbersForPages:(int)count;
 
 // ****** LOADING
-- (NSDictionary*)loadManifest:(NSString*)file;
+- (NSDictionary *)loadManifest:(NSString *)file;
 - (BOOL)changePage:(int)page;
 - (void)gotoPageDelayer;
 - (void)gotoPage;
-- (void)initPageNumbersForPages:(int)count;
+- (void)handlePageLoading;
 - (void)loadSlot:(int)slot withPage:(int)page;
-- (BOOL)loadWebView:(UIWebView*)webview withPage:(int)page;
+- (BOOL)loadWebView:(UIWebView *)webview withPage:(int)page;
 
 // ****** SCROLLVIEW
 - (CGRect)frameForPage:(int)page;
