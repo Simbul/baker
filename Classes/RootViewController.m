@@ -528,6 +528,8 @@
                 currentPageIsDelayingLoading = NO; // since we are not loading anything we have to reset the delayer flag here
             }
             
+            [self getPageHeight];
+            
             tapNumber = 0;
             if (direction < 0) {
                 // PRELOAD NEXT page
@@ -850,7 +852,7 @@
 	for (id subview in currPage.subviews) {
 		if ([[subview class] isSubclassOfClass:[UIScrollView class]]) {
 			CGSize size = ((UIScrollView *)subview).contentSize;
-			NSLog(@"Current page height: %d", currentPageHeight);
+			NSLog(@"Changing current page height: %d -> %f", currentPageHeight, size.height);
 			currentPageHeight = size.height;
 		}
 	}
