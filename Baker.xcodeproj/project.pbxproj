@@ -499,6 +499,7 @@
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = Baker;
 				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = Debug;
 		};
@@ -517,6 +518,7 @@
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = Baker;
 				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 2;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -554,6 +556,7 @@
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = Baker;
 				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = Analyze;
 		};

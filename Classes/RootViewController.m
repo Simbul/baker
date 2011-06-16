@@ -348,36 +348,66 @@
 }
 - (void)initPageNumbersForPages:(int)count {
 	pageSpinners = [[NSMutableArray alloc] initWithCapacity:count];
-	
+    
 	for (int i = 0; i < count; i++) {
 		// ****** Spinners
 		UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
 		spinner.backgroundColor = [UIColor clearColor];
-		
-		CGRect frame = spinner.frame;
-		frame.origin.x = pageWidth * i + (pageWidth + frame.size.width) / 2 - 40;
-		frame.origin.y = (pageHeight + frame.size.height) / 2;
-		spinner.frame = frame;
-		
+        
+        CGRect frame = spinner.frame;
+        frame.origin.x = pageWidth * i + (pageWidth + frame.size.width) / 2 - 40;
+        frame.origin.y = (pageHeight + frame.size.height) / 2 - 40;        
+        spinner.frame = frame;
+        		
 		[pageSpinners addObject:spinner];
 		[[self scrollView] addSubview:spinner];
 		[spinner release];
-		
+        
 		// ****** Numbers
-		UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(pageWidth * i + (pageWidth) / 2, pageHeight / 2 - 6, 100, 50)];
-		label.backgroundColor = [UIColor clearColor];
-		label.textColor = [UIColor PAGE_NUMBERS_COLOR];
-		label.alpha = PAGE_NUMBERS_ALPHA;
+		UILabel *numLabel = [[UILabel alloc] initWithFrame:CGRectMake(pageWidth * i + pageWidth / 2, pageHeight / 2 - 36, 115, 30)];
+        numLabel.backgroundColor = [UIColor clearColor];
+        numLabel.font = [UIFont fontWithName:@"Helvetica" size:40.0];
+        numLabel.textColor = [UIColor PAGE_NUMBERS_COLOR];
+		numLabel.textAlignment = UITextAlignmentLeft;
+		numLabel.alpha = PAGE_NUMBERS_ALPHA;
 				
-		NSString *labelText = [[NSString alloc] initWithFormat:@"%d", i + 1];
-		label.font = [UIFont fontWithName:@"Helvetica" size:40.0];
-		label.textAlignment = UITextAlignmentLeft;
-		label.text = labelText;
-		//label.backgroundColor = [UIColor redColor];
-		[labelText release];
+        NSString *numLabelText = [NSString stringWithFormat:@"%d", i + 1];
+        numLabel.text = numLabelText;
 		
-		[[self scrollView] addSubview:label];
-		[label release];
+		[[self scrollView] addSubview:numLabel];
+		[numLabel release];
+        
+        // ****** Title        
+        NSRegularExpression *titleRegex = [NSRegularExpression regularExpressionWithPattern:@"<title>(.*)</title>" options:NSRegularExpressionCaseInsensitive error:NULL];
+        NSString *fileContent = [NSString stringWithContentsOfFile:[self.pages objectAtIndex: i] encoding:NSUTF8StringEncoding error:NULL];
+        NSRange matchRange = [[titleRegex firstMatchInString:fileContent options:0 range:NSMakeRange(0, [fileContent length])] rangeAtIndex:1];
+        if (!NSEqualRanges(matchRange, NSMakeRange(NSNotFound, 0))) {
+                        
+            NSString *titleLabelText = [fileContent substringWithRange:matchRange];
+                                    
+            CGSize titleLabelDimension = CGSizeMake(672, 330);
+            UIFont *titleLabelFont = [UIFont fontWithName:@"Helvetica" size:24.0];
+            if (screenBounds.size.width < 768) {
+                titleLabelDimension = CGSizeMake(280, 134);
+                titleLabelFont = [UIFont fontWithName:@"Helvetica" size:15.0];
+            }
+            
+            CGSize titleLabelTextSize = [titleLabelText sizeWithFont:titleLabelFont constrainedToSize:titleLabelDimension lineBreakMode:UILineBreakModeTailTruncation];            
+            CGRect titleLabelFrame = CGRectMake(pageWidth * i + (pageWidth - titleLabelTextSize.width) / 2, pageHeight / 2 + 6, titleLabelTextSize.width, titleLabelTextSize.height);
+            
+            UILabel *titleLabel = [[UILabel alloc] initWithFrame:titleLabelFrame];         
+            titleLabel.backgroundColor = [UIColor clearColor];
+            titleLabel.alpha = PAGE_NUMBERS_ALPHA;            
+            titleLabel.font = titleLabelFont;
+            titleLabel.textColor = [UIColor PAGE_NUMBERS_COLOR];
+            titleLabel.textAlignment = UITextAlignmentCenter;
+            titleLabel.lineBreakMode = UILineBreakModeTailTruncation;
+            titleLabel.numberOfLines = 0;
+            titleLabel.text = titleLabelText;
+            
+            [[self scrollView] addSubview:titleLabel];
+            [titleLabel release];
+        }
 	}
 }
 
@@ -605,12 +635,12 @@
 - (CGRect)frameForPage:(int)page {
 	return CGRectMake(pageWidth * (page - 1), 0, pageWidth, pageHeight);
 }
-- (void)spinnerForPage:(int)page isAnimating:(BOOL)isAnimating {
-	UIActivityIndicatorView *spinner = nil;
+- (void)spinnerForPage:(int)page isAnimating:(BOOL)isAnimating {	
+    UIActivityIndicatorView *spinner = nil;
 	if (page <= pageSpinners.count) spinner = [pageSpinners objectAtIndex:page - 1];
 	
 	if (isAnimating) {
-		spinner.alpha = 0.0;
+        spinner.alpha = 0.0;
 		[UIView beginAnimations:@"showSpinner" context:nil]; {
 			//[UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
 			[UIView setAnimationDuration:1.0];
@@ -619,7 +649,7 @@
 			
 			spinner.alpha = 1.0;
 		}
-		[UIView commitAnimations];	
+		[UIView commitAnimations];
 		[spinner startAnimating];
 	} else {
 		[spinner stopAnimating];
@@ -691,7 +721,7 @@
 	//NSString *javaScript = @"<script type=\"text/javascript\">function myFunction(){return 1+1;}</script>";
 	//[webView stringByEvaluatingJavaScriptFromString:javaScript];
 	
-	[self spinnerForPage:currentPageNumber isAnimating:NO]; // spinner YES
+	[self spinnerForPage:currentPageNumber isAnimating:NO]; // spinner NO
 	[self performSelector:@selector(revealWebView:) withObject:webView afterDelay:0.1]; // This seems fixing the WebView-Flash-Of-Old-Content-webBug
     [self handlePageLoading];
 }
