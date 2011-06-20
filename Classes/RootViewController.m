@@ -355,8 +355,10 @@
 		spinner.backgroundColor = [UIColor clearColor];
         
         CGRect frame = spinner.frame;
-        frame.origin.x = pageWidth * i + (pageWidth + frame.size.width) / 2 - 40;
-        frame.origin.y = (pageHeight + frame.size.height) / 2 - 40;        
+        frame.origin.x = pageWidth * i + (pageWidth - frame.size.width) / 2;
+        frame.origin.y = (pageHeight - frame.size.height) / 2;        
+        //frame.origin.x = -10;
+        //frame.origin.y = -10;
         spinner.frame = frame;
         		
 		[pageSpinners addObject:spinner];
@@ -364,11 +366,11 @@
 		[spinner release];
         
 		// ****** Numbers
-		UILabel *numLabel = [[UILabel alloc] initWithFrame:CGRectMake(pageWidth * i + pageWidth / 2, pageHeight / 2 - 36, 115, 30)];
+		UILabel *numLabel = [[UILabel alloc] initWithFrame:CGRectMake(pageWidth * i + (pageWidth - 115) / 2, pageHeight / 2 - 55, 115, 30)];
         numLabel.backgroundColor = [UIColor clearColor];
         numLabel.font = [UIFont fontWithName:@"Helvetica" size:40.0];
         numLabel.textColor = [UIColor PAGE_NUMBERS_COLOR];
-		numLabel.textAlignment = UITextAlignmentLeft;
+		numLabel.textAlignment = UITextAlignmentCenter;
 		numLabel.alpha = PAGE_NUMBERS_ALPHA;
 				
         NSString *numLabelText = [NSString stringWithFormat:@"%d", i + 1];
@@ -393,7 +395,7 @@
             }
             
             CGSize titleLabelTextSize = [titleLabelText sizeWithFont:titleLabelFont constrainedToSize:titleLabelDimension lineBreakMode:UILineBreakModeTailTruncation];            
-            CGRect titleLabelFrame = CGRectMake(pageWidth * i + (pageWidth - titleLabelTextSize.width) / 2, pageHeight / 2 + 6, titleLabelTextSize.width, titleLabelTextSize.height);
+            CGRect titleLabelFrame = CGRectMake(pageWidth * i + (pageWidth - titleLabelTextSize.width) / 2, pageHeight / 2 + 20, titleLabelTextSize.width, titleLabelTextSize.height);
             
             UILabel *titleLabel = [[UILabel alloc] initWithFrame:titleLabelFrame];         
             titleLabel.backgroundColor = [UIColor clearColor];
@@ -721,8 +723,8 @@
 	//NSString *javaScript = @"<script type=\"text/javascript\">function myFunction(){return 1+1;}</script>";
 	//[webView stringByEvaluatingJavaScriptFromString:javaScript];
 	
-	[self spinnerForPage:currentPageNumber isAnimating:NO]; // spinner NO
-	[self performSelector:@selector(revealWebView:) withObject:webView afterDelay:0.1]; // This seems fixing the WebView-Flash-Of-Old-Content-webBug
+	//[self spinnerForPage:currentPageNumber isAnimating:NO]; // spinner NO
+	//[self performSelector:@selector(revealWebView:) withObject:webView afterDelay:0.1]; // This seems fixing the WebView-Flash-Of-Old-Content-webBug
     [self handlePageLoading];
 }
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
