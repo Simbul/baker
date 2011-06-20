@@ -723,8 +723,8 @@
 	//NSString *javaScript = @"<script type=\"text/javascript\">function myFunction(){return 1+1;}</script>";
 	//[webView stringByEvaluatingJavaScriptFromString:javaScript];
 	
-	//[self spinnerForPage:currentPageNumber isAnimating:NO]; // spinner NO
-	//[self performSelector:@selector(revealWebView:) withObject:webView afterDelay:0.1]; // This seems fixing the WebView-Flash-Of-Old-Content-webBug
+	[self spinnerForPage:currentPageNumber isAnimating:NO]; // spinner NO
+	[self performSelector:@selector(revealWebView:) withObject:webView afterDelay:0.1]; // This seems fixing the WebView-Flash-Of-Old-Content-webBug
     [self handlePageLoading];
 }
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
