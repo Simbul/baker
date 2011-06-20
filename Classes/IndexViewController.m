@@ -31,7 +31,8 @@
 
 #import "IndexViewController.h"
 
-#define INDEX_HEIGHT 150
+// Set to a value in pixels to force height for the index view, e.g. #define INDEX_HEIGHT 200
+#define INDEX_HEIGHT NULL
 #define INDEX_VIEW_BOUNCE NO
 
 
@@ -43,6 +44,7 @@
     fileName = name;
     webViewDelegate = delegate;
     disabled = NO;
+    indexHeight = 0;
     
     [self setPageSizeForOrientation:UIInterfaceOrientationPortrait];
     
@@ -76,7 +78,8 @@
 // Implement loadView to create a view hierarchy programmatically, without using a nib.
 - (void)loadView
 {
-    UIWebView *webView = [[UIWebView alloc] initWithFrame:CGRectMake(0, 1024, 768, INDEX_HEIGHT)];
+    // Initialization to 1x1px is required to get sizeThatFits to work
+    UIWebView *webView = [[UIWebView alloc] initWithFrame:CGRectMake(0, 1024, 1, 1)];
     webView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
     webView.delegate = self;
     
@@ -119,7 +122,7 @@
 }
 
 - (BOOL)isIndexViewHidden {
-    return self.view.frame.origin.y > pageHeight - INDEX_HEIGHT;
+    return self.view.frame.origin.y > pageHeight - indexHeight;
 }
 
 - (BOOL)isDisabled {
@@ -129,9 +132,9 @@
 - (void)setIndexViewHidden:(BOOL)hidden withAnimation:(BOOL)animation {
     CGRect frame;
     if (hidden) {
-        frame = CGRectMake(0, pageHeight + pageY, pageWidth, INDEX_HEIGHT);
+        frame = CGRectMake(0, pageHeight + pageY, pageWidth, indexHeight);
     } else {
-        frame = CGRectMake(0, pageHeight + pageY - INDEX_HEIGHT, pageWidth, INDEX_HEIGHT);
+        frame = CGRectMake(0, pageHeight + pageY - indexHeight, pageWidth, indexHeight);
     }
     
     if (animation) {
@@ -201,6 +204,13 @@
 }
 
 -(void)webViewDidFinishLoad:(UIWebView *)webView {
+    if (INDEX_HEIGHT != NULL) {
+        indexHeight = (int) INDEX_HEIGHT;
+    } else {
+        indexHeight = [webView sizeThatFits:CGSizeZero].height;        
+    }
+    NSLog(@"Set height for IndexView to %d", indexHeight);
+    
     // After the first load, point the delegate to the main view controller
     webView.delegate = webViewDelegate;
 }

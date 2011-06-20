@@ -41,6 +41,7 @@
     int pageY;
     int pageWidth;
 	int pageHeight;
+    int indexHeight;
     BOOL disabled;
 }
 
