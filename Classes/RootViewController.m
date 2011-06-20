@@ -37,9 +37,9 @@
 
 // LOADER STYLE
 // Configure this to change the color of the loader
-#define SCROLLVIEW_BGCOLOR whiteColor
-#define PAGE_NUMBERS_COLOR blackColor
-#define PAGE_NUMBERS_ALPHA 0.2
+#define SCROLLVIEW_BGCOLOR blackColor
+#define PAGE_NUMBERS_COLOR whiteColor
+#define PAGE_NUMBERS_ALPHA 0.3
 
 // PINCH-TO-ZOOM
 // Enable pinch-to-zoom on the book page.
