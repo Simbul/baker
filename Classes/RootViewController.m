@@ -357,12 +357,11 @@
         CGRect frame = spinner.frame;
         frame.origin.x = pageWidth * i + (pageWidth - frame.size.width) / 2;
         frame.origin.y = (pageHeight - frame.size.height) / 2;        
-        //frame.origin.x = -10;
-        //frame.origin.y = -10;
         spinner.frame = frame;
         		
 		[pageSpinners addObject:spinner];
 		[[self scrollView] addSubview:spinner];
+        [spinner startAnimating];
 		[spinner release];
         
 		// ****** Numbers
@@ -599,7 +598,6 @@
         
         [self.toLoad removeObjectAtIndex:0];
         [self loadSlot:i withPage:currentPageNumber + i];
-        
     }
 }
 - (void)loadSlot:(int)slot withPage:(int)page {
@@ -618,7 +616,6 @@
     
     webView.frame = [self frameForPage:page];
 	[self loadWebView:webView withPage:page];
-	[self spinnerForPage:page isAnimating:YES]; // spinner YES	
 }
 - (BOOL)loadWebView:(UIWebView*)webView withPage:(int)page {
 	
@@ -636,26 +633,6 @@
 // ****** SCROLLVIEW
 - (CGRect)frameForPage:(int)page {
 	return CGRectMake(pageWidth * (page - 1), 0, pageWidth, pageHeight);
-}
-- (void)spinnerForPage:(int)page isAnimating:(BOOL)isAnimating {	
-    UIActivityIndicatorView *spinner = nil;
-	if (page <= pageSpinners.count) spinner = [pageSpinners objectAtIndex:page - 1];
-	
-	if (isAnimating) {
-        spinner.alpha = 0.0;
-		[UIView beginAnimations:@"showSpinner" context:nil]; {
-			//[UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
-			[UIView setAnimationDuration:1.0];
-			//[UIView setAnimationDelegate:self];
-			//[UIView setAnimationDidStopSelector:@selector(animationDidStop:finished:)];
-			
-			spinner.alpha = 1.0;
-		}
-		[UIView commitAnimations];
-		[spinner startAnimating];
-	} else {
-		[spinner stopAnimating];
-	}
 }
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
 	// This is called because this controller is the delegate for UIScrollView
@@ -723,7 +700,6 @@
 	//NSString *javaScript = @"<script type=\"text/javascript\">function myFunction(){return 1+1;}</script>";
 	//[webView stringByEvaluatingJavaScriptFromString:javaScript];
 	
-	[self spinnerForPage:currentPageNumber isAnimating:NO]; // spinner NO
 	[self performSelector:@selector(revealWebView:) withObject:webView afterDelay:0.1]; // This seems fixing the WebView-Flash-Of-Old-Content-webBug
     [self handlePageLoading];
 }

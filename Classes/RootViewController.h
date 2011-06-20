@@ -122,7 +122,6 @@
 
 // ****** SCROLLVIEW
 - (CGRect)frameForPage:(int)page;
-- (void)spinnerForPage:(int)page isAnimating:(BOOL)isAnimating;
 - (void)resetScrollView;
 
 // ****** WEBVIEW
