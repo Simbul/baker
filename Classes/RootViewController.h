@@ -116,6 +116,7 @@
 - (BOOL)changePage:(int)page;
 - (void)gotoPageDelayer;
 - (void)gotoPage;
+- (void)addPageLoading:(int)slot;
 - (void)handlePageLoading;
 - (void)loadSlot:(int)slot withPage:(int)page;
 - (BOOL)loadWebView:(UIWebView *)webview withPage:(int)page;

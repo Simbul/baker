@@ -308,13 +308,13 @@
 		
         [self resetScrollView];        
         [scrollView addSubview:currPage];
-        [toLoad addObject:[NSNumber numberWithInt:0]];
+        [self addPageLoading:0];
         
         if (currentPageNumber != totalPages) {
             if (nextPage.superview != scrollView) {
                 [scrollView addSubview:nextPage];
             }
-            [toLoad addObject:[NSNumber numberWithInt:+1]];
+            [self addPageLoading:+1];
         } else if (currentPageNumber == totalPages && nextPage.superview == scrollView) {
             [nextPage removeFromSuperview];
         }
@@ -323,7 +323,7 @@
             if (prevPage.superview != scrollView) {
                 [scrollView addSubview:prevPage];
             }
-            [toLoad addObject:[NSNumber numberWithInt:-1]];
+            [self addPageLoading:-1];
         } else if (currentPageNumber == 1 && prevPage.superview == scrollView) {
             [prevPage removeFromSuperview];
         }
@@ -498,8 +498,6 @@
         
         // ****** THREE CARD VIEW METHOD
         
-        [self.toLoad removeAllObjects];
-        
         // ****** Calculate move direction and normalize tapNumber
         int direction = 1;
         if (tapNumber < 0) {
@@ -511,23 +509,24 @@
         
         if (tapNumber > 2) {
             
+            [self.toLoad removeAllObjects];
+            
             // ****** Moved away for more than 2 pages: RELOAD ALL pages
             tapNumber = 0;
-            [toLoad addObject:[NSNumber numberWithInt:0]];
-            if (currentPageNumber < totalPages) {
-                [toLoad addObject:[NSNumber numberWithInt:+1]];
-            }
-            if (currentPageNumber > 1) {
-                [toLoad addObject:[NSNumber numberWithInt:-1]];
-            }
+            
+            [self addPageLoading:0];
+            if (currentPageNumber < totalPages)
+                [self addPageLoading:+1];
+            if (currentPageNumber > 1)
+                [self addPageLoading:-1];
                         
         } else {
             
+            int tmpSlot = 0;
             if (tapNumber == 2) {
             
                 // ****** Moved away for 2 pages: RELOAD CURRENT page
-                [toLoad addObject:[NSNumber numberWithInt:0]];
-            
+
                 if (direction < 0) {
                     // ****** Move RIGHT >>>
                     UIWebView *tmpView = prevPage;
@@ -539,9 +538,16 @@
                     nextPage = prevPage;
                     prevPage = tmpView;
                 }
+                
+                // Adjust pages slot in the stack to reflect the webviews pointer change
+                for (int i = 0; i < [toLoad count]; i++) {
+                    tmpSlot =  -1 * [[[toLoad objectAtIndex:i] valueForKey:@"slot"] intValue];
+                    [[toLoad objectAtIndex:i] setObject:[NSNumber numberWithInt:tmpSlot] forKey:@"slot"];
+                }
+                [self addPageLoading:0];
             
             } else if (tapNumber == 1) {
-                
+                                
                 if (direction < 0) { 
                     // ****** Move RIGHT >>>
                     UIWebView *tmpView = prevPage;
@@ -556,22 +562,51 @@
                     prevPage = tmpView;
                 }
                 
-                currentPageIsDelayingLoading = NO; // since we are not loading anything we have to reset the delayer flag here
+                // Adjust pages slot in the stack to reflect the webviews pointer change
+                for (int i = 0; i < [toLoad count]; i++) {
+                    if (direction < 0) {
+                        tmpSlot = [[[toLoad objectAtIndex:i] valueForKey:@"slot"] intValue] + 1;
+                        if (tmpSlot == +2) tmpSlot = -1;
+                        [[toLoad objectAtIndex:i] setObject:[NSNumber numberWithInt:tmpSlot] forKey:@"slot"];
+                    } else {
+                        tmpSlot = [[[toLoad objectAtIndex:i] valueForKey:@"slot"] intValue] - 1;
+                        if (tmpSlot == -2) tmpSlot = +1;
+                        [[toLoad objectAtIndex:i] setObject:[NSNumber numberWithInt:tmpSlot] forKey:@"slot"];
+                    }
+                }
+                
+                // Since we are not loading anything we have to reset the delayer flag
+                currentPageIsDelayingLoading = NO;
             }
             
             [self getPageHeight];
             
             tapNumber = 0;
             if (direction < 0) {
+                
+                // REMOVE OTHER NEXT page from toLoad stack
+                for (int i = 0; i < [toLoad count]; i++) {
+                    if ([[[toLoad objectAtIndex:i] valueForKey:@"slot"] intValue] == +1) {
+                        [toLoad removeObjectAtIndex:i];
+                    }   
+                }
+                
                 // PRELOAD NEXT page
-                if (currentPageNumber < totalPages) {
-                    [toLoad addObject:[NSNumber numberWithInt:+1]];
-                }
+                if (currentPageNumber < totalPages)
+                    [self addPageLoading:+1];
+                
             } else {
-                // PRELOAD PREV page
-                if (currentPageNumber > 1) {
-                    [toLoad addObject:[NSNumber numberWithInt:-1]];
+                
+                // REMOVE OTHER PREV page from toLoad stack
+                for (int i = 0; i < [toLoad count]; i++) {
+                    if ([[[toLoad objectAtIndex:i] valueForKey:@"slot"] intValue] == -1) {
+                        [toLoad removeObjectAtIndex:i];
+                    }   
                 }
+                
+                // PRELOAD PREV page
+                if (currentPageNumber > 1)
+                    [self addPageLoading:-1];
             }
         }
         
@@ -590,28 +625,41 @@
         [self handlePageLoading];
     }
 }
+- (void)addPageLoading:(int)slot {
+    
+    NSArray *objs = [NSArray arrayWithObjects:[NSNumber numberWithInt:slot], [NSNumber numberWithInt:currentPageNumber + slot], nil];
+    NSArray *keys = [NSArray arrayWithObjects:@"slot", @"page", nil];
+    
+    if (slot == 0) {
+        [toLoad insertObject:[NSDictionary dictionaryWithObjects:objs forKeys:keys] atIndex:0];
+    } else {
+        [toLoad addObject:[NSDictionary dictionaryWithObjects:objs forKeys:keys]];
+    }
+}
 - (void)handlePageLoading {
     if ([self.toLoad count] != 0) {
-        int i = [[self.toLoad objectAtIndex:0] intValue];
         
-        NSLog(@">>>>> HANDLE LOADING OF SLOT %d WITH PAGE %d <<<<<", i, currentPageNumber + i);
+        int slot = [[[toLoad objectAtIndex:0] valueForKey:@"slot"] intValue];
+        int page = [[[toLoad objectAtIndex:0] valueForKey:@"page"] intValue];
+        
+        NSLog(@">>>>> HANDLE LOADING OF SLOT %d WITH PAGE %d <<<<<", slot, page);
         
         [self.toLoad removeObjectAtIndex:0];
-        [self loadSlot:i withPage:currentPageNumber + i];
+        [self loadSlot:slot withPage:page];
+
     }
 }
 - (void)loadSlot:(int)slot withPage:(int)page {
 	
 	UIWebView *webView = nil;
-	//CGRect frame;
 	
 	// ****** SELECT
-	if (slot == -1) {
-		webView = self.prevPage;
-	} else if (slot == 0) {
+	if (slot == 0) {
 		webView = self.currPage;
 	} else if (slot == +1) {
 		webView = self.nextPage;
+	} else if (slot == -1) {
+		webView = self.prevPage;
 	}
     
     webView.frame = [self frameForPage:page];
@@ -683,11 +731,6 @@
 			// ...check if there is a saved starting scroll index and set it
 			NSString *currPageScrollIndex = [[NSUserDefaults standardUserDefaults] objectForKey:@"lastScrollIndex"];
 			if (currPageScrollIndex != nil) [self goDownInPage:currPageScrollIndex animating:NO];
-			
-			//[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onTouch:) name:@"onTouch" object:nil];
-			//[self loadSlot:+1 withPage:currentPageNumber + 1];
-			//[self loadSlot:-1 withPage:currentPageNumber - 1];
-			
 			currentPageFirstLoading = NO;
 		}
 		
@@ -700,7 +743,7 @@
 	//NSString *javaScript = @"<script type=\"text/javascript\">function myFunction(){return 1+1;}</script>";
 	//[webView stringByEvaluatingJavaScriptFromString:javaScript];
 	
-	[self performSelector:@selector(revealWebView:) withObject:webView afterDelay:0.1]; // This seems fixing the WebView-Flash-Of-Old-Content-webBug
+	[self performSelector:@selector(revealWebView:) withObject:webView afterDelay:0.1]; // This seems fixing the WebView-Flash-Of-Old-Content-webBug    
     [self handlePageLoading];
 }
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
