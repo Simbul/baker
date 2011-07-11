@@ -45,6 +45,9 @@
 		BFF823C9138055F600562F57 /* CJSONScanner.m in Sources */ = {isa = PBXBuildFile; fileRef = BFF823B4138055F600562F57 /* CJSONScanner.m */; };
 		BFF823CA138055F600562F57 /* CJSONSerializer.m in Sources */ = {isa = PBXBuildFile; fileRef = BFF823B6138055F600562F57 /* CJSONSerializer.m */; };
 		BFF823CB138055F600562F57 /* CJSONSerializer.m in Sources */ = {isa = PBXBuildFile; fileRef = BFF823B6138055F600562F57 /* CJSONSerializer.m */; };
+		D20915C013CB9C7800D3B55B /* Properties.m in Sources */ = {isa = PBXBuildFile; fileRef = D20915BF13CB9C7800D3B55B /* Properties.m */; };
+		D20915C413CB9FDC00D3B55B /* PropertiesTest.m in Sources */ = {isa = PBXBuildFile; fileRef = D20915C313CB9FDC00D3B55B /* PropertiesTest.m */; };
+		D20915C513CBA1C600D3B55B /* Properties.m in Sources */ = {isa = PBXBuildFile; fileRef = D20915BF13CB9C7800D3B55B /* Properties.m */; };
 		D21A0B86135CF1F2005D6E8A /* libOCMock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D21A0B85135CF1F2005D6E8A /* libOCMock.a */; };
 		D2700BD81355BC3100889DD8 /* OCMock.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2700BD71355BC3100889DD8 /* OCMock.framework */; };
 		D2700BDB1356048800889DD8 /* OCMock.framework in Copy OCMock */ = {isa = PBXBuildFile; fileRef = D2700BD71355BC3100889DD8 /* OCMock.framework */; };
@@ -124,6 +127,10 @@
 		BFF823B5138055F600562F57 /* CJSONSerializer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CJSONSerializer.h; sourceTree = "<group>"; };
 		BFF823B6138055F600562F57 /* CJSONSerializer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CJSONSerializer.m; sourceTree = "<group>"; };
 		BFF823B7138055F600562F57 /* JSONRepresentation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSONRepresentation.h; sourceTree = "<group>"; };
+		D20915BE13CB9C7800D3B55B /* Properties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Properties.h; sourceTree = "<group>"; };
+		D20915BF13CB9C7800D3B55B /* Properties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Properties.m; sourceTree = "<group>"; };
+		D20915C213CB9FDC00D3B55B /* PropertiesTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PropertiesTest.h; sourceTree = "<group>"; };
+		D20915C313CB9FDC00D3B55B /* PropertiesTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PropertiesTest.m; sourceTree = "<group>"; };
 		D21A0B85135CF1F2005D6E8A /* libOCMock.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libOCMock.a; sourceTree = "<group>"; };
 		D2700BD71355BC3100889DD8 /* OCMock.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = OCMock.framework; sourceTree = "<group>"; };
 		D281D02D13546BB1009F1B11 /* InterceptorWindowTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InterceptorWindowTests.h; sourceTree = "<group>"; };
@@ -176,6 +183,8 @@
 				D2A198A91375972600C6BE2F /* IndexViewController.m */,
 				9F4F07F111F8DE8200375A8C /* RootViewController.h */,
 				9F4F07F211F8DE8200375A8C /* RootViewController.m */,
+				D20915BE13CB9C7800D3B55B /* Properties.h */,
+				D20915BF13CB9C7800D3B55B /* Properties.m */,
 				1D3623240D0F684500981E51 /* BakerAppDelegate.h */,
 				1D3623250D0F684500981E51 /* BakerAppDelegate.m */,
 				F4EC203612862D4D008E94D1 /* InterceptorWindow.h */,
@@ -325,6 +334,8 @@
 				D2700BD61355BC0800889DD8 /* Frameworks */,
 				D281D02D13546BB1009F1B11 /* InterceptorWindowTests.h */,
 				D281D02E13546BB1009F1B11 /* InterceptorWindowTests.m */,
+				D20915C213CB9FDC00D3B55B /* PropertiesTest.h */,
+				D20915C313CB9FDC00D3B55B /* PropertiesTest.m */,
 			);
 			name = Tests;
 			sourceTree = "<group>";
@@ -457,6 +468,7 @@
 				BFF823C6138055F600562F57 /* CJSONDeserializer.m in Sources */,
 				BFF823C8138055F600562F57 /* CJSONScanner.m in Sources */,
 				BFF823CA138055F600562F57 /* CJSONSerializer.m in Sources */,
+				D20915C013CB9C7800D3B55B /* Properties.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -476,6 +488,8 @@
 				BFF823C7138055F600562F57 /* CJSONDeserializer.m in Sources */,
 				BFF823C9138055F600562F57 /* CJSONScanner.m in Sources */,
 				BFF823CB138055F600562F57 /* CJSONSerializer.m in Sources */,
+				D20915C413CB9FDC00D3B55B /* PropertiesTest.m in Sources */,
+				D20915C513CBA1C600D3B55B /* Properties.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
