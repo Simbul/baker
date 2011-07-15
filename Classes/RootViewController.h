@@ -45,12 +45,19 @@
 	
 	NSMutableArray *pages;
     NSMutableArray *toLoad;
+    NSMutableArray *pageDetails;
+
 	NSString *pageNameFromURL;
 	NSString *anchorFromURL;
 	
+    int tapNumber;
+    int stackedScrollingAnimations;
+    
+	BOOL currentPageFirstLoading;
+	BOOL currentPageIsDelayingLoading;
+	BOOL discardNextStatusBarToggle;
+    
     UIScrollView *scrollView;    
-    NSMutableArray *pageDetails;
-	
 	UIWebView *prevPage;
 	UIWebView *currPage;
 	UIWebView *nextPage;
@@ -68,39 +75,17 @@
 	int pageHeight;
     int currentPageHeight;
 	
-    int tapNumber;
-    int stackedScrollingAnimations;
-    
-	BOOL currentPageFirstLoading;
-	BOOL currentPageIsDelayingLoading;
-	BOOL discardNextStatusBarToggle;
-	
 	NSString *URLDownload;
-	Downloader *downloader;
-	
+    Downloader *downloader;
 	UIAlertView *feedbackAlert;
     
-    IndexViewController *indexViewController;
+    IndexViewController *indexViewController;    
 }
 
-@property (nonatomic, retain) NSString *bundleBookPath;
-@property (nonatomic, retain) NSString *documentsBookPath;
-
-@property (nonatomic, retain) NSMutableArray *pages;
-@property (nonatomic, retain) NSMutableArray *toLoad;
-@property (nonatomic, retain) NSString *pageNameFromURL;
-@property (nonatomic, retain) NSString *anchorFromURL;
-
+#pragma mark - PROPERTIES
 @property (nonatomic, retain) UIScrollView *scrollView;
 @property (nonatomic, retain) UIWebView *currPage;
-@property (nonatomic, retain) UIWebView *prevPage;
-@property (nonatomic, retain) UIWebView *nextPage;
-
-@property int tapNumber;
-@property int lastPageNumber;
 @property int currentPageNumber;
-
-@property (nonatomic, retain) NSString *URLDownload;
 
 #pragma mark - INIT
 - (void)setupWebView:(UIWebView *)webView;

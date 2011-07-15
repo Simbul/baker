@@ -35,6 +35,7 @@
 #import "SSZipArchive.h"
 #import "NSDictionary_JSONExtensions.h"
 
+
 // LOADER STYLE
 // Configure this to change the color of the loader
 #define SCROLLVIEW_BGCOLOR blackColor
@@ -85,103 +86,88 @@
 
 #define INDEX_FILE_NAME @"index.html"
 
-//  ==========================================================================================
 
 @implementation RootViewController
 
-@synthesize documentsBookPath;
-@synthesize bundleBookPath;
-
-@synthesize pages;
-@synthesize toLoad;
-@synthesize pageNameFromURL;
-@synthesize anchorFromURL;
-
+#pragma mark - SYNTHESIS
 @synthesize scrollView;
-
 @synthesize currPage;
-@synthesize prevPage;
-@synthesize nextPage;
-
-@synthesize tapNumber;
-@synthesize lastPageNumber;
 @synthesize currentPageNumber;
-
-@synthesize URLDownload;
-
 
 #pragma mark - INIT
 - (id)init {
-	[super initWithNibName:nil bundle:nil];
-	
-	// Get device screen bounds
-	screenBounds = [[UIScreen mainScreen] bounds];
-	NSLog(@"Device Width: %f", screenBounds.size.width);
-	NSLog(@"Device Height: %f", screenBounds.size.height);
-		
-	// Set up listener to download notification from application delegate
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(downloadBook:) name:@"downloadNotification" object:nil];
-	
-	[self checkPageSize];
-	
-    tapNumber = 0;
-	discardNextStatusBarToggle = NO;
-	stackedScrollingAnimations = 0;
-	[self hideStatusBar];
-	
-	// ****** SCROLLVIEW INIT
-	scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, pageWidth, pageHeight)];
-	scrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-	scrollView.backgroundColor = [UIColor SCROLLVIEW_BGCOLOR];
-	scrollView.showsHorizontalScrollIndicator = YES;
-	scrollView.showsVerticalScrollIndicator = NO;
-	scrollView.delaysContentTouches = NO;
-	scrollView.pagingEnabled = YES;
-	scrollView.delegate = self;	
-	
-    pageDetails = [[NSMutableArray array] retain];
-    
-    // ****** CURR WEBVIEW INIT
-	currPage = [[UIWebView alloc] init];
-    [self setupWebView:currPage];
+    self = [super initWithNibName:nil bundle:nil];
+    if (self) {
+        // ****** DEVICE SCREEN BOUNDS
+        screenBounds = [[UIScreen mainScreen] bounds];
+        NSLog(@"Device Width: %f", screenBounds.size.width);
+        NSLog(@"Device Height: %f", screenBounds.size.height);
+        
+        // ****** BOOK DIRECTORIES
+        NSArray *documentsPaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+        NSString *documentsPath = [NSString stringWithString:[documentsPaths objectAtIndex:0]];
+        documentsBookPath = [[documentsPath stringByAppendingPathComponent:@"book"] retain];
+        bundleBookPath = [[[NSBundle mainBundle] pathForResource:@"book" ofType:nil] retain];
+        
+        pages = [[NSMutableArray array] retain];
+        toLoad = [[NSMutableArray array] mutableCopy];
+        pageDetails = [[NSMutableArray array] retain];
 
-	// ****** PREV WEBVIEW INIT
-	prevPage = [[UIWebView alloc] init];
-    [self setupWebView:prevPage];
-
-	// ****** NEXT WEBVIEW INIT
-	nextPage = [[UIWebView alloc] init];
-    [self setupWebView:nextPage];
-
-	self.pageNameFromURL = nil;
-	self.anchorFromURL = nil;
-    self.toLoad = [NSMutableArray array];
-	
-	currentPageFirstLoading = YES;
-	currentPageIsDelayingLoading = YES;
-		
-	[[self view] addSubview:scrollView];
-	
-	NSArray *documentsPaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-	NSString *documentsPath = ([documentsPaths count] > 0) ? [documentsPaths objectAtIndex:0] : nil;
-	
-	self.documentsBookPath = [documentsPath stringByAppendingPathComponent:@"book"];
-	self.bundleBookPath = [[NSBundle mainBundle] pathForResource:@"book" ofType:nil];
-    
-    // ****** INDEX WEBVIEW INIT
-    indexViewController = [[IndexViewController alloc] initWithBookBundlePath:self.bundleBookPath documentsBookPath:self.documentsBookPath fileName:INDEX_FILE_NAME webViewDelegate:self];
-    [[self view] addSubview:indexViewController.view];
-	
-	if ([[NSFileManager defaultManager] fileExistsAtPath:documentsBookPath]) {
-        [self initBook:documentsBookPath];
-	} else {
-		if ([[NSFileManager defaultManager] fileExistsAtPath:bundleBookPath]) {
-			[self initBook:bundleBookPath];
-		} /* else {
-		   Do something if there are no books available to show...   
-		} */
+        pageNameFromURL = nil;
+        anchorFromURL = nil;
+                
+        tapNumber = 0;
+        stackedScrollingAnimations = 0;
+        
+        currentPageFirstLoading = YES;
+        currentPageIsDelayingLoading = YES;
+        discardNextStatusBarToggle = NO;
+                
+        // ****** LISTENER FOR DOWNLOAD NOTIFICATION
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(downloadBook:) name:@"downloadNotification" object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleDownloadResult:) name:@"handleDownloadResult" object:nil];
+        
+        [self checkPageSize];
+        [self hideStatusBar];
+        
+        // ****** SCROLLVIEW INIT
+        scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, pageWidth, pageHeight)];
+        scrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        scrollView.backgroundColor = [UIColor SCROLLVIEW_BGCOLOR];
+        scrollView.showsHorizontalScrollIndicator = YES;
+        scrollView.showsVerticalScrollIndicator = NO;
+        scrollView.delaysContentTouches = NO;
+        scrollView.pagingEnabled = YES;
+        scrollView.delegate = self;
+        [self.view addSubview:scrollView];
+        
+        // ****** CURR WEBVIEW INIT
+        currPage = [[UIWebView alloc] init];
+        [self setupWebView:currPage];
+        
+        // ****** NEXT WEBVIEW INIT
+        nextPage = [[UIWebView alloc] init];
+        [self setupWebView:nextPage];
+        
+        // ****** PREV WEBVIEW INIT
+        prevPage = [[UIWebView alloc] init];
+        [self setupWebView:prevPage];
+        
+        // ****** INDEX WEBVIEW INIT
+        indexViewController = [[IndexViewController alloc] initWithBookBundlePath:bundleBookPath documentsBookPath:documentsBookPath fileName:INDEX_FILE_NAME webViewDelegate:self];
+        [self.view addSubview:indexViewController.view];
+        
+        // ****** BOOK INIT
+        if ([[NSFileManager defaultManager] fileExistsAtPath:documentsBookPath]) {
+            [self initBook:documentsBookPath];
+        } else {
+            if ([[NSFileManager defaultManager] fileExistsAtPath:bundleBookPath]) {
+                [self initBook:bundleBookPath];
+            } /* else {
+               Do something if there are no books available to show...   
+            } */
+        }
 	}
-	
 	return self;
 }
 - (void)setupWebView:(UIWebView *)webView {
@@ -201,20 +187,20 @@
 		[self setPageSize:AVAILABLE_ORIENTATION];
 	} else {
 		UIDeviceOrientation orientation = [self interfaceOrientation];
-		// WARNING! Seems like checking [[UIDevice currentDevice] orientation] against "UIInterfaceOrientationPortrait" is broken (return FALSE with the device in portrait orientation)
+		// WARNING!!! Seems like checking [[UIDevice currentDevice] orientation] against "UIInterfaceOrientationPortrait" is broken (return FALSE with the device in portrait orientation)
 		// Safe solution: always check if the device is in landscape orientation, if FALSE then it's in portrait.
-		if (orientation == UIInterfaceOrientationLandscapeLeft || orientation == UIInterfaceOrientationLandscapeRight)
+        [self setPageSize:@"Portrait"];
+		if (orientation == UIInterfaceOrientationLandscapeLeft || orientation == UIInterfaceOrientationLandscapeRight) {
 			[self setPageSize:@"Landscape"];
-		else
-			[self setPageSize:@"Portrait"];
+        }
 	}
 }
 - (void)setPageSize:(NSString *)orientation {	
 	NSLog(@"Set size for orientation: %@", orientation);
-	if ([orientation isEqualToString:@"Portrait"]) {
-		pageWidth = screenBounds.size.width;
-		pageHeight = screenBounds.size.height;
-	} else if ([orientation isEqualToString:@"Landscape"]) {
+    
+    pageWidth = screenBounds.size.width;
+    pageHeight = screenBounds.size.height;
+	if ([orientation isEqualToString:@"Landscape"]) {
 		pageWidth = screenBounds.size.height;
 		pageHeight = screenBounds.size.width;
 	}
@@ -228,9 +214,8 @@
 
 	scrollView.contentSize = CGSizeMake(pageWidth * totalPages, pageHeight);
 	
-	UIApplication *sharedApplication = [UIApplication sharedApplication];
 	int scrollViewY = 0;
-	if (!sharedApplication.statusBarHidden) {
+	if (![UIApplication sharedApplication].statusBarHidden) {
 		scrollViewY = -20;
 	}
     
@@ -256,8 +241,9 @@
 
 	// ****** TAPPABLE AREAS
 	int tappableAreaSize = screenBounds.size.width/16;
-	if (screenBounds.size.width < 768)
+	if (screenBounds.size.width < 768) {
 		tappableAreaSize = screenBounds.size.width/8;
+    }
 	
 	upTapArea = CGRectMake(tappableAreaSize, 0, pageWidth - (tappableAreaSize * 2), tappableAreaSize);
 	downTapArea = CGRectMake(tappableAreaSize, pageHeight - tappableAreaSize, pageWidth - (tappableAreaSize * 2), tappableAreaSize);
@@ -266,15 +252,13 @@
 }
 - (void)initBook:(NSString *)path {	
 	// Count pages
-	
-    if (self.pages == nil) self.pages = [NSMutableArray array];
-    [self.pages removeAllObjects];
+    [pages removeAllObjects];
     [pageDetails removeAllObjects];
 	
 	NSArray *dirContent = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:path error:nil];
 	for (NSString *fileName in dirContent) {
 		if ([[fileName pathExtension] isEqualToString:@"html"] && ![fileName isEqualToString:INDEX_FILE_NAME]) {
-			[self.pages addObject:[path stringByAppendingPathComponent:fileName]];
+			[pages addObject:[path stringByAppendingPathComponent:fileName]];
         }
 	}
 		
@@ -282,16 +266,16 @@
 	NSLog(@"Pages in this book: %d", totalPages);
 	
 	if (totalPages > 0) {
-		// Check if there is a saved starting page
+		// Check if there is a saved starting page        
 		NSString *currPageToLoad = [[NSUserDefaults standardUserDefaults] objectForKey:@"lastPageViewed"];
 		
 		if (currentPageFirstLoading && currPageToLoad != nil) {
 			currentPageNumber = [currPageToLoad intValue];
 		} else {
 			currentPageNumber = 1;
-			if (self.pageNameFromURL != nil) {
-                self.pageNameFromURL = nil;
-				NSString *fileNameFromURL = [path stringByAppendingPathComponent:self.pageNameFromURL];
+			if (pageNameFromURL != nil) {
+                pageNameFromURL = nil;
+				NSString *fileNameFromURL = [path stringByAppendingPathComponent:pageNameFromURL];
 				for (int i = 0; i < totalPages; i++) {
 					if ([[pages objectAtIndex:i] isEqualToString:fileNameFromURL]) {
 						currentPageNumber = i + 1;
@@ -302,7 +286,7 @@
 		}
 		
         currentPageIsDelayingLoading = YES;
-        [self.toLoad removeAllObjects];
+        [toLoad removeAllObjects];
 		
         [self resetScrollView];        
         [scrollView addSubview:currPage];
@@ -327,13 +311,11 @@
         }
         
         [self handlePageLoading];
-        
         [indexViewController loadContentFromBundle:[path isEqualToString:bundleBookPath]];
 		
 	} else {
 		
 		[[NSFileManager defaultManager] removeItemAtPath:path error:NULL];
-		
  		feedbackAlert = [[UIAlertView alloc] initWithTitle:ZERO_PAGES_TITLE
 												   message:ZERO_PAGES_MESSAGE
 												  delegate:self
@@ -351,7 +333,7 @@
 		
         if (pageDetails.count > i && [pageDetails objectAtIndex:i] != nil) {
             
-            NSDictionary *details = [[NSDictionary dictionaryWithDictionary:[pageDetails objectAtIndex:i]] retain];        
+            NSDictionary *details = [NSDictionary dictionaryWithDictionary:[pageDetails objectAtIndex:i]];        
             for (NSString *key in details) {
                 UIView *value = [details objectForKey:key];
                 if (value != nil) {
@@ -390,7 +372,7 @@
             frame.origin.y = (pageHeight - frame.size.height) / 2;        
             spinner.frame = frame;
                     
-            [[self scrollView] addSubview:spinner];
+            [scrollView addSubview:spinner];
             [spinner startAnimating];
             [spinner release];
             
@@ -403,13 +385,13 @@
             number.alpha = PAGE_NUMBERS_ALPHA;                    
             number.text = [NSString stringWithFormat:@"%d", i + 1];
             
-            [[self scrollView] addSubview:number];
+            [scrollView addSubview:number];
             [number release];
             
             // ****** Title
             UILabel *title = nil;
             NSRegularExpression *titleRegex = [NSRegularExpression regularExpressionWithPattern:@"<title>(.*)</title>" options:NSRegularExpressionCaseInsensitive error:NULL];
-            NSString *fileContent = [NSString stringWithContentsOfFile:[self.pages objectAtIndex: i] encoding:NSUTF8StringEncoding error:NULL];
+            NSString *fileContent = [NSString stringWithContentsOfFile:[pages objectAtIndex: i] encoding:NSUTF8StringEncoding error:NULL];
             NSRange matchRange = [[titleRegex firstMatchInString:fileContent options:0 range:NSMakeRange(0, [fileContent length])] rangeAtIndex:1];
             if (!NSEqualRanges(matchRange, NSMakeRange(NSNotFound, 0))) {
                             
@@ -435,7 +417,7 @@
                 title.numberOfLines = 0;
                 title.text = titleText;
                 
-                [[self scrollView] addSubview:title];
+                [scrollView addSubview:title];
                 [title release];
             }
             
@@ -523,14 +505,13 @@
 	//NSString *file = [NSString stringWithFormat:@"%d", currentPageNumber];
 	//NSString *path = [[NSBundle mainBundle] pathForResource:file ofType:@"html" inDirectory:@"book"];
             
-    NSString *path = [pages objectAtIndex:currentPageNumber - 1];
+    NSString *path = [NSString stringWithString:[pages objectAtIndex:currentPageNumber - 1]];
     
     if ([[NSFileManager defaultManager] fileExistsAtPath:path] && tapNumber != 0) {
         
         NSLog(@"Goto Page: book/%@", [[NSFileManager defaultManager] displayNameAtPath:path]);
         
         // ****** THREE CARD VIEW METHOD
-        
         // ****** Calculate move direction and normalize tapNumber
         int direction = 1;
         if (tapNumber < 0) {
@@ -542,7 +523,7 @@
         
         if (tapNumber > 2) {
             
-            [self.toLoad removeAllObjects];
+            [toLoad removeAllObjects];
             
             // ****** Moved away for more than 2 pages: RELOAD ALL pages
             tapNumber = 0;
@@ -561,12 +542,12 @@
                 // ****** Moved away for 2 pages: RELOAD CURRENT page
 
                 if (direction < 0) {
-                    // ****** Move RIGHT >>>
+                    // ****** Move LEFT <<<
                     UIWebView *tmpView = prevPage;
                     prevPage = nextPage;
                     nextPage = tmpView;
                 } else {
-                    // ****** Move LEFT <<<
+                    // ****** Move RIGHT >>>
                     UIWebView *tmpView = nextPage; 
                     nextPage = prevPage;
                     prevPage = tmpView;
@@ -577,18 +558,19 @@
                     tmpSlot =  -1 * [[[toLoad objectAtIndex:i] valueForKey:@"slot"] intValue];
                     [[toLoad objectAtIndex:i] setObject:[NSNumber numberWithInt:tmpSlot] forKey:@"slot"];
                 }
+                
                 [self addPageLoading:0];
             
             } else if (tapNumber == 1) {
                                 
                 if (direction < 0) { 
-                    // ****** Move RIGHT >>>
+                    // ****** Move LEFT <<<
                     UIWebView *tmpView = prevPage;
                     prevPage = currPage;
                     currPage = nextPage;
                     nextPage = tmpView;
                 } else { 
-                    // ****** Move LEFT <<<
+                    // ****** Move RIGHT >>>
                     UIWebView *tmpView = nextPage;
                     nextPage = currPage;
                     currPage = prevPage;
@@ -597,15 +579,25 @@
                 
                 // Adjust pages slot in the stack to reflect the webviews pointer change
                 for (int i = 0; i < [toLoad count]; i++) {
+                    tmpSlot = [[[toLoad objectAtIndex:i] valueForKey:@"slot"] intValue];
                     if (direction < 0) {
-                        tmpSlot = [[[toLoad objectAtIndex:i] valueForKey:@"slot"] intValue] + 1;
-                        if (tmpSlot == +2) tmpSlot = -1;
-                        [[toLoad objectAtIndex:i] setObject:[NSNumber numberWithInt:tmpSlot] forKey:@"slot"];
+                        if (tmpSlot == +1) {
+                            tmpSlot = 0;
+                        } else if (tmpSlot == 0) {
+                            tmpSlot = -1;
+                        } else if (tmpSlot == -1) {
+                            tmpSlot = +1;
+                        }
                     } else {
-                        tmpSlot = [[[toLoad objectAtIndex:i] valueForKey:@"slot"] intValue] - 1;
-                        if (tmpSlot == -2) tmpSlot = +1;
-                        [[toLoad objectAtIndex:i] setObject:[NSNumber numberWithInt:tmpSlot] forKey:@"slot"];
+                        if (tmpSlot == -1) {
+                            tmpSlot = 0;
+                        } else if (tmpSlot == 0) {
+                            tmpSlot = +1;
+                        } else if (tmpSlot == +1) {
+                            tmpSlot = -1;
+                        }
                     }
+                    [[toLoad objectAtIndex:i] setObject:[NSNumber numberWithInt:tmpSlot] forKey:@"slot"];
                 }
                 
                 // Since we are not loading anything we have to reset the delayer flag
@@ -665,22 +657,21 @@
     NSArray *keys = [NSArray arrayWithObjects:@"slot", @"page", nil];
     
     if (slot == 0) {
-        [toLoad insertObject:[NSDictionary dictionaryWithObjects:objs forKeys:keys] atIndex:0];
+        [toLoad insertObject:[NSMutableDictionary dictionaryWithObjects:objs forKeys:keys] atIndex:0];
     } else {
-        [toLoad addObject:[NSDictionary dictionaryWithObjects:objs forKeys:keys]];
+        [toLoad addObject:[NSMutableDictionary dictionaryWithObjects:objs forKeys:keys]];
     }
 }
 - (void)handlePageLoading {
-    if ([self.toLoad count] != 0) {
-        
+    if ([toLoad count] != 0) {
+                
         int slot = [[[toLoad objectAtIndex:0] valueForKey:@"slot"] intValue];
         int page = [[[toLoad objectAtIndex:0] valueForKey:@"page"] intValue];
         
         NSLog(@">>>>> HANDLE LOADING OF SLOT %d WITH PAGE %d <<<<<", slot, page);
         
-        [self.toLoad removeObjectAtIndex:0];
+        [toLoad removeObjectAtIndex:0];
         [self loadSlot:slot withPage:page];
-
     }
 }
 - (void)loadSlot:(int)slot withPage:(int)page {
@@ -689,19 +680,23 @@
 	
 	// ****** SELECT
 	if (slot == 0) {
-		webView = self.currPage;
+		webView = currPage;
 	} else if (slot == +1) {
-		webView = self.nextPage;
+		webView = nextPage;
 	} else if (slot == -1) {
-		webView = self.prevPage;
+		webView = prevPage;
 	}
+    
+    if ([webView isLoading]) {
+        [webView stopLoading];
+    }
     
     webView.frame = [self frameForPage:page];
 	[self loadWebView:webView withPage:page];
 }
 - (BOOL)loadWebView:(UIWebView*)webView withPage:(int)page {
 	
-	NSString *path = [pages objectAtIndex:page-1];
+	NSString *path = [NSString stringWithString:[pages objectAtIndex:page-1]];
 		
 	if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
 		NSLog(@"[+] Loading: book/%@", [[NSFileManager defaultManager] displayNameAtPath:path]);
@@ -716,20 +711,19 @@
 - (CGRect)frameForPage:(int)page {
 	return CGRectMake(pageWidth * (page - 1), 0, pageWidth, pageHeight);
 }
-- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scroll {
 	// This is called because this controller is the delegate for UIScrollView
 	[self hideStatusBar];
 }
 - (void)scrollViewDidEndDragging:(UIScrollView *)scroll willDecelerate:(BOOL)decelerate {
 	// Nothing to do here...
 }
-- (void)scrollViewWillBeginDecelerating:(UIScrollView *)scrollView {
-    NSLog(@"scrollview did begin decelerating");
+- (void)scrollViewWillBeginDecelerating:(UIScrollView *)scroll {
 	// Nothing to do here either...
 }
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scroll {
     
-    int page = (int)(self.scrollView.contentOffset.x / pageWidth) + 1;
+    int page = (int)(scroll.contentOffset.x / pageWidth) + 1;
 	NSLog(@" <<< Swiping to page: %d >>>", page);
     
     if (currentPageNumber != page) {        
@@ -740,10 +734,10 @@
         [self gotoPageDelayer];
     }
 }
-- (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView {
+- (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scroll {
 	stackedScrollingAnimations--;
     if (stackedScrollingAnimations == 0) {
-		self.scrollView.scrollEnabled = YES;
+		scroll.scrollEnabled = YES;
 	}
 }
 
@@ -754,7 +748,7 @@
 - (void)webViewDidFinishLoad:(UIWebView *)webView {
 	// Sent after a web view finishes loading content.	
 	
-	if (webView == currPage) {
+	if ([webView isEqual:currPage]) {
 		// Get current page max scroll offset
 		[self getPageHeight];
 		
@@ -764,7 +758,9 @@
 		if (currentPageFirstLoading) {			
 			// ...check if there is a saved starting scroll index and set it
 			NSString *currPageScrollIndex = [[NSUserDefaults standardUserDefaults] objectForKey:@"lastScrollIndex"];
-			if (currPageScrollIndex != nil) [self goDownInPage:currPageScrollIndex animating:NO];
+			if (currPageScrollIndex != nil) {
+                [self goDownInPage:currPageScrollIndex animating:NO];
+            }
 			currentPageFirstLoading = NO;
 		}
 		
@@ -793,10 +789,10 @@
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
 	// Sent before a web view begins loading content, useful to trigger actions before the WebView.	
 	
-    if (webView == self.prevPage) {
+    if ([webView isEqual:prevPage]) {
         NSLog(@"Loading Prev Page --> load page");
         return YES;
-    } else if (webView == self.nextPage) {
+    } else if ([webView isEqual:nextPage]) {
         NSLog(@"Loading Next Page --> load page");
         return YES;
     } else if (currentPageIsDelayingLoading) {		
@@ -821,7 +817,7 @@
 				// ****** Handle: file://
 				NSLog(@"file:// ->");
 				
-				self.anchorFromURL = [url fragment];
+				anchorFromURL = [[url fragment] retain];
 				NSString *file = [[url relativePath] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 				
                 int page = (int)[pages indexOfObject:file] + 1;
@@ -847,17 +843,17 @@
 				} else {
 					
 					if ([[url pathExtension] isEqualToString:@"html"]) {
-						self.anchorFromURL = [url fragment];
-						self.pageNameFromURL = [[url lastPathComponent] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+						anchorFromURL = [[url fragment] retain];
+						pageNameFromURL = [[[url lastPathComponent] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding] retain];
 						NSString *tmpUrl = [[url URLByDeletingLastPathComponent] absoluteString];
 						url = [NSURL URLWithString:[tmpUrl stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"/"]]];						
 					}
 					
 					// *** Download book
-					self.URLDownload = [@"http:" stringByAppendingString:[url resourceSpecifier]];
+					URLDownload = [[@"http:" stringByAppendingString:[url resourceSpecifier]] retain];
 					
-					if ([[[NSURL URLWithString:self.URLDownload] pathExtension] isEqualToString:@""]) {
-						self.URLDownload = [self.URLDownload stringByAppendingString:@".hpub"];
+					if ([[[NSURL URLWithString:URLDownload] pathExtension] isEqualToString:@""]) {
+						URLDownload = [[URLDownload stringByAppendingString:@".hpub"] retain];
 					}
 					
 					[self downloadBook:nil];
@@ -933,7 +929,7 @@
 	for (id subview in currPage.subviews) {
 		if ([[subview class] isSubclassOfClass:[UIScrollView class]]) {
 			CGSize size = ((UIScrollView *)subview).contentSize;
-			NSLog(@"Changing current page height: %d -> %f", currentPageHeight, size.height);
+			NSLog(@"Changing current page height: %d --> %f", currentPageHeight, size.height);
 			currentPageHeight = size.height;
 		}
 	}
@@ -997,21 +993,21 @@
 	}
 }
 - (void)handleAnchor:(BOOL)animating {
-	if (self.anchorFromURL != nil) {
+	if (anchorFromURL != nil) {
 		
 		NSString *jsAnchorHandler = [NSString stringWithFormat:@"(function() {\
 									 var target = '%@';\
 									 var elem = document.getElementById(target);\
 									 if (!elem) elem = document.getElementsByName(target)[0];\
 									 return elem.offsetTop;\
-									 })();", self.anchorFromURL];
+									 })();", anchorFromURL];
 		
 		NSString *offset = [currPage stringByEvaluatingJavaScriptFromString:jsAnchorHandler];
 		
-		if (![offset isEqualToString:@""])
+		if (![offset isEqualToString:@""]) {
 			[self goDownInPage:offset animating:animating];
-		
-		self.anchorFromURL = nil;
+        }
+		anchorFromURL = nil;
 	}
 }
 
@@ -1024,8 +1020,9 @@
 		NSLog(@"TOGGLE status bar");
 		UIApplication *sharedApplication = [UIApplication sharedApplication];
 		[sharedApplication setStatusBarHidden:!sharedApplication.statusBarHidden withAnimation:UIStatusBarAnimationSlide];
-        if(![indexViewController isDisabled]) 
+        if(![indexViewController isDisabled]) {
             [indexViewController setIndexViewHidden:![indexViewController isIndexViewHidden] withAnimation:YES];
+        }
 	}
 }
 - (void)hideStatusBar {
@@ -1035,16 +1032,17 @@
 	NSLog(@"HIDE status bar %@", (discardToggle ? @"discarding toggle" : @""));
 	discardNextStatusBarToggle = discardToggle;
 	[[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
-    if(![indexViewController isDisabled]) 
+    if(![indexViewController isDisabled]) {
         [indexViewController setIndexViewHidden:YES withAnimation:YES];
+    }
 }
 
 #pragma mark - DOWNLOAD NEW BOOKS
 - (void)downloadBook:(NSNotification *)notification {
 	
-	if (notification != nil)
-		self.URLDownload = (NSString *)[notification object];
-	
+	if (notification != nil) {
+		URLDownload = [[NSString stringWithString:(NSString *)[notification object]] retain];
+    }	
 	NSLog(@"Download file %@", URLDownload);
 	
 	feedbackAlert = [[UIAlertView alloc] initWithTitle:@""
@@ -1066,23 +1064,18 @@
         }
 	}
 }
-- (void)startDownloadRequest {
-	
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleDownloadResult:) name:@"handleDownloadResult" object:nil];	
+- (void)startDownloadRequest {	
 	downloader = [[Downloader alloc] initDownloader:@"handleDownloadResult"];
 	[downloader makeHTTPRequest:URLDownload];
 }
 - (void)handleDownloadResult:(NSNotification *)notification {
 	
-	NSMutableDictionary *requestSummary = (NSMutableDictionary *)[notification object];
-	[[NSNotificationCenter defaultCenter] removeObserver:self name:@"handleDownloadResult" object:nil];
-	
+	NSDictionary *requestSummary = [NSDictionary dictionaryWithDictionary:(NSMutableDictionary *)[notification object]];	
 	[downloader release];
 		
 	if ([requestSummary objectForKey:@"error"] != nil) {
 		
 		NSLog(@"Error while downloading data");
-		
 		feedbackAlert = [[UIAlertView alloc] initWithTitle:ERROR_FEEDBACK_TITLE
 												   message:ERROR_FEEDBACK_MESSAGE
 												  delegate:self
@@ -1094,7 +1087,6 @@
 	} else if ([requestSummary objectForKey:@"data"] != nil) {
 		
 		NSLog(@"Data received succesfully");
-		
 		feedbackAlert = [[UIAlertView alloc] initWithTitle:EXTRACT_FEEDBACK_TITLE
 												   message:nil
 												  delegate:self
@@ -1116,23 +1108,22 @@
 }
 - (void)manageDownloadData:(NSData *)data {
 			
-	NSArray *URLSections = [URLDownload pathComponents];
+	NSArray *URLSections = [NSArray arrayWithArray:[URLDownload pathComponents]];
 	NSString *targetPath = [NSTemporaryDirectory() stringByAppendingString:[URLSections lastObject]];
 		
 	[data writeToFile:targetPath atomically:YES];
 			
 	if ([[NSFileManager defaultManager] fileExistsAtPath:targetPath]) {
 		NSLog(@"File create successfully! Path: %@", targetPath);
-		
-		NSString *destinationPath = self.documentsBookPath;
+		NSString *destinationPath = documentsBookPath;
 		NSLog(@"Book destination path: %@", destinationPath);
 		
 		// If a "book" directory already exists remove it (quick solution, improvement needed) 
-		if ([[NSFileManager defaultManager] fileExistsAtPath:destinationPath])
+		if ([[NSFileManager defaultManager] fileExistsAtPath:destinationPath]) {
 			[[NSFileManager defaultManager] removeItemAtPath:destinationPath error:NULL];
-		
+        }
+    
 		[SSZipArchive unzipFileAtPath:targetPath toDestination:destinationPath];
-		
 		NSLog(@"Book successfully unzipped. Removing .hpub file");
 		[[NSFileManager defaultManager] removeItemAtPath:targetPath error:NULL];
 				
@@ -1143,7 +1134,7 @@
 	} */
 }
 
-#pragma mark - SYSTEM
+#pragma mark - ORIENTATION
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
 	// Overriden to allow any orientation.
 	if ([AVAILABLE_ORIENTATION isEqualToString:@"Portrait"]) {
@@ -1194,7 +1185,6 @@
      
 	[self checkPageSize];
 	[self getPageHeight];
-    
 	[self resetScrollView];
 }
 
@@ -1215,9 +1205,12 @@
 }
 - (void)dealloc {
     
+    [indexViewController release];
+    [scrollView release];
     [currPage release];
 	[nextPage release];
 	[prevPage release];
+    
     [super dealloc];
 }
 
