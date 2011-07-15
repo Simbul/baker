@@ -109,7 +109,8 @@
 
 @synthesize URLDownload;
 
-// ****** INIT
+
+#pragma mark - INIT
 - (id)init {
 	[super initWithNibName:nil bundle:nil];
 	
@@ -444,7 +445,7 @@
 	}
 }
 
-// ****** LOADING
+#pragma mark - LOADING
 - (NSDictionary*)loadManifest:(NSString*)file {
     /****************************************************************************************************
 	 * Reads a JSON file from Application Bundle to a NSDictionary.
@@ -711,7 +712,7 @@
 	return NO;
 }
 
-// ****** SCROLLVIEW
+#pragma mark - SCROLLVIEW
 - (CGRect)frameForPage:(int)page {
 	return CGRectMake(pageWidth * (page - 1), 0, pageWidth, pageHeight);
 }
@@ -746,7 +747,7 @@
 	}
 }
 
-// ****** WEBVIEW
+#pragma mark - WEBVIEW
 - (void)webViewDidStartLoad:(UIWebView *)webView {
 	// Sent before a web view begins loading content.
 }
@@ -895,7 +896,7 @@
 	[self webView:webView hidden:NO animating:YES];  // Delayed run to fix the WebView-Flash-Of-Old-Content-Bug
 }
 
-// ****** GESTURES
+#pragma mark - GESTURES
 - (void)userDidTap:(UITouch *)touch {
 	CGPoint tapPoint = [touch locationInView:self.view];
 	NSLog(@"User tap at [%f, %f]", tapPoint.x, tapPoint.y);
@@ -927,7 +928,7 @@
 	[self hideStatusBar];
 }
 
-// ****** PAGE SCROLLING
+#pragma mark - PAGE SCROLLING
 - (void)getPageHeight {
 	for (id subview in currPage.subviews) {
 		if ([[subview class] isSubclassOfClass:[UIScrollView class]]) {
@@ -1014,7 +1015,7 @@
 	}
 }
 
-// ****** STATUS BAR
+#pragma mark - STATUS BAR
 - (void)toggleStatusBar {
 	if (discardNextStatusBarToggle) {
 		// do nothing, but reset the variable
@@ -1038,7 +1039,7 @@
         [indexViewController setIndexViewHidden:YES withAnimation:YES];
 }
 
-// ****** DOWNLOAD NEW BOOKS
+#pragma mark - DOWNLOAD NEW BOOKS
 - (void)downloadBook:(NSNotification *)notification {
 	
 	if (notification != nil)
@@ -1142,7 +1143,7 @@
 	} */
 }
 
-// ****** SYSTEM
+#pragma mark - SYSTEM
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
 	// Overriden to allow any orientation.
 	if ([AVAILABLE_ORIENTATION isEqualToString:@"Portrait"]) {
@@ -1196,6 +1197,8 @@
     
 	[self resetScrollView];
 }
+
+#pragma mark - MEMORY
 - (void)didReceiveMemoryWarning {
 	// Releases the view if it doesn't have a superview.
     [super didReceiveMemoryWarning];

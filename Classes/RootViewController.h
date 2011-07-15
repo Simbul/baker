@@ -102,14 +102,14 @@
 
 @property (nonatomic, retain) NSString *URLDownload;
 
-// ****** INIT
+#pragma mark - INIT
 - (void)setupWebView:(UIWebView *)webView;
 - (void)checkPageSize;
 - (void)setPageSize:(NSString *)orientation;
 - (void)initBook:(NSString *)path;
 - (void)initPageNumbersForPages:(int)count;
 
-// ****** LOADING
+#pragma mark - LOADING
 - (NSDictionary *)loadManifest:(NSString *)file;
 - (BOOL)changePage:(int)page;
 - (void)gotoPageDelayer;
@@ -119,31 +119,31 @@
 - (void)loadSlot:(int)slot withPage:(int)page;
 - (BOOL)loadWebView:(UIWebView *)webview withPage:(int)page;
 
-// ****** SCROLLVIEW
+#pragma mark - SCROLLVIEW
 - (CGRect)frameForPage:(int)page;
 - (void)resetScrollView;
 
-// ****** WEBVIEW
+#pragma mark - WEBVIEW
 - (void)webView:(UIWebView *)webView hidden:(BOOL)status animating:(BOOL)animating;
 - (void)revealWebView:(UIWebView *)webView;
 
-// ****** GESTURES
+#pragma mark - GESTURES
 - (void)userDidTap:(UITouch *)touch;
 - (void)userDidScroll:(UITouch *)touch;
 
-// ****** PAGE SCROLLING
+#pragma mark - PAGE SCROLLING
 - (void)getPageHeight;
 - (void)goUpInPage:(NSString *)offset animating:(BOOL)animating;
 - (void)goDownInPage:(NSString *)offset animating:(BOOL)animating;
 - (void)scrollPage:(UIWebView *)webView to:(NSString *)offset animating:(BOOL)animating;
 - (void)handleAnchor:(BOOL)animating;
 
-// ****** STATUS BAR
+#pragma mark - STATUS BAR
 - (void)toggleStatusBar;
 - (void)hideStatusBar;
 - (void)hideStatusBarDiscardingToggle:(BOOL)discardToggle;
 
-// ****** DOWNLOAD NEW BOOKS
+#pragma mark - DOWNLOAD NEW BOOKS
 - (void)downloadBook:(NSNotification *)notification;
 - (void)startDownloadRequest;
 - (void)handleDownloadResult:(NSNotification *)notification;
