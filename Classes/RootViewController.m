@@ -98,7 +98,6 @@
 @synthesize anchorFromURL;
 
 @synthesize scrollView;
-@synthesize pageSpinners;
 
 @synthesize currPage;
 @synthesize prevPage;
@@ -112,7 +111,6 @@
 
 // ****** INIT
 - (id)init {
-	
 	[super initWithNibName:nil bundle:nil];
 	
 	// Get device screen bounds
@@ -140,6 +138,8 @@
 	scrollView.pagingEnabled = YES;
 	scrollView.delegate = self;	
 	
+    pageDetails = [[NSMutableArray array] retain];
+    
     // ****** CURR WEBVIEW INIT
 	currPage = [[UIWebView alloc] init];
     [self setupWebView:currPage];
@@ -161,15 +161,14 @@
 		
 	[[self view] addSubview:scrollView];
 	
-	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-	NSString *documentsPath = ([paths count] > 0) ? [paths objectAtIndex:0] : nil;
+	NSArray *documentsPaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+	NSString *documentsPath = ([documentsPaths count] > 0) ? [documentsPaths objectAtIndex:0] : nil;
 	
 	self.documentsBookPath = [documentsPath stringByAppendingPathComponent:@"book"];
 	self.bundleBookPath = [[NSBundle mainBundle] pathForResource:@"book" ofType:nil];
     
     // ****** INDEX WEBVIEW INIT
     indexViewController = [[IndexViewController alloc] initWithBookBundlePath:self.bundleBookPath documentsBookPath:self.documentsBookPath fileName:INDEX_FILE_NAME webViewDelegate:self];
-    
     [[self view] addSubview:indexViewController.view];
 	
 	if ([[NSFileManager defaultManager] fileExistsAtPath:documentsBookPath]) {
@@ -185,7 +184,6 @@
 	return self;
 }
 - (void)setupWebView:(UIWebView *)webView {
-    
     webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 	webView.mediaPlaybackRequiresUserAction = MEDIA_PLAYBACK_REQUIRES_USER_ACTION;
 	webView.scalesPageToFit = PAGE_ZOOM_GESTURE;
@@ -210,8 +208,7 @@
 			[self setPageSize:@"Portrait"];
 	}
 }
-- (void)setPageSize:(NSString *)orientation {
-	
+- (void)setPageSize:(NSString *)orientation {	
 	NSLog(@"Set size for orientation: %@", orientation);
 	if ([orientation isEqualToString:@"Portrait"]) {
 		pageWidth = screenBounds.size.width;
@@ -235,6 +232,7 @@
 	if (!sharedApplication.statusBarHidden) {
 		scrollViewY = -20;
 	}
+    
     [UIView animateWithDuration:0.2 animations:^{
         scrollView.frame = CGRectMake(0, scrollViewY, pageWidth, pageHeight);
     }];
@@ -265,19 +263,18 @@
 	leftTapArea = CGRectMake(0, tappableAreaSize, tappableAreaSize, pageHeight - (tappableAreaSize * 2));
 	rightTapArea = CGRectMake(pageWidth - tappableAreaSize, tappableAreaSize, tappableAreaSize, pageHeight - (tappableAreaSize * 2));
 }
-- (void)initBook:(NSString *)path {
-	
+- (void)initBook:(NSString *)path {	
 	// Count pages
-	if (self.pages != nil) {
-		[self.pages removeAllObjects];
-	} else {
-		self.pages = [NSMutableArray array];
-    }
+	
+    if (self.pages == nil) self.pages = [NSMutableArray array];
+    [self.pages removeAllObjects];
+    [pageDetails removeAllObjects];
 	
 	NSArray *dirContent = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:path error:nil];
 	for (NSString *fileName in dirContent) {
-		if ([[fileName pathExtension] isEqualToString:@"html"] && ![fileName isEqualToString:INDEX_FILE_NAME])
+		if ([[fileName pathExtension] isEqualToString:@"html"] && ![fileName isEqualToString:INDEX_FILE_NAME]) {
 			[self.pages addObject:[path stringByAppendingPathComponent:fileName]];
+        }
 	}
 		
 	totalPages = [pages count];
@@ -291,9 +288,9 @@
 			currentPageNumber = [currPageToLoad intValue];
 		} else {
 			currentPageNumber = 1;
-			if (self.pageNameFromURL != nil) { 
+			if (self.pageNameFromURL != nil) {
+                self.pageNameFromURL = nil;
 				NSString *fileNameFromURL = [path stringByAppendingPathComponent:self.pageNameFromURL];
-				self.pageNameFromURL = nil;
 				for (int i = 0; i < totalPages; i++) {
 					if ([[pages objectAtIndex:i] isEqualToString:fileNameFromURL]) {
 						currentPageNumber = i + 1;
@@ -329,6 +326,7 @@
         }
         
         [self handlePageLoading];
+        
         [indexViewController loadContentFromBundle:[path isEqualToString:bundleBookPath]];
 		
 	} else {
@@ -347,67 +345,101 @@
 	}
 }
 - (void)initPageNumbersForPages:(int)count {
-	pageSpinners = [[NSMutableArray alloc] initWithCapacity:count];
     
 	for (int i = 0; i < count; i++) {
-		// ****** Spinners
-		UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-		spinner.backgroundColor = [UIColor clearColor];
-        
-        CGRect frame = spinner.frame;
-        frame.origin.x = pageWidth * i + (pageWidth - frame.size.width) / 2;
-        frame.origin.y = (pageHeight - frame.size.height) / 2;        
-        spinner.frame = frame;
-        		
-		[pageSpinners addObject:spinner];
-		[[self scrollView] addSubview:spinner];
-        [spinner startAnimating];
-		[spinner release];
-        
-		// ****** Numbers
-		UILabel *numLabel = [[UILabel alloc] initWithFrame:CGRectMake(pageWidth * i + (pageWidth - 115) / 2, pageHeight / 2 - 55, 115, 30)];
-        numLabel.backgroundColor = [UIColor clearColor];
-        numLabel.font = [UIFont fontWithName:@"Helvetica" size:40.0];
-        numLabel.textColor = [UIColor PAGE_NUMBERS_COLOR];
-		numLabel.textAlignment = UITextAlignmentCenter;
-		numLabel.alpha = PAGE_NUMBERS_ALPHA;
-				
-        NSString *numLabelText = [NSString stringWithFormat:@"%d", i + 1];
-        numLabel.text = numLabelText;
 		
-		[[self scrollView] addSubview:numLabel];
-		[numLabel release];
-        
-        // ****** Title        
-        NSRegularExpression *titleRegex = [NSRegularExpression regularExpressionWithPattern:@"<title>(.*)</title>" options:NSRegularExpressionCaseInsensitive error:NULL];
-        NSString *fileContent = [NSString stringWithContentsOfFile:[self.pages objectAtIndex: i] encoding:NSUTF8StringEncoding error:NULL];
-        NSRange matchRange = [[titleRegex firstMatchInString:fileContent options:0 range:NSMakeRange(0, [fileContent length])] rangeAtIndex:1];
-        if (!NSEqualRanges(matchRange, NSMakeRange(NSNotFound, 0))) {
+        if (pageDetails.count > i && [pageDetails objectAtIndex:i] != nil) {
+            
+            NSDictionary *details = [[NSDictionary dictionaryWithDictionary:[pageDetails objectAtIndex:i]] retain];        
+            for (NSString *key in details) {
+                UIView *value = [details objectForKey:key];
+                if (value != nil) {
+                    
+                    CGRect frame = value.frame;
+                    if ([key isEqualToString:@"spinner"]) {
                         
-            NSString *titleLabelText = [fileContent substringWithRange:matchRange];
-                                    
-            CGSize titleLabelDimension = CGSizeMake(672, 330);
-            UIFont *titleLabelFont = [UIFont fontWithName:@"Helvetica" size:24.0];
-            if (screenBounds.size.width < 768) {
-                titleLabelDimension = CGSizeMake(280, 134);
-                titleLabelFont = [UIFont fontWithName:@"Helvetica" size:15.0];
+                        frame.origin.x = pageWidth * i + (pageWidth - frame.size.width) / 2;
+                        frame.origin.y = (pageHeight - frame.size.height) / 2;
+                        
+                    } else if ([key isEqualToString:@"number"]) {
+                        
+                        frame.origin.x = pageWidth * i + (pageWidth - 115) / 2;
+                        frame.origin.y = pageHeight / 2 - 55;
+
+                        
+                    } else if ([key isEqualToString:@"title"]) {
+                        
+                        frame.origin.x = pageWidth * i + (pageWidth - frame.size.width) / 2;
+                        frame.origin.y = pageHeight / 2 + 20;
+                    }
+                    
+                    value.frame = frame;
+                    [scrollView addSubview:value];
+                }
+            }
+                        
+        } else {
+        
+            // ****** Spinners
+            UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+            spinner.backgroundColor = [UIColor clearColor];
+            
+            CGRect frame = spinner.frame;
+            frame.origin.x = pageWidth * i + (pageWidth - frame.size.width) / 2;
+            frame.origin.y = (pageHeight - frame.size.height) / 2;        
+            spinner.frame = frame;
+                    
+            [[self scrollView] addSubview:spinner];
+            [spinner startAnimating];
+            [spinner release];
+            
+            // ****** Numbers
+            UILabel *number = [[UILabel alloc] initWithFrame:CGRectMake(pageWidth * i + (pageWidth - 115) / 2, pageHeight / 2 - 55, 115, 30)];
+            number.backgroundColor = [UIColor clearColor];
+            number.font = [UIFont fontWithName:@"Helvetica" size:40.0];
+            number.textColor = [UIColor PAGE_NUMBERS_COLOR];
+            number.textAlignment = UITextAlignmentCenter;
+            number.alpha = PAGE_NUMBERS_ALPHA;                    
+            number.text = [NSString stringWithFormat:@"%d", i + 1];
+            
+            [[self scrollView] addSubview:number];
+            [number release];
+            
+            // ****** Title
+            UILabel *title = nil;
+            NSRegularExpression *titleRegex = [NSRegularExpression regularExpressionWithPattern:@"<title>(.*)</title>" options:NSRegularExpressionCaseInsensitive error:NULL];
+            NSString *fileContent = [NSString stringWithContentsOfFile:[self.pages objectAtIndex: i] encoding:NSUTF8StringEncoding error:NULL];
+            NSRange matchRange = [[titleRegex firstMatchInString:fileContent options:0 range:NSMakeRange(0, [fileContent length])] rangeAtIndex:1];
+            if (!NSEqualRanges(matchRange, NSMakeRange(NSNotFound, 0))) {
+                            
+                NSString *titleText = [fileContent substringWithRange:matchRange];
+                                        
+                CGSize titleDimension = CGSizeMake(672, 330);
+                UIFont *titleFont = [UIFont fontWithName:@"Helvetica" size:24.0];
+                if (screenBounds.size.width < 768) {
+                    titleDimension = CGSizeMake(280, 134);
+                    titleFont = [UIFont fontWithName:@"Helvetica" size:15.0];
+                }
+                
+                CGSize titleTextSize = [titleText sizeWithFont:titleFont constrainedToSize:titleDimension lineBreakMode:UILineBreakModeTailTruncation];            
+                CGRect titleFrame = CGRectMake(pageWidth * i + (pageWidth - titleTextSize.width) / 2, pageHeight / 2 + 20, titleTextSize.width, titleTextSize.height);
+                
+                title = [[UILabel alloc] initWithFrame:titleFrame];         
+                title.backgroundColor = [UIColor clearColor];
+                title.alpha = PAGE_NUMBERS_ALPHA;            
+                title.font = titleFont;
+                title.textColor = [UIColor PAGE_NUMBERS_COLOR];
+                title.textAlignment = UITextAlignmentCenter;
+                title.lineBreakMode = UILineBreakModeTailTruncation;
+                title.numberOfLines = 0;
+                title.text = titleText;
+                
+                [[self scrollView] addSubview:title];
+                [title release];
             }
             
-            CGSize titleLabelTextSize = [titleLabelText sizeWithFont:titleLabelFont constrainedToSize:titleLabelDimension lineBreakMode:UILineBreakModeTailTruncation];            
-            CGRect titleLabelFrame = CGRectMake(pageWidth * i + (pageWidth - titleLabelTextSize.width) / 2, pageHeight / 2 + 20, titleLabelTextSize.width, titleLabelTextSize.height);
-            
-            UILabel *titleLabel = [[UILabel alloc] initWithFrame:titleLabelFrame];         
-            titleLabel.backgroundColor = [UIColor clearColor];
-            titleLabel.alpha = PAGE_NUMBERS_ALPHA;            
-            titleLabel.font = titleLabelFont;
-            titleLabel.textColor = [UIColor PAGE_NUMBERS_COLOR];
-            titleLabel.textAlignment = UITextAlignmentCenter;
-            titleLabel.lineBreakMode = UILineBreakModeTailTruncation;
-            titleLabel.numberOfLines = 0;
-            titleLabel.text = titleLabelText;
-            
-            [[self scrollView] addSubview:titleLabel];
-            [titleLabel release];
+            NSMutableDictionary *details = [NSMutableDictionary dictionaryWithObjectsAndKeys:spinner, @"spinner", number, @"number", title, @"title", nil];
+            [pageDetails insertObject:details atIndex:i];
         }
 	}
 }
@@ -433,7 +465,7 @@
         ret = [NSDictionary dictionaryWithJSONString:fileJSON error:&e];
     }
     
-    /* // Testing logs
+     /* // Testing logs
      NSLog(@"%@", e);
      NSLog(@"%@", ret);
      
@@ -576,7 +608,8 @@
                 }
                 
                 // Since we are not loading anything we have to reset the delayer flag
-                currentPageIsDelayingLoading = NO;
+                currentPageIsDelayingLoading = NO;                
+                [scrollView bringSubviewToFront:currPage];
             }
             
             [self getPageHeight];
@@ -724,10 +757,10 @@
 		// Get current page max scroll offset
 		[self getPageHeight];
 		
+        [scrollView bringSubviewToFront:currPage];
+        
 		// If is the first time i load something in the currPage web view...
-		if (currentPageFirstLoading) {
-			NSLog(@"(1) currPage finished first loading");
-			
+		if (currentPageFirstLoading) {			
 			// ...check if there is a saved starting scroll index and set it
 			NSString *currPageScrollIndex = [[NSUserDefaults standardUserDefaults] objectForKey:@"lastScrollIndex"];
 			if (currPageScrollIndex != nil) [self goDownInPage:currPageScrollIndex animating:NO];
@@ -864,11 +897,8 @@
 
 // ****** GESTURES
 - (void)userDidTap:(UITouch *)touch {
-	NSLog(@"User did single tap");
-	
 	CGPoint tapPoint = [touch locationInView:self.view];
-	
-	NSLog(@"  .  1 tap [%f, %f]", tapPoint.x, tapPoint.y);
+	NSLog(@"User tap at [%f, %f]", tapPoint.x, tapPoint.y);
 	
 	// ...and swipe or scroll the page.
 	if (CGRectContainsPoint(upTapArea, tapPoint)) {
@@ -886,7 +916,6 @@
 			NSLog(@"--> TAP right!");
 			page = currentPageNumber + 1;
 		}
-		
         [self changePage:page];
         
 	} else if (touch.tapCount == 2) {
@@ -1164,6 +1193,7 @@
      
 	[self checkPageSize];
 	[self getPageHeight];
+    
 	[self resetScrollView];
 }
 - (void)didReceiveMemoryWarning {

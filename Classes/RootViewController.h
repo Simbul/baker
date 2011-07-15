@@ -40,16 +40,16 @@
 	
 	CGRect screenBounds;
 	
+    NSString *bundleBookPath;
 	NSString *documentsBookPath;
-	NSString *bundleBookPath;
 	
 	NSMutableArray *pages;
     NSMutableArray *toLoad;
 	NSString *pageNameFromURL;
 	NSString *anchorFromURL;
 	
-	UIScrollView *scrollView;
-	NSMutableArray *pageSpinners;
+    UIScrollView *scrollView;    
+    NSMutableArray *pageDetails;
 	
 	UIWebView *prevPage;
 	UIWebView *currPage;
@@ -83,8 +83,8 @@
     IndexViewController *indexViewController;
 }
 
-@property (nonatomic, retain) NSString *documentsBookPath;
 @property (nonatomic, retain) NSString *bundleBookPath;
+@property (nonatomic, retain) NSString *documentsBookPath;
 
 @property (nonatomic, retain) NSMutableArray *pages;
 @property (nonatomic, retain) NSMutableArray *toLoad;
@@ -92,8 +92,6 @@
 @property (nonatomic, retain) NSString *anchorFromURL;
 
 @property (nonatomic, retain) UIScrollView *scrollView;
-@property (nonatomic, retain) NSMutableArray *pageSpinners;
-
 @property (nonatomic, retain) UIWebView *currPage;
 @property (nonatomic, retain) UIWebView *prevPage;
 @property (nonatomic, retain) UIWebView *nextPage;
