@@ -32,6 +32,7 @@
 
 #import <UIKit/UIKit.h>
 #import "IndexViewController.h"
+#import "Properties.h"
 
 
 @class Downloader;
@@ -79,7 +80,9 @@
     Downloader *downloader;
 	UIAlertView *feedbackAlert;
     
-    IndexViewController *indexViewController;    
+    IndexViewController *indexViewController;
+    
+    Properties *properties;
 }
 
 #pragma mark - PROPERTIES
@@ -95,7 +98,6 @@
 - (void)initPageNumbersForPages:(int)count;
 
 #pragma mark - LOADING
-- (NSDictionary *)loadManifest:(NSString *)file;
 - (BOOL)changePage:(int)page;
 - (void)gotoPageDelayer;
 - (void)gotoPage;

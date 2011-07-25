@@ -36,9 +36,18 @@
 @implementation Properties
 
 - (id)init {
+    return [self initWithManifest:nil];
+}
+
+- (id)initWithManifest:(NSString *)fileName {
     self = [super init];
     if (self) {
-        manifest = [[NSDictionary alloc] init];
+        NSString *filePath = [[NSBundle mainBundle] pathForResource:fileName ofType:@"json"];
+        if ([[NSFileManager defaultManager] fileExistsAtPath:filePath]) {
+            manifest = [self loadManifest:fileName];
+        } else {
+            manifest = [[NSDictionary alloc] init];
+        }
         defaults = [self initDefaults];
     }
     return self;
@@ -115,6 +124,32 @@
     NSDictionary *ret;
     
     ret = [NSDictionary dictionaryWithJSONString:json error:&e];
+    return ret;
+}
+
+- (NSDictionary*)loadManifest:(NSString*)file {
+    /****************************************************************************************************
+	 * Reads a JSON file from Application Bundle to a NSDictionary.
+     *
+     * Requires TouchJSON with the inclusion of: #import "NSDictionary_JSONExtensions.h"
+     *
+     * Use normal NSDictionary and NSArray lookups to find elements.
+     *   [json objectForKey:@"name"]
+     *   [[json objectForKey:@"items"] objectAtIndex:1]
+	 */
+    NSDictionary *ret;
+    
+    NSString *filePath = [[NSBundle mainBundle] pathForResource:file ofType:@"json"]; 
+    if (filePath) {  
+        NSString *fileJSON = [NSString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
+        
+        NSError *e = NULL;
+        ret = [NSDictionary dictionaryWithJSONString:fileJSON error:&e];
+        if ([e userInfo] != NULL) {
+            NSLog(@"Error loading JSON: %@", [e userInfo]);
+        }
+    }
+    
     return ret;
 }
 

@@ -98,6 +98,9 @@
 - (id)init {
     self = [super initWithNibName:nil bundle:nil];
     if (self) {
+        // ****** INIT PROPERTIES
+        properties = [[Properties alloc] initWithManifest:@"book/book"];
+      
         // ****** DEVICE SCREEN BOUNDS
         screenBounds = [[UIScreen mainScreen] bounds];
         NSLog(@"Device Width: %f", screenBounds.size.width);
@@ -428,35 +431,6 @@
 }
 
 #pragma mark - LOADING
-- (NSDictionary*)loadManifest:(NSString*)file {
-    /****************************************************************************************************
-	 * Reads a JSON file from Application Bundle to a NSDictionary.
-     *
-     * Requires TouchJSON with the inclusion of: #import "NSDictionary_JSONExtensions.h"
-     *
-     * Use normal NSDictionary and NSArray lookups to find elements.
-     *   [json objectForKey:@"name"]
-     *   [[json objectForKey:@"items"] objectAtIndex:1]
-	 */
-    NSDictionary *ret;
-    
-    NSString *filePath = [[NSBundle mainBundle] pathForResource:file ofType:@"json"];  
-    if (filePath) {  
-        NSString *fileJSON = [NSString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
-        
-        NSError *e = NULL;
-        ret = [NSDictionary dictionaryWithJSONString:fileJSON error:&e];
-    }
-    
-     /* // Testing logs
-     NSLog(@"%@", e);
-     NSLog(@"%@", ret);
-     
-     NSLog(@"Lookup, string: %@", [ret objectForKey:@"title"]);
-     NSLog(@"Lookup, sub-array: %@", [[ret objectForKey:@"pages"] objectAtIndex:1]); */
-    
-    return ret;
-}
 - (BOOL)changePage:(int)page {
     
     BOOL pageChanged = NO;

@@ -37,9 +37,11 @@
     NSDictionary *defaults;
 }
 
+- (id)initWithManifest:(NSString *)fileName;
 - (id)get:(NSString *)rootName, ...;
 - (id)getFrom:(NSDictionary *)dictionary withKeys:(NSArray *)keys;
 - (id)getFrom:(NSDictionary *)dictionary withFallback:(NSDictionary *)fallbackDictionary withKeys:(NSArray *)keys;
 - (NSDictionary *)initDefaults;
+- (NSDictionary*)loadManifest:(NSString*)file;
 
 @end
