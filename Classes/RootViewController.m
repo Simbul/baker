@@ -44,7 +44,6 @@
 
 // LOADER STYLE
 // Configure this to change the color of the loader
-#define SCROLLVIEW_BGCOLOR blackColor
 #define PAGE_NUMBERS_COLOR whiteColor
 #define PAGE_NUMBERS_ALPHA 0.3
 
@@ -153,7 +152,7 @@
         // ****** SCROLLVIEW INIT
         scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, pageWidth, pageHeight)];
         scrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        scrollView.backgroundColor = [UIColor SCROLLVIEW_BGCOLOR];
+        scrollView.backgroundColor = [self colorWithHexString:[properties get:@"x-baker", @"background", nil]];
         scrollView.showsHorizontalScrollIndicator = YES;
         scrollView.showsVerticalScrollIndicator = NO;
         scrollView.delaysContentTouches = NO;
@@ -1332,6 +1331,28 @@
 	[prevPage release];
     
     [super dealloc];
+}
+
+#pragma mark - UTILITIES
+- (UIColor *)colorWithRGBHex:(UInt32)hex {
+	int r = (hex >> 16) & 0xFF;
+	int g = (hex >> 8) & 0xFF;
+	int b = (hex) & 0xFF;
+    
+	return [UIColor colorWithRed:r / 255.0f
+						   green:g / 255.0f
+							blue:b / 255.0f
+						   alpha:1.0f];
+}
+
+// Returns a UIColor by scanning the string for a hex number and passing that to +[UIColor colorWithRGBHex:]
+// Skips any leading whitespace and ignores any trailing characters
+- (UIColor *)colorWithHexString:(NSString *)stringToConvert {
+    NSString *hexString = [stringToConvert stringByReplacingOccurrencesOfString:@"#" withString:@""];
+	NSScanner *scanner = [NSScanner scannerWithString:hexString];
+	unsigned hexNum;
+	if (![scanner scanHexInt:&hexNum]) return nil;
+	return [self colorWithRGBHex:hexNum];
 }
 
 @end

@@ -148,4 +148,8 @@
 #pragma mark - ORIENTATION
 - (NSString *)getCurrentInterfaceOrientation;
 
+#pragma mark - UTILITIES
+- (UIColor *)colorWithRGBHex:(UInt32)hex;
+- (UIColor *)colorWithHexString:(NSString *)stringToConvert;
+
 @end
