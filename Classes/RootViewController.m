@@ -106,7 +106,9 @@
         NSLog(@"• INIT");
         
         // ****** INIT PROPERTIES
-        properties = [[Properties alloc] initWithManifest:@"book/book"];
+        properties = [Properties properties];
+        NSString *filePath = [[NSBundle mainBundle] pathForResource:@"book/book" ofType:@"json"];
+        [properties loadManifest:filePath];
       
         // ****** DEVICE SCREEN BOUNDS
         screenBounds = [[UIScreen mainScreen] bounds];

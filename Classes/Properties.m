@@ -158,4 +158,45 @@
     return ret;
 }
 
+#pragma mark - SINGLETON METHODS
+static Properties *sharedProperties = nil;
+
++ (Properties*)properties
+{
+    if (sharedProperties == nil) {
+        sharedProperties = [[super allocWithZone:NULL] init];
+    }
+    return sharedProperties;
+}
+
++ (id)allocWithZone:(NSZone *)zone
+{
+    return [[self properties] retain];
+}
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    return self;
+}
+
+- (id)retain
+{
+    return self;
+}
+
+- (NSUInteger)retainCount
+{
+    return NSUIntegerMax;  //denotes an object that cannot be released
+}
+
+- (void)release
+{
+    //do nothing
+}
+
+- (id)autorelease
+{
+    return self;
+}
+
 @end

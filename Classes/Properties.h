@@ -44,5 +44,6 @@
 - (BOOL)loadManifest:(NSString *)filePath;
 - (NSDictionary *)initDefaults;
 - (NSDictionary*)dictionaryFromManifestFile:(NSString*)file;
++ (Properties*)properties;
 
 @end
