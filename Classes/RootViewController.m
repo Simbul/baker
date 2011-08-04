@@ -34,6 +34,7 @@
 #import "Downloader.h"
 #import "SSZipArchive.h"
 #import "NSDictionary_JSONExtensions.h"
+#import "PageTitleLabel.h"
 
 // THREE CARD
 // Enable three card loading method.
@@ -441,37 +442,10 @@
             [number release];
             
             // ****** Title
-            UILabel *title = nil;
-            NSRegularExpression *titleRegex = [NSRegularExpression regularExpressionWithPattern:@"<title>(.*)</title>" options:NSRegularExpressionCaseInsensitive error:NULL];
-            NSString *fileContent = [NSString stringWithContentsOfFile:[pages objectAtIndex: i] encoding:NSUTF8StringEncoding error:NULL];
-            NSRange matchRange = [[titleRegex firstMatchInString:fileContent options:0 range:NSMakeRange(0, [fileContent length])] rangeAtIndex:1];
-            if (!NSEqualRanges(matchRange, NSMakeRange(NSNotFound, 0))) {
-                            
-                NSString *titleText = [fileContent substringWithRange:matchRange];
-                                        
-                CGSize titleDimension = CGSizeMake(672, 330);
-                UIFont *titleFont = [UIFont fontWithName:@"Helvetica" size:24.0];
-                if (screenBounds.size.width < 768) {
-                    titleDimension = CGSizeMake(280, 134);
-                    titleFont = [UIFont fontWithName:@"Helvetica" size:15.0];
-                }
-                
-                CGSize titleTextSize = [titleText sizeWithFont:titleFont constrainedToSize:titleDimension lineBreakMode:UILineBreakModeTailTruncation];            
-                CGRect titleFrame = CGRectMake(pageWidth * i + (pageWidth - titleTextSize.width) / 2, pageHeight / 2 + 20, titleTextSize.width, titleTextSize.height);
-                
-                title = [[UILabel alloc] initWithFrame:titleFrame];         
-                title.backgroundColor = [UIColor clearColor];
-                title.alpha = PAGE_NUMBERS_ALPHA;            
-                title.font = titleFont;
-                title.textColor = [UIColor PAGE_NUMBERS_COLOR];
-                title.textAlignment = UITextAlignmentCenter;
-                title.lineBreakMode = UILineBreakModeTailTruncation;
-                title.numberOfLines = 0;
-                title.text = titleText;
-                
-                [scrollView addSubview:title];
-                [title release];
-            }
+            PageTitleLabel *title = [[PageTitleLabel alloc]initWithFile:[pages objectAtIndex: i]];
+            [title setX:(pageWidth * i + ((pageWidth - title.frame.size.width) / 2)) Y:(pageHeight / 2 + 20)];
+            [scrollView addSubview:title];
+            [title release];
             
             NSMutableDictionary *details = [NSMutableDictionary dictionaryWithObjectsAndKeys:spinner, @"spinner", number, @"number", title, @"title", nil];
             [pageDetails insertObject:details atIndex:i];
