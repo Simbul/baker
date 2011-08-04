@@ -43,11 +43,7 @@
     self = [super init];
     if (self) {
         NSString *filePath = [[NSBundle mainBundle] pathForResource:fileName ofType:@"json"];
-        if ([[NSFileManager defaultManager] fileExistsAtPath:filePath]) {
-            manifest = [self loadManifest:fileName];
-        } else {
-            manifest = [[NSDictionary alloc] init];
-        }
+        [self loadManifest:filePath];
         defaults = [self initDefaults];
     }
     return self;
@@ -107,6 +103,16 @@
     }
 }
 
+- (BOOL)loadManifest:(NSString *)filePath {
+    if ([[NSFileManager defaultManager] fileExistsAtPath:filePath]) {
+        manifest = [self dictionaryFromManifestFile:filePath];
+        return YES;
+    } else {
+        manifest = [[NSDictionary alloc] init];
+        return NO;
+    }
+}
+
 - (NSDictionary *)initDefaults {
     NSString *json = @"{"
         "\"properties\": {"
@@ -127,7 +133,7 @@
     return ret;
 }
 
-- (NSDictionary*)loadManifest:(NSString*)file {
+- (NSDictionary*)dictionaryFromManifestFile:(NSString*)filePath {
     /****************************************************************************************************
 	 * Reads a JSON file from Application Bundle to a NSDictionary.
      *
@@ -139,7 +145,6 @@
 	 */
     NSDictionary *ret;
     
-    NSString *filePath = [[NSBundle mainBundle] pathForResource:file ofType:@"json"]; 
     if (filePath) {  
         NSString *fileJSON = [NSString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
         
