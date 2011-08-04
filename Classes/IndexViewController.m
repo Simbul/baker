@@ -122,7 +122,7 @@
 }
 
 - (BOOL)isIndexViewHidden {
-    return self.view.frame.origin.y > pageHeight - indexHeight;
+    return [UIApplication sharedApplication].statusBarHidden;
 }
 
 - (BOOL)isDisabled {

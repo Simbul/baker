@@ -993,9 +993,10 @@
 	} else {
 		NSLog(@"TOGGLE status bar");
 		UIApplication *sharedApplication = [UIApplication sharedApplication];
-		[sharedApplication setStatusBarHidden:!sharedApplication.statusBarHidden withAnimation:UIStatusBarAnimationSlide];
+        BOOL hidden = sharedApplication.statusBarHidden;
+		[sharedApplication setStatusBarHidden:!hidden withAnimation:UIStatusBarAnimationSlide];
         if(![indexViewController isDisabled]) {
-            [indexViewController setIndexViewHidden:![indexViewController isIndexViewHidden] withAnimation:YES];
+            [indexViewController setIndexViewHidden:!hidden withAnimation:YES];
         }
 	}
 }
