@@ -86,7 +86,8 @@
     } else {
         if ([rootObj isKindOfClass:[NSDictionary class]] ) {
             NSRange range = NSMakeRange(1, [keys count] - 1);
-            return [self getFrom:rootObj withFallback:defaults withKeys:[keys subarrayWithRange:range]];
+            id subDefaults = [defaults objectForKey:[keys objectAtIndex:0]];
+            return [self getFrom:rootObj withFallback:subDefaults withKeys:[keys subarrayWithRange:range]];
         } else {
             return rootObj;
         }
