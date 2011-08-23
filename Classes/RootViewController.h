@@ -41,8 +41,9 @@
 	
 	CGRect screenBounds;
 	
-    NSString *bundleBookPath;
 	NSString *documentsBookPath;
+    NSString *cachedSnapshotsPath;
+    NSString *bundleBookPath;
 	
 	NSMutableArray *pages;
     NSMutableArray *toLoad;
@@ -92,7 +93,6 @@
 
 #pragma mark - INIT
 - (void)setupWebView:(UIWebView *)webView;
-- (void)checkPageSize;
 - (void)setPageSize:(NSString *)orientation;
 - (void)initBook:(NSString *)path;
 - (void)initPageNumbersForPages:(int)count;
@@ -113,6 +113,11 @@
 #pragma mark - WEBVIEW
 - (void)webView:(UIWebView *)webView hidden:(BOOL)status animating:(BOOL)animating;
 - (void)revealWebView:(UIWebView *)webView;
+
+#pragma mark - SNAPSHOTS
+- (BOOL)checkSnapshot:(int)pageNumber;
+- (void)takeSnapshot;
+- (void)placeSnapshot:(int)pageNumber;
 
 #pragma mark - GESTURES
 - (void)userDidTap:(UITouch *)touch;
@@ -135,5 +140,8 @@
 - (void)startDownloadRequest;
 - (void)handleDownloadResult:(NSNotification *)notification;
 - (void)manageDownloadData:(NSData *)data;
+
+#pragma mark - ORIENTATION
+- (NSString *)getCurrentInterfaceOrientation;
 
 @end

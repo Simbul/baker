@@ -66,16 +66,16 @@
 #define CLOSE_BOOK_MESSAGE @"Do you want to close this book?"
 #define CLOSE_BOOK_CONFIRM @"Close book"
 
-#define ZERO_PAGES_TITLE @"Whoops!"
+#define ZERO_PAGES_TITLE   @"Whoops!"
 #define ZERO_PAGES_MESSAGE @"Sorry, that book had no pages."
 
-#define ERROR_FEEDBACK_TITLE @"Whoops!"
+#define ERROR_FEEDBACK_TITLE   @"Whoops!"
 #define ERROR_FEEDBACK_MESSAGE @"There was a problem downloading the book."
 #define ERROR_FEEDBACK_CONFIRM @"Retry"
 
 #define EXTRACT_FEEDBACK_TITLE @"Extracting..."
 
-#define ALERT_FEEDBACK_CANCEL @"Cancel"
+#define ALERT_FEEDBACK_CANCEL  @"Cancel"
 
 // AVAILABLE ORIENTATION
 // Define the available orientation of the book
@@ -110,10 +110,16 @@
         NSArray *documentsPaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
         NSString *documentsPath = [NSString stringWithString:[documentsPaths objectAtIndex:0]];
         documentsBookPath = [[documentsPath stringByAppendingPathComponent:@"book"] retain];
+        
+        NSArray *cachePaths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+        NSString *cachePath = ([cachePaths count] > 0) ? [cachePaths objectAtIndex:0] : nil;
+        cachedSnapshotsPath = [[cachePath stringByAppendingPathComponent:@"snapshots"] retain];
+        [[NSFileManager defaultManager] createDirectoryAtPath:cachedSnapshotsPath withIntermediateDirectories:YES attributes:nil error:nil];
+
         bundleBookPath = [[[NSBundle mainBundle] pathForResource:@"book" ofType:nil] retain];
         
         pages = [[NSMutableArray array] retain];
-        toLoad = [[NSMutableArray array] mutableCopy];
+        toLoad = [[NSMutableArray array] retain];
         pageDetails = [[NSMutableArray array] retain];
 
         pageNameFromURL = nil;
@@ -129,8 +135,8 @@
         // ****** LISTENER FOR DOWNLOAD NOTIFICATION
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(downloadBook:) name:@"downloadNotification" object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleDownloadResult:) name:@"handleDownloadResult" object:nil];
-        
-        [self checkPageSize];
+                
+        [self setPageSize:[self getCurrentInterfaceOrientation]];
         [self hideStatusBar];
         
         // ****** SCROLLVIEW INIT
@@ -178,24 +184,10 @@
 	webView.mediaPlaybackRequiresUserAction = MEDIA_PLAYBACK_REQUIRES_USER_ACTION;
 	webView.scalesPageToFit = PAGE_ZOOM_GESTURE;
     webView.delegate = self;
-	webView.alpha = 0.5;
 	if (!PAGE_VERTICAL_BOUNCE) {
 		for (id subview in webView.subviews)
 			if ([[subview class] isSubclassOfClass: [UIScrollView class]])
 				((UIScrollView *)subview).bounces = NO;
-	}        
-}
-- (void)checkPageSize {
-    if ([AVAILABLE_ORIENTATION isEqualToString:@"Portrait"] || [AVAILABLE_ORIENTATION isEqualToString:@"Landscape"]) {
-		[self setPageSize:AVAILABLE_ORIENTATION];
-	} else {
-		UIDeviceOrientation orientation = [self interfaceOrientation];
-		// WARNING!!! Seems like checking [[UIDevice currentDevice] orientation] against "UIInterfaceOrientationPortrait" is broken (return FALSE with the device in portrait orientation)
-		// Safe solution: always check if the device is in landscape orientation, if FALSE then it's in portrait.
-        [self setPageSize:@"Portrait"];
-		if (orientation == UIInterfaceOrientationLandscapeLeft || orientation == UIInterfaceOrientationLandscapeRight) {
-			[self setPageSize:@"Landscape"];
-        }
 	}
 }
 - (void)setPageSize:(NSString *)orientation {	
@@ -209,11 +201,13 @@
 	}
 }
 - (void)resetScrollView {
-	for (id subview in scrollView.subviews) {
-		if (![subview isKindOfClass:[UIWebView class]]) {
-			[subview removeFromSuperview];
-		}
-	}
+        
+    for (NSMutableDictionary *details in pageDetails) {
+        for (NSString *key in details) {
+            UIView *value = [details objectForKey:key];
+            value.hidden = YES;
+        }
+    }
 
 	scrollView.contentSize = CGSizeMake(pageWidth * totalPages, pageHeight);
 	
@@ -240,7 +234,8 @@
     
     currPage.frame = [self frameForPage:currentPageNumber];
     [scrollView bringSubviewToFront:currPage];
-	[scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:NO];
+	
+    [scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:NO];
 
 	// ****** TAPPABLE AREAS
 	int tappableAreaSize = screenBounds.size.width/16;
@@ -255,8 +250,19 @@
 }
 - (void)initBook:(NSString *)path {	
 	// Count pages
-    [pages removeAllObjects];
+    
+    for (NSMutableDictionary *details in pageDetails) {
+        for (NSString *key in details) {
+            UIView *value = [details objectForKey:key];
+            [value removeFromSuperview];
+        }
+    }
+    
     [pageDetails removeAllObjects];
+    [pages removeAllObjects];
+    
+    [[NSFileManager defaultManager] removeItemAtPath:cachedSnapshotsPath error:nil];
+    [[NSFileManager defaultManager] createDirectoryAtPath:cachedSnapshotsPath withIntermediateDirectories:YES attributes:nil error:nil];
 	
 	NSArray *dirContent = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:path error:nil];
 	for (NSString *fileName in dirContent) {
@@ -331,36 +337,52 @@
 	}
 }
 - (void)initPageNumbersForPages:(int)count {
-    
 	for (int i = 0; i < count; i++) {
-		
+        
         if (pageDetails.count > i && [pageDetails objectAtIndex:i] != nil) {
             
-            NSDictionary *details = [NSDictionary dictionaryWithDictionary:[pageDetails objectAtIndex:i]];        
-            for (NSString *key in details) {
-                UIView *value = [details objectForKey:key];
-                if (value != nil) {
-                    
-                    CGRect frame = value.frame;
-                    if ([key isEqualToString:@"spinner"]) {
+            NSDictionary *details = [NSDictionary dictionaryWithDictionary:[pageDetails objectAtIndex:i]];  
+            
+            NSString *orientation = [self getCurrentInterfaceOrientation];
+            UIView *snapView = [details objectForKey:[NSString stringWithFormat:@"snap-%@", orientation]];
+            if (snapView != nil)
+            {
+                snapView.hidden = NO;
+            } 
+            else {
+                
+                for (NSString *key in details) {
+                    UIView *value = [details objectForKey:key];
+                    if (value != nil) {
                         
-                        frame.origin.x = pageWidth * i + (pageWidth - frame.size.width) / 2;
-                        frame.origin.y = (pageHeight - frame.size.height) / 2;
-                        
-                    } else if ([key isEqualToString:@"number"]) {
-                        
-                        frame.origin.x = pageWidth * i + (pageWidth - 115) / 2;
-                        frame.origin.y = pageHeight / 2 - 55;
+                        CGRect frame = value.frame;
+                        if ([key isEqualToString:@"spinner"]) {
+                            
+                            frame.origin.x = pageWidth * i + (pageWidth - frame.size.width) / 2;
+                            frame.origin.y = (pageHeight - frame.size.height) / 2;
+                            value.frame = frame;
+                            value.hidden = NO;
+                            
+                        } else if ([key isEqualToString:@"number"]) {
+                            
+                            frame.origin.x = pageWidth * i + (pageWidth - 115) / 2;
+                            frame.origin.y = pageHeight / 2 - 55;
+                            value.frame = frame;
+                            value.hidden = NO;
 
+                            
+                        } else if ([key isEqualToString:@"title"]) {
+                            
+                            frame.origin.x = pageWidth * i + (pageWidth - frame.size.width) / 2;
+                            frame.origin.y = pageHeight / 2 + 20;
+                            value.frame = frame;
+                            value.hidden = NO;
                         
-                    } else if ([key isEqualToString:@"title"]) {
-                        
-                        frame.origin.x = pageWidth * i + (pageWidth - frame.size.width) / 2;
-                        frame.origin.y = pageHeight / 2 + 20;
+                        } else {
+                            
+                            value.hidden = YES;
+                        }
                     }
-                    
-                    value.frame = frame;
-                    [scrollView addSubview:value];
                 }
             }
                         
@@ -575,8 +597,10 @@
                 }
                 
                 // Since we are not loading anything we have to reset the delayer flag
-                currentPageIsDelayingLoading = NO;                
+                currentPageIsDelayingLoading = NO;
+                
                 [scrollView bringSubviewToFront:currPage];
+                [self takeSnapshot];
             }
             
             [self getPageHeight];
@@ -725,9 +749,7 @@
 	if ([webView isEqual:currPage]) {
 		// Get current page max scroll offset
 		[self getPageHeight];
-		
-        [scrollView bringSubviewToFront:currPage];
-        
+                
 		// If is the first time i load something in the currPage web view...
 		if (currentPageFirstLoading) {			
 			// ...check if there is a saved starting scroll index and set it
@@ -747,7 +769,7 @@
 	//NSString *javaScript = @"<script type=\"text/javascript\">function myFunction(){return 1+1;}</script>";
 	//[webView stringByEvaluatingJavaScriptFromString:javaScript];
 	
-	[self performSelector:@selector(revealWebView:) withObject:webView afterDelay:0.1]; // This seems fixing the WebView-Flash-Of-Old-Content-webBug    
+	[self performSelector:@selector(revealWebView:) withObject:webView afterDelay:0.1]; // This seems fixing the WebView-Flash-Of-Old-Content-webBug 
     [self handlePageLoading];
 }
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
@@ -844,26 +866,75 @@
 - (void)webView:(UIWebView *)webView hidden:(BOOL)status animating:(BOOL)animating {
 	NSLog(@"- webview hidden:%d animating:%d", status, animating);
 	
-	if (animating) {
-		webView.alpha = 0.0;
-		webView.hidden = NO;
-		
-		[UIView beginAnimations:@"webViewVisibility" context:nil]; {
-			//[UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
-			[UIView setAnimationDuration:0.5];
-			//[UIView setAnimationDelegate:self];
-			//[UIView setAnimationDidStopSelector:@selector(animationDidStop:finished:)];
-			
-			webView.alpha = 1.0;	
-		}
-		[UIView commitAnimations];		
+    webView.alpha = 0.0;
+    webView.hidden = NO;
+    
+	if (animating && ![self checkSnapshot:currentPageNumber]) {
+        [UIView animateWithDuration:0.5
+                         animations:^{ webView.alpha = 1.0; }
+                         completion:^(BOOL finished) {
+                             if ([webView isEqual:currPage]) {
+                                 [scrollView bringSubviewToFront:webView];
+                                 [self takeSnapshot];
+                             }
+                         }];	
 	} else {
 		webView.alpha = 1.0;
-		webView.hidden = NO;
 	}
+    
 }
 - (void)revealWebView:(UIWebView *)webView {
 	[self webView:webView hidden:NO animating:YES];  // Delayed run to fix the WebView-Flash-Of-Old-Content-Bug
+}
+
+#pragma mark - SNAPSHOTS
+- (BOOL)checkSnapshot:(int)pageNumber {
+    NSString *snapshotFile = [cachedSnapshotsPath stringByAppendingPathComponent:[NSString stringWithFormat:@"snap-%@-%i.jpg", [self getCurrentInterfaceOrientation], pageNumber]];
+    return [[NSFileManager defaultManager] fileExistsAtPath:snapshotFile];
+}
+- (void)takeSnapshot {
+    
+    if (![self checkSnapshot:currentPageNumber]) {
+        
+        NSString *snapshotFile = [cachedSnapshotsPath stringByAppendingPathComponent:[NSString stringWithFormat:@"snap-%@-%i.jpg", [self getCurrentInterfaceOrientation], currentPageNumber]];
+        UIImage *snapshot = nil;
+        CGSize pageSize = CGSizeMake(pageWidth, pageHeight);
+        
+        UIGraphicsBeginImageContextWithOptions(pageSize, NO, 1.0);
+        [currPage.layer renderInContext:UIGraphicsGetCurrentContext()];
+        snapshot = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+        
+        if (snapshot) {
+            NSError *error = nil;
+            if (![UIImageJPEGRepresentation(snapshot, 0.6) writeToFile:snapshotFile options:NSDataWritingAtomic error:&error]) {
+                NSLog(@"%@", [error localizedDescription]);
+            } else {
+                NSLog(@"snapshot saved to file %@", snapshotFile);
+                [self placeSnapshot:currentPageNumber];
+            }
+        }
+    }
+}
+- (void)placeSnapshot:(int)pageNumber {
+    if ([self checkSnapshot:pageNumber]) {
+        
+        int i = pageNumber - 1;
+        NSString *orientation = [self getCurrentInterfaceOrientation];    
+        NSString *snapshotFile = [cachedSnapshotsPath stringByAppendingPathComponent:[NSString stringWithFormat:@"snap-%@-%i.jpg", orientation, pageNumber]];
+        
+        UIImage *snapshot = [UIImage imageWithContentsOfFile:snapshotFile];
+        UIImageView *snapView = [[UIImageView alloc] initWithImage:snapshot];
+        snapView.frame = CGRectMake(pageWidth * i, 0, pageWidth, pageHeight);
+        
+        if (pageDetails.count > i && [pageDetails objectAtIndex:i] != nil) {
+            NSMutableDictionary *details = [pageDetails objectAtIndex:i];            
+            [details setObject:snapView forKey:[NSString stringWithFormat:@"snap-%@", orientation]];
+        }
+        
+        [scrollView addSubview:snapView];
+        [snapView release];
+    }
 }
 
 #pragma mark - GESTURES
@@ -1110,6 +1181,21 @@
 }
 
 #pragma mark - ORIENTATION
+- (NSString *)getCurrentInterfaceOrientation {
+    if ([AVAILABLE_ORIENTATION isEqualToString:@"Portrait"] || [AVAILABLE_ORIENTATION isEqualToString:@"Landscape"])
+    {
+        return AVAILABLE_ORIENTATION;
+    } 
+    else {
+		// WARNING!!! Seems like checking [[UIDevice currentDevice] orientation] against "UIInterfaceOrientationPortrait" is broken (return FALSE with the device in portrait orientation)
+		// Safe solution: always check if the device is in landscape orientation, if FALSE then it's in portrait.
+        if (UIInterfaceOrientationIsLandscape(self.interfaceOrientation)) {
+            return @"Landscape";
+        } else {
+            return @"Portrait";
+        }
+	}
+}
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
 	// Overriden to allow any orientation.
 	if ([AVAILABLE_ORIENTATION isEqualToString:@"Portrait"]) {
@@ -1155,11 +1241,10 @@
     [currPage stringByEvaluatingJavaScriptFromString:jsCommand];
 }
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
-    UIDeviceOrientation orientation = [self interfaceOrientation];
-    [indexViewController rotateFromOrientation:fromInterfaceOrientation toOrientation:orientation];
-     
-	[self checkPageSize];
-	[self getPageHeight];
+    [indexViewController rotateFromOrientation:fromInterfaceOrientation toOrientation:self.interfaceOrientation];
+    
+    [self setPageSize:[self getCurrentInterfaceOrientation]];
+    [self getPageHeight];    
 	[self resetScrollView];
 }
 
