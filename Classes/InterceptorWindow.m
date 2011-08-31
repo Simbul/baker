@@ -30,49 +30,62 @@
 //  
 
 #import "InterceptorWindow.h"
+#import "RootViewController.h"
 
 @implementation InterceptorWindow
 
-@synthesize target;
-@synthesize eventsDelegate;
+#pragma mark - Init
 
-- (id)initWithTarget:(UIView *)targetView eventsDelegate:(UIViewController *)delegateController frame:(CGRect)aRect {
-	self.target = targetView;
-	self.eventsDelegate = delegateController;
-	
-	return [super initWithFrame:aRect];
+- (id)initWithTarget:(UIView *)targetView eventsDelegate:(UIViewController *)delegateController frame:(CGRect)frame {
+    
+    self = [super initWithFrame:frame];
+    if (self) {
+        target = targetView;
+        eventsDelegate = (RootViewController *)delegateController;
+    }
+    return self;
 }
+
+#pragma mark - Events management
+
 - (void)sendEvent:(UIEvent *)event {
-	// At the moment, all the events are propagated (by calling the sendEvent method
+	
+    // At the moment, all the events are propagated (by calling the sendEvent method
 	// in the parent class) except single-finger multitaps.
 	
 	BOOL shouldCallParent = YES;
 	
 	if (event.type == UIEventTypeTouches) {
-		NSSet *touches = [event allTouches];		
+		
+        NSSet *touches = [event allTouches];		
 		if (touches.count == 1) {
-			UITouch *touch = touches.anyObject;
+			
+            UITouch *touch = touches.anyObject;
 			
 			if (touch.phase == UITouchPhaseBegan) {
-				scrolling = NO;
+				isScrolling = NO;
 			} else if (touch.phase == UITouchPhaseMoved) {
-				scrolling = YES;
+				isScrolling = YES;
 			}
-			
+        
 			if (touch.tapCount > 1) {
-				if (touch.phase == UITouchPhaseEnded && !scrolling) {
-					// Touch is not the first of multiple subsequent touches
-					NSLog(@"Multi Tap");
+                // Touch is not the first of multiple subsequent touches
+                if (touch.phase == UITouchPhaseEnded && !isScrolling) {
+                    NSLog(@"Multi Tap");
 					[self performSelector:@selector(forwardTap:) withObject:touch];
 				}
 				shouldCallParent = NO;
-			} else if ([touch.view isDescendantOfView:self.target] == YES) {
-				if (scrolling) {
-					NSLog(@"Scrolling");
+                
+			} else if ([touch.view isDescendantOfView:target] == YES) {
+                // Touch was on the target view (or one of its descendants) ...
+                if (isScrolling) {
+					// ... and is not a single tap but a scrollin gesture
+                    NSLog(@"Scrolling");
 					[self performSelector:@selector(forwardScroll:) withObject:touch];
-				} else if (touch.phase == UITouchPhaseEnded) {
-					// Touch was on the target view (or one of its descendants)
-					// and a single tap has just been completed
+				
+                } else if (touch.phase == UITouchPhaseEnded) {
+					
+					// ... and a single tap has just been completed
 					NSLog(@"Single Tap");
 					[self performSelector:@selector(forwardTap:) withObject:touch];
 				}
@@ -93,8 +106,11 @@
 }
 
 - (void)dealloc {
-	[target release];
-	[super dealloc];
+	
+    [target release];
+	[eventsDelegate release];
+    
+    [super dealloc];
 }
 
 @end
