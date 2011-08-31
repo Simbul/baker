@@ -57,6 +57,7 @@
     
 	BOOL currentPageFirstLoading;
 	BOOL currentPageIsDelayingLoading;
+    BOOL currentPageIsLocked;
 	BOOL discardNextStatusBarToggle;
     
     UIScrollView *scrollView;    
@@ -94,8 +95,11 @@
 #pragma mark - INIT
 - (void)setupWebView:(UIWebView *)webView;
 - (void)setPageSize:(NSString *)orientation;
+- (void)setTappableAreaSize;
+- (void)resetScrollView;
+- (void)resetPageDetails;
 - (void)initBook:(NSString *)path;
-- (void)initPageNumbersForPages:(int)count;
+- (void)initPageDetailsForPages:(int)count;
 
 #pragma mark - LOADING
 - (BOOL)changePage:(int)page;
