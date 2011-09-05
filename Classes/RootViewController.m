@@ -785,19 +785,11 @@
 	if ([webView isEqual:currPage]) {
 		// Get current page max scroll offset
 		[self getPageHeight];
-                
-		// If is the first time i load something in the currPage web view...
-		if (currentPageFirstLoading) {			
-			// ...check if there is a saved starting scroll index and set it
-			NSString *currPageScrollIndex = [[NSUserDefaults standardUserDefaults] objectForKey:@"lastScrollIndex"];
-			if (currPageScrollIndex != nil) {
-                [self goDownInPage:currPageScrollIndex animating:NO];
-            }
-			currentPageFirstLoading = NO;
-		}
 		
-		// Handle saved hash reference (if any)
-		[self handleAnchor:NO];
+        if ([self checkSnapshot:currentPageNumber]) {
+            NSLog(@"   Handle saved hash reference if necessary");
+            [self handleAnchor:NO];
+        }
 	}
 	
 	// /!\ hack to make it load at the right time and not too early
@@ -856,7 +848,7 @@
                 int page = (int)[pages indexOfObject:file] + 1;
                 
 				if (![self changePage:page]) {
-					[self handleAnchor:NO];
+					[self handleAnchor:YES];
 				}
 				
 			} else if ([[url scheme] isEqualToString:@"book"]) {
@@ -906,15 +898,32 @@
 	
     webView.alpha = 0.0;
     webView.hidden = NO;
-    
+        
     if (animating && ![self checkSnapshot:currentPageNumber]) {
         [UIView animateWithDuration:0.5
                          animations:^{ webView.alpha = 1.0; }
                          completion:^(BOOL finished) {
-                             if ([webView isEqual:currPage] && !ENABLE_THREE_CARD) {
-                                 NSLog(@"   Current page has appeared, taking snapshot if necessary");
-                                 [self takeSnapshot];
+                             if ([webView isEqual:currPage]) {
+                                 if (!ENABLE_THREE_CARD) {
+                                     NSLog(@"   Current page has appeared, taking snapshot if necessary");
+                                     [self takeSnapshot];
+                                 }
+                                 
                                  [scrollView bringSubviewToFront:webView];
+                                                                  
+                                 // If is the first time i load something in the currPage web view...
+                                 if (currentPageFirstLoading) {			
+                                     // ... check if there is a saved starting scroll index and set it
+                                     NSLog(@"   Handle last scroll index if necessary");
+                                     NSString *currPageScrollIndex = [[NSUserDefaults standardUserDefaults] objectForKey:@"lastScrollIndex"];
+                                     if (currPageScrollIndex != nil) {
+                                         [self goDownInPage:currPageScrollIndex animating:YES];
+                                     }
+                                     currentPageFirstLoading = NO;
+                                 } else {
+                                     NSLog(@"   Handle saved hash reference if necessary");
+                                     [self handleAnchor:YES];
+                                 }
                              }
                              
                              if ([toLoad count] == 0) {
@@ -930,6 +939,11 @@
             NSLog(@"   Page has appeared, there are no more pages to load, unlock pages");
             currentPageIsLocked = NO;
             scrollView.scrollEnabled = YES;
+        }
+        
+        if ([webView isEqual:currPage]) {
+            NSLog(@"   Handle saved hash reference if necessary");
+            [self handleAnchor:YES];
         }
 	}
     
@@ -1086,7 +1100,6 @@
 }
 - (void)handleAnchor:(BOOL)animating {
 	if (anchorFromURL != nil) {
-		
 		NSString *jsAnchorHandler = [NSString stringWithFormat:@"(function() {\
 									 var target = '%@';\
 									 var elem = document.getElementById(target);\
