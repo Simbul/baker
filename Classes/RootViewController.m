@@ -40,7 +40,7 @@
 // Enable three card loading method.
 //  NO (Default) - Only the current page is load.
 //  YES - Three pages (current, next and previous) are loaded.
-#define ENABLE_THREE_CARD YES
+#define ENABLE_THREE_CARD NO
 
 // LOADER STYLE
 // Configure this to change the color of the loader
@@ -600,7 +600,6 @@
                     currentPageIsDelayingLoading = NO;
                     
                     [scrollView bringSubviewToFront:currPage];
-                    [self takeSnapshot];
                 }
                 
                 [self getPageHeight];
@@ -908,26 +907,27 @@
     webView.alpha = 0.0;
     webView.hidden = NO;
     
-	if (animating && ![self checkSnapshot:currentPageNumber]) {
+    if (animating && ![self checkSnapshot:currentPageNumber]) {
         [UIView animateWithDuration:0.5
                          animations:^{ webView.alpha = 1.0; }
                          completion:^(BOOL finished) {
-                             if ([webView isEqual:currPage]) {
+                             if ([webView isEqual:currPage] && !ENABLE_THREE_CARD) {
+                                 NSLog(@"   Current page has appeared, taking snapshot if necessary");
+                                 [self takeSnapshot];
                                  [scrollView bringSubviewToFront:webView];
-                                 NSLog(@"   Page has happeared, taking snapshot if necessary and unlock it");
-                                 if (!ENABLE_THREE_CARD) {
-                                     [self takeSnapshot];
-                                 }
-                                 if ([toLoad count] == 0) {
-                                     currentPageIsLocked = NO;
-                                     scrollView.scrollEnabled = YES;
-                                 }
+                             }
+                             
+                             if ([toLoad count] == 0) {
+                                 NSLog(@"   There are no more pages to load, unlock pages");
+                                 currentPageIsLocked = NO;
+                                 scrollView.scrollEnabled = YES;
                              }
                          }];
 	} else {
+        
 		webView.alpha = 1.0;
-        NSLog(@"   Page has happeared, unlock it");
         if ([toLoad count] == 0) {
+            NSLog(@"   Page has appeared, there are no more pages to load, unlock pages");
             currentPageIsLocked = NO;
             scrollView.scrollEnabled = YES;
         }
