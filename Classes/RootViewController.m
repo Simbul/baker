@@ -198,8 +198,8 @@
 	webView.scalesPageToFit = PAGE_ZOOM_GESTURE;
     webView.delegate = self;
 	if (!PAGE_VERTICAL_BOUNCE) {
-		for (id subview in webView.subviews) {
-			if ([[subview class] isMemberOfClass:[UIScrollView class]]) {
+		for (UIView *subview in webView.subviews) {
+			if ([subview isKindOfClass:[UIScrollView class]]) {
 				((UIScrollView *)subview).bounces = NO;
             }
         }
@@ -1029,8 +1029,8 @@
 
 #pragma mark - PAGE SCROLLING
 - (void)getPageHeight {
-	for (id subview in currPage.subviews) {
-		if ([[subview class] isMemberOfClass:[UIScrollView class]]) {
+	for (UIView *subview in currPage.subviews) {
+		if ([subview isKindOfClass:[UIScrollView class]]) {
 			CGSize size = ((UIScrollView *)subview).contentSize;
 			NSLog(@"• Setting current page height from %d to %f", currentPageHeight, size.height);
 			currentPageHeight = size.height;
