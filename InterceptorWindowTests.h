@@ -4,7 +4,7 @@
 //
 //  ==========================================================================================
 //  
-//  Copyright (c) 2010, Davide Casali, Marco Colombo, Alessandro Morandi
+//  Copyright (c) 2010-2011, Davide Casali, Marco Colombo, Alessandro Morandi
 //  All rights reserved.
 //  
 //  Redistribution and use in source and binary forms, with or without modification, are 
