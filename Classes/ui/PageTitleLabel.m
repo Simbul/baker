@@ -73,9 +73,9 @@
 
 - (void)initStyle {
     self.backgroundColor = [UIColor clearColor];
-    id alpha = [properties get:@"x-baker", @"pageNumbersAlpha", nil];
+    id alpha = [properties get:@"-baker-page-numbers-alpha", nil];
     self.alpha = [(NSNumber*) alpha floatValue];
-    self.textColor = [Utils colorWithHexString:[properties get:@"x-baker", @"pageNumbersColor", nil]];
+    self.textColor = [Utils colorWithHexString:[properties get:@"-baker-page-numbers-color", nil]];
     self.textAlignment = UITextAlignmentCenter;
     self.lineBreakMode = UILineBreakModeTailTruncation;
     self.numberOfLines = 0;

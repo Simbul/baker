@@ -116,18 +116,14 @@
 
 - (NSDictionary *)initDefaults {
     NSString *json = @"{"
-        "\"properties\": {"
-            "\"orientation\": \"both\","
-            "\"pinchToZoom\": false"
-        "},"
-        "\"x-baker\": {"
-            "\"background\": \"#000000\","
-            "\"verticalBounce\": true,"
-            "\"indexHeight\": 150,"
-            "\"mediaAutoPlay\": true,"
-            "\"pageNumbersColor\": \"#FFFFFF\","
-            "\"pageNumbersAlpha\": 0.3"
-        "}"
+        "\"orientation\": \"both\","
+        "\"zoomable\": false,"
+        "\"-baker-background\": \"#000000\","
+        "\"-baker-vertical-bounce\": true,"
+        "\"-baker-index-height\": 150,"
+        "\"-baker-media-autoplay\": true,"
+        "\"-baker-page-numbers-color\": \"#FFFFFF\","
+        "\"-baker-page-numbers-alpha\": 0.3"
     "}";
     NSError *e = NULL;
     NSDictionary *ret;

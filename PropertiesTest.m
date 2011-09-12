@@ -88,22 +88,22 @@
     Properties *properties = [[Properties alloc]init];
     id property;
     
-    property = [properties get:@"properties", @"orientation", nil];
+    property = [properties get:@"orientation", nil];
     STAssertEqualObjects(property, @"both", @"Should return expected default value for orientation");
     
-    property = [properties get:@"properties", @"pinchToZoom", nil];
+    property = [properties get:@"zoomable", nil];
     STAssertEquals([property boolValue], NO, @"Should return expected default value for pinchToZoom");
     
-    property = [properties get:@"x-baker", @"background", nil];
-    STAssertEqualObjects(property, @"#000000", @"Should return expected default value for background");
+    property = [properties get:@"-baker-background", nil];
+    STAssertEqualObjects(property, @"#000000", @"Should return expected default value for -baker-background");
     
-    property = [properties get:@"x-baker", @"verticalBounce", nil];
+    property = [properties get:@"-baker-vertical-bounce", nil];
     STAssertEquals([property boolValue], YES, @"Should return expected default value for verticalBounce");
     
-    property = [properties get:@"x-baker", @"indexHeight", nil];
+    property = [properties get:@"-baker-index-height", nil];
     STAssertEqualObjects(property, [[NSNumber alloc] initWithInteger:150], @"Should return expected default value for indexHeight");
     
-    property = [properties get:@"x-baker", @"mediaAutoPlay", nil];
+    property = [properties get:@"-baker-media-autoplay", nil];
     STAssertEquals([property boolValue], YES, @"Should return expected default value for mediaAutoPlay");
 }
 

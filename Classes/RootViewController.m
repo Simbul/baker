@@ -148,7 +148,7 @@
         // ****** SCROLLVIEW INIT
         scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, pageWidth, pageHeight)];
         scrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        scrollView.backgroundColor = [Utils colorWithHexString:[properties get:@"x-baker", @"background", nil]];
+        scrollView.backgroundColor = [Utils colorWithHexString:[properties get:@"-baker-background", nil]];
         scrollView.showsHorizontalScrollIndicator = YES;
         scrollView.showsVerticalScrollIndicator = NO;
         scrollView.delaysContentTouches = NO;
@@ -430,9 +430,9 @@
             UILabel *number = [[UILabel alloc] initWithFrame:CGRectMake(pageWidth * i + (pageWidth - 115) / 2, pageHeight / 2 - 55, 115, 30)];
             number.backgroundColor = [UIColor clearColor];
             number.font = [UIFont fontWithName:@"Helvetica" size:40.0];
-            number.textColor = [Utils colorWithHexString:[properties get:@"x-baker", @"pageNumbersColor", nil]];
+            number.textColor = [Utils colorWithHexString:[properties get:@"-baker-page-numbers-color", nil]];
             number.textAlignment = UITextAlignmentCenter;
-            id alpha = [properties get:@"x-baker", @"pageNumbersAlpha", nil];
+            id alpha = [properties get:@"-baker-page-numbers-alpha", nil];
             number.alpha = [(NSNumber*) alpha floatValue];
             number.text = [NSString stringWithFormat:@"%d", i + 1];
             
