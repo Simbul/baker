@@ -43,23 +43,6 @@
 //  YES - Three pages (current, next and previous) are loaded.
 #define ENABLE_THREE_CARD NO
 
-// PINCH-TO-ZOOM
-// Enable pinch-to-zoom on the book page.
-//   NO (Default) - Because it creates a more uniform reading experience: you should zoom only specific items with JavaScript.
-//   YES - Not recommended. You have to manually set the zoom in EACH of your HTML files.
-#define PAGE_ZOOM_GESTURE NO
-
-// VERTICAL BOUNCE
-// Enable bounce effect on vertical scrolls.
-// Should be set to NO only when the book pages don't need any vertical scrolling.
-#define PAGE_VERTICAL_BOUNCE YES
-
-// MEDIA PLAYBACK REQUIRES USER ACTION
-// Enable automatic HTML5 media playback.
-//   YES (Default) - Media required user action to be started.
-//   NO - Media can be played automatically.
-#define MEDIA_PLAYBACK_REQUIRES_USER_ACTION YES
-
 // ALERT LABELS
 #define OPEN_BOOK_MESSAGE @"Do you want to download "
 #define OPEN_BOOK_CONFIRM @"Open book"
@@ -78,13 +61,6 @@
 
 #define ALERT_FEEDBACK_CANCEL  @"Cancel"
 
-// AVAILABLE ORIENTATION
-// Define the available orientation of the book
-//	@"Any" (Default) - Book is available in both orientation
-//	@"Portrait" - Book is available only in portrait orientation
-//	@"Landscape" - Book is available only in landscape orientation
-#define	AVAILABLE_ORIENTATION @"Any"
-
 #define INDEX_FILE_NAME @"index.html"
 
 @implementation RootViewController
@@ -93,6 +69,7 @@
 @synthesize scrollView;
 @synthesize currPage;
 @synthesize currentPageNumber;
+@synthesize availableOrientation;
 
 #pragma mark - INIT
 - (id)init {
@@ -104,6 +81,10 @@
         properties = [Properties properties];
         NSString *filePath = [[NSBundle mainBundle] pathForResource:@"book/book" ofType:@"json"];
         [properties loadManifest:filePath];
+        
+        // ****** ORIENTATION
+        self.availableOrientation = [properties get:@"orientation", nil];
+        NSLog(@"available orientation %@", availableOrientation);
       
         // ****** DEVICE SCREEN BOUNDS
         screenBounds = [[UIScreen mainScreen] bounds];
@@ -189,10 +170,11 @@
     NSLog(@"• Setup webView");
     
     webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-	webView.mediaPlaybackRequiresUserAction = MEDIA_PLAYBACK_REQUIRES_USER_ACTION;
-	webView.scalesPageToFit = PAGE_ZOOM_GESTURE;
+	webView.mediaPlaybackRequiresUserAction = ![[properties get:@"-baker-media-autoplay", nil] boolValue];
+    webView.scalesPageToFit = [[properties get:@"zoomable", nil] boolValue];
     webView.delegate = self;
-	if (!PAGE_VERTICAL_BOUNCE) {
+    BOOL verticalBounce = [[properties get:@"-baker-vertical-bounce", nil] boolValue];
+	if (!verticalBounce) {
 		for (UIView *subview in webView.subviews) {
 			if ([subview isKindOfClass:[UIScrollView class]]) {
 				((UIScrollView *)subview).bounces = NO;
@@ -1238,9 +1220,9 @@
 
 #pragma mark - ORIENTATION
 - (NSString *)getCurrentInterfaceOrientation {
-    if ([AVAILABLE_ORIENTATION isEqualToString:@"Portrait"] || [AVAILABLE_ORIENTATION isEqualToString:@"Landscape"])
+    if ([availableOrientation isEqualToString:@"Portrait"] || [availableOrientation isEqualToString:@"Landscape"])
     {
-        return AVAILABLE_ORIENTATION;
+        return availableOrientation;
     } 
     else {
 		// WARNING!!! Seems like checking [[UIDevice currentDevice] orientation] against "UIInterfaceOrientationPortrait" is broken (return FALSE with the device in portrait orientation)
@@ -1254,9 +1236,9 @@
 }
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
 	// Overriden to allow any orientation.
-	if ([AVAILABLE_ORIENTATION isEqualToString:@"Portrait"]) {
+	if ([availableOrientation isEqualToString:@"Portrait"]) {
 		return (interfaceOrientation == UIInterfaceOrientationPortrait || interfaceOrientation == UIInterfaceOrientationPortraitUpsideDown);
-	} else if ([AVAILABLE_ORIENTATION isEqualToString:@"Landscape"]) {
+	} else if ([availableOrientation isEqualToString:@"Landscape"]) {
 		return (interfaceOrientation == UIInterfaceOrientationLandscapeRight || interfaceOrientation == UIInterfaceOrientationLandscapeLeft);
 	} else {
 		return YES;

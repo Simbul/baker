@@ -44,6 +44,8 @@
 	NSString *documentsBookPath;
     NSString *cachedSnapshotsPath;
     NSString *bundleBookPath;
+    
+    NSString *availableOrientation;
 	
 	NSMutableArray *pages;
     NSMutableArray *toLoad;
@@ -90,6 +92,7 @@
 #pragma mark - PROPERTIES
 @property (nonatomic, retain) UIScrollView *scrollView;
 @property (nonatomic, retain) UIWebView *currPage;
+@property (nonatomic, retain) NSString *availableOrientation;
 @property int currentPageNumber;
 
 #pragma mark - INIT
