@@ -124,7 +124,9 @@
             "\"background\": \"#000000\","
             "\"verticalBounce\": true,"
             "\"indexHeight\": 150,"
-            "\"mediaAutoPlay\": true"
+            "\"mediaAutoPlay\": true,"
+            "\"spinnerColor\": \"#FFFFFF\","
+            "\"spinnerAlpha\": 0.3"
         "}"
     "}";
     NSError *e = NULL;

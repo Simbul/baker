@@ -30,10 +30,11 @@
 //  
 
 #import <Foundation/Foundation.h>
+#import "Properties.h"
 
 
 @interface PageTitleLabel : UILabel {
-    
+    Properties *properties;
 }
 
 - (id)initWithFile:(NSString *)path;

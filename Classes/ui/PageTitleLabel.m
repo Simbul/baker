@@ -41,7 +41,9 @@
     return [self initWithFileContent:fileContent];
 }
 
-- (id)initWithFileContent:(NSString *)fileContent {    
+- (id)initWithFileContent:(NSString *)fileContent {
+    properties = [Properties properties];
+    
     NSRegularExpression *titleRegex = [NSRegularExpression regularExpressionWithPattern:@"<title>(.*)</title>" options:NSRegularExpressionCaseInsensitive error:NULL];
     NSRange matchRange = [[titleRegex firstMatchInString:fileContent options:0 range:NSMakeRange(0, [fileContent length])] rangeAtIndex:1];
     if (!NSEqualRanges(matchRange, NSMakeRange(NSNotFound, 0))) {
@@ -73,7 +75,8 @@
 
 - (void)initStyle {
     self.backgroundColor = [UIColor clearColor];
-    self.alpha = PAGE_NUMBERS_ALPHA;
+    id alpha = [properties get:@"x-baker", @"spinnerAlpha", nil];
+    self.alpha = [(NSNumber*) alpha floatValue];
     self.textColor = [UIColor PAGE_NUMBERS_COLOR];
     self.textAlignment = UITextAlignmentCenter;
     self.lineBreakMode = UILineBreakModeTailTruncation;
