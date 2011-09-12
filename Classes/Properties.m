@@ -125,8 +125,8 @@
             "\"verticalBounce\": true,"
             "\"indexHeight\": 150,"
             "\"mediaAutoPlay\": true,"
-            "\"spinnerColor\": \"#FFFFFF\","
-            "\"spinnerAlpha\": 0.3"
+            "\"pageNumbersColor\": \"#FFFFFF\","
+            "\"pageNumbersAlpha\": 0.3"
         "}"
     "}";
     NSError *e = NULL;

@@ -43,11 +43,6 @@
 //  YES - Three pages (current, next and previous) are loaded.
 #define ENABLE_THREE_CARD NO
 
-// LOADER STYLE
-// Configure this to change the color of the loader
-#define PAGE_NUMBERS_COLOR whiteColor
-#define PAGE_NUMBERS_ALPHA 0.3
-
 // PINCH-TO-ZOOM
 // Enable pinch-to-zoom on the book page.
 //   NO (Default) - Because it creates a more uniform reading experience: you should zoom only specific items with JavaScript.
@@ -435,9 +430,10 @@
             UILabel *number = [[UILabel alloc] initWithFrame:CGRectMake(pageWidth * i + (pageWidth - 115) / 2, pageHeight / 2 - 55, 115, 30)];
             number.backgroundColor = [UIColor clearColor];
             number.font = [UIFont fontWithName:@"Helvetica" size:40.0];
-            number.textColor = [UIColor PAGE_NUMBERS_COLOR];
+            number.textColor = [Utils colorWithHexString:[properties get:@"x-baker", @"pageNumbersColor", nil]];
             number.textAlignment = UITextAlignmentCenter;
-            number.alpha = PAGE_NUMBERS_ALPHA;                    
+            id alpha = [properties get:@"x-baker", @"pageNumbersAlpha", nil];
+            number.alpha = [(NSNumber*) alpha floatValue];
             number.text = [NSString stringWithFormat:@"%d", i + 1];
             
             [scrollView addSubview:number];

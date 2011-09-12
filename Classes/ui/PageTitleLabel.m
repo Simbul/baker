@@ -30,9 +30,7 @@
 //  
 
 #import "PageTitleLabel.h"
-
-#define PAGE_NUMBERS_COLOR whiteColor
-#define PAGE_NUMBERS_ALPHA 0.3
+#import "Utils.h"
 
 @implementation PageTitleLabel
 
@@ -75,9 +73,9 @@
 
 - (void)initStyle {
     self.backgroundColor = [UIColor clearColor];
-    id alpha = [properties get:@"x-baker", @"spinnerAlpha", nil];
+    id alpha = [properties get:@"x-baker", @"pageNumbersAlpha", nil];
     self.alpha = [(NSNumber*) alpha floatValue];
-    self.textColor = [UIColor PAGE_NUMBERS_COLOR];
+    self.textColor = [Utils colorWithHexString:[properties get:@"x-baker", @"pageNumbersColor", nil]];
     self.textAlignment = UITextAlignmentCenter;
     self.lineBreakMode = UILineBreakModeTailTruncation;
     self.numberOfLines = 0;
