@@ -116,7 +116,7 @@
         
         currentPageFirstLoading = YES;
         currentPageIsDelayingLoading = YES;
-        currentPageIsLocked = YES;
+        currentPageIsLocked = NO;
         discardNextStatusBarToggle = NO;
                 
         // ****** LISTENER FOR DOWNLOAD NOTIFICATION
@@ -136,18 +136,6 @@
         scrollView.pagingEnabled = YES;
         scrollView.delegate = self;
         [self.view addSubview:scrollView];
-        
-        // ****** CURR WEBVIEW INIT
-        currPage = [[UIWebView alloc] init];
-        [self setupWebView:currPage];
-        
-        // ****** NEXT WEBVIEW INIT
-        nextPage = [[UIWebView alloc] init];
-        [self setupWebView:nextPage];
-        
-        // ****** PREV WEBVIEW INIT
-        prevPage = [[UIWebView alloc] init];
-        [self setupWebView:prevPage];
         
         // ****** INDEX WEBVIEW INIT
         indexViewController = [[IndexViewController alloc] initWithBookBundlePath:bundleBookPath documentsBookPath:documentsBookPath fileName:INDEX_FILE_NAME webViewDelegate:self];
@@ -169,12 +157,20 @@
 - (void)setupWebView:(UIWebView *)webView {
     NSLog(@"• Setup webView");
     
-    webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-	webView.mediaPlaybackRequiresUserAction = ![[properties get:@"-baker-media-autoplay", nil] boolValue];
-    webView.scalesPageToFit = [[properties get:@"zoomable", nil] boolValue];
     webView.delegate = self;
-    BOOL verticalBounce = [[properties get:@"-baker-vertical-bounce", nil] boolValue];
-	if (!verticalBounce) {
+    webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+	
+    // TURNED OFF BECAUSE THE APP CRASH WHEN INVOKED MORE THAN ONE TIME
+    //webView.mediaPlaybackRequiresUserAction = ![[properties get:@"-baker-media-autoplay", nil] boolValue];
+    //webView.scalesPageToFit = [[properties get:@"zoomable", nil] boolValue];
+    //BOOL verticalBounce = [[properties get:@"-baker-vertical-bounce", nil] boolValue];
+    
+    //PLACEHOLDERS
+    webView.mediaPlaybackRequiresUserAction = YES;
+    webView.scalesPageToFit = NO;
+    BOOL verticalBounce = NO;
+    
+    if (!verticalBounce) {
 		for (UIView *subview in webView.subviews) {
 			if ([subview isKindOfClass:[UIScrollView class]]) {
 				((UIScrollView *)subview).bounces = NO;
@@ -209,6 +205,10 @@
     NSLog(@"• Reset scrollview subviews");
     
     NSLog(@"    Prevent page from changing until scrollview reset is finished");
+    BOOL scrollEnabled = scrollView.scrollEnabled;
+    if (scrollEnabled) {
+        scrollView.scrollEnabled = !scrollEnabled;
+    }
     currentPageIsLocked = YES;
     
     [self setTappableAreaSize];
@@ -227,25 +227,30 @@
 	if (![UIApplication sharedApplication].statusBarHidden) {
 		scrollViewY = -20;
 	}    
-    [UIView animateWithDuration:0.2 animations:^{
-        scrollView.frame = CGRectMake(0, scrollViewY, pageWidth, pageHeight);
-    }];
+    [UIView animateWithDuration:0.2 
+                     animations:^{ scrollView.frame = CGRectMake(0, scrollViewY, pageWidth, pageHeight); }];
 	
-    if (prevPage.superview == scrollView) {
+    if (prevPage && [prevPage.superview isEqual:scrollView]) {
         prevPage.frame = [self frameForPage:currentPageNumber - 1];
         [scrollView bringSubviewToFront:prevPage];
     }
     
-    if (nextPage.superview == scrollView) {
+    if (nextPage && [nextPage.superview isEqual:scrollView]) {
         nextPage.frame = [self frameForPage:currentPageNumber + 1];
         [scrollView bringSubviewToFront:nextPage];
     }
     
-    currPage.frame = [self frameForPage:currentPageNumber];
+    if (currPage) {
+        currPage.frame = [self frameForPage:currentPageNumber];
+    }
+    
     [scrollView bringSubviewToFront:currPage];
     [scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:NO];
     
     NSLog(@"    Unlock page changing");
+    if (scrollEnabled) {
+        scrollView.scrollEnabled = scrollEnabled;
+    }
     currentPageIsLocked = NO;
 }
 - (void)resetPageDetails {
@@ -301,30 +306,19 @@
         [toLoad removeAllObjects];
 		
         [self resetScrollView];        
-        [scrollView addSubview:currPage];
         [self addPageLoading:0];
         
         if (ENABLE_THREE_CARD) {
             if (currentPageNumber != totalPages) {
-                if (nextPage.superview != scrollView) {
-                    [scrollView addSubview:nextPage];
-                }
                 [self addPageLoading:+1];
-            } else if (currentPageNumber == totalPages && nextPage.superview == scrollView) {
-                [nextPage removeFromSuperview];
             }
             
             if (currentPageNumber != 1) {
-                if (prevPage.superview != scrollView) {
-                    [scrollView addSubview:prevPage];
-                }
                 [self addPageLoading:-1];
-            } else if (currentPageNumber == 1 && prevPage.superview == scrollView) {
-                [prevPage removeFromSuperview];
             }
         }
-            
         [self handlePageLoading];
+        
         [indexViewController loadContentFromBundle:[path isEqualToString:bundleBookPath]];
 		
 	} else {
@@ -348,10 +342,8 @@
         
         if (pageDetails.count > i && [pageDetails objectAtIndex:i] != nil) {
             
-            NSDictionary *details = [NSDictionary dictionaryWithDictionary:[pageDetails objectAtIndex:i]];  
-            
-            NSString *orientation = [self getCurrentInterfaceOrientation];
-            UIView *snapView = [details objectForKey:[NSString stringWithFormat:@"snap-%@", orientation]];
+            NSDictionary *details = [NSDictionary dictionaryWithDictionary:[pageDetails objectAtIndex:i]];              
+            UIView *snapView = [details objectForKey:[NSString stringWithFormat:@"snap-%@", [self getCurrentInterfaceOrientation]]];
             if (snapView != nil)
             {
                 snapView.hidden = NO;
@@ -445,10 +437,9 @@
 		currentPageNumber = totalPages;
 	} else if (page != currentPageNumber) {
         
-        NSLog(@"    Prevent page from changing until its loading is finished");
-        currentPageIsLocked = YES;
+        // While we are tapping, we don't want scrolling event to get in the way
         scrollView.scrollEnabled = NO;
-        //stackedScrollingAnimations++;
+        stackedScrollingAnimations++;
         
         lastPageNumber = currentPageNumber;
 		currentPageNumber = page;
@@ -463,7 +454,7 @@
         pageChanged = YES;
 	}
 	
-	return pageChanged;	
+	return pageChanged;
 }
 - (void)gotoPageDelayer {
 	// This delay is required in order to avoid stuttering when the animation runs.
@@ -492,15 +483,16 @@
                 direction = -direction;
                 tapNumber = -tapNumber;
             }
-            
             NSLog(@"    Tap number: %d", tapNumber);
             
             if (tapNumber > 2) {
-                
-                [toLoad removeAllObjects];
+                tapNumber = 0;
                 
                 // ****** Moved away for more than 2 pages: RELOAD ALL pages
-                tapNumber = 0;
+                [toLoad removeAllObjects];                
+                [currPage removeFromSuperview];
+                [nextPage removeFromSuperview];
+                [prevPage removeFromSuperview];
                 
                 [self addPageLoading:0];
                 if (currentPageNumber < totalPages)
@@ -514,41 +506,46 @@
                 if (tapNumber == 2) {
                 
                     // ****** Moved away for 2 pages: RELOAD CURRENT page
-
                     if (direction < 0) {
                         // ****** Move LEFT <<<
+                        [prevPage removeFromSuperview];
                         UIWebView *tmpView = prevPage;
                         prevPage = nextPage;
                         nextPage = tmpView;
                     } else {
                         // ****** Move RIGHT >>>
+                        [nextPage removeFromSuperview];
                         UIWebView *tmpView = nextPage; 
                         nextPage = prevPage;
                         prevPage = tmpView;
                     }
-                    
+                                        
                     // Adjust pages slot in the stack to reflect the webviews pointer change
                     for (int i = 0; i < [toLoad count]; i++) {
                         tmpSlot =  -1 * [[[toLoad objectAtIndex:i] valueForKey:@"slot"] intValue];
                         [[toLoad objectAtIndex:i] setObject:[NSNumber numberWithInt:tmpSlot] forKey:@"slot"];
                     }
                     
+                    [currPage removeFromSuperview];
                     [self addPageLoading:0];
                 
                 } else if (tapNumber == 1) {
                                     
-                    if (direction < 0) { 
+                    if (direction < 0) {
                         // ****** Move LEFT <<<
+                        [prevPage removeFromSuperview];
                         UIWebView *tmpView = prevPage;
                         prevPage = currPage;
                         currPage = nextPage;
                         nextPage = tmpView;
-                    } else { 
+                        
+                    } else {
                         // ****** Move RIGHT >>>
+                        [nextPage removeFromSuperview];
                         UIWebView *tmpView = nextPage;
                         nextPage = currPage;
                         currPage = prevPage;
-                        prevPage = tmpView;
+                        prevPage = tmpView;                        
                     }
                     
                     // Adjust pages slot in the stack to reflect the webviews pointer change
@@ -573,11 +570,9 @@
                         }
                         [[toLoad objectAtIndex:i] setObject:[NSNumber numberWithInt:tmpSlot] forKey:@"slot"];
                     }
-                    
+                                        
                     // Since we are not loading anything we have to reset the delayer flag
                     currentPageIsDelayingLoading = NO;
-                    
-                    [scrollView bringSubviewToFront:currPage];
                 }
                 
                 [self getPageHeight];
@@ -593,8 +588,9 @@
                     }
                     
                     // PRELOAD NEXT page
-                    if (currentPageNumber < totalPages)
+                    if (currentPageNumber < totalPages) {
                         [self addPageLoading:+1];
+                    }
                     
                 } else {
                     
@@ -606,38 +602,20 @@
                     }
                     
                     // PRELOAD PREV page
-                    if (currentPageNumber > 1)
+                    if (currentPageNumber > 1) {
                         [self addPageLoading:-1];
+                    }
                 }
-            }
-            
-            if (currentPageNumber != totalPages && nextPage.superview != scrollView) {
-                [scrollView addSubview:nextPage];
-            } else if (currentPageNumber == totalPages && nextPage.superview == scrollView) {
-                [nextPage removeFromSuperview];
-                
-                NSLog(@"    Nothing to load, unlock page");
-                currentPageIsLocked = NO;
-                scrollView.scrollEnabled = YES;
-            }
-            
-            if (currentPageNumber != 1 && prevPage.superview != scrollView) {
-                [scrollView addSubview:prevPage];
-            } else if (currentPageNumber == 1 && prevPage.superview == scrollView) {
-                [prevPage removeFromSuperview];
-                
-                NSLog(@"    Nothing to load, unlock page");
-                currentPageIsLocked = NO;
-                scrollView.scrollEnabled = YES;
             }
             
             [self handlePageLoading];
         }
         else
         {
-            [toLoad removeAllObjects];
-            
             tapNumber = 0;
+            
+            [toLoad removeAllObjects];
+            [currPage removeFromSuperview];            
             
             [self addPageLoading:0];
             [self handlePageLoading];
@@ -671,31 +649,58 @@
 - (void)loadSlot:(int)slot withPage:(int)page {
 	NSLog(@"• Setup new page for loading");
     
-	UIWebView *webView = nil;
+    UIWebView *webView = [[UIWebView alloc] init];
+    [self setupWebView:webView];
+    
+    webView.frame = [self frameForPage:page];
+    webView.hidden = YES;
 	
 	// ****** SELECT
+    // Since pointers can change at any time we've got to handle them directly on a slot basis.
+    // Save the page pointer to a temp view to avoid code redundancy make Baker go apeshit.
 	if (slot == 0) {
-		webView = currPage;
+        
+        if (currPage) {
+            currPage.delegate = nil;
+            if ([currPage isLoading]) {
+                [currPage stopLoading];
+            }
+            [currPage release];
+        }
+        currPage = webView;
+        
 	} else if (slot == +1) {
-		webView = nextPage;
-	} else if (slot == -1) {
-		webView = prevPage;
-	}
+        
+        if (nextPage) {
+            nextPage.delegate = nil;
+            if ([nextPage isLoading]) {
+                [nextPage stopLoading];
+            }
+            [nextPage release];
+        }
+        nextPage = webView;
     
-    if ([webView isLoading]) {
-        [webView stopLoading];
+    } else if (slot == -1) {
+        
+        if (prevPage) {
+            prevPage.delegate = nil;
+            if ([prevPage isLoading]) {
+                [prevPage stopLoading];
+            }
+            [prevPage release];
+        }
+        prevPage = webView;
     }
-
-    webView.frame = [self frameForPage:page];
+    
+    [scrollView addSubview:webView];
 	[self loadWebView:webView withPage:page];
 }
 - (BOOL)loadWebView:(UIWebView*)webView withPage:(int)page {
 	
-	NSString *path = [NSString stringWithString:[pages objectAtIndex:page-1]];
+	NSString *path = [NSString stringWithString:[pages objectAtIndex:page - 1]];
 		
 	if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
 		NSLog(@"• Loading: book/%@", [[NSFileManager defaultManager] displayNameAtPath:path]);
-        webView.hidden = YES; // use direct property instead of [self webView:hidden:animating:] otherwise it won't work
 		[webView loadRequest:[NSURLRequest requestWithURL:[NSURL fileURLWithPath:path]]];
 		return YES;
 	}
@@ -712,7 +717,6 @@
 }
 - (void)scrollViewDidEndDragging:(UIScrollView *)scroll willDecelerate:(BOOL)decelerate {
     NSLog(@"• Scrollview did end dragging");
-    scrollView.scrollEnabled = NO;
 }
 - (void)scrollViewWillBeginDecelerating:(UIScrollView *)scroll {
     NSLog(@"• Scrollview will begin decelerating");
@@ -724,10 +728,6 @@
     
     if (currentPageNumber != page) {
         
-        NSLog(@"    Prevent page from changing until its loading is finished");
-        currentPageIsLocked = YES;
-        scrollView.scrollEnabled = NO;
-        
         lastPageNumber = currentPageNumber;
         currentPageNumber = page;
         
@@ -735,59 +735,19 @@
         
 		currentPageIsDelayingLoading = YES;
 		[self gotoPage];
-    } else {
-        scrollView.scrollEnabled = YES;
     }
 }
 - (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scroll {
     NSLog(@"• Scrollview did end scrolling animation");
     
-    /*
     stackedScrollingAnimations--;
     if (stackedScrollingAnimations == 0) {
         NSLog(@"    Scroll enabled");
 		scroll.scrollEnabled = YES;
 	}
-    */
 }
 
 #pragma mark - WEBVIEW
-- (void)webViewDidStartLoad:(UIWebView *)webView {
-	// Sent before a web view begins loading content.
-}
-- (void)webViewDidFinishLoad:(UIWebView *)webView {
-    NSLog(@"• Page did finish load");
-    
-	// Sent after a web view finishes loading content.	
-	
-	if ([webView isEqual:currPage]) {
-		// Get current page max scroll offset
-		[self getPageHeight];
-		
-        if ([self checkSnapshot:currentPageNumber]) {
-            NSLog(@"   Handle saved hash reference if necessary");
-            [self handleAnchor:NO];
-        }
-	}
-	
-	// /!\ hack to make it load at the right time and not too early
-	// source: http://stackoverflow.com/questions/1422146/webviewdidfinishload-firing-too-soon
-	//NSString *javaScript = @"<script type=\"text/javascript\">function myFunction(){return 1+1;}</script>";
-	//[webView stringByEvaluatingJavaScriptFromString:javaScript];
-	
-	[self performSelector:@selector(revealWebView:) withObject:webView afterDelay:0.1]; // This seems fixing the WebView-Flash-Of-Old-Content-webBug 
-    [self handlePageLoading];
-}
-- (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
-	// Sent if a web view failed to load content.
-    if (webView == currPage) {
-		NSLog(@"• CurrPage failed to load content with error: %@", error);
-	} else if (webView == prevPage) {
-		NSLog(@"• PrevPage failed to load content with error: %@", error);
-	} else if (webView == nextPage) {
-		NSLog(@"• NextPage failed to load content with error: %@", error);
-    }
-}
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
 	// Sent before a web view begins loading content, useful to trigger actions before the WebView.	
 	NSLog(@"• Should webView load the page ?");
@@ -871,117 +831,149 @@
 		return NO;
 	}
 }
-- (void)webView:(UIWebView *)webView hidden:(BOOL)status animating:(BOOL)animating {
-	NSLog(@"• webView hidden: %d animating: %d", status, animating);
-	
-    webView.alpha = 0.0;
+- (void)webViewDidStartLoad:(UIWebView *)webView {
+    NSLog(@"• Page did start load");
+}
+- (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
+	// Sent if a web view failed to load content.
+    if ([webView isEqual:currPage]) {
+		NSLog(@"• CurrPage failed to load content with error: %@", error);
+	} else if ([webView isEqual:prevPage]) {
+		NSLog(@"• PrevPage failed to load content with error: %@", error);
+	} else if ([webView isEqual:nextPage]) {
+		NSLog(@"• NextPage failed to load content with error: %@", error);
+    }
+}
+- (void)webViewDidFinishLoad:(UIWebView *)webView {
+    NSLog(@"• Page did finish load");
+    
+	// Sent after a web view finishes loading content.
+    if ([webView isEqual:currPage]) {
+		// Get current page max scroll offset
+		[self getPageHeight];
+    }
+    
+    [webView removeFromSuperview];
     webView.hidden = NO;
+    
+    if (ENABLE_THREE_CARD) {
+        [self webView:webView hidden:NO animating:YES];
+    } else {
+        [self takeSnapshotFromView:webView forPage:currentPageNumber andOrientation:[self getCurrentInterfaceOrientation]];
+    }
+    [self handlePageLoading];
+}
+- (void)webView:(UIWebView *)webView hidden:(BOOL)status animating:(BOOL)animating {
+	
+    NSLog(@"• webView hidden: %d animating: %d", status, animating);
         
-    if (animating && ![self checkSnapshot:currentPageNumber]) {
+    if (animating) {
+        
+        webView.hidden = NO;
+        webView.alpha = 0.0;
+        
+        [scrollView addSubview:webView];
         [UIView animateWithDuration:0.5
                          animations:^{ webView.alpha = 1.0; }
-                         completion:^(BOOL finished) {
-                             if ([webView isEqual:currPage]) {
-                                 if (!ENABLE_THREE_CARD) {
-                                     NSLog(@"   Current page has appeared, taking snapshot if necessary");
-                                     [self takeSnapshot];
-                                 }
-                                 
-                                 [scrollView bringSubviewToFront:webView];
-                                                                  
-                                 // If is the first time i load something in the currPage web view...
-                                 if (currentPageFirstLoading) {			
-                                     // ... check if there is a saved starting scroll index and set it
-                                     NSLog(@"   Handle last scroll index if necessary");
-                                     NSString *currPageScrollIndex = [[NSUserDefaults standardUserDefaults] objectForKey:@"lastScrollIndex"];
-                                     if (currPageScrollIndex != nil) {
-                                         [self goDownInPage:currPageScrollIndex animating:YES];
-                                     }
-                                     currentPageFirstLoading = NO;
-                                 } else {
-                                     NSLog(@"   Handle saved hash reference if necessary");
-                                     [self handleAnchor:YES];
-                                 }
-                             }
-                             
-                             if ([toLoad count] == 0) {
-                                 NSLog(@"   There are no more pages to load, unlock pages");
-                                 currentPageIsLocked = NO;
-                                 scrollView.scrollEnabled = YES;
-                             }
-                         }];
+                         completion:^(BOOL finished) { [self webViewDidAppear:webView animating:animating]; }];
 	} else {
         
-		webView.alpha = 1.0;
-        if ([toLoad count] == 0) {
-            NSLog(@"   Page has appeared, there are no more pages to load, unlock pages");
-            currentPageIsLocked = NO;
-            scrollView.scrollEnabled = YES;
-        }
-        
-        if ([webView isEqual:currPage]) {
-            NSLog(@"   Handle saved hash reference if necessary");
-            [self handleAnchor:YES];
-        }
+        [scrollView addSubview:webView];
+        [self webViewDidAppear:webView animating:animating];
 	}
     
 }
-- (void)revealWebView:(UIWebView *)webView {
-    // Delayed run to fix the WebView-Flash-Of-Old-Content-Bug
-	[self webView:webView hidden:NO animating:YES];
+- (void)webViewDidAppear:(UIWebView *)webView animating:(BOOL)animating {
+        
+    if ([webView isEqual:currPage]) {
+        
+        // If is the first time i load something in the currPage web view...
+        if (currentPageFirstLoading) {
+            // ... check if there is a saved starting scroll index and set it
+            NSLog(@"   Handle last scroll index if necessary");
+            NSString *currPageScrollIndex = [[NSUserDefaults standardUserDefaults] objectForKey:@"lastScrollIndex"];
+            if (currPageScrollIndex != nil) {
+                [self goDownInPage:currPageScrollIndex animating:YES];
+            }
+            currentPageFirstLoading = NO;
+        } else {
+            NSLog(@"   Handle saved hash reference if necessary");
+            [self handleAnchor:YES];
+        }
+    }
 }
 
 #pragma mark - SNAPSHOTS
-- (BOOL)checkSnapshot:(int)pageNumber {
-    NSString *snapshotFile = [cachedSnapshotsPath stringByAppendingPathComponent:[NSString stringWithFormat:@"snap-%@-%i.jpg", [self getCurrentInterfaceOrientation], pageNumber]];
+- (BOOL)checkSnapshotForPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation {
+    NSString *snapshotFile = [cachedSnapshotsPath stringByAppendingPathComponent:[NSString stringWithFormat:@"snap-%@-%i.jpg", interfaceOrientation, pageNumber]];
     return [[NSFileManager defaultManager] fileExistsAtPath:snapshotFile];
 }
-- (void)takeSnapshot {
+- (void)takeSnapshotFromView:(UIWebView *)webView forPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation {
     
-    if (![self checkSnapshot:currentPageNumber]) {
+    if (![self checkSnapshotForPage:pageNumber andOrientation:interfaceOrientation] && [interfaceOrientation isEqualToString:[self getCurrentInterfaceOrientation]]) {
         
-        NSLog(@"• Taking snapshot of page %d", currentPageNumber);
+        NSLog(@"• Taking snapshot of page %d", pageNumber);
         
-        NSString *snapshotFile = [cachedSnapshotsPath stringByAppendingPathComponent:[NSString stringWithFormat:@"snap-%@-%i.jpg", [self getCurrentInterfaceOrientation], currentPageNumber]];
+        NSString *snapshotFile = [cachedSnapshotsPath stringByAppendingPathComponent:[NSString stringWithFormat:@"snap-%@-%i.jpg", interfaceOrientation, pageNumber]];
         UIImage *snapshot = nil;
-        CGSize pageSize = CGSizeMake(pageWidth, pageHeight);
         
-        UIGraphicsBeginImageContextWithOptions(pageSize, NO, 1.0);
-        [currPage.layer renderInContext:UIGraphicsGetCurrentContext()];
+        CGSize pageSize = CGSizeMake(screenBounds.size.width, screenBounds.size.height);
+        if ([interfaceOrientation isEqualToString:@"Landscape"]) {
+            pageSize = CGSizeMake(screenBounds.size.height, screenBounds.size.width);
+        }
+
+        UIGraphicsBeginImageContextWithOptions(webView.frame.size, NO, 1.0);
+        [webView.layer renderInContext:UIGraphicsGetCurrentContext()];
         snapshot = UIGraphicsGetImageFromCurrentImageContext();
         UIGraphicsEndImageContext();
         
         if (snapshot) {
             NSError *error = nil;
             if (![UIImageJPEGRepresentation(snapshot, 0.6) writeToFile:snapshotFile options:NSDataWritingAtomic error:&error]) {
-                NSLog(@"    Error while taking snapshot: %@", [error localizedDescription]);
+                NSLog(@"    Error while writing snapshot: %@", [error localizedDescription]);
             } else {
                 NSLog(@"    Snapshot succesfully saved to file %@", snapshotFile);
-                [self placeSnapshot:currentPageNumber];
+                [self placeSnapshotForView:webView andPage:pageNumber andOrientation:interfaceOrientation];
             }
         }
+        
+    } else {
+        
+        [self webView:webView hidden:NO animating:YES];
     }
+    
 }
-- (void)placeSnapshot:(int)pageNumber {
-   
- if ([self checkSnapshot:pageNumber]) {
-        
-        int i = pageNumber - 1;
-        NSString *orientation = [self getCurrentInterfaceOrientation];    
-        NSString *snapshotFile = [cachedSnapshotsPath stringByAppendingPathComponent:[NSString stringWithFormat:@"snap-%@-%i.jpg", orientation, pageNumber]];
-        
-        UIImage *snapshot = [UIImage imageWithContentsOfFile:snapshotFile];
-        UIImageView *snapView = [[UIImageView alloc] initWithImage:snapshot];
-        snapView.frame = CGRectMake(pageWidth * i, 0, pageWidth, pageHeight);
-        
-        if (pageDetails.count > i && [pageDetails objectAtIndex:i] != nil) {
-            NSMutableDictionary *details = [pageDetails objectAtIndex:i];            
-            [details setObject:snapView forKey:[NSString stringWithFormat:@"snap-%@", orientation]];
-        }
+- (void)placeSnapshotForView:(UIWebView *)webView andPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation {
+            
+    int i = pageNumber - 1;
+    NSString *snapshotFile = [cachedSnapshotsPath stringByAppendingPathComponent:[NSString stringWithFormat:@"snap-%@-%i.jpg", interfaceOrientation, pageNumber]];
+    
+    UIImageView *snapView = [[UIImageView alloc] initWithImage:[UIImage imageWithContentsOfFile:snapshotFile]];
+ 
+    CGSize pageSize = CGSizeMake(screenBounds.size.width, screenBounds.size.height);
+    if ([interfaceOrientation isEqualToString:@"Landscape"]) {
+        pageSize = CGSizeMake(screenBounds.size.height, screenBounds.size.width);
+    }
+    snapView.frame = CGRectMake(pageSize.width * i, 0, pageSize.width, pageSize.height);
+    
+    if (pageDetails.count > i && [pageDetails objectAtIndex:i] != nil) {
+        NSMutableDictionary *details = [pageDetails objectAtIndex:i];            
+        [details setObject:snapView forKey:[NSString stringWithFormat:@"snap-%@", interfaceOrientation]];
+    }
+    
+    if (![interfaceOrientation isEqualToString:[self getCurrentInterfaceOrientation]]) {
+        snapView.hidden = YES;
+    } else {
+        snapView.hidden = NO;
+        snapView.alpha = 0.0;
         
         [scrollView addSubview:snapView];
-        [snapView release];
+        [UIView animateWithDuration:0.5
+                         animations:^{ snapView.alpha = 1.0; }
+                         completion:^(BOOL finished) { [self webView:webView hidden:NO animating:NO]; }];
     }
+    
+    [snapView release];
 }
 
 #pragma mark - GESTURES

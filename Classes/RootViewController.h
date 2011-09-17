@@ -119,12 +119,12 @@
 
 #pragma mark - WEBVIEW
 - (void)webView:(UIWebView *)webView hidden:(BOOL)status animating:(BOOL)animating;
-- (void)revealWebView:(UIWebView *)webView;
+- (void)webViewDidAppear:(UIWebView *)webView animating:(BOOL)animating;
 
 #pragma mark - SNAPSHOTS
-- (BOOL)checkSnapshot:(int)pageNumber;
-- (void)takeSnapshot;
-- (void)placeSnapshot:(int)pageNumber;
+- (BOOL)checkSnapshotForPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation;
+- (void)takeSnapshotFromView:(UIWebView *)webView forPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation;
+- (void)placeSnapshotForView:(UIWebView *)webView andPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation;
 
 #pragma mark - GESTURES
 - (void)userDidTap:(UITouch *)touch;
