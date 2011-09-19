@@ -35,6 +35,9 @@
 
 @implementation Properties
 
+@synthesize manifest;
+@synthesize defaults;
+
 - (id)init {
     return [self initWithManifest:nil];
 }
@@ -44,7 +47,7 @@
     if (self) {
         NSString *filePath = [[NSBundle mainBundle] pathForResource:fileName ofType:@"json"];
         [self loadManifest:filePath];
-        defaults = [self initDefaults];
+        self.defaults = [self initDefaults];
     }
     return self;
 }
@@ -74,7 +77,6 @@
         }
     }
     va_end(args);
-
     
     return [self getFrom:manifest withFallback:defaults withKeys:keys];
 }
@@ -91,7 +93,7 @@
         } else {
             return rootObj;
         }
-    }    
+    }
 }
 
 - (id)getFrom:(NSDictionary *)dictionary withKeys:(NSArray *)keys {
@@ -106,10 +108,10 @@
 
 - (BOOL)loadManifest:(NSString *)filePath {
     if ([[NSFileManager defaultManager] fileExistsAtPath:filePath]) {
-        manifest = [self dictionaryFromManifestFile:filePath];
+        self.manifest = [self dictionaryFromManifestFile:filePath];
         return YES;
     } else {
-        manifest = [[NSDictionary alloc] init];
+        self.manifest = [[NSDictionary alloc] init];
         return NO;
     }
 }
