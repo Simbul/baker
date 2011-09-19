@@ -149,7 +149,7 @@
             if ([[NSFileManager defaultManager] fileExistsAtPath:bundleBookPath]) {
                 [self initBook:bundleBookPath];
             } else {
-              // Do something if there are no books available to show   
+              // Do something if there are no books available to show
             }
         }
 	}
@@ -161,15 +161,9 @@
     webView.delegate = self;
     webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 	
-    // TURNED OFF BECAUSE THE APP CRASH WHEN INVOKED MORE THAN ONE TIME
-    //webView.mediaPlaybackRequiresUserAction = ![[properties get:@"-baker-media-autoplay", nil] boolValue];
-    //webView.scalesPageToFit = [[properties get:@"zoomable", nil] boolValue];
-    //BOOL verticalBounce = [[properties get:@"-baker-vertical-bounce", nil] boolValue];
-    
-    //PLACEHOLDERS
-    webView.mediaPlaybackRequiresUserAction = YES;
-    webView.scalesPageToFit = NO;
-    BOOL verticalBounce = NO;
+    webView.mediaPlaybackRequiresUserAction = ![[properties get:@"-baker-media-autoplay", nil] boolValue];
+    webView.scalesPageToFit = [[properties get:@"zoomable", nil] boolValue];
+    BOOL verticalBounce = [[properties get:@"-baker-vertical-bounce", nil] boolValue];
     
     if (!verticalBounce) {
 		for (UIView *subview in webView.subviews) {
@@ -888,7 +882,6 @@
         [scrollView addSubview:webView];
         [self webViewDidAppear:webView animating:animating];
 	}
-    
 }
 - (void)webViewDidAppear:(UIWebView *)webView animating:(BOOL)animating {
         
@@ -949,13 +942,23 @@
             animating = YES;            
         }
     } else {
-        // Should be animating = NO as soon as the brief
         shouldRevealWebView = YES;
-        animating = YES;
+        animating = NO;
     }
     
     if (!currentPageHasChanged && shouldRevealWebView) {
-        [self webView:webView hidden:NO animating:animating];
+        
+        if (animating)
+        {
+            [self webView:webView hidden:NO animating:animating];
+        } 
+        else
+        {
+            webView.hidden = YES;
+            [scrollView addSubview:webView];
+            [webView performSelector:@selector(setHidden:) withObject:NO afterDelay:0.1];
+            [self webViewDidAppear:webView animating:animating];
+        }
     }
 }
 - (void)placeSnapshotForView:(UIWebView *)webView andPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation {
