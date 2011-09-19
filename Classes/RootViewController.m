@@ -116,6 +116,7 @@
         
         currentPageFirstLoading = YES;
         currentPageIsDelayingLoading = YES;
+        currentPageHasChanged = NO;
         currentPageIsLocked = NO;
         discardNextStatusBarToggle = NO;
                 
@@ -431,12 +432,16 @@
     
     BOOL pageChanged = NO;
 	
-    if (page < 1) {
+    if (page < 1)
+    {
 		currentPageNumber = 1;
-	} else if (page > totalPages) {
+	}
+    else if (page > totalPages)
+    {
 		currentPageNumber = totalPages;
-	} else if (page != currentPageNumber) {
-        
+	} 
+    else if (page != currentPageNumber)
+    {
         // While we are tapping, we don't want scrolling event to get in the way
         scrollView.scrollEnabled = NO;
         stackedScrollingAnimations++;
@@ -668,6 +673,7 @@
             [currPage release];
         }
         currPage = webView;
+        currentPageHasChanged = YES;
         
 	} else if (slot == +1) {
         
@@ -849,6 +855,7 @@
     
 	// Sent after a web view finishes loading content.
     if ([webView isEqual:currPage]) {
+        currentPageHasChanged = NO;
 		// Get current page max scroll offset
 		[self getPageHeight];
     }
@@ -910,38 +917,46 @@
 }
 - (void)takeSnapshotFromView:(UIWebView *)webView forPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation {
     
-    if (![self checkSnapshotForPage:pageNumber andOrientation:interfaceOrientation] && [interfaceOrientation isEqualToString:[self getCurrentInterfaceOrientation]]) {
+    BOOL shouldRevealWebView = NO;
+    BOOL animating = NO;
+    
+    if (![self checkSnapshotForPage:pageNumber andOrientation:interfaceOrientation]) {
         
         NSLog(@"• Taking snapshot of page %d", pageNumber);
         
         NSString *snapshotFile = [cachedSnapshotsPath stringByAppendingPathComponent:[NSString stringWithFormat:@"snap-%@-%i.jpg", interfaceOrientation, pageNumber]];
         UIImage *snapshot = nil;
         
-        CGSize pageSize = CGSizeMake(screenBounds.size.width, screenBounds.size.height);
-        if ([interfaceOrientation isEqualToString:@"Landscape"]) {
-            pageSize = CGSizeMake(screenBounds.size.height, screenBounds.size.width);
-        }
-
-        UIGraphicsBeginImageContextWithOptions(webView.frame.size, NO, 1.0);
-        [webView.layer renderInContext:UIGraphicsGetCurrentContext()];
-        snapshot = UIGraphicsGetImageFromCurrentImageContext();
-        UIGraphicsEndImageContext();
-        
-        if (snapshot) {
-            NSError *error = nil;
-            if (![UIImageJPEGRepresentation(snapshot, 0.6) writeToFile:snapshotFile options:NSDataWritingAtomic error:&error]) {
-                NSLog(@"    Error while writing snapshot: %@", [error localizedDescription]);
-            } else {
-                NSLog(@"    Snapshot succesfully saved to file %@", snapshotFile);
-                [self placeSnapshotForView:webView andPage:pageNumber andOrientation:interfaceOrientation];
+        if ([interfaceOrientation isEqualToString:[self getCurrentInterfaceOrientation]] && !currentPageHasChanged) {
+            
+            CGSize pageSize = CGSizeMake(screenBounds.size.width, screenBounds.size.height);
+            if ([interfaceOrientation isEqualToString:@"Landscape"]) {
+                pageSize = CGSizeMake(screenBounds.size.height, screenBounds.size.width);
             }
+            
+            UIGraphicsBeginImageContextWithOptions(webView.frame.size, NO, 1.0);
+            [webView.layer renderInContext:UIGraphicsGetCurrentContext()];
+            snapshot = UIGraphicsGetImageFromCurrentImageContext();
+            UIGraphicsEndImageContext();
+            
+            if (snapshot) {
+                [UIImageJPEGRepresentation(snapshot, 0.6) writeToFile:snapshotFile options:NSDataWritingAtomic error:nil];
+                NSLog(@"    Snapshot succesfully saved to file %@", snapshotFile);
+                [self placeSnapshotForView:webView andPage:pageNumber andOrientation:interfaceOrientation];                
+            }
+        } else {
+            shouldRevealWebView = YES;
+            animating = YES;            
         }
-        
     } else {
-        
-        [self webView:webView hidden:NO animating:YES];
+        // Should be animating = NO as soon as the brief
+        shouldRevealWebView = YES;
+        animating = YES;
     }
     
+    if (!currentPageHasChanged && shouldRevealWebView) {
+        [self webView:webView hidden:NO animating:animating];
+    }
 }
 - (void)placeSnapshotForView:(UIWebView *)webView andPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation {
             
@@ -961,16 +976,17 @@
         [details setObject:snapView forKey:[NSString stringWithFormat:@"snap-%@", interfaceOrientation]];
     }
     
-    if (![interfaceOrientation isEqualToString:[self getCurrentInterfaceOrientation]]) {
-        snapView.hidden = YES;
-    } else {
+    if ([interfaceOrientation isEqualToString:[self getCurrentInterfaceOrientation]] && !currentPageHasChanged) {
+        
         snapView.hidden = NO;
         snapView.alpha = 0.0;
         
         [scrollView addSubview:snapView];
         [UIView animateWithDuration:0.5
                          animations:^{ snapView.alpha = 1.0; }
-                         completion:^(BOOL finished) { [self webView:webView hidden:NO animating:NO]; }];
+                         completion:^(BOOL finished) { if (!currentPageHasChanged) { [self webView:webView hidden:NO animating:NO]; }}];
+    } else {
+        snapView.hidden = YES;
     }
     
     [snapView release];

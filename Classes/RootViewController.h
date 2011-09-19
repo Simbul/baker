@@ -59,6 +59,7 @@
     
 	BOOL currentPageFirstLoading;
 	BOOL currentPageIsDelayingLoading;
+    BOOL currentPageHasChanged;
     BOOL currentPageIsLocked;
 	BOOL discardNextStatusBarToggle;
     
