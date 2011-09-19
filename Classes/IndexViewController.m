@@ -31,9 +31,6 @@
 
 #import "IndexViewController.h"
 
-// Set to a value in pixels to force height for the index view, e.g. #define INDEX_HEIGHT 200
-#define INDEX_HEIGHT NULL
-
 
 @implementation IndexViewController
 
@@ -213,8 +210,9 @@
 }
 
 -(void)webViewDidFinishLoad:(UIWebView *)webView {
-    if (INDEX_HEIGHT != NULL) {
-        indexHeight = (int) INDEX_HEIGHT;
+    id height = [properties get:@"-baker-index-height", nil];
+    if (height != [NSNull null]) {
+        indexHeight = (int) [height integerValue];
     } else {
         indexHeight = [webView sizeThatFits:CGSizeZero].height;        
     }

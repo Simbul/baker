@@ -126,6 +126,7 @@
         "\"-baker-media-autoplay\": true,"
         "\"-baker-page-numbers-color\": \"#FFFFFF\","
         "\"-baker-page-numbers-alpha\": 0.3,"
+        "\"-baker-index-height\": null,"
         "\"-baker-index-bounce\": false"
     "}";
     NSError *e = NULL;
