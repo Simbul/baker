@@ -92,19 +92,28 @@
     STAssertEqualObjects(property, @"both", @"Should return expected default value for orientation");
     
     property = [properties get:@"zoomable", nil];
-    STAssertEquals([property boolValue], NO, @"Should return expected default value for pinchToZoom");
+    STAssertEquals([property boolValue], NO, @"Should return expected default value for zoomable");
     
     property = [properties get:@"-baker-background", nil];
     STAssertEqualObjects(property, @"#000000", @"Should return expected default value for -baker-background");
     
     property = [properties get:@"-baker-vertical-bounce", nil];
-    STAssertEquals([property boolValue], YES, @"Should return expected default value for verticalBounce");
+    STAssertEquals([property boolValue], YES, @"Should return expected default value for -baker-vertical-bounce");
     
-    property = [properties get:@"-baker-index-height", nil];
-    STAssertEqualObjects(property, [[NSNumber alloc] initWithInteger:150], @"Should return expected default value for indexHeight");
+    property = [properties get:@"-baker-page-numbers-color", nil];
+    STAssertEqualObjects(property, @"#FFFFFF", @"Should return expected default value for -baker-page-numbers-color");
+    
+    property = [properties get:@"-baker-page-numbers-alpha", nil];
+    STAssertEqualObjects(property, [NSDecimalNumber decimalNumberWithString:@"0.3"], @"Should return expected default value for -baker-page-numbers-alpha");
     
     property = [properties get:@"-baker-media-autoplay", nil];
-    STAssertEquals([property boolValue], YES, @"Should return expected default value for mediaAutoPlay");
+    STAssertEquals([property boolValue], YES, @"Should return expected default value for -baker-media-autoplay");
+    
+    property = [properties get:@"-baker-index-height", nil];
+    STAssertEquals(property, [NSNull null], @"Should return expected default value for -baker-index-height");
+    
+    property = [properties get:@"-baker-index-bounce", nil];
+    STAssertEquals([property boolValue], NO, @"Should return expected default value for -baker-index-bounce");
 }
 
 @end

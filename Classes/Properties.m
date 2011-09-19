@@ -122,7 +122,6 @@
         "\"zoomable\": false,"
         "\"-baker-background\": \"#000000\","
         "\"-baker-vertical-bounce\": true,"
-        "\"-baker-index-height\": 150,"
         "\"-baker-media-autoplay\": true,"
         "\"-baker-page-numbers-color\": \"#FFFFFF\","
         "\"-baker-page-numbers-alpha\": 0.3,"
