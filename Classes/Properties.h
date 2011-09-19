@@ -37,6 +37,9 @@
     NSDictionary *defaults;
 }
 
+@property (nonatomic, retain) NSDictionary *manifest;
+@property (nonatomic, retain) NSDictionary *defaults;
+
 - (id)initWithManifest:(NSString *)fileName;
 - (id)get:(NSString *)rootName, ...;
 - (id)getFrom:(NSDictionary *)dictionary withKeys:(NSArray *)keys;
