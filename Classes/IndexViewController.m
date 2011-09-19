@@ -33,7 +33,6 @@
 
 // Set to a value in pixels to force height for the index view, e.g. #define INDEX_HEIGHT 200
 #define INDEX_HEIGHT NULL
-#define INDEX_VIEW_BOUNCE NO
 
 
 @implementation IndexViewController
@@ -45,6 +44,9 @@
     webViewDelegate = delegate;
     disabled = NO;
     indexHeight = 0;
+    
+    // ****** INIT PROPERTIES
+    properties = [Properties properties];
     
     [self setPageSizeForOrientation:UIInterfaceOrientationPortrait];
     
@@ -85,8 +87,6 @@
     
     webView.backgroundColor = [UIColor clearColor];
     [webView setOpaque:NO];
-    
-    [self setBounceForWebView:webView bounces:INDEX_VIEW_BOUNCE];
     
     self.view = webView;
     [webView release];
@@ -188,19 +188,28 @@
     if(fromBundle){
         NSLog(@"Reloading index from bundle");
         path = [bookBundlePath stringByAppendingPathComponent:fileName];
-    }else{
-        
+    } else {
         path = [documentsBookPath stringByAppendingPathComponent:fileName];
     }
+    
+    [self assignProperties];
+    
     NSLog(@"Path to index view is %@", path);
     if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
         disabled = NO;
 		[(UIWebView *)self.view loadRequest:[NSURLRequest requestWithURL:[NSURL fileURLWithPath:path]]];
-	}
-    else{
+	} else {
         NSLog(@"Could not find index view at that path");
         disabled = YES;
     }
+}
+
+- (void)assignProperties {
+    UIWebView *webView = (UIWebView*) self.view;
+    webView.mediaPlaybackRequiresUserAction = ![[properties get:@"-baker-media-autoplay", nil] boolValue];
+    
+    BOOL bounce = [[properties get:@"-baker-index-bounce", nil] boolValue];
+    [self setBounceForWebView:webView bounces:bounce];
 }
 
 -(void)webViewDidFinishLoad:(UIWebView *)webView {

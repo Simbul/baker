@@ -125,7 +125,8 @@
         "\"-baker-index-height\": 150,"
         "\"-baker-media-autoplay\": true,"
         "\"-baker-page-numbers-color\": \"#FFFFFF\","
-        "\"-baker-page-numbers-alpha\": 0.3"
+        "\"-baker-page-numbers-alpha\": 0.3,"
+        "\"-baker-index-bounce\": false"
     "}";
     NSError *e = NULL;
     NSDictionary *ret;

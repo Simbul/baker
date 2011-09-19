@@ -30,6 +30,7 @@
 //  
 
 #import <UIKit/UIKit.h>
+#import "Properties.h"
 
 
 @interface IndexViewController : UIViewController <UIWebViewDelegate> {
@@ -43,6 +44,8 @@
 	int pageHeight;
     int indexHeight;
     BOOL disabled;
+    
+    Properties *properties;
 }
 
 - (id)initWithBookBundlePath:(NSString *)path documentsBookPath:(NSString *)docpath fileName:(NSString *)name webViewDelegate:(UIViewController *)delegate;
@@ -57,5 +60,6 @@
 - (void)rotateFromOrientation:(UIInterfaceOrientation)fromInterfaceOrientation toOrientation:(UIInterfaceOrientation)toInterfaceOrientation;
 - (void)fadeOut;
 - (void)fadeIn;
+- (void)assignProperties;
 
 @end

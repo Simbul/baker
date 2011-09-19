@@ -11,6 +11,7 @@
 
     "-baker-background": "#000000",
     "-baker-vertical-bounce": true,
+    "-baker-index-bounce": false,
     "-baker-index-height": 300,
     "-baker-media-autoplay": true,
 
