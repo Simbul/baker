@@ -70,6 +70,8 @@
 @synthesize currPage;
 @synthesize currentPageNumber;
 @synthesize availableOrientation;
+@synthesize backgroundImageLandscape;
+@synthesize backgroundImagePortrait;
 
 #pragma mark - INIT
 - (id)init {
@@ -216,6 +218,16 @@
             value.hidden = YES;
         }
     }
+    
+    NSString *backgroundPathLandscape = [properties get:@"-baker-background-image-landscape", nil];
+    if (backgroundPathLandscape != NULL) {
+        backgroundImageLandscape = [UIImage imageNamed:backgroundPathLandscape];
+    }
+    NSString *backgroundPathPortrait = [properties get:@"-baker-background-image-portrait", nil];
+    if (backgroundPathPortrait != NULL) {
+        backgroundImagePortrait = [UIImage imageNamed:backgroundPathPortrait];
+    }
+    
     [self initPageDetailsForPages:totalPages];
 
     scrollView.contentSize = CGSizeMake(pageWidth * totalPages, pageHeight);
@@ -374,6 +386,15 @@
                             value.frame = frame;
                             value.hidden = NO;
                         
+                        } else if ([key isEqualToString:@"background"]) {
+
+                            [self setImageFor:(UIImageView *)value];
+                            frame.origin.x = pageWidth * i;
+                            frame.size.width = pageWidth;
+                            frame.size.height = pageHeight;
+                            value.frame = frame;
+                            value.hidden = NO;
+                            
                         } else {
                             
                             value.hidden = YES;
@@ -383,6 +404,11 @@
             }
                         
         } else {
+            // ****** Background
+            UIImageView *backgroundView = [[UIImageView alloc] initWithFrame:CGRectMake(pageWidth * i, 0, pageWidth, pageHeight)];
+            [self setImageFor:backgroundView];
+            [scrollView addSubview:backgroundView];
+            [backgroundView release];
         
             // ****** Spinners
             UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
@@ -416,10 +442,23 @@
             [scrollView addSubview:title];
             [title release];
             
-            NSMutableDictionary *details = [NSMutableDictionary dictionaryWithObjectsAndKeys:spinner, @"spinner", number, @"number", title, @"title", nil];
+            // ****** Store instances for later use
+            NSMutableDictionary *details = [NSMutableDictionary dictionaryWithObjectsAndKeys:spinner, @"spinner", number, @"number", title, @"title", backgroundView, @"background", nil];
             [pageDetails insertObject:details atIndex:i];
         }
 	}
+}
+
+- (void)setImageFor:(UIImageView *)view {
+    if (pageWidth > pageHeight && backgroundImageLandscape != NULL) {
+        // Landscape
+        view.image = backgroundImageLandscape;
+    } else if (pageWidth < pageHeight && backgroundImagePortrait != NULL) {
+        // Portrait
+        view.image = backgroundImagePortrait;
+    } else {
+        view.image = NULL;
+    }
 }
 
 #pragma mark - LOADING

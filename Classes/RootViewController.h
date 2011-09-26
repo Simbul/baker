@@ -50,6 +50,8 @@
 	NSMutableArray *pages;
     NSMutableArray *toLoad;
     NSMutableArray *pageDetails;
+    UIImage *backgroundImageLandscape;
+    UIImage *backgroundImagePortrait;
 
 	NSString *pageNameFromURL;
 	NSString *anchorFromURL;
@@ -96,6 +98,8 @@
 @property (nonatomic, retain) UIScrollView *scrollView;
 @property (nonatomic, retain) UIWebView *currPage;
 @property (nonatomic, retain) NSString *availableOrientation;
+@property (nonatomic, retain) UIImage *backgroundImageLandscape;
+@property (nonatomic, retain) UIImage *backgroundImagePortrait;
 @property int currentPageNumber;
 
 #pragma mark - INIT
@@ -106,6 +110,7 @@
 - (void)resetPageDetails;
 - (void)initBook:(NSString *)path;
 - (void)initPageDetailsForPages:(int)count;
+- (void)setImageFor:(UIImageView *)view;
 
 #pragma mark - LOADING
 - (BOOL)changePage:(int)page;

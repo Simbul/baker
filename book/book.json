@@ -13,6 +13,7 @@
     "-baker-vertical-bounce": true,
     "-baker-index-height": 202,
     "-baker-media-autoplay": true,
+    "-baker-background-image-portrait": "book/background-portrait.png",
 
     "contents": [
         "Book Cover.html",
