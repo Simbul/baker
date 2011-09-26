@@ -11,24 +11,26 @@
 
     "-baker-background": "#000000",
     "-baker-vertical-bounce": true,
-    "-baker-index-bounce": false,
-    "-baker-index-height": null,
+    "-baker-index-height": 202,
     "-baker-media-autoplay": true,
 
     "contents": [
         "Book Cover.html",
-        "Chapter 01.html",
-        "Chapter 02.html",
-        "Chapter 03.html",
-        "Chapter 04.html",
-        "Chapter 05.html",
-        "Chapter 06.html",
-        "Chapter 07.html",
-        "Chapter 08.html",
-        "Chapter 09.html",
-        "Chapter 10.html",
-        "Chapter 11.html",
-        "Chapter 12.html",
-        "Colophon.html"
+        "Book Index.html",
+        "Part1-01.html",
+        "Part1-02.html",
+        "Part1-03.html",
+        "Part1-04.html",
+        "Part1-05.html",
+        "Part1-06.html",
+        "Part1-07.html",
+        "Part2-01.html",
+        "Part2-02.html",
+        "Part2-03.html",
+        "Part2-04.html",
+        "Part2-05.html",
+        "Part2-06.html",
+        "Part2-07.html",
+        "Tail.html"
     ]
 }

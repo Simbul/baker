@@ -1,0 +1,56 @@
+/*
+ * Baker Ebook Framework - iPad Sized Page CSS
+ * last update: 2010-10-03
+ * 
+ * Copyright (C) 2010 by Davide S. Casali <folletto AT gmail DOT com>
+ * Released under BSD License
+ * 
+ * USAGE:
+ * Wrap all your book content in a <div> with id="page":
+ *    <div id="page">
+ *      <!-- content -->
+ *    </div>
+ */
+
+
+/* Show only on non-iPad portrait browsers/orientations */
+@media not screen and (device-width: 768px) and (orientation: portrait) {
+  
+  body {
+    background: #dcdcdc !important;
+  }
+
+  #page {
+    -webkit-box-shadow: 0px 5px 35px #000000;
+    border-radius: 1px;
+    -moz-border-radius: 1px;
+  
+    background: #ffffff;
+    margin: 30px auto;
+    min-height: 1004px; /* top bar excluded */
+  
+    overflow: hidden;
+    padding: 0;
+    position: relative;
+    width: 768px;
+  }
+
+  /* iPad
+  body section {
+    -webkit-box-shadow: 0px 5px 35px #000000;
+    border-top: 100px solid #000000;
+    border-bottom: 100px solid #000000;
+    border-left: 85px solid #000000;
+    border-right: 85px solid #000000;
+  
+    border-radius: 60px;
+    -moz-border-radius: 60px;
+  
+    position: relative;
+  
+    width: 768px;
+    min-height: 1024px;
+    margin: 30px auto;
+  }
+  /**/
+}
