@@ -61,9 +61,11 @@
 	BOOL currentPageIsDelayingLoading;
     BOOL currentPageHasChanged;
     BOOL currentPageIsLocked;
-	BOOL discardNextStatusBarToggle;
     
-    UIScrollView *scrollView;    
+	BOOL discardNextStatusBarToggle;
+    BOOL discardPostLoadingOperations;
+    
+    UIScrollView *scrollView;
 	UIWebView *prevPage;
 	UIWebView *currPage;
 	UIWebView *nextPage;

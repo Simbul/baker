@@ -118,7 +118,9 @@
         currentPageIsDelayingLoading = YES;
         currentPageHasChanged = NO;
         currentPageIsLocked = NO;
+        
         discardNextStatusBarToggle = NO;
+        discardPostLoadingOperations = NO;
                 
         // ****** LISTENER FOR DOWNLOAD NOTIFICATION
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(downloadBook:) name:@"downloadNotification" object:nil];
@@ -692,6 +694,8 @@
         prevPage = webView;
     }
     
+    ((UIScrollView *)[[webView subviews] objectAtIndex:0]).pagingEnabled = YES;
+    
     [scrollView addSubview:webView];
 	[self loadWebView:webView withPage:page];
 }
@@ -749,84 +753,120 @@
 
 #pragma mark - WEBVIEW
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
+        
 	// Sent before a web view begins loading content, useful to trigger actions before the WebView.	
 	NSLog(@"• Should webView load the page ?");
+    NSURL *url = [request URL];
+    discardPostLoadingOperations = NO;
     
-    if ([webView isEqual:prevPage]) {
+    if ([webView isEqual:prevPage])
+    {
         NSLog(@"    Page is prev page --> load page");
         return YES;
-    } else if ([webView isEqual:nextPage]) {
+    } 
+    else if ([webView isEqual:nextPage])
+    {
         NSLog(@"    Page is next page --> load page");
         return YES;
-    } else if (currentPageIsDelayingLoading) {		
+    } 
+    else if (currentPageIsDelayingLoading)
+    {		
 		NSLog(@"    Page is current page and current page IS delaying loading --> load page");
 		currentPageIsDelayingLoading = NO;
 		return YES;
-	} else {
-		
+	}
+    else
+    {
 		[self hideStatusBarDiscardingToggle:YES];
-		
-		NSURL *url = [request URL];
-		NSLog(@"    Page is current page and current page IS NOT delaying loading --> handle index or clicked link: %@", [url absoluteString]);
-		
+        
 		// ****** Handle URI schemes
-		if (url) {
-			// Existing, checking schemes...
-			if([[url lastPathComponent] isEqualToString:INDEX_FILE_NAME]){
+		if (url)
+        {
+			// Existing, checking if index...
+            if([[url lastPathComponent] isEqualToString:INDEX_FILE_NAME])
+            {
                 NSLog(@"    Page is index --> load index");
-                return YES; // Let the index view load
+                return YES;
             }
-			if ([[url scheme] isEqualToString:@"file"]) {
-				// ****** Handle: file://
-				NSLog(@"    Page is a link with scheme file:// --> load internal link");
-				
-				anchorFromURL = [[url fragment] retain];
-				NSString *file = [[url relativePath] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-				
-                int page = (int)[pages indexOfObject:file] + 1;
+            else
+            {
+                NSLog(@"    Page is current page and current page IS NOT delaying loading --> handle clicked link: %@", [url absoluteString]);
                 
-				if (![self changePage:page]) {
-					[self handleAnchor:YES];
-				}
-				
-			} else if ([[url scheme] isEqualToString:@"book"]) {
-				// ****** Handle: book://
-				NSLog(@"    Page is a link with scheme book:// --> download new book");
-				
-				if ([[url host] isEqualToString:@"local"] && [[NSFileManager defaultManager] fileExistsAtPath:bundleBookPath]) {
-					// *** Back to bundled book
-					feedbackAlert = [[UIAlertView alloc] initWithTitle:@""
-															   message:[NSString stringWithFormat:CLOSE_BOOK_MESSAGE]
-															  delegate:self
-													 cancelButtonTitle:ALERT_FEEDBACK_CANCEL
-													 otherButtonTitles:CLOSE_BOOK_CONFIRM, nil];
-					[feedbackAlert show];
-					[feedbackAlert release];
+                // Not index, checking scheme...
+                if ([[url scheme] isEqualToString:@"file"])
+                {
+                    // ****** Handle: file://
+                    NSLog(@"    Page is a link with scheme file:// --> load internal link");
                     
-				} else {
-					
-					if ([[url pathExtension] isEqualToString:@"html"]) {
-						anchorFromURL = [[url fragment] retain];
-						pageNameFromURL = [[[url lastPathComponent] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding] retain];
-						NSString *tmpUrl = [[url URLByDeletingLastPathComponent] absoluteString];
-						url = [NSURL URLWithString:[tmpUrl stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"/"]]];						
-					}
-					
-					// *** Download book
-					URLDownload = [[@"http:" stringByAppendingString:[url resourceSpecifier]] retain];
-					
-					if ([[[NSURL URLWithString:URLDownload] pathExtension] isEqualToString:@""]) {
-						URLDownload = [[URLDownload stringByAppendingString:@".hpub"] retain];
-					}
-					
-					[self downloadBook:nil];
-				}
-			} else {
-				// ****** Handle: *
-                NSLog(@"    Page is a external link --> open Safari");
-				[[UIApplication sharedApplication] openURL:[request URL]];
-			}
-		}
+                    anchorFromURL = [[url fragment] retain];
+                    NSString *file = [[url relativePath] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+                    
+                    int page = (int)[pages indexOfObject:file] + 1;
+                    
+                    if (![self changePage:page])
+                    {
+                        if (anchorFromURL == nil) {
+                            return YES;
+                        }
+                        
+                        [self handleAnchor:YES];                        
+                    }
+                }
+                else if ([[url scheme] isEqualToString:@"book"])
+                {
+                    // ****** Handle: book://
+                    NSLog(@"    Page is a link with scheme book:// --> download new book");
+                    
+                    if ([[url host] isEqualToString:@"local"] && [[NSFileManager defaultManager] fileExistsAtPath:bundleBookPath]) {
+                        // *** Back to bundled book
+                        feedbackAlert = [[UIAlertView alloc] initWithTitle:@""
+                                                                   message:[NSString stringWithFormat:CLOSE_BOOK_MESSAGE]
+                                                                  delegate:self
+                                                         cancelButtonTitle:ALERT_FEEDBACK_CANCEL
+                                                         otherButtonTitles:CLOSE_BOOK_CONFIRM, nil];
+                        [feedbackAlert show];
+                        [feedbackAlert release];
+                        
+                    } else {
+                        
+                        if ([[url pathExtension] isEqualToString:@"html"]) {
+                            anchorFromURL = [[url fragment] retain];
+                            pageNameFromURL = [[[url lastPathComponent] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding] retain];
+                            NSString *tmpUrl = [[url URLByDeletingLastPathComponent] absoluteString];
+                            url = [NSURL URLWithString:[tmpUrl stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"/"]]];						
+                        }
+                        
+                        // ****** Download book
+                        URLDownload = [[@"http:" stringByAppendingString:[url resourceSpecifier]] retain];
+                        
+                        if ([[[NSURL URLWithString:URLDownload] pathExtension] isEqualToString:@""]) {
+                            URLDownload = [[URLDownload stringByAppendingString:@".hpub"] retain];
+                        }
+                        
+                        [self downloadBook:nil];
+                    }
+                } 
+                else 
+                {
+                    NSString *params = [url query];
+                    if (params != nil)
+                    {                        
+                        NSRegularExpression *referrerRegex = [NSRegularExpression regularExpressionWithPattern:@"referrer=Baker" options:NSRegularExpressionCaseInsensitive error:NULL];
+                        NSUInteger matches = [referrerRegex numberOfMatchesInString:params options:0 range:NSMakeRange(0, [params length])];
+                        
+                        if (matches > 0) {
+                            NSLog(@"    Link contain param \"referrer=Baker\" --> open link in Safari");
+                            [[UIApplication sharedApplication] openURL:[request URL]];
+                            return NO;
+                        }
+                    }
+                    
+                    NSLog(@"    Link doesn't contain param \"referrer=Baker\" --> open link in Page");
+                    discardPostLoadingOperations = YES;
+                    return YES;
+                }
+            }
+        }
 		
 		return NO;
 	}
@@ -847,22 +887,24 @@
 - (void)webViewDidFinishLoad:(UIWebView *)webView {
     NSLog(@"• Page did finish load");
     
-	// Sent after a web view finishes loading content.
-    if ([webView isEqual:currPage]) {
-        currentPageHasChanged = NO;
-		// Get current page max scroll offset
-		[self getPageHeight];
+    if (!discardPostLoadingOperations)
+    {
+        if ([webView isEqual:currPage]) {
+            currentPageHasChanged = NO;
+            // Get current page max scroll offset
+            [self getPageHeight];
+        }
+        
+        [webView removeFromSuperview];
+        webView.hidden = NO;
+        
+        if (ENABLE_THREE_CARD) {
+            [self webView:webView hidden:NO animating:YES];
+        } else {
+            [self takeSnapshotFromView:webView forPage:currentPageNumber andOrientation:[self getCurrentInterfaceOrientation]];
+        }
+        [self handlePageLoading];
     }
-    
-    [webView removeFromSuperview];
-    webView.hidden = NO;
-    
-    if (ENABLE_THREE_CARD) {
-        [self webView:webView hidden:NO animating:YES];
-    } else {
-        [self takeSnapshotFromView:webView forPage:currentPageNumber andOrientation:[self getCurrentInterfaceOrientation]];
-    }
-    [self handlePageLoading];
 }
 - (void)webView:(UIWebView *)webView hidden:(BOOL)status animating:(BOOL)animating {
 	
