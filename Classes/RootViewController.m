@@ -694,8 +694,6 @@
         prevPage = webView;
     }
     
-    ((UIScrollView *)[[webView subviews] objectAtIndex:0]).pagingEnabled = YES;
-    
     [scrollView addSubview:webView];
 	[self loadWebView:webView withPage:page];
 }
