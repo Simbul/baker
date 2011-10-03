@@ -37,12 +37,6 @@
 #import "PageTitleLabel.h"
 #import "Utils.h"
 
-// THREE CARD
-// Enable three card loading method.
-//  NO (Default) - Only the current page is load.
-//  YES - Three pages (current, next and previous) are loaded.
-#define ENABLE_THREE_CARD NO
-
 // ALERT LABELS
 #define OPEN_BOOK_MESSAGE @"Do you want to download "
 #define OPEN_BOOK_CONFIRM @"Open book"
@@ -86,7 +80,11 @@
         
         // ****** ORIENTATION
         self.availableOrientation = [properties get:@"orientation", nil];
-        NSLog(@"available orientation %@", availableOrientation);
+        NSLog(@"available orientation: %@", availableOrientation);
+        
+        // ****** RENDERING
+        renderingType = [[[properties get:@"-baker-rendering", nil] retain] autorelease];
+        NSLog(@"rendering type: %@", renderingType);
       
         // ****** DEVICE SCREEN BOUNDS
         screenBounds = [[UIScreen mainScreen] bounds];
@@ -316,7 +314,7 @@
         [self resetScrollView];        
         [self addPageLoading:0];
         
-        if (ENABLE_THREE_CARD) {
+        if ([renderingType isEqualToString:@"three-cards"]) {
             if (currentPageNumber != totalPages) {
                 [self addPageLoading:+1];
             }
@@ -513,7 +511,7 @@
         
         NSLog(@"• Goto page: book/%@", [[NSFileManager defaultManager] displayNameAtPath:path]);
         
-        if (ENABLE_THREE_CARD)
+        if ([renderingType isEqualToString:@"three-cards"])
         {
             // ****** THREE CARD VIEW METHOD
             // ****** Calculate move direction and normalize tapNumber
@@ -939,7 +937,7 @@
         [webView removeFromSuperview];
         webView.hidden = NO;
         
-        if (ENABLE_THREE_CARD) {
+        if ([renderingType isEqualToString:@"three-cards"]) {
             [self webView:webView hidden:NO animating:YES];
         } else {
             [self takeSnapshotFromView:webView forPage:currentPageNumber andOrientation:[self getCurrentInterfaceOrientation]];

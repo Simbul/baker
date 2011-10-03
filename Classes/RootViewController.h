@@ -46,6 +46,7 @@
     NSString *bundleBookPath;
     
     NSString *availableOrientation;
+    NSString *renderingType;
 	
 	NSMutableArray *pages;
     NSMutableArray *toLoad;

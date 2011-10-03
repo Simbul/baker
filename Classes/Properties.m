@@ -127,7 +127,8 @@
         "\"-baker-page-numbers-alpha\": 0.3,"
         "\"-baker-index-height\": null,"
         "\"-baker-index-bounce\": false,"
-        "\"-baker-vertical-pagination\": false"
+        "\"-baker-vertical-pagination\": false,"
+        "\"-baker-rendering\": \"screenshots\""
     "}";
     NSError *e = NULL;
     NSDictionary *ret;
