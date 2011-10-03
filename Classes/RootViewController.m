@@ -840,13 +840,17 @@
                     
                     int page = (int)[pages indexOfObject:file] + 1;
                     
-                    if (![self changePage:page])
+                    if (![self changePage:page] && ![webView isEqual:indexViewController.view])
                     {
                         if (anchorFromURL == nil) {
                             return YES;
                         }
                         
                         [self handleAnchor:YES];                        
+                    }
+                    else if ([webView isEqual:indexViewController.view])
+                    {
+                        discardNextStatusBarToggle = NO;
                     }
                 }
                 else if ([[url scheme] isEqualToString:@"book"])
