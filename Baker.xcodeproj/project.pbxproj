@@ -60,6 +60,7 @@
 		D281D06E13549F08009F1B11 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F242ED911FB344D00641757 /* QuartzCore.framework */; };
 		D2A198AA1375972600C6BE2F /* IndexViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D2A198A91375972600C6BE2F /* IndexViewController.m */; };
 		D2A58308141EA59100E91BBF /* Utils.m in Sources */ = {isa = PBXBuildFile; fileRef = D2A58307141EA59100E91BBF /* Utils.m */; };
+		D2B70D54143A5E0100241A28 /* GTMNSString+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = D2B70D53143A5E0100241A28 /* GTMNSString+HTML.m */; };
 		F4EC203812862D4D008E94D1 /* InterceptorWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = F4EC203712862D4D008E94D1 /* InterceptorWindow.m */; };
 /* End PBXBuildFile section */
 
@@ -145,6 +146,9 @@
 		D2A198A91375972600C6BE2F /* IndexViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IndexViewController.m; sourceTree = "<group>"; };
 		D2A58306141EA59100E91BBF /* Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Utils.h; path = lib/Utils.h; sourceTree = "<group>"; };
 		D2A58307141EA59100E91BBF /* Utils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Utils.m; path = lib/Utils.m; sourceTree = "<group>"; };
+		D2B70D52143A5E0100241A28 /* GTMNSString+HTML.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "GTMNSString+HTML.h"; path = "lib/GTMNSString+HTML.h"; sourceTree = "<group>"; };
+		D2B70D53143A5E0100241A28 /* GTMNSString+HTML.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "GTMNSString+HTML.m"; path = "lib/GTMNSString+HTML.m"; sourceTree = "<group>"; };
+		D2B70D56143A5E3E00241A28 /* GTMDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GTMDefines.h; path = lib/GTMDefines.h; sourceTree = "<group>"; };
 		F4EC203612862D4D008E94D1 /* InterceptorWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InterceptorWindow.h; sourceTree = "<group>"; };
 		F4EC203712862D4D008E94D1 /* InterceptorWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InterceptorWindow.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -360,6 +364,9 @@
 		D2B5B1ED141EA44800C8C333 /* lib */ = {
 			isa = PBXGroup;
 			children = (
+				D2B70D56143A5E3E00241A28 /* GTMDefines.h */,
+				D2B70D52143A5E0100241A28 /* GTMNSString+HTML.h */,
+				D2B70D53143A5E0100241A28 /* GTMNSString+HTML.m */,
 				D2A58306141EA59100E91BBF /* Utils.h */,
 				D2A58307141EA59100E91BBF /* Utils.m */,
 			);
@@ -497,6 +504,7 @@
 				D20915C013CB9C7800D3B55B /* Properties.m in Sources */,
 				D2690B6113EB46A30011CC7D /* PageTitleLabel.m in Sources */,
 				D2A58308141EA59100E91BBF /* Utils.m in Sources */,
+				D2B70D54143A5E0100241A28 /* GTMNSString+HTML.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

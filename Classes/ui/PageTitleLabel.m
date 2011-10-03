@@ -31,6 +31,7 @@
 
 #import "PageTitleLabel.h"
 #import "Utils.h"
+#import "GTMNSString+HTML.h"
 
 @implementation PageTitleLabel
 
@@ -45,7 +46,7 @@
     NSRegularExpression *titleRegex = [NSRegularExpression regularExpressionWithPattern:@"<title>(.*)</title>" options:NSRegularExpressionCaseInsensitive error:NULL];
     NSRange matchRange = [[titleRegex firstMatchInString:fileContent options:0 range:NSMakeRange(0, [fileContent length])] rangeAtIndex:1];
     if (!NSEqualRanges(matchRange, NSMakeRange(NSNotFound, 0))) {
-        NSString *titleText = [fileContent substringWithRange:matchRange];
+        NSString *titleText = [[fileContent substringWithRange:matchRange] gtm_stringByUnescapingFromHTML];
 
         CGSize titleDimension = CGSizeMake(672, 330);
         UIFont *titleFont = [UIFont fontWithName:@"Helvetica" size:24.0];
