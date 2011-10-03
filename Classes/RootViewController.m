@@ -733,6 +733,9 @@
         prevPage = webView;
     }
     
+    
+    ((UIScrollView *)[[webView subviews] objectAtIndex:0]).pagingEnabled = [[properties get:@"-baker-vertical-pagination", nil] boolValue];
+
     [scrollView addSubview:webView];
 	[self loadWebView:webView withPage:page];
 }

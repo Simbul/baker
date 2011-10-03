@@ -114,6 +114,9 @@
     
     property = [properties get:@"-baker-index-bounce", nil];
     STAssertEquals([property boolValue], NO, @"Should return expected default value for -baker-index-bounce");
+    
+    property = [properties get:@"-baker-vertical-pagination", nil];
+    STAssertEquals([property boolValue], NO, @"Should return expected default value for -baker-vertical-pagination");
 }
 
 @end
