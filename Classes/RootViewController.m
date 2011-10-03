@@ -122,7 +122,6 @@
         currentPageIsLocked = NO;
         
         discardNextStatusBarToggle = NO;
-        discardPostLoadingOperations = NO;
                 
         // ****** LISTENER FOR DOWNLOAD NOTIFICATION
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(downloadBook:) name:@"downloadNotification" object:nil];
@@ -797,7 +796,6 @@
 	// Sent before a web view begins loading content, useful to trigger actions before the WebView.	
 	NSLog(@"• Should webView load the page ?");
     NSURL *url = [request URL];
-    discardPostLoadingOperations = NO;
     
     if ([webView isEqual:prevPage])
     {
@@ -906,7 +904,6 @@
                     }
                     
                     NSLog(@"    Link doesn't contain param \"referrer=Baker\" --> open link in Page");
-                    discardPostLoadingOperations = YES;
                     return YES;
                 }
             }
@@ -931,7 +928,7 @@
 - (void)webViewDidFinishLoad:(UIWebView *)webView {
     NSLog(@"• Page did finish load");
     
-    if (!discardPostLoadingOperations)
+    if (webView.hidden == YES)
     {
         if ([webView isEqual:currPage]) {
             currentPageHasChanged = NO;

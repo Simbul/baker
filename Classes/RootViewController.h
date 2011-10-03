@@ -65,7 +65,6 @@
     BOOL currentPageIsLocked;
     
 	BOOL discardNextStatusBarToggle;
-    BOOL discardPostLoadingOperations;
     
     UIScrollView *scrollView;
 	UIWebView *prevPage;
