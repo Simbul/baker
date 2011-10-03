@@ -181,7 +181,7 @@
     
     pageWidth = screenBounds.size.width;
     pageHeight = screenBounds.size.height;
-	if ([orientation isEqualToString:@"Landscape"]) {
+	if ([orientation isEqualToString:@"landscape"]) {
 		pageWidth = screenBounds.size.height;
 		pageHeight = screenBounds.size.width;
 	}
@@ -1006,7 +1006,7 @@
         if ([interfaceOrientation isEqualToString:[self getCurrentInterfaceOrientation]] && !currentPageHasChanged) {
             
             CGSize pageSize = CGSizeMake(screenBounds.size.width, screenBounds.size.height);
-            if ([interfaceOrientation isEqualToString:@"Landscape"]) {
+            if ([interfaceOrientation isEqualToString:@"landscape"]) {
                 pageSize = CGSizeMake(screenBounds.size.height, screenBounds.size.width);
             }
             
@@ -1052,7 +1052,7 @@
     UIImageView *snapView = [[UIImageView alloc] initWithImage:[UIImage imageWithContentsOfFile:snapshotFile]];
  
     CGSize pageSize = CGSizeMake(screenBounds.size.width, screenBounds.size.height);
-    if ([interfaceOrientation isEqualToString:@"Landscape"]) {
+    if ([interfaceOrientation isEqualToString:@"landscape"]) {
         pageSize = CGSizeMake(screenBounds.size.height, screenBounds.size.width);
     }
     snapView.frame = CGRectMake(pageSize.width * i, 0, pageSize.width, pageSize.height);
@@ -1314,7 +1314,7 @@
 
 #pragma mark - ORIENTATION
 - (NSString *)getCurrentInterfaceOrientation {
-    if ([availableOrientation isEqualToString:@"Portrait"] || [availableOrientation isEqualToString:@"Landscape"])
+    if ([availableOrientation isEqualToString:@"portrait"] || [availableOrientation isEqualToString:@"landscape"])
     {
         return availableOrientation;
     } 
@@ -1322,17 +1322,17 @@
 		// WARNING!!! Seems like checking [[UIDevice currentDevice] orientation] against "UIInterfaceOrientationPortrait" is broken (return FALSE with the device in portrait orientation)
 		// Safe solution: always check if the device is in landscape orientation, if FALSE then it's in portrait.
         if (UIInterfaceOrientationIsLandscape(self.interfaceOrientation)) {
-            return @"Landscape";
+            return @"landscape";
         } else {
-            return @"Portrait";
+            return @"portrait";
         }
 	}
 }
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
 	// Overriden to allow any orientation.
-	if ([availableOrientation isEqualToString:@"Portrait"]) {
+	if ([availableOrientation isEqualToString:@"portrait"]) {
 		return (interfaceOrientation == UIInterfaceOrientationPortrait || interfaceOrientation == UIInterfaceOrientationPortraitUpsideDown);
-	} else if ([availableOrientation isEqualToString:@"Landscape"]) {
+	} else if ([availableOrientation isEqualToString:@"landscape"]) {
 		return (interfaceOrientation == UIInterfaceOrientationLandscapeRight || interfaceOrientation == UIInterfaceOrientationLandscapeLeft);
 	} else {
 		return YES;
