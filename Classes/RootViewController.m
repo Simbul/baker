@@ -280,13 +280,17 @@
     
     [self resetPageDetails];
 	
-	NSArray *dirContent = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:path error:nil];
-	for (NSString *fileName in dirContent) {
-		if ([[fileName pathExtension] isEqualToString:@"html"] && ![fileName isEqualToString:INDEX_FILE_NAME]) {
-			[pages addObject:[path stringByAppendingPathComponent:fileName]];
+    NSEnumerator *pagesEnumerator = [[properties get:@"contents", nil] objectEnumerator];
+    id page;
+    while ((page = [pagesEnumerator nextObject])) {
+        NSString* pageFile = [path stringByAppendingPathComponent:page];
+        if ([[NSFileManager defaultManager] fileExistsAtPath:pageFile]) {
+            [pages addObject:pageFile];
+        } else {
+            NSLog(@"Page %@ does not exist in %@", page, path);
         }
-	}
-		
+    }
+    
 	totalPages = [pages count];
 	NSLog(@"    Pages in this book: %d", totalPages);
 	

@@ -59,11 +59,13 @@
                         @"blah",
                         [[NSNumber alloc] initWithInteger:1],
                         [NSNumber numberWithBool:YES],
+                        [NSArray arrayWithObjects:@"one", @"two", nil],
                         nil];
     NSArray *keys = [NSArray arrayWithObjects:
                      @"string",
                      @"number",
                      @"boolean",
+                     @"array",
                      nil];
     NSDictionary *dict = [[NSDictionary alloc] initWithObjects:objects forKeys:keys];
     
@@ -82,6 +84,10 @@
     queryKeys = [NSArray arrayWithObjects:@"boolean", nil];
     property = [properties getFrom:dict withKeys:queryKeys];
     STAssertEquals([property boolValue], YES, @"Should return an int corresponding to a boolean");
+    
+    queryKeys = [NSArray arrayWithObjects:@"array", nil];
+    property = [properties getFrom:dict withKeys:queryKeys];
+    STAssertEquals(property, [objects objectAtIndex:3], @"Should return an int corresponding to an array");
 }
 
 - (void)testDefaults {
