@@ -14,6 +14,7 @@
     "-baker-index-height": 202,
     "-baker-media-autoplay": true,
     "-baker-background-image-portrait": "book/gfx/background-portrait.png",
+    "-baker-background-image-landscape": "book/gfx/background-landscape.png",
 
     "contents": [
         "Book Cover.html",
