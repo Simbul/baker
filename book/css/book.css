@@ -6,17 +6,6 @@
  * 
  */
 
-
-/****************************************************************************************************
- * Media queries
- * 
-@import url(baker-css-768px.css); /**/
-
-@media not screen and (device-width: 768px) and (orientation: portrait) {
-  /* Rules only for iPad */
-  
-}
-
 /****************************************************************************************************
  * General
  */
@@ -111,17 +100,10 @@ img.right {
  */
 #page.cover img.central {
   display: block;
-  margin: 70px auto;
+  margin: 70px auto 50px;
 }
 
 #page.cover .footer {
-  background: #ffffff url(../gfx/background.jpg);
-  height: 165px;
-  display: block;
-  width: 100%;
-  position: fixed;
-  bottom: 0;
-  
   text-align: center;
 }
 
@@ -199,6 +181,30 @@ img.right {
   text-align: justify;
   text-indent: 1em;
   line-height: 1.6em;
+}
+
+
+/****************************************************************************************************
+ * Media queries
+ */
+@media only screen and (max-device-width : 768px) and (orientation : portrait) {
+  /* Rules only for iPad - Portrait */
+  
+}
+
+@media only screen and (max-device-width : 1024px) and (orientation : landscape) {
+  /* Rules only for iPad - Landscape */
+  #page.cover img.central {
+    display: none;
+  }
+  
+  #page {
+    min-height: 768px;
+  }
+  
+  #page.cover .footer {
+    margin-top: 240px;
+  }
 }
 
 
