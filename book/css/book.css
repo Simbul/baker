@@ -157,14 +157,14 @@ img.right {
 }
 
 #page.index .menu li a .count {
-  background: #ffffff;
+  background: #ffffff url(../gfx/background.jpg);
   padding-left: 3px;
   position: absolute;
   right: 0;
 }
 
 #page.index .menu li a {
-  background: #ffffff;
+  background: #ffffff url(../gfx/background.jpg);
   color: #000000;
   text-decoration: none;
   
