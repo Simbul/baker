@@ -1,6 +1,6 @@
 /*
  * Baker Ebook Framework - Basic Book
- * last update: 2011-09-05
+ * last update: 2011-10-10
  * 
  * Copyright (C) 2011 by Davide S. Casali <folletto AT gmail DOT com>
  * 
@@ -89,6 +89,9 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: normal;
   text-align: center;
   text-decoration: none;
+  display: block;
+  width: 150px;
+  height: 150px;
 }
 
 #index .navigation li a h7 {
