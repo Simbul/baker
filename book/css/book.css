@@ -1,6 +1,6 @@
 /*
  * Baker Ebook Framework - Basic Book
- * last update: 2011-09-05
+ * last update: 2011-10-10
  * 
  * Copyright (C) 2011 by Davide S. Casali <folletto AT gmail DOT com>
  * 
@@ -9,7 +9,7 @@
 
 /****************************************************************************************************
  * Media queries
- */ 
+ * 
 @import url(baker-css-768px.css); /**/
 
 @media not screen and (device-width: 768px) and (orientation: portrait) {
@@ -21,6 +21,7 @@
  * General
  */
 body {
+  background: #ffffff url(../gfx/background.jpg);
 	font-family: Helvetica, Arial, sans-serif;
 	font-size: 16px;
 	margin: 0;
@@ -79,9 +80,9 @@ img.right {
  */
 #page {
   background: #ffffff url(../gfx/background.jpg);
-  width: 768px;
   min-height: 1024px;
   overflow: hidden;
+  margin: 0 auto;
 }
 
 /****** Blood */
@@ -186,8 +187,9 @@ img.right {
 
 #page.chapter #content {
   min-height: 1024px;
+  width: 530px;
   
-  padding: 100px 120px;
+  margin: 120px auto;
 }
 
 #page.chapter p,
