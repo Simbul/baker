@@ -663,18 +663,17 @@
     }
 }
 - (void)lockPage:(BOOL)lock {
-    BOOL scrollEnabled = scrollView.scrollEnabled;    
     if (lock)
     {
-        if (scrollEnabled) {
-            scrollView.scrollEnabled = !scrollEnabled;
+        if (scrollView.scrollEnabled) {
+            scrollView.scrollEnabled = NO;
         }
         currentPageIsLocked = YES;
     }
     else
     {
-        if (scrollEnabled) {
-            scrollView.scrollEnabled = scrollEnabled;
+        if (stackedScrollingAnimations == 0) {
+            scrollView.scrollEnabled = YES;
         }
         currentPageIsLocked = NO;
     }
@@ -965,19 +964,7 @@
         if ([renderingType isEqualToString:@"three-cards"]) {
             [self webView:webView hidden:NO animating:YES];
         } else {
-            
-            BOOL scrollEnabled = scrollView.scrollEnabled;
-            if (scrollEnabled) {
-                scrollView.scrollEnabled = !scrollEnabled;
-            }
-            currentPageIsLocked = YES;
-            
             [self takeSnapshotFromView:webView forPage:currentPageNumber andOrientation:[self getCurrentInterfaceOrientation]];
-            
-            if (scrollEnabled) {
-                scrollView.scrollEnabled = !scrollEnabled;
-            }
-            currentPageIsLocked = NO;
         }
         [self handlePageLoading];
     }
