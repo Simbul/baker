@@ -201,11 +201,7 @@
     NSLog(@"• Reset scrollview subviews");
     
     NSLog(@"    Prevent page from changing until scrollview reset is finished");
-    BOOL scrollEnabled = scrollView.scrollEnabled;
-    if (scrollEnabled) {
-        scrollView.scrollEnabled = !scrollEnabled;
-    }
-    currentPageIsLocked = YES;
+    [self lockPage:YES];
     
     [self setTappableAreaSize];
     
@@ -254,10 +250,7 @@
     [scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:NO];
     
     NSLog(@"    Unlock page changing");
-    if (scrollEnabled) {
-        scrollView.scrollEnabled = scrollEnabled;
-    }
-    currentPageIsLocked = NO;
+    [self lockPage:NO];
 }
 - (void)resetPageDetails {
     NSLog(@"• Reset page details array and empty screenshot directory");
@@ -663,6 +656,23 @@
         }
     }
 }
+- (void)lockPage:(BOOL)lock {
+    BOOL scrollEnabled = scrollView.scrollEnabled;    
+    if (lock)
+    {
+        if (scrollEnabled) {
+            scrollView.scrollEnabled = !scrollEnabled;
+        }
+        currentPageIsLocked = YES;
+    }
+    else
+    {
+        if (scrollEnabled) {
+            scrollView.scrollEnabled = scrollEnabled;
+        }
+        currentPageIsLocked = NO;
+    }
+}
 - (void)addPageLoading:(int)slot {    
     NSLog(@"• Add page to the loding queue");
 
@@ -684,6 +694,11 @@
         NSLog(@"• Handle loading of slot %d with page %d", slot, page);
         
         [toLoad removeObjectAtIndex:0];
+        
+        if ([renderingType isEqualToString:@"screenshots"] && ![self checkSnapshotForPage:page andOrientation:[self getCurrentInterfaceOrientation]]) {
+            [self lockPage:YES];
+        }
+        
         [self loadSlot:slot withPage:page];
     }
 }
@@ -944,7 +959,19 @@
         if ([renderingType isEqualToString:@"three-cards"]) {
             [self webView:webView hidden:NO animating:YES];
         } else {
+            
+            BOOL scrollEnabled = scrollView.scrollEnabled;
+            if (scrollEnabled) {
+                scrollView.scrollEnabled = !scrollEnabled;
+            }
+            currentPageIsLocked = YES;
+            
             [self takeSnapshotFromView:webView forPage:currentPageNumber andOrientation:[self getCurrentInterfaceOrientation]];
+            
+            if (scrollEnabled) {
+                scrollView.scrollEnabled = !scrollEnabled;
+            }
+            currentPageIsLocked = NO;
         }
         [self handlePageLoading];
     }
@@ -1030,6 +1057,8 @@
         shouldRevealWebView = YES;
         animating = NO;
     }
+    
+    [self lockPage:NO];
     
     if (!currentPageHasChanged && shouldRevealWebView) {
         
