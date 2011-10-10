@@ -268,7 +268,7 @@
     [[NSFileManager defaultManager] removeItemAtPath:cachedSnapshotsPath error:nil];
     [[NSFileManager defaultManager] createDirectoryAtPath:cachedSnapshotsPath withIntermediateDirectories:YES attributes:nil error:nil];
 }
-- (void)initBook:(NSString *)path {	
+- (void)initBook:(NSString *)path {
     NSLog(@"• Init Book");
     
     [self resetPageDetails];
@@ -276,7 +276,13 @@
     NSEnumerator *pagesEnumerator = [[properties get:@"contents", nil] objectEnumerator];
     id page;
     while ((page = [pagesEnumerator nextObject])) {
-        NSString* pageFile = [path stringByAppendingPathComponent:page];
+        NSString *pageFile;
+        if ([page isKindOfClass:[NSString class]]) {
+            pageFile = [path stringByAppendingPathComponent:page];
+        } else if ([page isKindOfClass:[NSDictionary class]]) {
+            pageFile = [path stringByAppendingPathComponent:[page objectForKey:@"url"]];
+        }
+        
         if ([[NSFileManager defaultManager] fileExistsAtPath:pageFile]) {
             [pages addObject:pageFile];
         } else {
