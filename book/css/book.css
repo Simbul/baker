@@ -43,8 +43,15 @@ h1 {
   border-bottom: 1px solid #cf0000;
   color: #cf0000;
   font-size: 70px;
-  margin: 141px 0 0;
-  padding: 19px 0;
+  
+  height: 264px;
+  position: relative;
+}
+h1 div {
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  margin: 0 0 20px;
 }
 
 h2 {
@@ -164,7 +171,6 @@ img.right {
  */
 #page.chapter h1 {
   font-size: 42px;
-  padding-top: 52px;
 }
 
 #page.chapter #content {
