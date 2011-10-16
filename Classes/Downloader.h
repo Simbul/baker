@@ -33,4 +33,6 @@
 - (void)postNotification;
 - (void)cancelConnection;
 
+- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error;
+
 @end

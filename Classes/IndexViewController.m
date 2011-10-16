@@ -34,7 +34,7 @@
 
 @implementation IndexViewController
 
-- (id)initWithBookBundlePath:(NSString *)path documentsBookPath:(NSString *)docpath fileName:(NSString *)name webViewDelegate:(UIViewController *)delegate {
+- (id)initWithBookBundlePath:(NSString *)path documentsBookPath:(NSString *)docpath fileName:(NSString *)name webViewDelegate:(UIViewController<UIWebViewDelegate> *)delegate {
     bookBundlePath = path;
     documentsBookPath = docpath;
     fileName = name;
