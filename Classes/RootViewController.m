@@ -401,6 +401,9 @@
             }
                         
         } else {
+            UIColor *foregroundColor = [Utils colorWithHexString:[properties get:@"-baker-page-numbers-color", nil]];
+            id foregroundAlpha = [properties get:@"-baker-page-numbers-alpha", nil];
+            
             // ****** Background
             UIImageView *backgroundView = [[UIImageView alloc] initWithFrame:CGRectMake(pageWidth * i, 0, pageWidth, pageHeight)];
             [self setImageFor:backgroundView];
@@ -408,8 +411,10 @@
             [backgroundView release];
         
             // ****** Spinners
-            UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+            UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] init];
             spinner.backgroundColor = [UIColor clearColor];
+            spinner.color = foregroundColor;
+            spinner.alpha = [(NSNumber*) foregroundAlpha floatValue];
             
             CGRect frame = spinner.frame;
             frame.origin.x = pageWidth * i + (pageWidth - frame.size.width) / 2;
@@ -424,10 +429,9 @@
             UILabel *number = [[UILabel alloc] initWithFrame:CGRectMake(pageWidth * i + (pageWidth - 115) / 2, pageHeight / 2 - 55, 115, 30)];
             number.backgroundColor = [UIColor clearColor];
             number.font = [UIFont fontWithName:@"Helvetica" size:40.0];
-            number.textColor = [Utils colorWithHexString:[properties get:@"-baker-page-numbers-color", nil]];
+            number.textColor = foregroundColor;
             number.textAlignment = UITextAlignmentCenter;
-            id alpha = [properties get:@"-baker-page-numbers-alpha", nil];
-            number.alpha = [(NSNumber*) alpha floatValue];
+            number.alpha = [(NSNumber*) foregroundAlpha floatValue];
             number.text = [NSString stringWithFormat:@"%d", i + 1];
             
             [scrollView addSubview:number];
