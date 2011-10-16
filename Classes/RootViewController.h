@@ -108,6 +108,7 @@
 - (void)setTappableAreaSize;
 - (void)resetScrollView;
 - (void)resetPageDetails;
+- (void)initBookProperties:(NSString *)path;
 - (void)initBook:(NSString *)path;
 - (void)initPageDetailsForPages:(int)count;
 - (void)setImageFor:(UIImageView *)view;

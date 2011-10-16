@@ -75,16 +75,6 @@
         
         // ****** INIT PROPERTIES
         properties = [Properties properties];
-        NSString *filePath = [[NSBundle mainBundle] pathForResource:@"book/book" ofType:@"json"];
-        [properties loadManifest:filePath];
-        
-        // ****** ORIENTATION
-        self.availableOrientation = [properties get:@"orientation", nil];
-        NSLog(@"available orientation: %@", availableOrientation);
-        
-        // ****** RENDERING
-        renderingType = [[[properties get:@"-baker-rendering", nil] retain] autorelease];
-        NSLog(@"rendering type: %@", renderingType);
       
         // ****** DEVICE SCREEN BOUNDS
         screenBounds = [[UIScreen mainScreen] bounds];
@@ -127,7 +117,6 @@
         // ****** SCROLLVIEW INIT
         scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, pageWidth, pageHeight)];
         scrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        scrollView.backgroundColor = [Utils colorWithHexString:[properties get:@"-baker-background", nil]];
         scrollView.showsHorizontalScrollIndicator = YES;
         scrollView.showsVerticalScrollIndicator = NO;
         scrollView.delaysContentTouches = NO;
@@ -162,15 +151,13 @@
     webView.scalesPageToFit = [[properties get:@"zoomable", nil] boolValue];
     BOOL verticalBounce = [[properties get:@"-baker-vertical-bounce", nil] boolValue];
     
-    if (!verticalBounce) {
-		for (UIView *subview in webView.subviews) {
-			if ([subview isKindOfClass:[UIScrollView class]]) {
-				((UIScrollView *)subview).bounces = NO;
-            }
+    for (UIView *subview in webView.subviews) {
+        if ([subview isKindOfClass:[UIScrollView class]]) {
+            ((UIScrollView *)subview).bounces = verticalBounce;
         }
-	}
+    }
 }
-- (void)setPageSize:(NSString *)orientation {	
+- (void)setPageSize:(NSString *)orientation {
 	NSLog(@"• Set size for orientation: %@", orientation);
     
     pageWidth = screenBounds.size.width;
@@ -206,15 +193,6 @@
             UIView *value = [details objectForKey:key];
             value.hidden = YES;
         }
-    }
-    
-    NSString *backgroundPathLandscape = [properties get:@"-baker-background-image-landscape", nil];
-    if (backgroundPathLandscape != NULL) {
-        backgroundImageLandscape = [UIImage imageNamed:backgroundPathLandscape];
-    }
-    NSString *backgroundPathPortrait = [properties get:@"-baker-background-image-portrait", nil];
-    if (backgroundPathPortrait != NULL) {
-        backgroundImagePortrait = [UIImage imageNamed:backgroundPathPortrait];
     }
     
     [self initPageDetailsForPages:totalPages];
@@ -264,9 +242,39 @@
     [[NSFileManager defaultManager] removeItemAtPath:cachedSnapshotsPath error:nil];
     [[NSFileManager defaultManager] createDirectoryAtPath:cachedSnapshotsPath withIntermediateDirectories:YES attributes:nil error:nil];
 }
+- (void)initBookProperties:(NSString *)path {        
+    NSString *filePath = [path stringByAppendingPathComponent:@"book.json"];
+    [properties loadManifest:filePath];
+    
+    // ****** ORIENTATION
+    self.availableOrientation = [properties get:@"orientation", nil];
+    NSLog(@"available orientation: %@", availableOrientation);
+    
+    // ****** RENDERING
+    renderingType = [[[properties get:@"-baker-rendering", nil] retain] autorelease];
+    NSLog(@"rendering type: %@", renderingType);
+    
+    // ****** BACKGROUND
+    scrollView.backgroundColor = [Utils colorWithHexString:[properties get:@"-baker-background", nil]];
+    
+    NSString *backgroundPathLandscape = [properties get:@"-baker-background-image-landscape", nil];
+    if (backgroundPathLandscape != NULL) {
+        backgroundImageLandscape = [UIImage imageNamed:backgroundPathLandscape];
+    } else {
+        backgroundImageLandscape = NULL;
+    }
+    NSString *backgroundPathPortrait = [properties get:@"-baker-background-image-portrait", nil];
+    if (backgroundPathPortrait != NULL) {
+        backgroundImagePortrait = [UIImage imageNamed:backgroundPathPortrait];
+    } else {
+        backgroundImagePortrait = NULL;
+    }
+
+}
 - (void)initBook:(NSString *)path {
     NSLog(@"• Init Book");
     
+    [self initBookProperties:path];
     [self resetPageDetails];
 	
     NSEnumerator *pagesEnumerator = [[properties get:@"contents", nil] objectEnumerator];
