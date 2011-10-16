@@ -94,14 +94,10 @@
         // ****** BOOK DIRECTORIES
         NSArray *documentsPaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
         NSString *documentsPath = [NSString stringWithString:[documentsPaths objectAtIndex:0]];
-        documentsBookPath = [[documentsPath stringByAppendingPathComponent:@"book"] retain];
         
-        NSArray *cachePaths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
-        NSString *cachePath = ([cachePaths count] > 0) ? [cachePaths objectAtIndex:0] : nil;
-        cachedSnapshotsPath = [[cachePath stringByAppendingPathComponent:@"snapshots"] retain];
-        [[NSFileManager defaultManager] createDirectoryAtPath:cachedSnapshotsPath withIntermediateDirectories:YES attributes:nil error:nil];
-
-        bundleBookPath = [[[NSBundle mainBundle] pathForResource:@"book" ofType:nil] retain];
+        documentsBookPath   = [[documentsPath stringByAppendingPathComponent:@"book"] retain];
+        cachedSnapshotsPath = [[documentsPath stringByAppendingPathComponent:@"snapshots"] retain];
+        bundleBookPath      = [[[NSBundle mainBundle] pathForResource:@"book" ofType:nil] retain];
         
         // ****** BOOK ENVIRONMENT
         pages = [[NSMutableArray array] retain];
@@ -275,6 +271,7 @@
 	
     NSEnumerator *pagesEnumerator = [[properties get:@"contents", nil] objectEnumerator];
     id page;
+    
     while ((page = [pagesEnumerator nextObject])) {
         NSString *pageFile;
         if ([page isKindOfClass:[NSString class]]) {
@@ -448,7 +445,6 @@
         }
 	}
 }
-
 - (void)setImageFor:(UIImageView *)view {
     if (pageWidth > pageHeight && backgroundImageLandscape != NULL) {
         // Landscape
