@@ -858,11 +858,17 @@
                     // ****** Handle: file://
                     NSLog(@"    Page is a link with scheme file:// --> load internal link");
                     
-                    anchorFromURL = [[url fragment] retain];
+                    anchorFromURL  = [[url fragment] retain];
                     NSString *file = [[url relativePath] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
                     
-                    int page = (int)[pages indexOfObject:file] + 1;
+                    int page = [pages indexOfObject:file];
+                    if (page == NSNotFound)
+                    {
+                        // ****** Internal link, but not one of the book pages --> load page anyway
+                        return YES;
+                    }
                     
+                    page = page + 1;
                     if (![self changePage:page] && ![webView isEqual:indexViewController.view])
                     {
                         if (anchorFromURL == nil) {
@@ -871,6 +877,7 @@
                         
                         [self handleAnchor:YES];                        
                     }
+                        
                     else if ([webView isEqual:indexViewController.view])
                     {
                         discardNextStatusBarToggle = NO;
