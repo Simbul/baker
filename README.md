@@ -99,17 +99,16 @@ From inside an existing book you make with Baker you can download other books, i
 A book in the HPub format is like the default book that's inside Baker:
 
 * All the HTML files must be at root level (not in a subfolder, otherwise you'll get an empty book).
-* The HTML files are alphabetically ordered. You can for example do: 01.html, 02.html, etc.
-* In this case, 01.html is going to be used as the first page of the book, so it'll probably be your cover.
-* All the assets must be contained (with a relative reference) within the root folder.
-* Subfolders are allowed for assets, but the HTML files will only be read from the root of the folder itself.
+* Each chapter/section/article (horizontally swiped on the iPad) should be a single HTML file inside the "book/" folder
+* Create a Hpub book.json file: title, author, pages, etc. (see below)
+* The assets must be contained within the "book/" folder or its subfolders
 
 When it's ready:
 
-1. Zip all the files (not the folder, remember!).
+1. Zip all the files (not the folder, remember, its content).
 2. Change the extension of the file from ".zip" to ".hpub".
 3. Upload the .hpub file on a server.
-4. Link from a Baker book the book on the server, with the syntax: book://example.org/path/bookname
+4. Link to the publication on the server, using the [Hpub book protocol](https://github.com/Simbul/baker/wiki/Book-protocol): `book://example.org/path/bookname`  
    (with or without extension, Baker will add ".hpub" by itself).
 
 
@@ -134,14 +133,14 @@ CHANGELOG
   * Improved handling of internal and external links
   * Memory optimization
   * iOS 5 and Xcode 4.2 compatibility
+  * Minimum supported version: iOS 4.0
   * Minor fixes and improvements
   * Thanks to @francesctovar @therabidbanana @eaglejohn @ffranke for the great support
-  * Minimum supported version: iOS 4.0
 
 * **2.0**
   * Multi-orientation books support (portrait, landscape, both) - thanks to @svdgraaf
   * iPhone support
-  * Xcode 4
+  * Xcode 4 compatibility
   * Added support to open a specific page of a downloaded book
   * Added support to remove vertical bounce (for non-scrolling books)
   * Added support to enable automatic media playback
@@ -150,7 +149,6 @@ CHANGELOG
   * Fix: orientationchange event now fires
   * Minimum supported version: iOS 3.2
   * Minor fixes
-
 
 * **1.1**
   * Added book:// protocol to allow downloadable HPub books
@@ -167,5 +165,4 @@ CHANGELOG
   * First release
 
 
-
-> Elementary, my dear Watson.
+> _Elementary, my dear Watson._
