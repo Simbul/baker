@@ -42,8 +42,9 @@
 	CGRect screenBounds;
 	
 	NSString *documentsBookPath;
-    NSString *cachedSnapshotsPath;
     NSString *bundleBookPath;
+    NSString *defaultSnapshotsPath;
+    NSString *cachedSnapshotsPath;
     
     NSString *availableOrientation;
     NSString *renderingType;
@@ -107,10 +108,12 @@
 - (void)setPageSize:(NSString *)orientation;
 - (void)setTappableAreaSize;
 - (void)resetScrollView;
+- (void)initPageDetails;
+- (void)showPageDetails;
 - (void)resetPageDetails;
 - (void)initBookProperties:(NSString *)path;
 - (void)initBook:(NSString *)path;
-- (void)initPageDetailsForPages:(int)count;
+
 - (void)setImageFor:(UIImageView *)view;
 
 #pragma mark - LOADING
@@ -132,6 +135,7 @@
 - (void)webViewDidAppear:(UIWebView *)webView animating:(BOOL)animating;
 
 #pragma mark - SNAPSHOTS
+- (void)initSnapshots;
 - (BOOL)checkSnapshotForPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation;
 - (void)takeSnapshotFromView:(UIWebView *)webView forPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation;
 - (void)placeSnapshotForView:(UIWebView *)webView andPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation;

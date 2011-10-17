@@ -85,9 +85,9 @@
         NSArray *documentsPaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
         NSString *documentsPath = [NSString stringWithString:[documentsPaths objectAtIndex:0]];
         
-        documentsBookPath   = [[documentsPath stringByAppendingPathComponent:@"book"] retain];
-        cachedSnapshotsPath = [[documentsPath stringByAppendingPathComponent:@"snapshots"] retain];
-        bundleBookPath      = [[[NSBundle mainBundle] pathForResource:@"book" ofType:nil] retain];
+        documentsBookPath     = [[documentsPath stringByAppendingPathComponent:@"book"] retain];
+        bundleBookPath        = [[[NSBundle mainBundle] pathForResource:@"book" ofType:nil] retain];        
+        defaultSnapshotsPath  = [[documentsPath stringByAppendingPathComponent:@"baker-snapshots"] retain];
         
         // ****** BOOK ENVIRONMENT
         pages = [[NSMutableArray array] retain];
@@ -195,7 +195,7 @@
         }
     }
     
-    [self initPageDetailsForPages:totalPages];
+    [self showPageDetails];
 
     scrollView.contentSize = CGSizeMake(pageWidth * totalPages, pageHeight);
 
@@ -226,6 +226,123 @@
     NSLog(@"    Unlock page changing");
     [self lockPage:NO];
 }
+- (void)initPageDetails {
+    NSLog(@"• Init page details for the book pages");
+    
+    for (int i = 0; i < totalPages; i++) {
+        
+        UIColor *foregroundColor = [Utils colorWithHexString:[properties get:@"-baker-page-numbers-color", nil]];
+        id foregroundAlpha = [properties get:@"-baker-page-numbers-alpha", nil];
+        
+        // ****** Background
+        UIImageView *backgroundView = [[UIImageView alloc] initWithFrame:CGRectMake(pageWidth * i, 0, pageWidth, pageHeight)];
+        [self setImageFor:backgroundView];
+        [scrollView addSubview:backgroundView];
+        [backgroundView release];
+        
+        // ****** Spinners
+        UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] init];
+        spinner.backgroundColor = [UIColor clearColor];
+        spinner.color = foregroundColor;
+        spinner.alpha = [(NSNumber*) foregroundAlpha floatValue];
+        
+        CGRect frame = spinner.frame;
+        frame.origin.x = pageWidth * i + (pageWidth - frame.size.width) / 2;
+        frame.origin.y = (pageHeight - frame.size.height) / 2;        
+        spinner.frame = frame;
+        
+        [scrollView addSubview:spinner];
+        [spinner startAnimating];
+        [spinner release];
+        
+        // ****** Numbers
+        UILabel *number = [[UILabel alloc] initWithFrame:CGRectMake(pageWidth * i + (pageWidth - 115) / 2, pageHeight / 2 - 55, 115, 30)];
+        number.backgroundColor = [UIColor clearColor];
+        number.font = [UIFont fontWithName:@"Helvetica" size:40.0];
+        number.textColor = foregroundColor;
+        number.textAlignment = UITextAlignmentCenter;
+        number.alpha = [(NSNumber*) foregroundAlpha floatValue];
+        number.text = [NSString stringWithFormat:@"%d", i + 1];
+        
+        [scrollView addSubview:number];
+        [number release];
+        
+        // ****** Title
+        PageTitleLabel *title = [[PageTitleLabel alloc]initWithFile:[pages objectAtIndex: i]];
+        [title setX:(pageWidth * i + ((pageWidth - title.frame.size.width) / 2)) Y:(pageHeight / 2 + 20)];
+        [scrollView addSubview:title];
+        [title release];
+        
+        // ****** Store instances for later use
+        NSMutableDictionary *details = [NSMutableDictionary dictionaryWithObjectsAndKeys:spinner, @"spinner", number, @"number", title, @"title", backgroundView, @"background", nil];
+        [pageDetails insertObject:details atIndex:i];
+    }
+    
+    if ([renderingType isEqualToString:@"screenshots"]) {
+        [self initSnapshots];
+    }
+}
+- (void)showPageDetails {
+    NSLog(@"• Show page details for the book pages");
+    
+	for (int i = 0; i < totalPages; i++) {
+        
+        if (pageDetails.count > i && [pageDetails objectAtIndex:i] != nil) {
+            
+            NSDictionary *details = [NSDictionary dictionaryWithDictionary:[pageDetails objectAtIndex:i]];              
+            UIView *snapView = [details objectForKey:[NSString stringWithFormat:@"snap-%@", [self getCurrentInterfaceOrientation]]];
+            if (snapView != nil)
+            {
+                snapView.hidden = NO;
+            } 
+            else {
+                
+                for (NSString *key in details) {
+                    UIView *value = [details objectForKey:key];
+                    if (value != nil) {
+                        
+                        CGRect frame = value.frame;
+                        if ([key isEqualToString:@"spinner"]) {
+                            
+                            frame.origin.x = pageWidth * i + (pageWidth - frame.size.width) / 2;
+                            frame.origin.y = (pageHeight - frame.size.height) / 2;
+                            value.frame = frame;
+                            value.hidden = NO;
+                            
+                        } else if ([key isEqualToString:@"number"]) {
+                            
+                            frame.origin.x = pageWidth * i + (pageWidth - 115) / 2;
+                            frame.origin.y = pageHeight / 2 - 55;
+                            value.frame = frame;
+                            value.hidden = NO;
+                            
+                            
+                        } else if ([key isEqualToString:@"title"]) {
+                            
+                            frame.origin.x = pageWidth * i + (pageWidth - frame.size.width) / 2;
+                            frame.origin.y = pageHeight / 2 + 20;
+                            value.frame = frame;
+                            value.hidden = NO;
+                            
+                        } else if ([key isEqualToString:@"background"]) {
+                            
+                            [self setImageFor:(UIImageView *)value];
+                            frame.origin.x = pageWidth * i;
+                            frame.size.width = pageWidth;
+                            frame.size.height = pageHeight;
+                            value.frame = frame;
+                            value.hidden = NO;
+                            
+                        } else {
+                            
+                            value.hidden = YES;
+                        }
+                    }
+                }
+            }
+        } 
+	}
+}
 - (void)resetPageDetails {
     NSLog(@"• Reset page details array and empty screenshot directory");
     
@@ -238,9 +355,6 @@
     
     [pageDetails removeAllObjects];
     [pages removeAllObjects];
-    
-    [[NSFileManager defaultManager] removeItemAtPath:cachedSnapshotsPath error:nil];
-    [[NSFileManager defaultManager] createDirectoryAtPath:cachedSnapshotsPath withIntermediateDirectories:YES attributes:nil error:nil];
 }
 - (void)initBookProperties:(NSString *)path {        
     NSString *filePath = [path stringByAppendingPathComponent:@"book.json"];
@@ -319,7 +433,18 @@
         currentPageIsDelayingLoading = YES;
         [toLoad removeAllObjects];
 		
-        [self resetScrollView];        
+        cachedSnapshotsPath = [path stringByAppendingPathComponent:@"baker-snapshots"];
+        if (![[NSFileManager defaultManager] fileExistsAtPath:cachedSnapshotsPath])
+        {
+            if ([path isEqualToString:bundleBookPath]) {
+                cachedSnapshotsPath = defaultSnapshotsPath;
+            }
+            [[NSFileManager defaultManager] createDirectoryAtPath:cachedSnapshotsPath withIntermediateDirectories:YES attributes:nil error:nil];            
+        }
+        [cachedSnapshotsPath retain];
+        
+        [self initPageDetails];
+        [self resetScrollView];
         [self addPageLoading:0];
         
         if ([renderingType isEqualToString:@"three-cards"]) {
@@ -347,114 +472,6 @@
 		[feedbackAlert release];
 		
 		[self initBook:bundleBookPath];
-	}
-}
-- (void)initPageDetailsForPages:(int)count {
-    NSLog(@"• Init and show page details for the book pages");
-    
-	for (int i = 0; i < count; i++) {
-        
-        if (pageDetails.count > i && [pageDetails objectAtIndex:i] != nil) {
-            
-            NSDictionary *details = [NSDictionary dictionaryWithDictionary:[pageDetails objectAtIndex:i]];              
-            UIView *snapView = [details objectForKey:[NSString stringWithFormat:@"snap-%@", [self getCurrentInterfaceOrientation]]];
-            if (snapView != nil)
-            {
-                snapView.hidden = NO;
-            } 
-            else {
-                
-                for (NSString *key in details) {
-                    UIView *value = [details objectForKey:key];
-                    if (value != nil) {
-                        
-                        CGRect frame = value.frame;
-                        if ([key isEqualToString:@"spinner"]) {
-                            
-                            frame.origin.x = pageWidth * i + (pageWidth - frame.size.width) / 2;
-                            frame.origin.y = (pageHeight - frame.size.height) / 2;
-                            value.frame = frame;
-                            value.hidden = NO;
-                            
-                        } else if ([key isEqualToString:@"number"]) {
-                            
-                            frame.origin.x = pageWidth * i + (pageWidth - 115) / 2;
-                            frame.origin.y = pageHeight / 2 - 55;
-                            value.frame = frame;
-                            value.hidden = NO;
-
-                            
-                        } else if ([key isEqualToString:@"title"]) {
-                            
-                            frame.origin.x = pageWidth * i + (pageWidth - frame.size.width) / 2;
-                            frame.origin.y = pageHeight / 2 + 20;
-                            value.frame = frame;
-                            value.hidden = NO;
-                        
-                        } else if ([key isEqualToString:@"background"]) {
-
-                            [self setImageFor:(UIImageView *)value];
-                            frame.origin.x = pageWidth * i;
-                            frame.size.width = pageWidth;
-                            frame.size.height = pageHeight;
-                            value.frame = frame;
-                            value.hidden = NO;
-                            
-                        } else {
-                            
-                            value.hidden = YES;
-                        }
-                    }
-                }
-            }
-                        
-        } else {
-            UIColor *foregroundColor = [Utils colorWithHexString:[properties get:@"-baker-page-numbers-color", nil]];
-            id foregroundAlpha = [properties get:@"-baker-page-numbers-alpha", nil];
-            
-            // ****** Background
-            UIImageView *backgroundView = [[UIImageView alloc] initWithFrame:CGRectMake(pageWidth * i, 0, pageWidth, pageHeight)];
-            [self setImageFor:backgroundView];
-            [scrollView addSubview:backgroundView];
-            [backgroundView release];
-        
-            // ****** Spinners
-            UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] init];
-            spinner.backgroundColor = [UIColor clearColor];
-            spinner.color = foregroundColor;
-            spinner.alpha = [(NSNumber*) foregroundAlpha floatValue];
-            
-            CGRect frame = spinner.frame;
-            frame.origin.x = pageWidth * i + (pageWidth - frame.size.width) / 2;
-            frame.origin.y = (pageHeight - frame.size.height) / 2;        
-            spinner.frame = frame;
-                    
-            [scrollView addSubview:spinner];
-            [spinner startAnimating];
-            [spinner release];
-            
-            // ****** Numbers
-            UILabel *number = [[UILabel alloc] initWithFrame:CGRectMake(pageWidth * i + (pageWidth - 115) / 2, pageHeight / 2 - 55, 115, 30)];
-            number.backgroundColor = [UIColor clearColor];
-            number.font = [UIFont fontWithName:@"Helvetica" size:40.0];
-            number.textColor = foregroundColor;
-            number.textAlignment = UITextAlignmentCenter;
-            number.alpha = [(NSNumber*) foregroundAlpha floatValue];
-            number.text = [NSString stringWithFormat:@"%d", i + 1];
-            
-            [scrollView addSubview:number];
-            [number release];
-            
-            // ****** Title
-            PageTitleLabel *title = [[PageTitleLabel alloc]initWithFile:[pages objectAtIndex: i]];
-            [title setX:(pageWidth * i + ((pageWidth - title.frame.size.width) / 2)) Y:(pageHeight / 2 + 20)];
-            [scrollView addSubview:title];
-            [title release];
-            
-            // ****** Store instances for later use
-            NSMutableDictionary *details = [NSMutableDictionary dictionaryWithObjectsAndKeys:spinner, @"spinner", number, @"number", title, @"title", backgroundView, @"background", nil];
-            [pageDetails insertObject:details atIndex:i];
-        }
 	}
 }
 - (void)setImageFor:(UIImageView *)view {
@@ -1024,6 +1041,19 @@
 }
 
 #pragma mark - SNAPSHOTS
+- (void)initSnapshots {
+    
+    for (int i = 1; i <= totalPages; i++)
+    {
+        if ([self checkSnapshotForPage:i andOrientation:@"portrait"]) {
+            [self placeSnapshotForView:nil andPage:i andOrientation:@"portrait"];
+        }
+            
+        if ([self checkSnapshotForPage:i andOrientation:@"landscape"]) {
+            [self placeSnapshotForView:nil andPage:i andOrientation:@"landscape"];
+        }
+    }
+}
 - (BOOL)checkSnapshotForPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation {
     NSString *snapshotFile = [cachedSnapshotsPath stringByAppendingPathComponent:[NSString stringWithFormat:@"snap-%@-%i.jpg", interfaceOrientation, pageNumber]];
     return [[NSFileManager defaultManager] fileExistsAtPath:snapshotFile];
@@ -1100,8 +1130,14 @@
         NSMutableDictionary *details = [pageDetails objectAtIndex:i];            
         [details setObject:snapView forKey:[NSString stringWithFormat:@"snap-%@", interfaceOrientation]];
     }
+        
+    if (webView == nil) {
+        [scrollView addSubview:snapView];
+    }
     
-    if ([interfaceOrientation isEqualToString:[self getCurrentInterfaceOrientation]] && !currentPageHasChanged) {
+    snapView.hidden = YES;
+    
+    if (webView != nil && [interfaceOrientation isEqualToString:[self getCurrentInterfaceOrientation]] && !currentPageHasChanged) {
         
         snapView.hidden = NO;
         snapView.alpha = 0.0;
@@ -1110,8 +1146,6 @@
         [UIView animateWithDuration:0.5
                          animations:^{ snapView.alpha = 1.0; }
                          completion:^(BOOL finished) { if (!currentPageHasChanged) { [self webView:webView hidden:NO animating:NO]; }}];
-    } else {
-        snapView.hidden = YES;
     }
     
     [snapView release];
@@ -1344,7 +1378,7 @@
 		NSLog(@"    Book successfully unzipped. Removing .hpub file");
 		[[NSFileManager defaultManager] removeItemAtPath:targetPath error:NULL];
 				
-		[feedbackAlert dismissWithClickedButtonIndex:feedbackAlert.cancelButtonIndex animated:YES];
+		[feedbackAlert dismissWithClickedButtonIndex:feedbackAlert.cancelButtonIndex animated:YES];        
 		[self initBook:destinationPath];
 	} /* else {
 	   Do something if it was not possible to write the book file on the iPhone/iPad file system...
@@ -1435,6 +1469,16 @@
 	prevPage.delegate = nil;
 }
 - (void)dealloc {
+    
+    [cachedSnapshotsPath release];
+    [defaultSnapshotsPath release];
+
+    [documentsBookPath release];
+    [bundleBookPath release];
+
+    [pageDetails release];
+    [toLoad release];
+    [pages release];
     
     [indexViewController release];
     [scrollView release];
