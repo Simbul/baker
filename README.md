@@ -1,10 +1,7 @@
 Project Baker
 =============
 
-**The HTML5 ebook framework to publish interactive books & magazines on iPad & iPhone using simply open web standards**
-
-_Copyright (C) 2010-2011, Davide Casali, Marco Colombo, Alessandro Morandi_  
-_Licensed under **BSD Opensource License** (free for personal and commercial use)_  
+**The HTML5 ebook framework to publish interactive books & magazines on iPad & iPhone using simply open web standards**  
 <http://bakerframework.com>  
 
 
@@ -163,6 +160,13 @@ CHANGELOG
 
 * **1.0**
   * First release
+
+
+LICENSE
+-------
+
+  _Copyright (C) 2010-2011, Davide Casali, Marco Colombo, Alessandro Morandi_  
+  _Licensed under **BSD Opensource License** (free for personal and commercial use)_
 
 
 > _Elementary, my dear Watson._
