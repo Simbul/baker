@@ -551,6 +551,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Baker_Prefix.pch;
 				INFOPLIST_FILE = "Baker-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = Baker;
 				SDKROOT = iphoneos;
@@ -570,6 +571,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Baker_Prefix.pch;
 				INFOPLIST_FILE = "Baker-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = Baker;
 				SDKROOT = iphoneos;
@@ -607,6 +609,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Baker_Prefix.pch;
 				INFOPLIST_FILE = "Baker-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = Baker;
 				SDKROOT = iphoneos;
