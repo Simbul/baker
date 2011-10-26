@@ -61,6 +61,9 @@
 #ifndef kCFCoreFoundationVersionNumber_iPhoneOS_5_0
     #define kCFCoreFoundationVersionNumber_iPhoneOS_5_0 675.00
 #endif
+#ifndef __IPHONE_5_0
+    #define __IPHONE_5_0 50000
+#endif
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_5_0
     #define IF_IOS5_OR_GREATER(...) \
     if (kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iPhoneOS_5_0) { \
