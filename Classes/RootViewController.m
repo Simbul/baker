@@ -38,24 +38,24 @@
 #import "Utils.h"
 
 // ALERT LABELS
-#define OPEN_BOOK_MESSAGE @"Do you want to download "
-#define OPEN_BOOK_CONFIRM @"Open book"
+#define OPEN_BOOK_MESSAGE       @"Do you want to download "
+#define OPEN_BOOK_CONFIRM       @"Open book"
 
-#define CLOSE_BOOK_MESSAGE @"Do you want to close this book?"
-#define CLOSE_BOOK_CONFIRM @"Close book"
+#define CLOSE_BOOK_MESSAGE      @"Do you want to close this book?"
+#define CLOSE_BOOK_CONFIRM      @"Close book"
 
-#define ZERO_PAGES_TITLE   @"Whoops!"
-#define ZERO_PAGES_MESSAGE @"Sorry, that book had no pages."
+#define ZERO_PAGES_TITLE        @"Whoops!"
+#define ZERO_PAGES_MESSAGE      @"Sorry, that book had no pages."
 
-#define ERROR_FEEDBACK_TITLE   @"Whoops!"
-#define ERROR_FEEDBACK_MESSAGE @"There was a problem downloading the book."
-#define ERROR_FEEDBACK_CONFIRM @"Retry"
+#define ERROR_FEEDBACK_TITLE    @"Whoops!"
+#define ERROR_FEEDBACK_MESSAGE  @"There was a problem downloading the book."
+#define ERROR_FEEDBACK_CONFIRM  @"Retry"
 
-#define EXTRACT_FEEDBACK_TITLE @"Extracting..."
+#define EXTRACT_FEEDBACK_TITLE  @"Extracting..."
 
-#define ALERT_FEEDBACK_CANCEL  @"Cancel"
+#define ALERT_FEEDBACK_CANCEL   @"Cancel"
 
-#define INDEX_FILE_NAME @"index.html"
+#define INDEX_FILE_NAME         @"index.html"
 
 // IOS VERSION >= 5.0 MACRO
 #ifndef kCFCoreFoundationVersionNumber_iPhoneOS_5_0
@@ -478,7 +478,7 @@
         
         [indexViewController loadContentFromBundle:[path isEqualToString:bundleBookPath]];
 		
-	} else {
+	} else if (![path isEqualToString:bundleBookPath]) {
 		
 		[[NSFileManager defaultManager] removeItemAtPath:path error:NULL];
  		feedbackAlert = [[UIAlertView alloc] initWithTitle:ZERO_PAGES_TITLE
@@ -487,9 +487,7 @@
 										 cancelButtonTitle:ALERT_FEEDBACK_CANCEL
 										 otherButtonTitles:nil];
 		[feedbackAlert show];
-		[feedbackAlert release];
-		
-		[self initBook:bundleBookPath];
+		[feedbackAlert release];		
 	}
 }
 - (void)setImageFor:(UIImageView *)view {
@@ -1323,15 +1321,16 @@
 	[feedbackAlert release];
 }
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-	if (buttonIndex != alertView.cancelButtonIndex) {
-		if ([[alertView buttonTitleAtIndex:buttonIndex] isEqualToString:CLOSE_BOOK_CONFIRM]){
-            currentPageIsDelayingLoading = YES;
-			[self initBook:bundleBookPath];
-        }
-		else{
-			[self startDownloadRequest];
-        }
-	}
+    
+    if ([[alertView buttonTitleAtIndex:buttonIndex] isEqualToString:CLOSE_BOOK_CONFIRM])
+    {	
+        currentPageIsDelayingLoading = YES;
+		[self initBook:bundleBookPath];
+    }
+    else if ([[alertView buttonTitleAtIndex:buttonIndex] isEqualToString:OPEN_BOOK_CONFIRM])
+    {
+        [self startDownloadRequest];
+    }
 }
 - (void)startDownloadRequest {	
 	downloader = [[Downloader alloc] initDownloader:@"handleDownloadResult"];
