@@ -43,8 +43,8 @@
 	
 	NSString *documentsBookPath;
     NSString *bundleBookPath;
-    NSString *defaultSnapshotsPath;
-    NSString *cachedSnapshotsPath;
+    NSString *defaultScreeshotsPath;
+    NSString *cachedScreenshotsPath;
     
     NSString *availableOrientation;
     NSString *renderingType;
@@ -135,10 +135,10 @@
 - (void)webViewDidAppear:(UIWebView *)webView animating:(BOOL)animating;
 
 #pragma mark - SNAPSHOTS
-- (void)initSnapshots;
-- (BOOL)checkSnapshotForPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation;
-- (void)takeSnapshotFromView:(UIWebView *)webView forPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation;
-- (void)placeSnapshotForView:(UIWebView *)webView andPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation;
+- (void)initScreenshots;
+- (BOOL)checkScreeshotForPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation;
+- (void)takeScreenshotFromView:(UIWebView *)webView forPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation;
+- (void)placeScreenshotForView:(UIWebView *)webView andPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation;
 
 #pragma mark - GESTURES
 - (void)userDidTap:(UITouch *)touch;

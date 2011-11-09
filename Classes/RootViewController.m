@@ -103,7 +103,7 @@
         
         documentsBookPath     = [[documentsPath stringByAppendingPathComponent:@"book"] retain];
         bundleBookPath        = [[[NSBundle mainBundle] pathForResource:@"book" ofType:nil] retain];        
-        defaultSnapshotsPath  = [[documentsPath stringByAppendingPathComponent:@"baker-snapshots"] retain];
+        defaultScreeshotsPath = [[documentsPath stringByAppendingPathComponent:@"baker-screenshots"] retain];
         
         // ****** BOOK ENVIRONMENT
         pages = [[NSMutableArray array] retain];
@@ -297,7 +297,7 @@
     }
     
     if ([renderingType isEqualToString:@"screenshots"]) {
-        [self initSnapshots];
+        [self initScreenshots];
     }
 }
 - (void)showPageDetails {
@@ -308,10 +308,10 @@
         if (pageDetails.count > i && [pageDetails objectAtIndex:i] != nil) {
             
             NSDictionary *details = [NSDictionary dictionaryWithDictionary:[pageDetails objectAtIndex:i]];              
-            UIView *snapView = [details objectForKey:[NSString stringWithFormat:@"snap-%@", [self getCurrentInterfaceOrientation]]];
-            if (snapView != nil)
+            UIView *screenshotView = [details objectForKey:[NSString stringWithFormat:@"screenshot-%@", [self getCurrentInterfaceOrientation]]];
+            if (screenshotView != nil)
             {
-                snapView.hidden = NO;
+                screenshotView.hidden = NO;
             } 
             else {
                 
@@ -451,15 +451,15 @@
         currentPageIsDelayingLoading = YES;
         [toLoad removeAllObjects];
 		
-        cachedSnapshotsPath = [path stringByAppendingPathComponent:@"baker-snapshots"];
-        if (![[NSFileManager defaultManager] fileExistsAtPath:cachedSnapshotsPath])
+        cachedScreenshotsPath = [path stringByAppendingPathComponent:@"baker-screenshot"];
+        if (![[NSFileManager defaultManager] fileExistsAtPath:cachedScreenshotsPath])
         {
             if ([path isEqualToString:bundleBookPath]) {
-                cachedSnapshotsPath = defaultSnapshotsPath;
+                cachedScreenshotsPath = defaultScreeshotsPath;
             }
-            [[NSFileManager defaultManager] createDirectoryAtPath:cachedSnapshotsPath withIntermediateDirectories:YES attributes:nil error:nil];            
+            [[NSFileManager defaultManager] createDirectoryAtPath:cachedScreenshotsPath withIntermediateDirectories:YES attributes:nil error:nil];            
         }
-        [cachedSnapshotsPath retain];
+        [cachedScreenshotsPath retain];
         
         [self initPageDetails];
         [self resetScrollView];
@@ -741,7 +741,7 @@
         
         [toLoad removeObjectAtIndex:0];
         
-        if ([renderingType isEqualToString:@"screenshots"] && ![self checkSnapshotForPage:page andOrientation:[self getCurrentInterfaceOrientation]]) {
+        if ([renderingType isEqualToString:@"screenshots"] && ![self checkScreeshotForPage:page andOrientation:[self getCurrentInterfaceOrientation]]) {
             [self lockPage:YES];
         }
         
@@ -1012,7 +1012,7 @@
         if ([renderingType isEqualToString:@"three-cards"]) {
             [self webView:webView hidden:NO animating:YES];
         } else {
-            [self takeSnapshotFromView:webView forPage:currentPageNumber andOrientation:[self getCurrentInterfaceOrientation]];
+            [self takeScreenshotFromView:webView forPage:currentPageNumber andOrientation:[self getCurrentInterfaceOrientation]];
         }
         [self handlePageLoading];
     }
@@ -1056,35 +1056,35 @@
     }
 }
 
-#pragma mark - SNAPSHOTS
-- (void)initSnapshots {
+#pragma mark - SCREENSHOT
+- (void)initScreenshots {
     
     for (int i = 1; i <= totalPages; i++)
     {
-        if ([self checkSnapshotForPage:i andOrientation:@"portrait"]) {
-            [self placeSnapshotForView:nil andPage:i andOrientation:@"portrait"];
+        if ([self checkScreeshotForPage:i andOrientation:@"portrait"]) {
+            [self placeScreenshotForView:nil andPage:i andOrientation:@"portrait"];
         }
             
-        if ([self checkSnapshotForPage:i andOrientation:@"landscape"]) {
-            [self placeSnapshotForView:nil andPage:i andOrientation:@"landscape"];
+        if ([self checkScreeshotForPage:i andOrientation:@"landscape"]) {
+            [self placeScreenshotForView:nil andPage:i andOrientation:@"landscape"];
         }
     }
 }
-- (BOOL)checkSnapshotForPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation {
-    NSString *snapshotFile = [cachedSnapshotsPath stringByAppendingPathComponent:[NSString stringWithFormat:@"snap-%@-%i.jpg", interfaceOrientation, pageNumber]];
-    return [[NSFileManager defaultManager] fileExistsAtPath:snapshotFile];
+- (BOOL)checkScreeshotForPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation {
+    NSString *screenshotFile = [cachedScreenshotsPath stringByAppendingPathComponent:[NSString stringWithFormat:@"screenshot-%@-%i.jpg", interfaceOrientation, pageNumber]];
+    return [[NSFileManager defaultManager] fileExistsAtPath:screenshotFile];
 }
-- (void)takeSnapshotFromView:(UIWebView *)webView forPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation {
+- (void)takeScreenshotFromView:(UIWebView *)webView forPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation {
     
     BOOL shouldRevealWebView = NO;
     BOOL animating = NO;
     
-    if (![self checkSnapshotForPage:pageNumber andOrientation:interfaceOrientation]) {
+    if (![self checkScreeshotForPage:pageNumber andOrientation:interfaceOrientation]) {
         
-        NSLog(@"• Taking snapshot of page %d", pageNumber);
+        NSLog(@"• Taking screenshot of page %d", pageNumber);
         
-        NSString *snapshotFile = [cachedSnapshotsPath stringByAppendingPathComponent:[NSString stringWithFormat:@"snap-%@-%i.jpg", interfaceOrientation, pageNumber]];
-        UIImage *snapshot = nil;
+        NSString *screenshotFile = [cachedScreenshotsPath stringByAppendingPathComponent:[NSString stringWithFormat:@"screenshot-%@-%i.jpg", interfaceOrientation, pageNumber]];
+        UIImage *screenshot = nil;
         
         if ([interfaceOrientation isEqualToString:[self getCurrentInterfaceOrientation]] && !currentPageHasChanged) {
             
@@ -1095,13 +1095,13 @@
             
             UIGraphicsBeginImageContextWithOptions(webView.frame.size, NO, 1.0);
             [webView.layer renderInContext:UIGraphicsGetCurrentContext()];
-            snapshot = UIGraphicsGetImageFromCurrentImageContext();
+            screenshot = UIGraphicsGetImageFromCurrentImageContext();
             UIGraphicsEndImageContext();
             
-            if (snapshot) {
-                [UIImageJPEGRepresentation(snapshot, 0.6) writeToFile:snapshotFile options:NSDataWritingAtomic error:nil];
-                NSLog(@"    Snapshot succesfully saved to file %@", snapshotFile);
-                [self placeSnapshotForView:webView andPage:pageNumber andOrientation:interfaceOrientation];                
+            if (screenshot) {
+                [UIImageJPEGRepresentation(screenshot, 0.6) writeToFile:screenshotFile options:NSDataWritingAtomic error:nil];
+                NSLog(@"    Screenshot succesfully saved to file %@", screenshotFile);
+                [self placeScreenshotForView:webView andPage:pageNumber andOrientation:interfaceOrientation];                
             }
         } else {
             shouldRevealWebView = YES;
@@ -1129,42 +1129,42 @@
         }
     }
 }
-- (void)placeSnapshotForView:(UIWebView *)webView andPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation {
+- (void)placeScreenshotForView:(UIWebView *)webView andPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation {
             
     int i = pageNumber - 1;
-    NSString *snapshotFile = [cachedSnapshotsPath stringByAppendingPathComponent:[NSString stringWithFormat:@"snap-%@-%i.jpg", interfaceOrientation, pageNumber]];
+    NSString *screenshotFile = [cachedScreenshotsPath stringByAppendingPathComponent:[NSString stringWithFormat:@"screenshot-%@-%i.jpg", interfaceOrientation, pageNumber]];
     
-    UIImageView *snapView = [[UIImageView alloc] initWithImage:[UIImage imageWithContentsOfFile:snapshotFile]];
+    UIImageView *screenshotView = [[UIImageView alloc] initWithImage:[UIImage imageWithContentsOfFile:screenshotFile]];
  
     CGSize pageSize = CGSizeMake(screenBounds.size.width, screenBounds.size.height);
     if ([interfaceOrientation isEqualToString:@"landscape"]) {
         pageSize = CGSizeMake(screenBounds.size.height, screenBounds.size.width);
     }
-    snapView.frame = CGRectMake(pageSize.width * i, 0, pageSize.width, pageSize.height);
+    screenshotView.frame = CGRectMake(pageSize.width * i, 0, pageSize.width, pageSize.height);
     
     if (pageDetails.count > i && [pageDetails objectAtIndex:i] != nil) {
         NSMutableDictionary *details = [pageDetails objectAtIndex:i];            
-        [details setObject:snapView forKey:[NSString stringWithFormat:@"snap-%@", interfaceOrientation]];
+        [details setObject:screenshotView forKey:[NSString stringWithFormat:@"screenshot-%@", interfaceOrientation]];
     }
         
     if (webView == nil) {
-        [scrollView addSubview:snapView];
+        [scrollView addSubview:screenshotView];
     }
     
-    snapView.hidden = YES;
+    screenshotView.hidden = YES;
     
     if (webView != nil && [interfaceOrientation isEqualToString:[self getCurrentInterfaceOrientation]] && !currentPageHasChanged) {
         
-        snapView.hidden = NO;
-        snapView.alpha = 0.0;
+        screenshotView.hidden = NO;
+        screenshotView.alpha = 0.0;
         
-        [scrollView addSubview:snapView];
+        [scrollView addSubview:screenshotView];
         [UIView animateWithDuration:0.5
-                         animations:^{ snapView.alpha = 1.0; }
+                         animations:^{ screenshotView.alpha = 1.0; }
                          completion:^(BOOL finished) { if (!currentPageHasChanged) { [self webView:webView hidden:NO animating:NO]; }}];
     }
     
-    [snapView release];
+    [screenshotView release];
 }
 
 #pragma mark - GESTURES
@@ -1487,8 +1487,8 @@
 }
 - (void)dealloc {
     
-    [cachedSnapshotsPath release];
-    [defaultSnapshotsPath release];
+    [cachedScreenshotsPath release];
+    [defaultScreeshotsPath release];
 
     [documentsBookPath release];
     [bundleBookPath release];
