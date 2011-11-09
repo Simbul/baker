@@ -26,6 +26,8 @@
 	return self;
 }
 - (void)makeHTTPRequest:(NSString *)urlAddress {
+    
+    [UIApplication sharedApplication].idleTimerDisabled = YES;
 	
 	NSLog(@"HTTP Request to %@", urlAddress);
 	
@@ -147,6 +149,7 @@
 }
 - (void)postNotification {
 	
+    [UIApplication sharedApplication].idleTimerDisabled = NO;
 	[[NSNotificationCenter defaultCenter] postNotificationName:notificationName object:requestSummary];
 }
 - (void)cancelConnection {
