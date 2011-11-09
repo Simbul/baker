@@ -122,6 +122,13 @@ BUGS AND FEEDBACK
 CHANGELOG
 ---------
 
+* **MASTER** 
+  * Newsstand basic support
+  * Fix: doesn't idle when downloading
+
+* **3.0.2**
+  * Fix: iOS 4 support for the spinner feature available only in iOS 5
+
 * **3.0** 
   * Two rendering modes to improve performances: screenshots (thanks to @pugpig) and three-cards
   * index.html view on double-tap to manage navigation and menu
