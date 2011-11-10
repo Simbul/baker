@@ -102,7 +102,7 @@
         NSString *documentsPath = [NSString stringWithString:[documentsPaths objectAtIndex:0]];
         
         documentsBookPath     = [[documentsPath stringByAppendingPathComponent:@"book"] retain];
-        bundleBookPath        = [[[NSBundle mainBundle] pathForResource:@"book" ofType:nil] retain];        
+        bundleBookPath        = [[[NSBundle mainBundle] pathForResource:@"book" ofType:nil] retain];
         defaultScreeshotsPath = [[documentsPath stringByAppendingPathComponent:@"baker-screenshots"] retain];
         
         // ****** BOOK ENVIRONMENT
@@ -313,8 +313,8 @@
             {
                 screenshotView.hidden = NO;
             } 
-            else {
-                
+            else
+            {
                 for (NSString *key in details) {
                     UIView *value = [details objectForKey:key];
                     if (value != nil) {
@@ -451,14 +451,22 @@
         currentPageIsDelayingLoading = YES;
         [toLoad removeAllObjects];
 		
-        cachedScreenshotsPath = [path stringByAppendingPathComponent:@"baker-screenshot"];
-        if (![[NSFileManager defaultManager] fileExistsAtPath:cachedScreenshotsPath])
-        {
+        NSString *screenshotFolder = [properties get:@"-baker-page-screenshots", nil];
+        if (screenshotFolder != nil) {
+            cachedScreenshotsPath = [path stringByAppendingPathComponent:screenshotFolder];
+        }
+        
+        if (screenshotFolder == nil || ![[NSFileManager defaultManager] fileExistsAtPath:cachedScreenshotsPath]) {
+            cachedScreenshotsPath = [path stringByAppendingPathComponent:@"baker-screenshots"];
             if ([path isEqualToString:bundleBookPath]) {
                 cachedScreenshotsPath = defaultScreeshotsPath;
             }
-            [[NSFileManager defaultManager] createDirectoryAtPath:cachedScreenshotsPath withIntermediateDirectories:YES attributes:nil error:nil];            
+        } 
+        
+        if (![[NSFileManager defaultManager] fileExistsAtPath:cachedScreenshotsPath]) {
+            [[NSFileManager defaultManager] createDirectoryAtPath:cachedScreenshotsPath withIntermediateDirectories:YES attributes:nil error:nil];
         }
+    
         [cachedScreenshotsPath retain];
         
         [self initPageDetails];
@@ -1076,8 +1084,8 @@
 }
 - (void)takeScreenshotFromView:(UIWebView *)webView forPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation {
     
-    BOOL shouldRevealWebView = NO;
-    BOOL animating = NO;
+    BOOL shouldRevealWebView = YES;
+    BOOL animating = YES;
     
     if (![self checkScreeshotForPage:pageNumber andOrientation:interfaceOrientation]) {
         
@@ -1099,16 +1107,18 @@
             UIGraphicsEndImageContext();
             
             if (screenshot) {
-                [UIImageJPEGRepresentation(screenshot, 0.6) writeToFile:screenshotFile options:NSDataWritingAtomic error:nil];
-                NSLog(@"    Screenshot succesfully saved to file %@", screenshotFile);
-                [self placeScreenshotForView:webView andPage:pageNumber andOrientation:interfaceOrientation];                
+                BOOL saved = [UIImageJPEGRepresentation(screenshot, 0.6) writeToFile:screenshotFile options:NSDataWritingAtomic error:nil];
+                if (saved) {
+                    NSLog(@"    Screenshot succesfully saved to file %@", screenshotFile);
+                    [self placeScreenshotForView:webView andPage:pageNumber andOrientation:interfaceOrientation];
+                    
+                    shouldRevealWebView = NO;
+                }
             }
-        } else {
-            shouldRevealWebView = YES;
-            animating = YES;            
         }
-    } else {
-        shouldRevealWebView = YES;
+    } 
+    else
+    {
         animating = NO;
     }
     
