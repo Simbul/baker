@@ -434,8 +434,17 @@
 		// Check if there is a saved starting page        
 		NSString *currPageToLoad = [[NSUserDefaults standardUserDefaults] objectForKey:@"lastPageViewed"];
 		
-        currentPageNumber = 1;
-		if (currentPageFirstLoading && currPageToLoad != nil) {
+        int startingPage = [[properties get:@"-baker-start-at-page", nil] intValue];
+        if (startingPage < 0) {
+            startingPage = MAX(1, totalPages + startingPage + 1);
+        } else if (startingPage == 0) {
+            startingPage = 1;
+        } else if (startingPage > 0) {
+            startingPage = MIN(totalPages, startingPage);
+        }
+        
+        currentPageNumber = startingPage;
+        if (currentPageFirstLoading && currPageToLoad != nil) {
 			currentPageNumber = [currPageToLoad intValue];
 		} else if (pageNameFromURL != nil) {
             pageNameFromURL = nil;
@@ -447,6 +456,8 @@
                 }
 			}
 		}
+        
+        NSLog(@"    Starting page: %i", currentPageNumber);
 		
         currentPageIsDelayingLoading = YES;
         [toLoad removeAllObjects];
