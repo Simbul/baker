@@ -280,7 +280,11 @@
         number.textColor = foregroundColor;
         number.textAlignment = UITextAlignmentCenter;
         number.alpha = [(NSNumber*) foregroundAlpha floatValue];
+        
         number.text = [NSString stringWithFormat:@"%d", i + 1];
+        if ([[properties get:@"-baker-start-at-page", nil] intValue] < 0) {
+            number.text = [NSString stringWithFormat:@"%d", totalPages - i];
+        }
         
         [scrollView addSubview:number];
         [number release];
