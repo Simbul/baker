@@ -79,9 +79,6 @@
 @synthesize scrollView;
 @synthesize currPage;
 @synthesize currentPageNumber;
-@synthesize availableOrientation;
-@synthesize backgroundImageLandscape;
-@synthesize backgroundImagePortrait;
 
 #pragma mark - INIT
 - (id)init {
@@ -98,8 +95,7 @@
         NSLog(@"    Device Height: %f", screenBounds.size.height);
         
         // ****** BOOK DIRECTORIES
-        NSArray *documentsPaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-        NSString *documentsPath = [NSString stringWithString:[documentsPaths objectAtIndex:0]];
+        NSString *documentsPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
         
         documentsBookPath     = [[documentsPath stringByAppendingPathComponent:@"book"] retain];
         bundleBookPath        = [[[NSBundle mainBundle] pathForResource:@"book" ofType:nil] retain];
@@ -131,13 +127,14 @@
         [self hideStatusBar];
         
         // ****** SCROLLVIEW INIT
-        scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, pageWidth, pageHeight)];
+        self.scrollView = [[[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, pageWidth, pageHeight)] autorelease];
         scrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         scrollView.showsHorizontalScrollIndicator = YES;
         scrollView.showsVerticalScrollIndicator = NO;
         scrollView.delaysContentTouches = NO;
         scrollView.pagingEnabled = YES;
         scrollView.delegate = self;
+        
         [self.view addSubview:scrollView];
         
         // ****** INDEX WEBVIEW INIT
@@ -383,7 +380,7 @@
     [properties loadManifest:filePath];
     
     // ****** ORIENTATION
-    self.availableOrientation = [properties get:@"orientation", nil];
+    availableOrientation = [[[properties get:@"orientation", nil] retain] autorelease];
     NSLog(@"available orientation: %@", availableOrientation);
     
     // ****** RENDERING
@@ -392,18 +389,17 @@
     
     // ****** BACKGROUND
     scrollView.backgroundColor = [Utils colorWithHexString:[properties get:@"-baker-background", nil]];
+    backgroundImageLandscape   = nil;
+    backgroundImagePortrait    = nil;
     
     NSString *backgroundPathLandscape = [properties get:@"-baker-background-image-landscape", nil];
-    if (backgroundPathLandscape != NULL) {
-        backgroundImageLandscape = [UIImage imageNamed:backgroundPathLandscape];
-    } else {
-        backgroundImageLandscape = NULL;
+    if (backgroundPathLandscape != nil) {
+        backgroundImageLandscape = [[UIImage imageNamed:backgroundPathLandscape] retain];
     }
+    
     NSString *backgroundPathPortrait = [properties get:@"-baker-background-image-portrait", nil];
-    if (backgroundPathPortrait != NULL) {
-        backgroundImagePortrait = [UIImage imageNamed:backgroundPathPortrait];
-    } else {
-        backgroundImagePortrait = NULL;
+    if (backgroundPathPortrait != nil) {
+        backgroundImagePortrait = [[UIImage imageNamed:backgroundPathPortrait] retain];
     }
 
 }
@@ -417,7 +413,7 @@
     id page;
     
     while ((page = [pagesEnumerator nextObject])) {
-        NSString *pageFile;
+        NSString *pageFile = nil;
         if ([page isKindOfClass:[NSString class]]) {
             pageFile = [path stringByAppendingPathComponent:page];
         } else if ([page isKindOfClass:[NSDictionary class]]) {
@@ -774,7 +770,7 @@
 - (void)loadSlot:(int)slot withPage:(int)page {
 	NSLog(@"• Setup new page for loading");
     
-    UIWebView *webView = [[UIWebView alloc] init];
+    UIWebView *webView = [[[UIWebView alloc] init] autorelease];
     [self setupWebView:webView];
     
     webView.frame = [self frameForPage:page];
@@ -792,7 +788,7 @@
             }
             [currPage release];
         }
-        currPage = webView;
+        currPage = [webView retain];
         currentPageHasChanged = YES;
         
 	} else if (slot == +1) {
@@ -804,7 +800,7 @@
             }
             [nextPage release];
         }
-        nextPage = webView;
+        nextPage = [webView retain];
     
     } else if (slot == -1) {
         
@@ -815,7 +811,7 @@
             }
             [prevPage release];
         }
-        prevPage = webView;
+        prevPage = [webView retain];
     }
     
     
@@ -1110,11 +1106,6 @@
         UIImage *screenshot = nil;
         
         if ([interfaceOrientation isEqualToString:[self getCurrentInterfaceOrientation]] && !currentPageHasChanged) {
-            
-            CGSize pageSize = CGSizeMake(screenBounds.size.width, screenBounds.size.height);
-            if ([interfaceOrientation isEqualToString:@"landscape"]) {
-                pageSize = CGSizeMake(screenBounds.size.height, screenBounds.size.width);
-            }
             
             UIGraphicsBeginImageContextWithOptions(webView.frame.size, NO, 1.0);
             [webView.layer renderInContext:UIGraphicsGetCurrentContext()];

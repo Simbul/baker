@@ -98,9 +98,6 @@
 #pragma mark - PROPERTIES
 @property (nonatomic, retain) UIScrollView *scrollView;
 @property (nonatomic, retain) UIWebView *currPage;
-@property (nonatomic, retain) NSString *availableOrientation;
-@property (nonatomic, retain) UIImage *backgroundImageLandscape;
-@property (nonatomic, retain) UIImage *backgroundImagePortrait;
 @property int currentPageNumber;
 
 #pragma mark - INIT

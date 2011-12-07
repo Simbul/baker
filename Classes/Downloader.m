@@ -17,12 +17,12 @@
 
 - (Downloader *)initDownloader:(NSString *)observerName {
 	
-	[super init];
-	
-	notificationName = observerName;	
-	requestSummary = [[NSMutableDictionary alloc] init];
-	receivedData = [[NSMutableData alloc] init];
-		
+	self = [super init];
+	if (self) {
+        notificationName = observerName;	
+        requestSummary = [[NSMutableDictionary alloc] init];
+        receivedData = [[NSMutableData alloc] init];
+    }
 	return self;
 }
 - (void)makeHTTPRequest:(NSString *)urlAddress {

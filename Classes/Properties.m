@@ -52,23 +52,26 @@
     return self;
 }
 
-/**
-    Get the value for the specified property.
-    E.g. with a JSON like this:
-    {
-     "prop1": "value1",
-     "nest":{
-      "prop2": "value2"
-     }
-    }
-    Some calls could be:
-    [get @"prop1", nil] // returns "value1"
-    [get @"nest", "prop2", nil] // returns "value2"
-
-    Remember to end the list of parameters with nil.
- */
 - (id)get:(NSString *)rootName, ... {
-    NSMutableArray *keys = [[NSMutableArray alloc] init];
+    
+    /****************************************************************************************************
+     * Get the value for the specified property.
+     * E.g. with a JSON like this:
+     *   {
+     *      "prop1": "value1",
+     *      "nest":{
+     *          "prop2": "value2"
+     *      }
+     *   }
+     * 
+     * Some calls could be:
+     *   [get @"prop1", nil] // returns "value1"
+     *   [get @"nest", "prop2", nil] // returns "value2"
+     *
+     * Remember to end the list of parameters with nil.
+     */
+    
+    NSMutableArray *keys = [NSMutableArray array];
     va_list args;
     va_start(args, rootName);
     for (NSString *arg = rootName; arg != nil; arg = va_arg(args, NSString*)) {
@@ -111,7 +114,7 @@
         self.manifest = [self dictionaryFromManifestFile:filePath];
         return YES;
     } else {
-        self.manifest = [[NSDictionary alloc] init];
+        self.manifest = [NSDictionary dictionary];
         return NO;
     }
 }
@@ -130,16 +133,14 @@
         "\"-baker-vertical-pagination\": false,"
         "\"-baker-rendering\": \"screenshots\""
     "}";
-    NSError *e = NULL;
-    NSDictionary *ret;
-    
-    ret = [NSDictionary dictionaryWithJSONString:json error:&e];
-    return ret;
+    NSError *e = nil;
+    return [[NSDictionary dictionaryWithJSONString:json error:&e] retain];
 }
 
 - (NSDictionary*)dictionaryFromManifestFile:(NSString*)filePath {
+    
     /****************************************************************************************************
-	 * Reads a JSON file from Application Bundle to a NSDictionary.
+     * Reads a JSON file from Application Bundle to a NSDictionary.
      *
      * Requires TouchJSON with the inclusion of: #import "NSDictionary_JSONExtensions.h"
      *
@@ -147,14 +148,15 @@
      *   [json objectForKey:@"name"]
      *   [[json objectForKey:@"items"] objectAtIndex:1]
 	 */
-    NSDictionary *ret;
+    
+    NSDictionary *ret = nil;
     
     if (filePath) {  
         NSString *fileJSON = [NSString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
         
-        NSError *e = NULL;
+        NSError *e = nil;
         ret = [NSDictionary dictionaryWithJSONString:fileJSON error:&e];
-        if ([e userInfo] != NULL) {
+        if ([e userInfo] != nil) {
             NSLog(@"Error loading JSON: %@", [e userInfo]);
         }
     }
@@ -165,39 +167,38 @@
 #pragma mark - SINGLETON METHODS
 static Properties *sharedProperties = nil;
 
-+ (Properties*)properties
++ (Properties *)properties
 {
     if (sharedProperties == nil) {
-        sharedProperties = [[super allocWithZone:NULL] init];
+        // Init singleton at most once per application
+        static dispatch_once_t onceToken;
+        dispatch_once(&onceToken, ^{
+            sharedProperties = [[super allocWithZone:nil] init];
+        });
     }
     return sharedProperties;
 }
-
 + (id)allocWithZone:(NSZone *)zone
 {
     return [[self properties] retain];
 }
-
 - (id)copyWithZone:(NSZone *)zone
 {
     return self;
 }
-
 - (id)retain
 {
     return self;
 }
-
 - (NSUInteger)retainCount
 {
-    return NSUIntegerMax;  //denotes an object that cannot be released
+    // Denotes an object that cannot be released
+    return NSUIntegerMax;
 }
-
 - (oneway void)release
 {
-    //do nothing
+    // Do nothing
 }
-
 - (id)autorelease
 {
     return self;

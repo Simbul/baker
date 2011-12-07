@@ -53,18 +53,14 @@
 	application.applicationSupportsShakeToEdit = NO;
     
 	// Create the controller for the root view
-	self.rootViewController =[[RootViewController alloc] init];
-	UIView *scrollView = [rootViewController scrollView];
+	self.rootViewController = [[[RootViewController alloc] init] autorelease];
 	
 	// Create the application window
-	UIWindow *localWindow = [[InterceptorWindow alloc] initWithTarget:scrollView eventsDelegate:self.rootViewController frame:[[UIScreen mainScreen]bounds]];
-	localWindow.backgroundColor = [UIColor whiteColor];
-	self.window = localWindow;
-	[localWindow release];
+	self.window = [[[InterceptorWindow alloc] initWithTarget:self.rootViewController.scrollView eventsDelegate:self.rootViewController frame:[[UIScreen mainScreen]bounds]] autorelease];
+	window.backgroundColor = [UIColor whiteColor];
 	
 	// Add the root view to the application window
-	[window addSubview:[rootViewController view]];
-	
+	[window addSubview:rootViewController.view];
     [window makeKeyAndVisible];
 	
 	NSString *reqSysVer = @"3.2";
