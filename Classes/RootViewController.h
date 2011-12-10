@@ -110,8 +110,8 @@
 - (void)resetPageDetails;
 - (void)initBookProperties:(NSString *)path;
 - (void)initBook:(NSString *)path;
-
 - (void)setImageFor:(UIImageView *)view;
+- (void)addSkipBackupAttributeToItemAtPath:(NSString *)path;
 
 #pragma mark - LOADING
 - (BOOL)changePage:(int)page;
@@ -131,7 +131,7 @@
 - (void)webView:(UIWebView *)webView hidden:(BOOL)status animating:(BOOL)animating;
 - (void)webViewDidAppear:(UIWebView *)webView animating:(BOOL)animating;
 
-#pragma mark - SNAPSHOTS
+#pragma mark - SCREENSHOTS
 - (void)initScreenshots;
 - (BOOL)checkScreeshotForPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation;
 - (void)takeScreenshotFromView:(UIWebView *)webView forPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation;

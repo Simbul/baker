@@ -30,6 +30,8 @@
 //  
 
 #import <QuartzCore/QuartzCore.h>
+#import <sys/xattr.h>
+
 #import "RootViewController.h"
 #import "Downloader.h"
 #import "SSZipArchive.h"
@@ -88,18 +90,28 @@
         
         // ****** INIT PROPERTIES
         properties = [Properties properties];
-      
+        
         // ****** DEVICE SCREEN BOUNDS
         screenBounds = [[UIScreen mainScreen] bounds];
         NSLog(@"    Device Width: %f", screenBounds.size.width);
         NSLog(@"    Device Height: %f", screenBounds.size.height);
         
-        // ****** BOOK DIRECTORIES
-        NSString *documentsPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+        // ****** BOOK DIRECTORIES        
+        NSString *privateDocsPath = [[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:@"Private Documents"];
+        if (![[NSFileManager defaultManager] fileExistsAtPath:privateDocsPath]) {
+            [[NSFileManager defaultManager] createDirectoryAtPath:privateDocsPath withIntermediateDirectories:YES attributes:nil error:nil];
+        }
         
-        documentsBookPath     = [[documentsPath stringByAppendingPathComponent:@"book"] retain];
+        NSString *cachePath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+        if (![[NSFileManager defaultManager] fileExistsAtPath:cachePath]) {
+            [[NSFileManager defaultManager] createDirectoryAtPath:cachePath withIntermediateDirectories:YES attributes:nil error:nil];
+        }
+        
         bundleBookPath        = [[[NSBundle mainBundle] pathForResource:@"book" ofType:nil] retain];
-        defaultScreeshotsPath = [[documentsPath stringByAppendingPathComponent:@"baker-screenshots"] retain];
+        documentsBookPath     = [[privateDocsPath stringByAppendingPathComponent:@"book"] retain];
+        
+        defaultScreeshotsPath = [[cachePath stringByAppendingPathComponent:@"baker-screenshots"] retain];
+        [self addSkipBackupAttributeToItemAtPath:defaultScreeshotsPath];
         
         // ****** BOOK ENVIRONMENT
         pages = [[NSMutableArray array] retain];
@@ -258,7 +270,7 @@
         spinner.backgroundColor = [UIColor clearColor];
         IF_IOS5_OR_GREATER(
             spinner.color = foregroundColor;
-            spinner.alpha = [(NSNumber*) foregroundAlpha floatValue];
+            spinner.alpha = [(NSNumber *)foregroundAlpha floatValue];
         );
         
         CGRect frame = spinner.frame;
@@ -276,7 +288,7 @@
         number.font = [UIFont fontWithName:@"Helvetica" size:40.0];
         number.textColor = foregroundColor;
         number.textAlignment = UITextAlignmentCenter;
-        number.alpha = [(NSNumber*) foregroundAlpha floatValue];
+        number.alpha = [(NSNumber *)foregroundAlpha floatValue];
         
         number.text = [NSString stringWithFormat:@"%d", i + 1];
         if ([[properties get:@"-baker-start-at-page", nil] intValue] < 0) {
@@ -472,10 +484,6 @@
             if ([path isEqualToString:bundleBookPath]) {
                 cachedScreenshotsPath = defaultScreeshotsPath;
             }
-        } 
-        
-        if (![[NSFileManager defaultManager] fileExistsAtPath:cachedScreenshotsPath]) {
-            [[NSFileManager defaultManager] createDirectoryAtPath:cachedScreenshotsPath withIntermediateDirectories:YES attributes:nil error:nil];
         }
     
         [cachedScreenshotsPath retain];
@@ -518,6 +526,16 @@
         view.image = backgroundImagePortrait;
     } else {
         view.image = NULL;
+    }
+}
+- (void)addSkipBackupAttributeToItemAtPath:(NSString *)path {
+    const char *filePath = [path fileSystemRepresentation];
+    const char *attrName = "com.apple.MobileBackup";
+    u_int8_t attrValue = 1;
+    
+    int result = setxattr(filePath, attrName, &attrValue, sizeof(attrValue), 0, 0);
+    if (result == 0) {
+        NSLog(@"Successfully added skip backup attribute to item %@", path);
     }
 }
 
@@ -1075,7 +1093,7 @@
     }
 }
 
-#pragma mark - SCREENSHOT
+#pragma mark - SCREENSHOTS
 - (void)initScreenshots {
     
     for (int i = 1; i <= totalPages; i++)
@@ -1090,6 +1108,12 @@
     }
 }
 - (BOOL)checkScreeshotForPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation {
+    
+    if (![[NSFileManager defaultManager] fileExistsAtPath:cachedScreenshotsPath]) {
+        [[NSFileManager defaultManager] createDirectoryAtPath:cachedScreenshotsPath withIntermediateDirectories:YES attributes:nil error:nil];
+        [self addSkipBackupAttributeToItemAtPath:cachedScreenshotsPath];
+    }
+    
     NSString *screenshotFile = [cachedScreenshotsPath stringByAppendingPathComponent:[NSString stringWithFormat:@"screenshot-%@-%i.jpg", interfaceOrientation, pageNumber]];
     return [[NSFileManager defaultManager] fileExistsAtPath:screenshotFile];
 }
@@ -1148,36 +1172,55 @@
 - (void)placeScreenshotForView:(UIWebView *)webView andPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation {
             
     int i = pageNumber - 1;
-    NSString *screenshotFile = [cachedScreenshotsPath stringByAppendingPathComponent:[NSString stringWithFormat:@"screenshot-%@-%i.jpg", interfaceOrientation, pageNumber]];
-    
+    NSString    *screenshotFile = [cachedScreenshotsPath stringByAppendingPathComponent:[NSString stringWithFormat:@"screenshot-%@-%i.jpg", interfaceOrientation, pageNumber]];
     UIImageView *screenshotView = [[UIImageView alloc] initWithImage:[UIImage imageWithContentsOfFile:screenshotFile]];
  
     CGSize pageSize = CGSizeMake(screenBounds.size.width, screenBounds.size.height);
     if ([interfaceOrientation isEqualToString:@"landscape"]) {
         pageSize = CGSizeMake(screenBounds.size.height, screenBounds.size.width);
     }
-    screenshotView.frame = CGRectMake(pageSize.width * i, 0, pageSize.width, pageSize.height);
     
-    if (pageDetails.count > i && [pageDetails objectAtIndex:i] != nil) {
-        NSMutableDictionary *details = [pageDetails objectAtIndex:i];            
+    screenshotView.frame = CGRectMake(pageSize.width * i, 0, pageSize.width, pageSize.height);
+    screenshotView.hidden = YES;
+    
+    BOOL alreadyPlaced = NO;
+    if (pageDetails.count > i && [pageDetails objectAtIndex:i] != nil)
+    {
+        NSMutableDictionary *details = [pageDetails objectAtIndex:i];
+        NSString *key = [NSString stringWithFormat:@"screenshot-%@", interfaceOrientation];
+        UIImageView *oldScreenshotView = [details objectForKey:key]; 
+        
+        if (oldScreenshotView != nil) {            
+            [scrollView addSubview:screenshotView];
+            [oldScreenshotView removeFromSuperview];
+            [details removeObjectForKey:key];
+            
+            alreadyPlaced = YES;
+        }
         [details setObject:screenshotView forKey:[NSString stringWithFormat:@"screenshot-%@", interfaceOrientation]];
     }
-        
+    
     if (webView == nil) {
         [scrollView addSubview:screenshotView];
     }
     
-    screenshotView.hidden = YES;
-    
-    if (webView != nil && [interfaceOrientation isEqualToString:[self getCurrentInterfaceOrientation]] && !currentPageHasChanged) {
+    if (webView != nil) {
         
-        screenshotView.hidden = NO;
-        screenshotView.alpha = 0.0;
+        if (alreadyPlaced) {
+            
+            screenshotView.hidden = NO;
+            [self webView:webView hidden:NO animating:NO];
+            
+        } else if ([interfaceOrientation isEqualToString:[self getCurrentInterfaceOrientation]] && !currentPageHasChanged) {
         
-        [scrollView addSubview:screenshotView];
-        [UIView animateWithDuration:0.5
-                         animations:^{ screenshotView.alpha = 1.0; }
-                         completion:^(BOOL finished) { if (!currentPageHasChanged) { [self webView:webView hidden:NO animating:NO]; }}];
+            screenshotView.hidden = NO;
+            screenshotView.alpha = 0.0;
+            
+            [scrollView addSubview:screenshotView];
+            [UIView animateWithDuration:0.5
+                             animations:^{ screenshotView.alpha = 1.0; }
+                             completion:^(BOOL finished) { if (!currentPageHasChanged) { [self webView:webView hidden:NO animating:NO]; }}];
+        }
     }
     
     [screenshotView release];
@@ -1340,6 +1383,11 @@
     
     if ([[alertView buttonTitleAtIndex:buttonIndex] isEqualToString:CLOSE_BOOK_CONFIRM])
     {	
+        // If a "book" directory already exists remove it (quick solution, improvement needed) 
+		if ([[NSFileManager defaultManager] fileExistsAtPath:documentsBookPath]) {
+			[[NSFileManager defaultManager] removeItemAtPath:documentsBookPath error:NULL];
+        }
+        
         currentPageIsDelayingLoading = YES;
 		[self initBook:bundleBookPath];
     }
@@ -1399,23 +1447,24 @@
 			
 	if ([[NSFileManager defaultManager] fileExistsAtPath:targetPath]) {
 		NSLog(@"• File hpub create successfully at path: %@", targetPath);
-		NSString *destinationPath = documentsBookPath;
-		NSLog(@"    Book destination path: %@", destinationPath);
+		NSLog(@"    Book destination path: %@", documentsBookPath);
 		
 		// If a "book" directory already exists remove it (quick solution, improvement needed) 
-		if ([[NSFileManager defaultManager] fileExistsAtPath:destinationPath]) {
-			[[NSFileManager defaultManager] removeItemAtPath:destinationPath error:NULL];
+		if ([[NSFileManager defaultManager] fileExistsAtPath:documentsBookPath]) {
+			[[NSFileManager defaultManager] removeItemAtPath:documentsBookPath error:NULL];
         }
     
-		[SSZipArchive unzipFileAtPath:targetPath toDestination:destinationPath];
-		NSLog(@"    Book successfully unzipped. Removing .hpub file");
-		[[NSFileManager defaultManager] removeItemAtPath:targetPath error:NULL];
+		[SSZipArchive unzipFileAtPath:targetPath toDestination:documentsBookPath];
+		
+        NSLog(@"    Book successfully unzipped. Removing .hpub file");
+        [[NSFileManager defaultManager] removeItemAtPath:targetPath error:NULL];
 				
-		[feedbackAlert dismissWithClickedButtonIndex:feedbackAlert.cancelButtonIndex animated:YES];        
-		[self initBook:destinationPath];
-	} /* else {
-	   Do something if it was not possible to write the book file on the iPhone/iPad file system...
-	} */
+		NSLog(@"    Add skip backup attribute to book folder");
+        [self addSkipBackupAttributeToItemAtPath:documentsBookPath];
+        
+        [feedbackAlert dismissWithClickedButtonIndex:feedbackAlert.cancelButtonIndex animated:YES];        
+		[self initBook:documentsBookPath];
+	}
 }
 
 #pragma mark - ORIENTATION
