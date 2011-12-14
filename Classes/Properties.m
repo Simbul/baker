@@ -30,7 +30,7 @@
 //  
 
 #import "Properties.h"
-#import "NSDictionary_JSONExtensions.h"
+#import "JSONKit.h"
 
 
 @implementation Properties
@@ -133,8 +133,7 @@
         "\"-baker-vertical-pagination\": false,"
         "\"-baker-rendering\": \"screenshots\""
     "}";
-    NSError *e = nil;
-    return [[NSDictionary dictionaryWithJSONString:json error:&e] retain];
+    return [[json objectFromJSONString] retain];
 }
 
 - (NSDictionary*)dictionaryFromManifestFile:(NSString*)filePath {
@@ -155,8 +154,8 @@
         NSString *fileJSON = [NSString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
         
         NSError *e = nil;
-        ret = [NSDictionary dictionaryWithJSONString:fileJSON error:&e];
-        if ([e userInfo] != nil) {
+        ret = [fileJSON objectFromJSONString];
+        if (ret == nil) {
             NSLog(@"Error loading JSON: %@", [e userInfo]);
         }
     }
