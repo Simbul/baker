@@ -35,7 +35,6 @@
 #import "RootViewController.h"
 #import "Downloader.h"
 #import "SSZipArchive.h"
-#import "NSDictionary_JSONExtensions.h"
 #import "PageTitleLabel.h"
 #import "Utils.h"
 
@@ -1131,7 +1130,7 @@
         
         if ([interfaceOrientation isEqualToString:[self getCurrentInterfaceOrientation]] && !currentPageHasChanged) {
             
-            UIGraphicsBeginImageContextWithOptions(webView.frame.size, NO, 1.0);
+            UIGraphicsBeginImageContextWithOptions(webView.frame.size, NO, [[UIScreen mainScreen] scale]);
             [webView.layer renderInContext:UIGraphicsGetCurrentContext()];
             screenshot = UIGraphicsGetImageFromCurrentImageContext();
             UIGraphicsEndImageContext();
