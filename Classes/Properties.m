@@ -156,7 +156,7 @@
         
         NSError *e = nil;
         ret = [fileJSON objectFromJSONStringWithParseOptions:JKParseOptionNone error:&e];
-        if (ret == nil) {
+        if ([e userInfo] != nil) {
             NSLog(@"Error loading JSON: %@", [e userInfo]);
         }
     }
