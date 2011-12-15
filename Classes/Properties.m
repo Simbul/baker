@@ -133,7 +133,8 @@
         "\"-baker-vertical-pagination\": false,"
         "\"-baker-rendering\": \"screenshots\""
     "}";
-    return [[json objectFromJSONString] retain];
+    NSError *e;
+    return [[json objectFromJSONStringWithParseOptions:JKParseOptionNone error:&e] retain];
 }
 
 - (NSDictionary*)dictionaryFromManifestFile:(NSString*)filePath {
@@ -154,7 +155,7 @@
         NSString *fileJSON = [NSString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
         
         NSError *e = nil;
-        ret = [fileJSON objectFromJSONString];
+        ret = [fileJSON objectFromJSONStringWithParseOptions:JKParseOptionNone error:&e];
         if (ret == nil) {
             NSLog(@"Error loading JSON: %@", [e userInfo]);
         }
