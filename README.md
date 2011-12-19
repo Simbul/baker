@@ -122,7 +122,7 @@ BUGS AND FEEDBACK
 CHANGELOG
 ---------
 
-* **MASTER** 
+* **MASTER** (currently achieved features)
   * Newsstand basic support
   * iOS5/iCloud data storage guidelines support
   * Pre-build screenshots in screenshot mode using -baker-page-screenshots in book.json
@@ -133,10 +133,10 @@ CHANGELOG
   * Fix: block idle when downloading
   * Fix: spinner color and iOS4.x support
 
-* **3.0.2**
+* **3.0.2** (29/10/2011)
   * Fix: iOS 4 support for the spinner feature available only in iOS 5
 
-* **3.0** 
+* **3.0** (18/10/2011)
   * Two rendering modes to improve performances: screenshots (thanks to @pugpig) and three-cards
   * index.html view on double-tap to manage navigation and menu
   * Full Hpub 1.0 support
@@ -148,7 +148,7 @@ CHANGELOG
   * Minor fixes and improvements
   * Thanks to @francesctovar @therabidbanana @eaglejohn @ffranke for the great support
 
-* **2.0**
+* **2.0** (28/04/2011)
   * Multi-orientation books support: portrait, landscape, both (thanks to @svdgraaf)
   * iPhone support
   * Xcode 4 compatibility
@@ -161,7 +161,7 @@ CHANGELOG
   * Minimum supported version: iOS 3.2
   * Minor fixes
 
-* **1.1**
+* **1.1** (19/01/2011)
   * Added book:// protocol to allow downloadable HPub books
   * Support for zipped HPub books (to allow downloading)
   * Link support (internal/external)
@@ -172,7 +172,7 @@ CHANGELOG
   * Fix: now the previous page doesn't flash anymore when you change page
   * Minor fixes
 
-* **1.0**
+* **1.0** (03/11/2010)
   * First release
 
 
