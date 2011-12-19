@@ -13,8 +13,8 @@
     "-baker-vertical-bounce": true,
     "-baker-index-height": 202,
     "-baker-media-autoplay": true,
-    "-baker-background-image-portrait": "book/gfx/background-portrait.png",
-    "-baker-background-image-landscape": "book/gfx/background-landscape.png",
+    "-baker-background-image-portrait": "gfx/background-portrait.png",
+    "-baker-background-image-landscape": "gfx/background-landscape.png",
     "-baker-page-numbers-color": "#000000",
 
     "contents": [
