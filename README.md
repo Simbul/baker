@@ -122,7 +122,7 @@ BUGS AND FEEDBACK
 CHANGELOG
 ---------
 
-* **MASTER** (currently achieved features)
+* **3.1** (20/12/2011)
   * Newsstand basic support
   * iOS5/iCloud data storage guidelines support
   * Pre-build screenshots in screenshot mode using -baker-page-screenshots in book.json
@@ -132,6 +132,7 @@ CHANGELOG
   * Change JSON library to JSONKit (thanks to @zenz)
   * Fix: block idle when downloading
   * Fix: spinner color and iOS4.x support
+  * Change: -baker-background-image-* properties are now relative to ./book/ folder, see Issue #247
 
 * **3.0.2** (29/10/2011)
   * Fix: iOS 4 support for the spinner feature available only in iOS 5
