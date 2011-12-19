@@ -41,6 +41,7 @@
 		D2A198AA1375972600C6BE2F /* IndexViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D2A198A91375972600C6BE2F /* IndexViewController.m */; };
 		D2A58308141EA59100E91BBF /* Utils.m in Sources */ = {isa = PBXBuildFile; fileRef = D2A58307141EA59100E91BBF /* Utils.m */; };
 		D2B70D54143A5E0100241A28 /* GTMNSString+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = D2B70D53143A5E0100241A28 /* GTMNSString+HTML.m */; };
+		D2DC7F25149FAA6500781BFA /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = F4968A861498C29F00D6689C /* JSONKit.m */; };
 		F4968A871498C29F00D6689C /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = F4968A861498C29F00D6689C /* JSONKit.m */; };
 		F4EC203812862D4D008E94D1 /* InterceptorWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = F4EC203712862D4D008E94D1 /* InterceptorWindow.m */; };
 /* End PBXBuildFile section */
@@ -431,6 +432,7 @@
 				D281D06A13549EF4009F1B11 /* InterceptorWindowTests.m in Sources */,
 				D20915C413CB9FDC00D3B55B /* PropertiesTest.m in Sources */,
 				D20915C513CBA1C600D3B55B /* Properties.m in Sources */,
+				D2DC7F25149FAA6500781BFA /* JSONKit.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
