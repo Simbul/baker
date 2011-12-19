@@ -993,8 +993,14 @@
                         
                         [self downloadBook:nil];
                     }
-                } 
-                else 
+                }
+                else if ([[url scheme] isEqualToString:@"mailto"])
+                {
+                    NSLog(@"    Link is a mailto address --> open link in Mail");
+                    [[UIApplication sharedApplication] openURL:url];
+                    return NO;
+                }
+                else
                 {
                     NSString *params = [url query];
                     if (params != nil)
@@ -1004,12 +1010,12 @@
                         
                         if (matches > 0) {
                             NSLog(@"    Link contain param \"referrer=Baker\" --> open link in Safari");
-                            [[UIApplication sharedApplication] openURL:[request URL]];
+                            [[UIApplication sharedApplication] openURL:url];
                             return NO;
                         }
                     }
                     
-                    NSLog(@"    Link doesn't contain param \"referrer=Baker\" --> open link in Page");
+                    NSLog(@"    Link doesn't contain param \"referrer=Baker\" --> open link in page");
                     return YES;
                 }
             }
