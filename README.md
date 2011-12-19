@@ -124,7 +124,14 @@ CHANGELOG
 
 * **MASTER** 
   * Newsstand basic support
-  * Fix: doesn't idle when downloading
+  * iOS5/iCloud data storage guidelines support
+  * Pre-build screenshots in screenshot mode using -baker-page-screenshots in book.json
+  * Retina display support in screenshot mode (thanks to @zenz)
+  * Manga support: start from the last page, or any arbitrary page using -baker-start-at-page in book.json
+  * Email protocol support
+  * Change JSON library to JSONKit (thanks to @zenz)
+  * Fix: block idle when downloading
+  * Fix: spinner color and iOS4.x support
 
 * **3.0.2**
   * Fix: iOS 4 support for the spinner feature available only in iOS 5
@@ -142,7 +149,7 @@ CHANGELOG
   * Thanks to @francesctovar @therabidbanana @eaglejohn @ffranke for the great support
 
 * **2.0**
-  * Multi-orientation books support (portrait, landscape, both) - thanks to @svdgraaf
+  * Multi-orientation books support: portrait, landscape, both (thanks to @svdgraaf)
   * iPhone support
   * Xcode 4 compatibility
   * Added support to open a specific page of a downloaded book
