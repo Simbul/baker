@@ -405,14 +405,15 @@
     
     NSString *backgroundPathLandscape = [properties get:@"-baker-background-image-landscape", nil];
     if (backgroundPathLandscape != nil) {
-        backgroundImageLandscape = [[UIImage imageNamed:backgroundPathLandscape] retain];
+        backgroundPathLandscape  = [path stringByAppendingPathComponent:backgroundPathLandscape];
+        backgroundImageLandscape = [[UIImage imageWithContentsOfFile:backgroundPathLandscape] retain];        
     }
     
     NSString *backgroundPathPortrait = [properties get:@"-baker-background-image-portrait", nil];
     if (backgroundPathPortrait != nil) {
-        backgroundImagePortrait = [[UIImage imageNamed:backgroundPathPortrait] retain];
+        backgroundPathPortrait  = [path stringByAppendingPathComponent:backgroundPathPortrait];
+        backgroundImagePortrait = [[UIImage imageWithContentsOfFile:backgroundPathPortrait] retain];
     }
-
 }
 - (void)initBook:(NSString *)path {
     NSLog(@"• Init Book");
