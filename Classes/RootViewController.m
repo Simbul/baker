@@ -127,9 +127,7 @@
         currentPageIsDelayingLoading = YES;
         currentPageHasChanged = NO;
         currentPageIsLocked = NO;
-        
-        discardNextStatusBarToggle = NO;
-                
+                        
         // ****** LISTENER FOR DOWNLOAD NOTIFICATION
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(downloadBook:) name:@"downloadNotification" object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleDownloadResult:) name:@"handleDownloadResult" object:nil];
@@ -914,9 +912,7 @@
 		return YES;
 	}
     else
-    {
-		[self hideStatusBarDiscardingToggle:YES];
-        
+    {        
 		// ****** Handle URI schemes
 		if (url)
         {
@@ -954,11 +950,6 @@
                         }
                         
                         [self handleAnchor:YES];                        
-                    }
-                        
-                    else if ([webView isEqual:indexViewController.view])
-                    {
-                        discardNextStatusBarToggle = NO;
                     }
                 }
                 else if ([[url scheme] isEqualToString:@"book"])
@@ -998,23 +989,23 @@
                 else if ([[url scheme] isEqualToString:@"mailto"])
                 {
                     // Handle mailto links using MessageUI framework
-                    NSLog(@"    mail link detected!");
+                    NSLog(@"    Page is a link with scheme mailto: handle mail link");
                     
-                    // Build temp aray and dictionary
+                    // Build temp array and dictionary
                     NSArray *tempArray = [[url absoluteString] componentsSeparatedByString:@"?"];
                     NSMutableDictionary *queryDictionary = [[NSMutableDictionary alloc] init];
                     
-                    // Check array count to see if whe have parameters to query
-                    if ([tempArray count] == 2) {
-                        
+                    // Check array count to see if we have parameters to query
+                    if ([tempArray count] == 2)
+                    {
                         NSArray *keyValuePairs = [[tempArray objectAtIndex:1] componentsSeparatedByString:@"&"];
                         
                         for (NSString *queryString in keyValuePairs) {
                             NSArray *keyValuePair = [queryString componentsSeparatedByString:@"="];
-                            if (keyValuePair.count == 2)
-                                [queryDictionary setObject: [keyValuePair objectAtIndex:1] forKey:[keyValuePair objectAtIndex:0]];
+                            if (keyValuePair.count == 2) {
+                                [queryDictionary setObject:[keyValuePair objectAtIndex:1] forKey:[keyValuePair objectAtIndex:0]];
+                            }
                         }
-                        
                     }
                     
                     NSString *email = ([tempArray objectAtIndex:0]) ? [tempArray objectAtIndex:0] : [url resourceSpecifier];
@@ -1030,15 +1021,13 @@
                         mailer.mailComposeDelegate = self;
                         mailer.modalPresentationStyle = UIModalPresentationPageSheet;
                         
-                        [mailer setToRecipients:[NSArray arrayWithObject: [email stringByReplacingOccurrencesOfString:@"mailto:" withString:@""]]];
-                        [mailer setSubject: [subject stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
-                        [mailer setMessageBody: [body stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding] isHTML:NO];
+                        [mailer setToRecipients:[NSArray arrayWithObject:[email stringByReplacingOccurrencesOfString:@"mailto:" withString:@""]]];
+                        [mailer setSubject:[subject stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+                        [mailer setMessageBody:[body stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding] isHTML:NO];
                         
                         // Show the view
                         [self presentModalViewController:mailer animated:YES];
-                        
-                        [mailer release];
-                        
+                        [mailer release];                        
                     }
                     else
                     {
@@ -1047,7 +1036,6 @@
                         {
                             // Go for it and open the URL within the respective app
                             [[UIApplication sharedApplication] openURL: url];   
-                            
                         }
                         else
                         {
@@ -1060,14 +1048,10 @@
                             
                             [alert show];
                             [alert release];
-                            
                         }
-                        
                     }
                     
-                    // Don't continue the request in WebView
                     return NO;
-                    
                 }
                 else
                 {
@@ -1325,7 +1309,7 @@
             }
             [self changePage:page];
         } else if ((touch.tapCount%2) == 0) {
-            [self performSelector:@selector(toggleStatusBar) withObject:nil];
+            [self toggleStatusBar];
         }
     }
 
@@ -1412,26 +1396,17 @@
 
 #pragma mark - STATUS BAR
 - (void)toggleStatusBar {
-	if (discardNextStatusBarToggle) {
-		// do nothing, but reset the variable
-		discardNextStatusBarToggle = NO;
-	} else {
-		NSLog(@"• Toggle status bar visibility");
-		UIApplication *sharedApplication = [UIApplication sharedApplication];
-        BOOL hidden = sharedApplication.statusBarHidden;
-		[sharedApplication setStatusBarHidden:!hidden withAnimation:UIStatusBarAnimationSlide];
-        if(![indexViewController isDisabled]) {
-            [indexViewController setIndexViewHidden:!hidden withAnimation:YES];
-        }
-	}
+    NSLog(@"• Toggle status bar visibility");
+    
+    UIApplication *sharedApplication = [UIApplication sharedApplication];
+    BOOL hidden = sharedApplication.statusBarHidden;
+    [sharedApplication setStatusBarHidden:!hidden withAnimation:UIStatusBarAnimationSlide];
+    if(![indexViewController isDisabled]) {
+        [indexViewController setIndexViewHidden:!hidden withAnimation:YES];
+    }
 }
 - (void)hideStatusBar {
-	[self hideStatusBarDiscardingToggle:NO];
-}
-- (void)hideStatusBarDiscardingToggle:(BOOL)discardToggle {
-	NSLog(@"• Hide status bar %@", (discardToggle ? @"discarding toggle" : @""));
-	discardNextStatusBarToggle = discardToggle;
-	[[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
+    [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
     if(![indexViewController isDisabled]) {
         [indexViewController setIndexViewHidden:YES withAnimation:YES];
     }

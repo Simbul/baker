@@ -38,7 +38,7 @@
 
 @class Downloader;
 
-@interface RootViewController : UIViewController < UIWebViewDelegate, UIScrollViewDelegate, MFMailComposeViewControllerDelegate> {
+@interface RootViewController : UIViewController <UIWebViewDelegate, UIScrollViewDelegate, MFMailComposeViewControllerDelegate> {
 	
 	CGRect screenBounds;
 	
@@ -66,9 +66,7 @@
 	BOOL currentPageIsDelayingLoading;
     BOOL currentPageHasChanged;
     BOOL currentPageIsLocked;
-    
-	BOOL discardNextStatusBarToggle;
-    
+        
     UIScrollView *scrollView;
 	UIWebView *prevPage;
 	UIWebView *currPage;
@@ -152,7 +150,6 @@
 #pragma mark - STATUS BAR
 - (void)toggleStatusBar;
 - (void)hideStatusBar;
-- (void)hideStatusBarDiscardingToggle:(BOOL)discardToggle;
 
 #pragma mark - DOWNLOAD NEW BOOKS
 - (void)downloadBook:(NSNotification *)notification;
