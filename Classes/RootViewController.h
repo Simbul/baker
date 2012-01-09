@@ -31,13 +31,14 @@
 
 
 #import <UIKit/UIKit.h>
+#import <MessageUI/MessageUI.h>
 #import "IndexViewController.h"
 #import "Properties.h"
 
 
 @class Downloader;
 
-@interface RootViewController : UIViewController < UIWebViewDelegate, UIScrollViewDelegate > {
+@interface RootViewController : UIViewController < UIWebViewDelegate, UIScrollViewDelegate, MFMailComposeViewControllerDelegate> {
 	
 	CGRect screenBounds;
 	

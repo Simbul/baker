@@ -997,9 +997,77 @@
                 }
                 else if ([[url scheme] isEqualToString:@"mailto"])
                 {
-                    NSLog(@"    Link is a mailto address --> open link in Mail");
-                    [[UIApplication sharedApplication] openURL:url];
+                    // Handle mailto links using MessageUI framework
+                    NSLog(@"    mail link detected!");
+                    
+                    // Build temp aray and dictionary
+                    NSArray *tempArray = [[url absoluteString] componentsSeparatedByString:@"?"];
+                    NSMutableDictionary *queryDictionary = [[NSMutableDictionary alloc] init];
+                    
+                    // Check array count to see if whe have parameters to query
+                    if ([tempArray count] == 2) {
+                        
+                        NSArray *keyValuePairs = [[tempArray objectAtIndex:1] componentsSeparatedByString:@"&"];
+                        
+                        for (NSString *queryString in keyValuePairs) {
+                            NSArray *keyValuePair = [queryString componentsSeparatedByString:@"="];
+                            if (keyValuePair.count == 2)
+                                [queryDictionary setObject: [keyValuePair objectAtIndex:1] forKey:[keyValuePair objectAtIndex:0]];
+                        }
+                        
+                    }
+                    
+                    NSString *email = ([tempArray objectAtIndex:0]) ? [tempArray objectAtIndex:0] : [url resourceSpecifier];
+                    NSString *subject = [queryDictionary objectForKey:@"subject"];
+                    NSString *body = [queryDictionary objectForKey:@"body"];
+                    
+                    [queryDictionary release];
+                    
+                    if ([MFMailComposeViewController canSendMail])
+                    {
+                        MFMailComposeViewController *mailer = [[MFMailComposeViewController alloc] init];
+                        
+                        mailer.mailComposeDelegate = self;
+                        mailer.modalPresentationStyle = UIModalPresentationPageSheet;
+                        
+                        [mailer setToRecipients:[NSArray arrayWithObject: [email stringByReplacingOccurrencesOfString:@"mailto:" withString:@""]]];
+                        [mailer setSubject: [subject stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+                        [mailer setMessageBody: [body stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding] isHTML:NO];
+                        
+                        // Show the view
+                        [self presentModalViewController:mailer animated:YES];
+                        
+                        [mailer release];
+                        
+                    }
+                    else
+                    {
+                        // Check if the system can handle a mailto link
+                        if ([[UIApplication sharedApplication] canOpenURL:url])
+                        {
+                            // Go for it and open the URL within the respective app
+                            [[UIApplication sharedApplication] openURL: url];   
+                            
+                        }
+                        else
+                        {
+                            // Display error message
+                            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Failure" 
+                                                                            message:@"Your device doesn't support the sending of emails!" 
+                                                                           delegate:nil 
+                                                                  cancelButtonTitle:@"OK" 
+                                                                  otherButtonTitles:nil];
+                            
+                            [alert show];
+                            [alert release];
+                            
+                        }
+                        
+                    }
+                    
+                    // Don't continue the request in WebView
                     return NO;
+                    
                 }
                 else
                 {
@@ -1575,6 +1643,38 @@
 	[prevPage release];
     
     [super dealloc];
+}
+
+#pragma mark - MFMailComposeController
+- (void)mailComposeController:(MFMailComposeViewController*)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error {
+    
+    // Log the result for debugging purpose
+    switch (result)
+    {
+        case MFMailComposeResultCancelled:
+            NSLog(@"    Mail cancelled.");
+            break;
+            
+        case MFMailComposeResultSaved:
+            NSLog(@"    Mail saved.");
+            break;
+            
+        case MFMailComposeResultSent:
+            NSLog(@"    Mail send.");
+            break;
+            
+        case MFMailComposeResultFailed:
+            NSLog(@"    Mail failed, check NSError.");
+            break;
+            
+        default:
+            NSLog(@"    Mail not sent.");
+            break;
+    }
+    
+    // Remove the mail view
+    [self dismissModalViewControllerAnimated:YES];
+    
 }
 
 @end
