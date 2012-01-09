@@ -42,8 +42,12 @@
     int pageY;
     int pageWidth;
 	int pageHeight;
+    int indexWidth;
     int indexHeight;
+    int actualIndexWidth;
+    int actualIndexHeight;
     BOOL disabled;
+    CGSize cachedContentSize;
     
     Properties *properties;
 }
@@ -61,5 +65,8 @@
 - (void)fadeOut;
 - (void)fadeIn;
 - (void)assignProperties;
+- (BOOL)stickToLeft;
+- (void)setActualSize;
+- (void)setViewFrame:(CGRect)frame;
 
 @end

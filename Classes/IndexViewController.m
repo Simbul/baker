@@ -40,6 +40,7 @@
     fileName = name;
     webViewDelegate = delegate;
     disabled = NO;
+    indexWidth = 0;
     indexHeight = 0;
     
     // ****** INIT PROPERTIES
@@ -118,6 +119,11 @@
     NSLog(@"Set IndexView size to %dx%d, with pageY set to %d", pageWidth, pageHeight, pageY);
 }
 
+- (void)setActualSize {
+    actualIndexWidth = MIN(indexWidth, pageWidth);
+    actualIndexHeight = MIN(indexHeight, pageHeight);
+}
+
 - (BOOL)isIndexViewHidden {
     return [UIApplication sharedApplication].statusBarHidden;
 }
@@ -129,22 +135,38 @@
 - (void)setIndexViewHidden:(BOOL)hidden withAnimation:(BOOL)animation {
     CGRect frame;
     if (hidden) {
-        frame = CGRectMake(0, pageHeight + pageY, pageWidth, indexHeight);
+        if ([self stickToLeft]) {
+            frame = CGRectMake(-actualIndexWidth, pageHeight - actualIndexHeight, actualIndexWidth, actualIndexHeight);
+        } else {
+            frame = CGRectMake(0, pageHeight + pageY, actualIndexWidth, actualIndexHeight);
+        }
     } else {
-        frame = CGRectMake(0, pageHeight + pageY - indexHeight, pageWidth, indexHeight);
+        if ([self stickToLeft]) {
+            frame = CGRectMake(0, pageHeight - actualIndexHeight, actualIndexWidth, actualIndexHeight);
+        } else {
+            frame = CGRectMake(0, pageHeight + pageY - indexHeight, actualIndexWidth, actualIndexHeight);
+        }
+
     }
     
     if (animation) {
         [UIView beginAnimations:@"slideIndexView" context:nil]; {
             [UIView setAnimationDuration:0.3];
             
-            self.view.frame = frame;
+            [self setViewFrame:frame];
         }
         [UIView commitAnimations];
     } else {
-        self.view.frame = frame;
+        [self setViewFrame:frame];
     }
+}
+
+- (void)setViewFrame:(CGRect)frame {
+    self.view.frame = frame;
     
+    // Orientation changes tend to screw the content size detection performed by the scrollView embedded in the webView.
+    // Let's show the scrollView who's boss.
+    ((UIWebView*)self.view).scrollView.contentSize = cachedContentSize;
 }
 
 - (void)fadeOut {
@@ -173,6 +195,7 @@
     BOOL hidden = [self isIndexViewHidden]; // cache hidden status before setting page size
     
     [self setPageSizeForOrientation:toInterfaceOrientation];
+    [self setActualSize];
     [self setIndexViewHidden:hidden withAnimation:NO];
     [self fadeIn];
 }
@@ -210,16 +233,33 @@
 }
 
 -(void)webViewDidFinishLoad:(UIWebView *)webView {
+    id width = [properties get:@"-baker-index-width", nil];
     id height = [properties get:@"-baker-index-height", nil];
+    
+    if (width != [NSNull null]) {
+        indexWidth = (int) [width integerValue];
+    } else {
+        indexWidth = [webView sizeThatFits:CGSizeZero].width;
+    }
     if (height != [NSNull null]) {
         indexHeight = (int) [height integerValue];
     } else {
-        indexHeight = [webView sizeThatFits:CGSizeZero].height;        
+        indexHeight = [webView sizeThatFits:CGSizeZero].height;
     }
-    NSLog(@"Set height for IndexView to %d", indexHeight);
+    
+    cachedContentSize = webView.scrollView.contentSize;
+    [self setActualSize];
+    
+    NSLog(@"Set size for IndexView to %dx%d (constrained from %dx%d)", actualIndexWidth, actualIndexHeight, indexWidth, indexHeight);
     
     // After the first load, point the delegate to the main view controller
     webView.delegate = webViewDelegate;
+    
+    [self setIndexViewHidden:[self isIndexViewHidden] withAnimation:NO];
+}
+
+- (BOOL)stickToLeft {
+    return (actualIndexHeight > actualIndexWidth);
 }
 
 /*
