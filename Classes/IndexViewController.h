@@ -34,10 +34,12 @@
 
 
 @interface IndexViewController : UIViewController <UIWebViewDelegate> {
+    
     NSString *bookBundlePath;
     NSString *documentsBookPath;
     NSString *fileName;
-    UIViewController<UIWebViewDelegate> *webViewDelegate;
+    UIScrollView *indexScrollView;
+    UIViewController <UIWebViewDelegate> *webViewDelegate;
     
     int pageY;
     int pageWidth;
@@ -47,6 +49,7 @@
     int actualIndexWidth;
     int actualIndexHeight;
     BOOL disabled;
+    
     CGSize cachedContentSize;
     
     Properties *properties;

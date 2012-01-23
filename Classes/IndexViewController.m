@@ -35,41 +35,35 @@
 @implementation IndexViewController
 
 - (id)initWithBookBundlePath:(NSString *)path documentsBookPath:(NSString *)docpath fileName:(NSString *)name webViewDelegate:(UIViewController<UIWebViewDelegate> *)delegate {
-    bookBundlePath = path;
-    documentsBookPath = docpath;
-    fileName = name;
-    webViewDelegate = delegate;
-    disabled = NO;
-    indexWidth = 0;
-    indexHeight = 0;
     
-    // ****** INIT PROPERTIES
-    properties = [Properties properties];
-    
-    [self setPageSizeForOrientation:UIInterfaceOrientationPortrait];
-    
-    return [self initWithNibName:nil bundle:nil];
-}
-
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    self = [super init];
     if (self) {
-        // Custom initialization
+        
+        fileName = name;
+        bookBundlePath = path;
+        documentsBookPath = docpath;
+        webViewDelegate = delegate;
+        
+        disabled = NO;
+        indexWidth = 0;
+        indexHeight = 0;
+        
+        // ****** INIT PROPERTIES
+        properties = [Properties properties];
+        
+        [self setPageSizeForOrientation:UIInterfaceOrientationPortrait];
     }
     return self;
 }
-
 - (void)dealloc
 {
+    [indexScrollView release];
     [super dealloc];
 }
-
 - (void)didReceiveMemoryWarning
 {
     // Releases the view if it doesn't have a superview.
     [super didReceiveMemoryWarning];
-    
     // Release any cached data, images, etc that aren't in use.
 }
 
@@ -86,16 +80,21 @@
     webView.backgroundColor = [UIColor clearColor];
     [webView setOpaque:NO];
     
-    self.view = webView;
+    
+    self.view = webView;    
+    for (UIView *subView in webView.subviews) {
+        if ([subView isKindOfClass:[UIScrollView class]]) {
+            indexScrollView = [(UIScrollView *)subView retain];
+            break;
+        }
+    }
     [webView release];
     
     [self loadContent];
 }
 
 - (void)setBounceForWebView:(UIWebView *)webView bounces:(BOOL)bounces {
-    for (id subview in webView.subviews)
-        if ([[subview class] isSubclassOfClass: [UIScrollView class]])
-            ((UIScrollView *)subview).bounces = bounces;
+    indexScrollView.bounces = bounces;
 }
 
 - (void)setPageSizeForOrientation:(UIInterfaceOrientation)orientation {
@@ -166,7 +165,7 @@
     
     // Orientation changes tend to screw the content size detection performed by the scrollView embedded in the webView.
     // Let's show the scrollView who's boss.
-    ((UIWebView*)self.view).scrollView.contentSize = cachedContentSize;
+    indexScrollView.contentSize = cachedContentSize;
 }
 
 - (void)fadeOut {
@@ -246,8 +245,8 @@
     } else {
         indexHeight = [webView sizeThatFits:CGSizeZero].height;
     }
-    
-    cachedContentSize = webView.scrollView.contentSize;
+
+    cachedContentSize = indexScrollView.contentSize;
     [self setActualSize];
     
     NSLog(@"Set size for IndexView to %dx%d (constrained from %dx%d)", actualIndexWidth, actualIndexHeight, indexWidth, indexHeight);
