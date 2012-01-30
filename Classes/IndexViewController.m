@@ -51,7 +51,7 @@
         // ****** INIT PROPERTIES
         properties = [Properties properties];
         
-        [self setPageSizeForOrientation:UIInterfaceOrientationPortrait];
+        [self setPageSizeForOrientation:[self interfaceOrientation]];
     }
     return self;
 }
@@ -238,12 +238,12 @@
     if (width != [NSNull null]) {
         indexWidth = (int) [width integerValue];
     } else {
-        indexWidth = [webView sizeThatFits:CGSizeZero].width;
+        indexWidth = [self sizeFromContentOf:webView].width;
     }
     if (height != [NSNull null]) {
         indexHeight = (int) [height integerValue];
     } else {
-        indexHeight = [webView sizeThatFits:CGSizeZero].height;
+        indexHeight = [self sizeFromContentOf:webView].height;
     }
 
     cachedContentSize = indexScrollView.contentSize;
@@ -259,6 +259,18 @@
 
 - (BOOL)stickToLeft {
     return (actualIndexHeight > actualIndexWidth);
+}
+
+- (CGSize)sizeFromContentOf:(UIView *)view {
+    // Setting the frame to 1x1 is required to get meaningful results from sizeThatFits when 
+    // the orientation of the is anything but Portrait.
+    // See: http://stackoverflow.com/questions/3936041/how-to-determine-the-content-size-of-a-uiwebview/3937599#3937599
+    CGRect frame = view.frame;
+    frame.size.width = 1;
+    frame.size.height = 1;
+    view.frame = frame;
+    
+    return [view sizeThatFits:CGSizeZero];
 }
 
 /*

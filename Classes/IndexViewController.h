@@ -69,6 +69,7 @@
 - (void)fadeIn;
 - (void)assignProperties;
 - (BOOL)stickToLeft;
+- (CGSize)sizeFromContentOf:(UIView *)view;
 - (void)setActualSize;
 - (void)setViewFrame:(CGRect)frame;
 
