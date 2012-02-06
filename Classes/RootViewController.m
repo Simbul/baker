@@ -58,6 +58,9 @@
 
 #define INDEX_FILE_NAME         @"index.html"
 
+#define URL_OPEN_EXTERNAL       @"referrer=Baker"
+
+
 // IOS VERSION >= 5.0 MACRO
 #ifndef kCFCoreFoundationVersionNumber_iPhoneOS_5_0
     #define kCFCoreFoundationVersionNumber_iPhoneOS_5_0 675.00
@@ -1055,20 +1058,32 @@
                 }
                 else
                 {
+                    // **************************************************************************************************** OPEN OUTSIDE BAKER
+                    // * This is required since the inclusion of external libraries (like Google Maps) requires
+                    // * direct opening of external pages within Baker. So we have to handle when you want to actually
+                    // * open a page outside of Baker.
+                    
                     NSString *params = [url query];
+                    NSLog(@" ---> LOG: %@", [url absoluteString]);
                     if (params != nil)
                     {                        
-                        NSRegularExpression *referrerRegex = [NSRegularExpression regularExpressionWithPattern:@"referrer=Baker" options:NSRegularExpressionCaseInsensitive error:NULL];
+                        NSRegularExpression *referrerRegex = [NSRegularExpression regularExpressionWithPattern:URL_OPEN_EXTERNAL options:NSRegularExpressionCaseInsensitive error:NULL];
                         NSUInteger matches = [referrerRegex numberOfMatchesInString:params options:0 range:NSMakeRange(0, [params length])];
                         
                         if (matches > 0) {
-                            NSLog(@"    Link contain param \"referrer=Baker\" --> open link in Safari");
-                            [[UIApplication sharedApplication] openURL:url];
+                            NSLog(@"    Link contain param \"%@\" --> open link in Safari", URL_OPEN_EXTERNAL);
+                            
+                            // Generate new URL without 
+                            NSRegularExpression *replacerRegexp = [NSRegularExpression regularExpressionWithPattern:[[NSString alloc] initWithFormat: @"(\\?|&)%@", URL_OPEN_EXTERNAL] options:NSRegularExpressionCaseInsensitive error:NULL];
+                            NSString *oldURL = [url absoluteString];
+                            NSString *newURL = [replacerRegexp stringByReplacingMatchesInString:oldURL options:0 range:NSMakeRange(0, [oldURL length]) withTemplate:@""];
+                            
+                            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:newURL]];
                             return NO;
                         }
                     }
                     
-                    NSLog(@"    Link doesn't contain param \"referrer=Baker\" --> open link in page");
+                    NSLog(@"    Link doesn't contain param \"%@\" --> open link in page", URL_OPEN_EXTERNAL);
                     return YES;
                 }
             }
