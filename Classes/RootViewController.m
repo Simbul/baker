@@ -596,7 +596,11 @@
         if ([renderingType isEqualToString:@"three-cards"])
         {
             // ****** THREE CARD VIEW METHOD
-            // ****** Calculate move direction and normalize tapNumber
+            
+            // Dispatch blur event on old current page
+            [self webView:currPage dispatchHTMLEvent:@"blur"];
+            
+            // Calculate move direction and normalize tapNumber
             int direction = 1;
             if (tapNumber < 0) {
                 direction = -direction;
@@ -607,8 +611,9 @@
             if (tapNumber > 2) {
                 tapNumber = 0;
                 
-                // ****** Moved away for more than 2 pages: RELOAD ALL pages
-                [toLoad removeAllObjects];                
+                // Moved away for more than 2 pages: RELOAD ALL pages
+                [toLoad removeAllObjects];
+                
                 [currPage removeFromSuperview];
                 [nextPage removeFromSuperview];
                 [prevPage removeFromSuperview];
@@ -624,15 +629,15 @@
                 int tmpSlot = 0;
                 if (tapNumber == 2) {
                 
-                    // ****** Moved away for 2 pages: RELOAD CURRENT page
+                    // Moved away for 2 pages: RELOAD CURRENT page
                     if (direction < 0) {
-                        // ****** Move LEFT <<<
+                        // Move LEFT <<<
                         [prevPage removeFromSuperview];
                         UIWebView *tmpView = prevPage;
                         prevPage = nextPage;
                         nextPage = tmpView;
                     } else {
-                        // ****** Move RIGHT >>>
+                        // Move RIGHT >>>
                         [nextPage removeFromSuperview];
                         UIWebView *tmpView = nextPage; 
                         nextPage = prevPage;
@@ -692,6 +697,9 @@
                                         
                     // Since we are not loading anything we have to reset the delayer flag
                     currentPageIsDelayingLoading = NO;
+                    
+                    // Dispatch focus event on new current page
+                    [self webView:currPage dispatchHTMLEvent:@"focus"];
                 }
                 
                 [self getPageHeight];
@@ -1112,7 +1120,6 @@
     {
         if ([webView isEqual:currPage]) {
             currentPageHasChanged = NO;
-            // Get current page max scroll offset
             [self getPageHeight];
         }
         
@@ -1124,6 +1131,7 @@
         } else {
             [self takeScreenshotFromView:webView forPage:currentPageNumber andOrientation:[self getCurrentInterfaceOrientation]];
         }
+        
         [self handlePageLoading];
     }
 }
@@ -1148,10 +1156,13 @@
 }
 - (void)webViewDidAppear:(UIWebView *)webView animating:(BOOL)animating {
         
-    if ([webView isEqual:currPage]) {
+    if ([webView isEqual:currPage])
+    {
+        [self webView:webView dispatchHTMLEvent:@"focus"];
         
         // If is the first time i load something in the currPage web view...
-        if (currentPageFirstLoading) {
+        if (currentPageFirstLoading)
+        {
             // ... check if there is a saved starting scroll index and set it
             NSLog(@"   Handle last scroll index if necessary");
             NSString *currPageScrollIndex = [[NSUserDefaults standardUserDefaults] objectForKey:@"lastScrollIndex"];
@@ -1159,11 +1170,21 @@
                 [self goDownInPage:currPageScrollIndex animating:YES];
             }
             currentPageFirstLoading = NO;
-        } else {
+        }
+        else
+        {
             NSLog(@"   Handle saved hash reference if necessary");
             [self handleAnchor:YES];
         }
-    }
+    }    
+}
+- (void)webView:(UIWebView *)webView dispatchHTMLEvent:(NSString *)event;
+{
+    NSString *jsDispatchEvent = [NSString stringWithFormat:@"var bakerDispatchedEvent = document.createEvent('Events');\
+                                                             bakerDispatchedEvent.initEvent('%@', false, false);\
+                                                             window.dispatchEvent(bakerDispatchedEvent);", event];
+    
+    [webView stringByEvaluatingJavaScriptFromString:jsDispatchEvent];
 }
 
 #pragma mark - SCREENSHOTS
@@ -1584,7 +1605,7 @@
     // 2. Create and dispatch a orientationchange event    
     NSString *jsOrientationChange = @"if (typeof bakerOrientationChangeEvent === 'undefined') {\
                                           var bakerOrientationChangeEvent = document.createEvent('Events');\
-                                              bakerOrientationChangeEvent.initEvent('orientationchange', true, false);\
+                                              bakerOrientationChangeEvent.initEvent('orientationchange', false, false);\
                                       }; window.dispatchEvent(bakerOrientationChangeEvent)";
     
     // 3. Merge the scripts and load them on the current UIWebView
@@ -1664,7 +1685,6 @@
     
     // Remove the mail view
     [self dismissModalViewControllerAnimated:YES];
-    
 }
 
 @end
