@@ -73,6 +73,8 @@
 	UIWebView *currPage;
 	UIWebView *nextPage;
 	
+    UIColor *webViewBackground;
+    
 	CGRect upTapArea;
 	CGRect downTapArea;
 	CGRect leftTapArea;

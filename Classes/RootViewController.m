@@ -130,6 +130,8 @@
         currentPageIsDelayingLoading = YES;
         currentPageHasChanged = NO;
         currentPageIsLocked = NO;
+        
+        webViewBackground = nil;
                         
         // ****** LISTENER FOR DOWNLOAD NOTIFICATION
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(downloadBook:) name:@"downloadNotification" object:nil];
@@ -168,6 +170,15 @@
 }
 - (void)setupWebView:(UIWebView *)webView {
     NSLog(@"• Setup webView");
+    
+    if (webViewBackground == nil)
+    {
+        webViewBackground = webView.backgroundColor;
+        [webViewBackground retain];
+    }
+    
+    webView.backgroundColor = [UIColor clearColor];
+    webView.opaque = NO;
     
     webView.delegate = self;
     webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
@@ -900,7 +911,7 @@
 }
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scroll {
     NSLog(@"• Scrollview will begin dragging");
-	[self hideStatusBar];
+    [self hideStatusBar];
 }
 - (void)scrollViewDidEndDragging:(UIScrollView *)scroll willDecelerate:(BOOL)decelerate {
     NSLog(@"• Scrollview did end dragging");
@@ -1215,7 +1226,7 @@
             NSLog(@"   Handle saved hash reference if necessary");
             [self handleAnchor:YES];
         }
-    }    
+    }
 }
 - (void)webView:(UIWebView *)webView dispatchHTMLEvent:(NSString *)event;
 {
@@ -1396,6 +1407,9 @@
 - (void)userDidScroll:(UITouch *)touch {
 	NSLog(@"• User scroll");
 	[self hideStatusBar];
+    
+    currPage.backgroundColor = webViewBackground;
+    currPage.opaque = YES;
 }
 
 #pragma mark - PAGE SCROLLING
@@ -1696,6 +1710,8 @@
     [currPage release];
 	[nextPage release];
 	[prevPage release];
+    
+    [webViewBackground release];
     
     [super dealloc];
 }
