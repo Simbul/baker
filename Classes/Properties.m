@@ -132,7 +132,9 @@
         "\"-baker-index-height\": null,"
         "\"-baker-index-bounce\": false,"
         "\"-baker-vertical-pagination\": false,"
-        "\"-baker-rendering\": \"screenshots\""
+        "\"-baker-rendering\": \"screenshots\","
+        "\"-baker-page-turn-swipe\": true,"
+        "\"-baker-page-turn-tap\": true"
     "}";
     NSError *e;
     return [[json objectFromJSONStringWithParseOptions:JKParseOptionNone error:&e] retain];

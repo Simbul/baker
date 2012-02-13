@@ -387,7 +387,11 @@
     [pageDetails removeAllObjects];
     [pages removeAllObjects];
 }
-- (void)initBookProperties:(NSString *)path {        
+- (void)initBookProperties:(NSString *)path {
+    /****************************************************************************************************
+     * Initializes the 'properties' object from book.json and inits also some static properties.
+     */
+    
     NSString *filePath = [path stringByAppendingPathComponent:@"book.json"];
     [properties loadManifest:filePath];
     
@@ -398,6 +402,9 @@
     // ****** RENDERING
     renderingType = [[[properties get:@"-baker-rendering", nil] retain] autorelease];
     NSLog(@"rendering type: %@", renderingType);
+    
+    // ****** SWIPES
+    scrollView.scrollEnabled = [[properties get:@"-baker-page-turn-swipe", nil] boolValue];
     
     // ****** BACKGROUND
     scrollView.backgroundColor = [Utils colorWithHexString:[properties get:@"-baker-background", nil]];
@@ -760,7 +767,7 @@
     else
     {
         if (stackedScrollingAnimations == 0) {
-            scrollView.scrollEnabled = YES;
+            scrollView.scrollEnabled = [[properties get:@"-baker-page-turn-swipe", nil] boolValue]; // YES by default, NO if specified
         }
         currentPageIsLocked = NO;
     }
@@ -895,7 +902,7 @@
     stackedScrollingAnimations--;
     if (stackedScrollingAnimations == 0) {
         NSLog(@"    Scroll enabled");
-		scroll.scrollEnabled = YES;
+		scroll.scrollEnabled = [[properties get:@"-baker-page-turn-swipe", nil] boolValue]; // YES by default, NO if specified
 	}
 }
 
@@ -1322,11 +1329,15 @@
 
 #pragma mark - GESTURES
 - (void)userDidTap:(UITouch *)touch {
-	
+	/****************************************************************************************************
+     * This function handles all the possible user navigation taps:
+     * up, down, left, right and double-tap.
+     */
+    
     CGPoint tapPoint = [touch locationInView:self.view];
-	NSLog(@"• User tap at [%f, %f]", tapPoint.x, tapPoint.y);
-	
-	// Swipe or scroll the page.
+    NSLog(@"• User tap at [%f, %f]", tapPoint.x, tapPoint.y);
+    
+    // Swipe or scroll the page.
     if (!currentPageIsLocked) {
         if (CGRectContainsPoint(upTapArea, tapPoint)) {
             NSLog(@"    Tap UP /\\!");
@@ -1343,7 +1354,7 @@
                 NSLog(@"    Tap RIGHT <<<");
                 page = currentPageNumber + 1;
             }
-            [self changePage:page];
+            if ([[properties get:@"-baker-page-turn-tap", nil] boolValue]) [self changePage:page];
         } else if ((touch.tapCount%2) == 0) {
             [self toggleStatusBar];
         }
