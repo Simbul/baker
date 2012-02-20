@@ -37,6 +37,8 @@
 	<string>Baker-30</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>UINewsstandApp</key>
+	<false/>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
@@ -44,7 +46,5 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>UINewsstandApp</key>
-	<true/>
 </dict>
 </plist>
