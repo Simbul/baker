@@ -1079,7 +1079,8 @@
                     // * open a page outside of Baker.
                     
                     NSString *params = [url query];
-                    NSLog(@" ---> LOG: %@", [url absoluteString]);
+                    NSLog(@"    Opening absolute URL: %@", [url absoluteString]);
+                    
                     if (params != nil)
                     {                        
                         NSRegularExpression *referrerRegex = [NSRegularExpression regularExpressionWithPattern:URL_OPEN_EXTERNAL options:NSRegularExpressionCaseInsensitive error:NULL];
@@ -1088,11 +1089,14 @@
                         if (matches > 0) {
                             NSLog(@"    Link contain param \"%@\" --> open link in Safari", URL_OPEN_EXTERNAL);
                             
-                            // Generate new URL without 
-                            NSRegularExpression *replacerRegexp = [NSRegularExpression regularExpressionWithPattern:[[NSString alloc] initWithFormat: @"(\\?|&)%@", URL_OPEN_EXTERNAL] options:NSRegularExpressionCaseInsensitive error:NULL];
+                            // Generate new URL without
+                            // We are regexp-ing three things: the string alone, the string first with other content, the string with other content in any other position
+                            NSRegularExpression *replacerRegexp = [NSRegularExpression regularExpressionWithPattern:[[NSString alloc] initWithFormat:@"\\?%@$|(?<=\\?)%@&?|()&?%@", URL_OPEN_EXTERNAL, URL_OPEN_EXTERNAL, URL_OPEN_EXTERNAL] options:NSRegularExpressionCaseInsensitive error:NULL];
                             NSString *oldURL = [url absoluteString];
+                            NSLog(@"  kjasdkajdals: %@", [replacerRegexp pattern]);
                             NSString *newURL = [replacerRegexp stringByReplacingMatchesInString:oldURL options:0 range:NSMakeRange(0, [oldURL length]) withTemplate:@""];
                             
+                            NSLog(@"    Opening with updated URL: %@", newURL);
                             [[UIApplication sharedApplication] openURL:[NSURL URLWithString:newURL]];
                             return NO;
                         }
