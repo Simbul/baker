@@ -866,6 +866,24 @@
 	return NO;
 }
 
+#pragma mark - MODAL VIEW
+
+- (void)loadModalWebView:(NSURL *) url {
+    NSLog(@"» should load a modal view...");
+    
+//myModalViewController = [[[ModalViewController alloc] initWithNibName:NSStringFromClass([ModalViewController class]) bundle:nil] autorelease];
+    myModalViewController = [[[ModalViewController alloc] initWithUrl:url] autorelease];
+    myModalViewController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+    myModalViewController.delegate = self;
+    
+    
+    [self presentViewController:myModalViewController animated:YES completion:nil];
+}
+
+- (void) done:(ModalViewController *)controller {
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
 #pragma mark - SCROLLVIEW
 - (CGRect)frameForPage:(int)page {
 	return CGRectMake(pageWidth * (page - 1), 0, pageWidth, pageHeight);
@@ -1093,11 +1111,11 @@
                             // We are regexp-ing three things: the string alone, the string first with other content, the string with other content in any other position
                             NSRegularExpression *replacerRegexp = [NSRegularExpression regularExpressionWithPattern:[[NSString alloc] initWithFormat:@"\\?%@$|(?<=\\?)%@&?|()&?%@", URL_OPEN_EXTERNAL, URL_OPEN_EXTERNAL, URL_OPEN_EXTERNAL] options:NSRegularExpressionCaseInsensitive error:NULL];
                             NSString *oldURL = [url absoluteString];
-                            NSLog(@"  kjasdkajdals: %@", [replacerRegexp pattern]);
+                            NSLog(@"    replacement pattern: %@", [replacerRegexp pattern]);
                             NSString *newURL = [replacerRegexp stringByReplacingMatchesInString:oldURL options:0 range:NSMakeRange(0, [oldURL length]) withTemplate:@""];
                             
                             NSLog(@"    Opening with updated URL: %@", newURL);
-                            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:newURL]];
+                            [self loadModalWebView:url];
                             return NO;
                         }
                     }
@@ -1663,6 +1681,7 @@
     [pages release];
     
     [indexViewController release];
+    [myModalViewController release];
     [scrollView release];
     [currPage release];
 	[nextPage release];
