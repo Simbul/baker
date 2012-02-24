@@ -871,17 +871,27 @@
 - (void)loadModalWebView:(NSURL *) url {
     NSLog(@"» should load a modal view...");
     
-//myModalViewController = [[[ModalViewController alloc] initWithNibName:NSStringFromClass([ModalViewController class]) bundle:nil] autorelease];
     myModalViewController = [[[ModalViewController alloc] initWithUrl:url] autorelease];
     myModalViewController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
     myModalViewController.delegate = self;
     
-    
-    [self presentViewController:myModalViewController animated:YES completion:nil];
+    // check if iOS4 or 5
+    if ([self respondsToSelector:@selector(presentViewController:animated:completion:)])
+        // iOS 5
+        [self presentViewController:myModalViewController animated:YES completion:nil];
+    else
+        // iOS 4
+        [self presentModalViewController:myModalViewController animated:YES];
 }
 
 - (void) done:(ModalViewController *)controller {
-    [self dismissViewControllerAnimated:YES completion:nil];
+    // check if iOS5 method is supported
+    if ([self respondsToSelector:@selector(dismissViewControllerAnimated:completion:)])
+        // iOS 5
+        [self dismissViewControllerAnimated:YES completion:nil];
+    else
+        // iOS 4
+        [self dismissModalViewControllerAnimated:YES];
 }
 
 #pragma mark - SCROLLVIEW
