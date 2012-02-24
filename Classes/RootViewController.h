@@ -33,12 +33,13 @@
 #import <UIKit/UIKit.h>
 #import <MessageUI/MessageUI.h>
 #import "IndexViewController.h"
+#import "ModalViewController.h"
 #import "Properties.h"
 
 
 @class Downloader;
 
-@interface RootViewController : UIViewController <UIWebViewDelegate, UIScrollViewDelegate, MFMailComposeViewControllerDelegate> {
+@interface RootViewController : UIViewController <UIWebViewDelegate, UIScrollViewDelegate, MFMailComposeViewControllerDelegate, modalWebViewDelegate> {
 	
 	CGRect screenBounds;
 	
@@ -90,6 +91,7 @@
 	UIAlertView *feedbackAlert;
     
     IndexViewController *indexViewController;
+    ModalViewController *myModalViewController;
     
     Properties *properties;
 }
@@ -121,6 +123,10 @@
 - (void)handlePageLoading;
 - (void)loadSlot:(int)slot withPage:(int)page;
 - (BOOL)loadWebView:(UIWebView *)webview withPage:(int)page;
+
+#pragma mark - MODAL WEBVIEW
+- (void)loadModalWebView:(NSURL *) url;
+- (void)done:(ModalViewController *)controller;
 
 #pragma mark - SCROLLVIEW
 - (CGRect)frameForPage:(int)page;
