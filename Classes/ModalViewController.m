@@ -32,7 +32,7 @@
 #import "ModalViewController.h"
 
 @implementation ModalViewController
-@synthesize delegate, webView;
+@synthesize delegate, webView, backButton, forwardButton;
 
 - (id)initWithUrl:(NSURL *)url {
     myUrl = url;
@@ -43,8 +43,6 @@
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
 	if (!(self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]))
         return nil;
-    
-    self.title = NSLocalizedString(@"ModalTitle", @"");
 	
 	return self;
 }
@@ -69,8 +67,28 @@
 - (void)viewDidUnload {
 }
 
+#pragma mark - UIWebView delegate methods
+- (void)webViewDidFinishLoad:(UIWebView *)webView1 {
+    backButton.enabled = [webView1 canGoBack];
+    forwardButton.enabled = [webView1 canGoForward];
+}
+
+#pragma mark - Interface Builder Actions
+
 - (IBAction)dismissAction:(id)sender {
     [[self delegate] done:self];
+}
+
+- (IBAction)goBack:(id)sender {
+    [webView goBack];
+}
+
+- (IBAction)goForward:(id)sender {
+    [webView goForward];
+}
+
+- (IBAction)openInSafari:(id)sender {
+    [[UIApplication sharedApplication] openURL:webView.request.URL];
 }
 
 @end

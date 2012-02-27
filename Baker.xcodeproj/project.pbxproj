@@ -15,6 +15,8 @@
 		578A4F2114B1AF570054CD50 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 578A4F2014B1AF570054CD50 /* MessageUI.framework */; };
 		84E7F05614F63CC8005B1929 /* ModalViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 84E7F05514F63CC8005B1929 /* ModalViewController.xib */; };
 		84E7F05A14F63CDF005B1929 /* ModalViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 84E7F05914F63CDF005B1929 /* ModalViewController.m */; };
+		84ED947314FC389000538EE5 /* forward.png in Resources */ = {isa = PBXBuildFile; fileRef = 84ED947214FC389000538EE5 /* forward.png */; };
+		84ED947614FC389D00538EE5 /* back.png in Resources */ = {isa = PBXBuildFile; fileRef = 84ED947514FC389D00538EE5 /* back.png */; };
 		9F123763129F133700B7E8C8 /* Downloader.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F123762129F133700B7E8C8 /* Downloader.m */; };
 		9F242EDA11FB344D00641757 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F242ED911FB344D00641757 /* QuartzCore.framework */; };
 		9F4F07F411F8DE8200375A8C /* RootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F4F07F211F8DE8200375A8C /* RootViewController.m */; };
@@ -76,6 +78,8 @@
 		84E7F05514F63CC8005B1929 /* ModalViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ModalViewController.xib; sourceTree = "<group>"; };
 		84E7F05814F63CDF005B1929 /* ModalViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModalViewController.h; sourceTree = "<group>"; };
 		84E7F05914F63CDF005B1929 /* ModalViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ModalViewController.m; sourceTree = "<group>"; };
+		84ED947214FC389000538EE5 /* forward.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = forward.png; sourceTree = "<group>"; };
+		84ED947514FC389D00538EE5 /* back.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = back.png; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Baker-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Baker-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
 		9F123761129F133700B7E8C8 /* Downloader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Downloader.h; sourceTree = "<group>"; };
 		9F123762129F133700B7E8C8 /* Downloader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Downloader.m; sourceTree = "<group>"; };
@@ -212,6 +216,8 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				84ED947514FC389D00538EE5 /* back.png */,
+				84ED947214FC389000538EE5 /* forward.png */,
 				84E7F05514F63CC8005B1929 /* ModalViewController.xib */,
 				BFEC41E51309D9CA00628DF3 /* ios-icon-iphone57.png */,
 				BFEC41E71309D9CE00628DF3 /* ios-icon-iphone114.png */,
@@ -385,6 +391,8 @@
 				BFEC41E61309D9CA00628DF3 /* ios-icon-iphone57.png in Resources */,
 				BFEC41E81309D9CE00628DF3 /* ios-icon-iphone114.png in Resources */,
 				84E7F05614F63CC8005B1929 /* ModalViewController.xib in Resources */,
+				84ED947314FC389000538EE5 /* forward.png in Resources */,
+				84ED947614FC389D00538EE5 /* back.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
