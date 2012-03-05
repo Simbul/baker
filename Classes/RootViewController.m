@@ -58,8 +58,8 @@
 
 #define INDEX_FILE_NAME         @"index.html"
 
-#define URL_OPEN_MODALLY        @"referrer=ModalBaker"
-#define URL_OPEN_EXTERNAL       @"referrer=ExternalBaker"
+#define URL_OPEN_MODALLY        @"referrer=Baker"
+#define URL_OPEN_EXTERNAL       @"referrer=Safari"
 
 
 // IOS VERSION >= 5.0 MACRO
