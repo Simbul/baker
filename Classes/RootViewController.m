@@ -95,7 +95,7 @@
         properties = [Properties properties];
         
         // ****** DEVICE SCREEN BOUNDS
-        screenBounds = [[UIScreen mainScreen] bounds];
+        screenBounds = [[UIScreen mainScreen] bounds];        
         NSLog(@"    Device Width: %f", screenBounds.size.width);
         NSLog(@"    Device Height: %f", screenBounds.size.height);
         
@@ -119,7 +119,10 @@
         // ****** BOOK ENVIRONMENT
         pages = [[NSMutableArray array] retain];
         toLoad = [[NSMutableArray array] retain];
+        
         pageDetails = [[NSMutableArray array] retain];
+        attachedScreenshotPortrait  = [[NSMutableDictionary dictionary] retain];
+        attachedScreenshotLandscape = [[NSMutableDictionary dictionary] retain];
 
         pageNameFromURL = nil;
         anchorFromURL = nil;
@@ -233,13 +236,31 @@
     }
     
     [self showPageDetails];
-
+    
+    if ([renderingType isEqualToString:@"screenshots"])
+    {
+        for (NSNumber *key in attachedScreenshotLandscape) {
+            UIView *value = [attachedScreenshotLandscape objectForKey:key];
+            [value removeFromSuperview];
+        }
+            
+        for (NSNumber *key in attachedScreenshotPortrait) {
+            UIView *value = [attachedScreenshotPortrait objectForKey:key];
+            [value removeFromSuperview];
+        }
+        
+        [attachedScreenshotLandscape removeAllObjects];
+        [attachedScreenshotPortrait removeAllObjects];
+        
+        [self initScreenshots];
+    }
+    
     scrollView.contentSize = CGSizeMake(pageWidth * totalPages, pageHeight);
 
 	int scrollViewY = 0;
 	if (![UIApplication sharedApplication].statusBarHidden) {
 		scrollViewY = -20;
-	}    
+	}
     [UIView animateWithDuration:0.2 
                      animations:^{ scrollView.frame = CGRectMake(0, scrollViewY, pageWidth, pageHeight); }];
 	
@@ -320,10 +341,6 @@
         NSMutableDictionary *details = [NSMutableDictionary dictionaryWithObjectsAndKeys:spinner, @"spinner", number, @"number", title, @"title", backgroundView, @"background", nil];
         [pageDetails insertObject:details atIndex:i];
     }
-    
-    if ([renderingType isEqualToString:@"screenshots"]) {
-        [self initScreenshots];
-    }
 }
 - (void)showPageDetails {
     NSLog(@"• Show page details for the book pages");
@@ -332,54 +349,47 @@
         
         if (pageDetails.count > i && [pageDetails objectAtIndex:i] != nil) {
             
-            NSDictionary *details = [NSDictionary dictionaryWithDictionary:[pageDetails objectAtIndex:i]];              
-            UIView *screenshotView = [details objectForKey:[NSString stringWithFormat:@"screenshot-%@", [self getCurrentInterfaceOrientation]]];
-            if (screenshotView != nil)
-            {
-                screenshotView.hidden = NO;
-            } 
-            else
-            {
-                for (NSString *key in details) {
-                    UIView *value = [details objectForKey:key];
-                    if (value != nil) {
+            NSDictionary *details = [NSDictionary dictionaryWithDictionary:[pageDetails objectAtIndex:i]];
+            
+            for (NSString *key in details) {
+                UIView *value = [details objectForKey:key];
+                if (value != nil) {
+                    
+                    CGRect frame = value.frame;
+                    if ([key isEqualToString:@"spinner"]) {
                         
-                        CGRect frame = value.frame;
-                        if ([key isEqualToString:@"spinner"]) {
-                            
-                            frame.origin.x = pageWidth * i + (pageWidth - frame.size.width) / 2;
-                            frame.origin.y = (pageHeight - frame.size.height) / 2;
-                            value.frame = frame;
-                            value.hidden = NO;
-                            
-                        } else if ([key isEqualToString:@"number"]) {
-                            
-                            frame.origin.x = pageWidth * i + (pageWidth - 115) / 2;
-                            frame.origin.y = pageHeight / 2 - 55;
-                            value.frame = frame;
-                            value.hidden = NO;
-                            
-                            
-                        } else if ([key isEqualToString:@"title"]) {
-                            
-                            frame.origin.x = pageWidth * i + (pageWidth - frame.size.width) / 2;
-                            frame.origin.y = pageHeight / 2 + 20;
-                            value.frame = frame;
-                            value.hidden = NO;
-                            
-                        } else if ([key isEqualToString:@"background"]) {
-                            
-                            [self setImageFor:(UIImageView *)value];
-                            frame.origin.x = pageWidth * i;
-                            frame.size.width = pageWidth;
-                            frame.size.height = pageHeight;
-                            value.frame = frame;
-                            value.hidden = NO;
-                            
-                        } else {
-                            
-                            value.hidden = YES;
-                        }
+                        frame.origin.x = pageWidth * i + (pageWidth - frame.size.width) / 2;
+                        frame.origin.y = (pageHeight - frame.size.height) / 2;
+                        value.frame = frame;
+                        value.hidden = NO;
+                        
+                    } else if ([key isEqualToString:@"number"]) {
+                        
+                        frame.origin.x = pageWidth * i + (pageWidth - 115) / 2;
+                        frame.origin.y = pageHeight / 2 - 55;
+                        value.frame = frame;
+                        value.hidden = NO;
+                        
+                        
+                    } else if ([key isEqualToString:@"title"]) {
+                        
+                        frame.origin.x = pageWidth * i + (pageWidth - frame.size.width) / 2;
+                        frame.origin.y = pageHeight / 2 + 20;
+                        value.frame = frame;
+                        value.hidden = NO;
+                        
+                    } else if ([key isEqualToString:@"background"]) {
+                        
+                        [self setImageFor:(UIImageView *)value];
+                        frame.origin.x = pageWidth * i;
+                        frame.size.width = pageWidth;
+                        frame.size.height = pageHeight;
+                        value.frame = frame;
+                        value.hidden = NO;
+                        
+                    } else {
+                        
+                        value.hidden = YES;
                     }
                 }
             }
@@ -1257,14 +1267,19 @@
 #pragma mark - SCREENSHOTS
 - (void)initScreenshots {
     
-    for (int i = 1; i <= totalPages; i++)
+    for (int i = MAX(1, currentPageNumber - 5); i <= MIN(totalPages, currentPageNumber + 5); i++)
     {
-        if ([self checkScreeshotForPage:i andOrientation:@"portrait"]) {
-            [self placeScreenshotForView:nil andPage:i andOrientation:@"portrait"];
+        if (UIInterfaceOrientationIsPortrait(self.interfaceOrientation))
+        {
+            if ([self checkScreeshotForPage:i andOrientation:@"portrait"]) {
+                [self placeScreenshotForView:nil andPage:i andOrientation:@"portrait"];
+            }
         }
-            
-        if ([self checkScreeshotForPage:i andOrientation:@"landscape"]) {
-            [self placeScreenshotForView:nil andPage:i andOrientation:@"landscape"];
+        else if (UIInterfaceOrientationIsLandscape(self.interfaceOrientation))
+        {
+            if ([self checkScreeshotForPage:i andOrientation:@"landscape"]) {
+                [self placeScreenshotForView:nil andPage:i andOrientation:@"landscape"];
+            }
         }
     }
 }
@@ -1302,7 +1317,6 @@
                 if (saved) {
                     NSLog(@"    Screenshot succesfully saved to file %@", screenshotFile);
                     [self placeScreenshotForView:webView andPage:pageNumber andOrientation:interfaceOrientation];
-                    
                     shouldRevealWebView = NO;
                 }
             }
@@ -1333,11 +1347,16 @@
 - (void)placeScreenshotForView:(UIWebView *)webView andPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation {
             
     int i = pageNumber - 1;
+    NSNumber *num = [NSNumber numberWithInt:pageNumber];
+    
     NSString    *screenshotFile = [cachedScreenshotsPath stringByAppendingPathComponent:[NSString stringWithFormat:@"screenshot-%@-%i.jpg", interfaceOrientation, pageNumber]];
     UIImageView *screenshotView = [[UIImageView alloc] initWithImage:[UIImage imageWithContentsOfFile:screenshotFile]];
- 
+    
+    NSMutableDictionary *attachedScreenshot = attachedScreenshotPortrait;
     CGSize pageSize = CGSizeMake(screenBounds.size.width, screenBounds.size.height);
+    
     if ([interfaceOrientation isEqualToString:@"landscape"]) {
+        attachedScreenshot = attachedScreenshotLandscape;
         pageSize = CGSizeMake(screenBounds.size.height, screenBounds.size.width);
     }
     
@@ -1345,23 +1364,19 @@
     screenshotView.hidden = YES;
     
     BOOL alreadyPlaced = NO;
-    if (pageDetails.count > i && [pageDetails objectAtIndex:i] != nil)
-    {
-        NSMutableDictionary *details = [pageDetails objectAtIndex:i];
-        NSString *key = [NSString stringWithFormat:@"screenshot-%@", interfaceOrientation];
-        UIImageView *oldScreenshotView = [details objectForKey:key]; 
+    UIImageView *oldScreenshot = [attachedScreenshot objectForKey:num];
+    if (oldScreenshot) {
+        [scrollView addSubview:screenshotView];        
+        [attachedScreenshot removeObjectForKey:num];
+        [oldScreenshot removeFromSuperview];
         
-        if (oldScreenshotView != nil) {            
-            [scrollView addSubview:screenshotView];
-            [oldScreenshotView removeFromSuperview];
-            [details removeObjectForKey:key];
-            
-            alreadyPlaced = YES;
-        }
-        [details setObject:screenshotView forKey:[NSString stringWithFormat:@"screenshot-%@", interfaceOrientation]];
+        alreadyPlaced = YES;
     }
     
+    [attachedScreenshot setObject:screenshotView forKey:num];
+    
     if (webView == nil) {
+        screenshotView.hidden = NO;
         [scrollView addSubview:screenshotView];
     }
     
