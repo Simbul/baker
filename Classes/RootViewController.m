@@ -58,7 +58,8 @@
 
 #define INDEX_FILE_NAME         @"index.html"
 
-#define URL_OPEN_EXTERNAL       @"referrer=Baker"
+#define URL_OPEN_MODALLY        @"referrer=ModalBaker"
+#define URL_OPEN_EXTERNAL       @"referrer=ExternalBaker"
 
 
 // IOS VERSION >= 5.0 MACRO
@@ -877,6 +878,34 @@
 	return NO;
 }
 
+#pragma mark - MODAL VIEW
+
+- (void)loadModalWebView:(NSURL *) url {
+    NSLog(@"» should load a modal view...");
+    
+    myModalViewController = [[[ModalViewController alloc] initWithUrl:url] autorelease];
+    myModalViewController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+    myModalViewController.delegate = self;
+    
+    // check if iOS4 or 5
+    if ([self respondsToSelector:@selector(presentViewController:animated:completion:)])
+        // iOS 5
+        [self presentViewController:myModalViewController animated:YES completion:nil];
+    else
+        // iOS 4
+        [self presentModalViewController:myModalViewController animated:YES];
+}
+
+- (void) done:(ModalViewController *)controller {
+    // check if iOS5 method is supported
+    if ([self respondsToSelector:@selector(dismissViewControllerAnimated:completion:)])
+        // iOS 5
+        [self dismissViewControllerAnimated:YES completion:nil];
+    else
+        // iOS 4
+        [self dismissModalViewControllerAnimated:YES];
+}
+
 #pragma mark - SCROLLVIEW
 - (CGRect)frameForPage:(int)page {
 	return CGRectMake(pageWidth * (page - 1), 0, pageWidth, pageHeight);
@@ -1094,8 +1123,11 @@
                     
                     if (params != nil)
                     {                        
-                        NSRegularExpression *referrerRegex = [NSRegularExpression regularExpressionWithPattern:URL_OPEN_EXTERNAL options:NSRegularExpressionCaseInsensitive error:NULL];
-                        NSUInteger matches = [referrerRegex numberOfMatchesInString:params options:0 range:NSMakeRange(0, [params length])];
+                        NSRegularExpression *referrerExternalRegex = [NSRegularExpression regularExpressionWithPattern:URL_OPEN_EXTERNAL options:NSRegularExpressionCaseInsensitive error:NULL];
+                        NSUInteger matches = [referrerExternalRegex numberOfMatchesInString:params options:0 range:NSMakeRange(0, [params length])];
+                        
+                        NSRegularExpression *referrerModalRegex = [NSRegularExpression regularExpressionWithPattern:URL_OPEN_MODALLY options:NSRegularExpressionCaseInsensitive error:NULL];
+                        NSUInteger matchesModal = [referrerModalRegex numberOfMatchesInString:params options:0 range:NSMakeRange(0, [params length])];
                         
                         if (matches > 0) {
                             NSLog(@"    Link contain param \"%@\" --> open link in Safari", URL_OPEN_EXTERNAL);
@@ -1104,11 +1136,24 @@
                             // We are regexp-ing three things: the string alone, the string first with other content, the string with other content in any other position
                             NSRegularExpression *replacerRegexp = [NSRegularExpression regularExpressionWithPattern:[[NSString alloc] initWithFormat:@"\\?%@$|(?<=\\?)%@&?|()&?%@", URL_OPEN_EXTERNAL, URL_OPEN_EXTERNAL, URL_OPEN_EXTERNAL] options:NSRegularExpressionCaseInsensitive error:NULL];
                             NSString *oldURL = [url absoluteString];
-                            NSLog(@"  kjasdkajdals: %@", [replacerRegexp pattern]);
+                            NSLog(@"    replacement pattern: %@", [replacerRegexp pattern]);
                             NSString *newURL = [replacerRegexp stringByReplacingMatchesInString:oldURL options:0 range:NSMakeRange(0, [oldURL length]) withTemplate:@""];
                             
                             NSLog(@"    Opening with updated URL: %@", newURL);
                             [[UIApplication sharedApplication] openURL:[NSURL URLWithString:newURL]];
+                            return NO;
+                        } else if (matchesModal) {
+                            NSLog(@"    Link contain param \"%@\" --> open link modally", URL_OPEN_MODALLY);
+                            
+                            // Generate new URL without
+                            // We are regexp-ing three things: the string alone, the string first with other content, the string with other content in any other position
+                            NSRegularExpression *replacerRegexp = [NSRegularExpression regularExpressionWithPattern:[[NSString alloc] initWithFormat:@"\\?%@$|(?<=\\?)%@&?|()&?%@", URL_OPEN_MODALLY, URL_OPEN_MODALLY, URL_OPEN_MODALLY] options:NSRegularExpressionCaseInsensitive error:NULL];
+                            NSString *oldURL = [url absoluteString];
+                            NSLog(@"    replacement pattern: %@", [replacerRegexp pattern]);
+                            NSString *newURL = [replacerRegexp stringByReplacingMatchesInString:oldURL options:0 range:NSMakeRange(0, [oldURL length]) withTemplate:@""];
+                            
+                            NSLog(@"    Opening with updated URL: %@", newURL);
+                            [self loadModalWebView:url];
                             return NO;
                         }
                     }
@@ -1677,6 +1722,7 @@
     [pages release];
     
     [indexViewController release];
+    [myModalViewController release];
     [scrollView release];
     [currPage release];
 	[nextPage release];
