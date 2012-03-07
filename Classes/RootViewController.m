@@ -887,6 +887,9 @@
     myModalViewController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
     myModalViewController.delegate = self;
     
+    // hide the IndexView before opening modal web view
+    [self hideStatusBar];
+    
     // check if iOS4 or 5
     if ([self respondsToSelector:@selector(presentViewController:animated:completion:)])
         // iOS 5
@@ -904,6 +907,13 @@
     else
         // iOS 4
         [self dismissModalViewControllerAnimated:YES];
+    
+    // in case the orientation changed while being in modal view, restore the 
+    // webview and stuff to the current orientation
+    [indexViewController rotateFromOrientation:self.interfaceOrientation toOrientation:self.interfaceOrientation];
+    [self setPageSize:[self getCurrentInterfaceOrientation]];
+    [self getPageHeight];
+	[self resetScrollView];
 }
 
 #pragma mark - SCROLLVIEW
@@ -1506,13 +1516,16 @@
 
 #pragma mark - STATUS BAR
 - (void)toggleStatusBar {
-    NSLog(@"• Toggle status bar visibility");
-    
-    UIApplication *sharedApplication = [UIApplication sharedApplication];
-    BOOL hidden = sharedApplication.statusBarHidden;
-    [sharedApplication setStatusBarHidden:!hidden withAnimation:UIStatusBarAnimationSlide];
-    if(![indexViewController isDisabled]) {
-        [indexViewController setIndexViewHidden:!hidden withAnimation:YES];
+    // if modal view is up, don't toggle.
+    if (! self.modalViewController) {
+        NSLog(@"• Toggle status bar visibility");
+        
+        UIApplication *sharedApplication = [UIApplication sharedApplication];
+        BOOL hidden = sharedApplication.statusBarHidden;
+        [sharedApplication setStatusBarHidden:!hidden withAnimation:UIStatusBarAnimationSlide];
+        if(![indexViewController isDisabled]) {
+            [indexViewController setIndexViewHidden:!hidden withAnimation:YES];
+        }
     }
 }
 - (void)hideStatusBar {
@@ -1690,7 +1703,7 @@
     [indexViewController rotateFromOrientation:fromInterfaceOrientation toOrientation:self.interfaceOrientation];
     
     [self setPageSize:[self getCurrentInterfaceOrientation]];
-    [self getPageHeight];    
+    [self getPageHeight];
 	[self resetScrollView];
 }
 
