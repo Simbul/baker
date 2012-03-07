@@ -907,6 +907,13 @@
     else
         // iOS 4
         [self dismissModalViewControllerAnimated:YES];
+    
+    // in case the orientation changed while being in modal view, restore the 
+    // webview and stuff to the current orientation
+    [indexViewController rotateFromOrientation:self.interfaceOrientation toOrientation:self.interfaceOrientation];
+    [self setPageSize:[self getCurrentInterfaceOrientation]];
+    [self getPageHeight];
+	[self resetScrollView];
 }
 
 #pragma mark - SCROLLVIEW
@@ -1696,7 +1703,7 @@
     [indexViewController rotateFromOrientation:fromInterfaceOrientation toOrientation:self.interfaceOrientation];
     
     [self setPageSize:[self getCurrentInterfaceOrientation]];
-    [self getPageHeight];    
+    [self getPageHeight];
 	[self resetScrollView];
 }
 
