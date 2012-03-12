@@ -53,7 +53,11 @@
 	
 	NSMutableArray *pages;
     NSMutableArray *toLoad;
+    
     NSMutableArray *pageDetails;
+    NSMutableDictionary *attachedScreenshotPortrait;
+    NSMutableDictionary *attachedScreenshotLandscape;
+    
     UIImage *backgroundImageLandscape;
     UIImage *backgroundImagePortrait;
 
@@ -120,14 +124,14 @@
 - (BOOL)changePage:(int)page;
 - (void)gotoPageDelayer;
 - (void)gotoPage;
-- (void)lockPage:(BOOL)lock;
+- (void)lockPage:(NSNumber *)lock;
 - (void)addPageLoading:(int)slot;
 - (void)handlePageLoading;
 - (void)loadSlot:(int)slot withPage:(int)page;
 - (BOOL)loadWebView:(UIWebView *)webview withPage:(int)page;
 
 #pragma mark - MODAL WEBVIEW
-- (void)loadModalWebView:(NSURL *) url;
+- (void)loadModalWebView:(NSURL *)url;
 - (void)done:(ModalViewController *)controller;
 
 #pragma mark - SCROLLVIEW
