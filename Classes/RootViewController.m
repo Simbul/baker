@@ -38,6 +38,7 @@
 #import "PageTitleLabel.h"
 #import "Utils.h"
 
+
 // ALERT LABELS
 #define OPEN_BOOK_MESSAGE       @"Do you want to download "
 #define OPEN_BOOK_CONFIRM       @"Open book"
@@ -80,8 +81,8 @@
 
 
 // SCREENSHOT
-#define MAX_SCREENSHOT_AFTER_CP  5
-#define MAX_SCREENSHOT_BEFORE_CP 5
+#define MAX_SCREENSHOT_AFTER_CP  10
+#define MAX_SCREENSHOT_BEFORE_CP 10
 
 @implementation RootViewController
 
@@ -229,7 +230,8 @@
     NSLog(@"• Reset scrollview subviews");
     
     NSLog(@"    Prevent page from changing until scrollview reset is finished");
-    [self lockPage:YES];
+    
+    [self lockPage:[NSNumber numberWithBool:YES]];
     
     [self setTappableAreaSize];
     
@@ -287,7 +289,8 @@
     [scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:NO];
     
     NSLog(@"    Unlock page changing");
-    [self lockPage:NO];
+    
+    [self lockPage:[NSNumber numberWithBool:NO]];
 }
 - (void)initPageDetails {
     NSLog(@"• Init page details for the book pages");
@@ -780,13 +783,17 @@
             
             [self initScreenshots];
             
+            if (![self checkScreeshotForPage:currentPageNumber andOrientation:[self getCurrentInterfaceOrientation]]) {
+                [self lockPage:[NSNumber numberWithBool:YES]];
+            }
+            
             [self addPageLoading:0];
             [self handlePageLoading];
         }
     }
 }
-- (void)lockPage:(BOOL)lock {
-    if (lock)
+- (void)lockPage:(NSNumber *)lock {
+    if ([lock boolValue])
     {
         if (scrollView.scrollEnabled) {
             scrollView.scrollEnabled = NO;
@@ -822,11 +829,6 @@
         NSLog(@"• Handle loading of slot %d with page %d", slot, page);
         
         [toLoad removeObjectAtIndex:0];
-        
-        if ([renderingType isEqualToString:@"screenshots"] && ![self checkScreeshotForPage:page andOrientation:[self getCurrentInterfaceOrientation]]) {
-            [self lockPage:YES];
-        }
-        
         [self loadSlot:slot withPage:page];
     }
 }
@@ -896,7 +898,7 @@
 }
 
 #pragma mark - MODAL VIEW
-- (void)loadModalWebView:(NSURL *) url {
+- (void)loadModalWebView:(NSURL *)url {
     NSLog(@"» should load a modal view...");
     
     myModalViewController = [[[ModalViewController alloc] initWithUrl:url] autorelease];
@@ -1322,14 +1324,12 @@
     return [[NSFileManager defaultManager] fileExistsAtPath:screenshotFile];
 }
 - (void)takeScreenshotFromView:(UIWebView *)webView forPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation {
-    
-    [self lockPage:YES];
-    
+        
     BOOL shouldRevealWebView = YES;
     BOOL animating = YES;
     
-    if (![self checkScreeshotForPage:pageNumber andOrientation:interfaceOrientation]) {
-        
+    if (![self checkScreeshotForPage:pageNumber andOrientation:interfaceOrientation])
+    {        
         NSLog(@"• Taking screenshot of page %d", pageNumber);
         
         NSString *screenshotFile = [cachedScreenshotsPath stringByAppendingPathComponent:[NSString stringWithFormat:@"screenshot-%@-%i.jpg", interfaceOrientation, pageNumber]];
@@ -1351,10 +1351,10 @@
                 }
             }
         }
+        
+        [self performSelector:@selector(lockPage:) withObject:[NSNumber numberWithBool:NO] afterDelay:0.1];
     } 
-    
-    [self lockPage:NO];
-    
+            
     if (!currentPageHasChanged && shouldRevealWebView) {
         [self webView:webView hidden:NO animating:animating];
     }
