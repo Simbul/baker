@@ -39,10 +39,13 @@
 
 @property (nonatomic, assign) id <modalWebViewDelegate> delegate;
 @property (nonatomic, assign) IBOutlet UIWebView *webView;
-@property (nonatomic, assign) IBOutlet UIBarButtonItem *backButton;
-@property (nonatomic, assign) IBOutlet UIBarButtonItem *forwardButton;
+@property (nonatomic, assign) IBOutlet UIToolbar *toolbar;
+@property (nonatomic, assign) IBOutlet UIBarButtonItem *btnGoBack;
+@property (nonatomic, assign) IBOutlet UIBarButtonItem *btnGoForward;
 
 - (id)initWithUrl:(NSURL *)url;
+- (void)loadView;
+- (void)viewDidLoad;
 - (IBAction)dismissAction:(id)sender;
 - (IBAction)goBack:(id)sender;
 - (IBAction)goForward:(id)sender;
