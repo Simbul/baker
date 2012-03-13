@@ -1002,7 +1002,7 @@
     {		
 		NSLog(@"    Page is current page and current page IS delaying loading --> load page");
 		currentPageIsDelayingLoading = NO;
-		return YES;
+        return ![self isIndexView:webView];
 	}
     else
     {        
@@ -1825,5 +1825,15 @@
     // Remove the mail view
     [self dismissModalViewControllerAnimated:YES];
 }
+
+#pragma mark - INDEX VIEW
+- (BOOL)isIndexView:(UIWebView *)webView {
+    if (webView == indexViewController.view) {
+        return YES;
+    } else {
+        return NO;
+    }
+}
+
 
 @end

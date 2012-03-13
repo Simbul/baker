@@ -173,4 +173,7 @@
 #pragma mark - ORIENTATION
 - (NSString *)getCurrentInterfaceOrientation;
 
+#pragma mark - INDEX VIEW
+- (BOOL)isIndexView:(UIWebView *)webView;
+
 @end
