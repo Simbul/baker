@@ -61,7 +61,7 @@
 #import "ModalViewController.h"
 
 @implementation ModalViewController
-@synthesize delegate, toolbar, webView, btnGoBack, btnGoForward;
+@synthesize delegate, toolbar, webView, btnGoBack, btnGoForward, spinner;
 
 
 #pragma mark - INIT
@@ -98,10 +98,20 @@
     btnGoBack = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"back.png"] style:UIBarButtonItemStylePlain target:nil action:@selector(goBack:)];
     btnGoBack.style = UIBarButtonItemStylePlain;
     btnGoBack.width = 30;
+    btnGoBack.enabled = NO;
+
     
     btnGoForward = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"forward.png"] style:UIBarButtonItemStylePlain target:nil action:@selector(goForward:)];
     btnGoForward.style = UIBarButtonItemStylePlain;
     btnGoForward.width = 30;
+    btnGoForward.enabled = NO;
+    
+    spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    spinner.hidesWhenStopped = YES;
+    spinner.frame = CGRectMake(3,3,25,25);
+    [spinner startAnimating];
+    UIBarButtonItem *btnSpinner = [[UIBarButtonItem alloc] initWithCustomView:spinner];
+    btnSpinner.width = 30;
     
     UIBarButtonItem *spacer = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
     
@@ -115,7 +125,7 @@
     
     
     // ****** Add items to toolbar
-    NSArray *items = [NSArray arrayWithObjects: btnClose, btnGoBack, btnGoForward, spacer, btnAction, nil];
+    NSArray *items = [NSArray arrayWithObjects: btnClose, btnGoBack, btnGoForward, btnSpinner, spacer, btnAction, nil];
     [toolbar setItems:items animated:NO];
     
     
@@ -125,6 +135,7 @@
     webView.backgroundColor = [UIColor underPageBackgroundColor];
     webView.contentMode = UIViewContentModeScaleToFill;
     webView.scalesPageToFit = YES;
+    webView.delegate = self;
     
         
     // ****** View
@@ -155,12 +166,24 @@
 }
 
 #pragma mark - WEBVIEW
+- (void)webViewDidStartLoad:(UIWebView *)wv {     
+    /****************************************************************************************************
+     * Start loading a new page in the UIWebView.
+     */
+    NSLog(@"[Modal] Loading %@", wv.request.URL.absoluteURL);
+    [spinner startAnimating];     
+}
 - (void)webViewDidFinishLoad:(UIWebView *)webViewIn {
     /****************************************************************************************************
      * Triggered when the WebView finish.
      * We reset the button status here.
      */
+    NSLog(@"[Modal] Done.");
     
+    // ****** Stop spinner
+    [spinner stopAnimating];
+    
+    // ****** Update buttons
     btnGoBack.enabled = [webViewIn canGoBack];
     btnGoForward.enabled = [webViewIn canGoForward];
 }

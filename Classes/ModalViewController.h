@@ -42,6 +42,7 @@
 @property (nonatomic, assign) IBOutlet UIToolbar *toolbar;
 @property (nonatomic, assign) IBOutlet UIBarButtonItem *btnGoBack;
 @property (nonatomic, assign) IBOutlet UIBarButtonItem *btnGoForward;
+@property (nonatomic, assign) IBOutlet UIActivityIndicatorView *spinner;
 
 - (id)initWithUrl:(NSURL *)url;
 - (void)loadView;
