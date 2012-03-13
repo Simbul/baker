@@ -168,7 +168,7 @@
 #pragma mark - ACTIONS
 - (IBAction)dismissAction:(id)sender {
     /****************************************************************************************************
-     * Close action.
+     * Close action, it calls the delegate object to unload itself.
      */
     [[self delegate] done:self];
 }

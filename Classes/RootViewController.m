@@ -4,7 +4,7 @@
 //
 //  ==========================================================================================
 //  
-//  Copyright (c) 2010-2011, Davide Casali, Marco Colombo, Alessandro Morandi
+//  Copyright (c) 2010-2012, Davide Casali, Marco Colombo, Alessandro Morandi
 //  All rights reserved.
 //  
 //  Redistribution and use in source and binary forms, with or without modification, are 
@@ -899,16 +899,20 @@
 
 #pragma mark - MODAL VIEW
 - (void)loadModalWebView:(NSURL *)url {
-    NSLog(@"» should load a modal view...");
+    /****************************************************************************************************
+     * Initializes the modal view and opens the requested url.
+     * It contains a fix to avoid an overlapping status bar.
+     */
+    NSLog(@"» Loading a modal webview for url %@", url.absoluteString);
     
     myModalViewController = [[[ModalViewController alloc] initWithUrl:url] autorelease];
     myModalViewController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
     myModalViewController.delegate = self;
     
-    // hide the IndexView before opening modal web view
+    // Hide the IndexView before opening modal web view
     [self hideStatusBar];
     
-    // check if iOS4 or 5
+    // Check if iOS4 or 5
     if ([self respondsToSelector:@selector(presentViewController:animated:completion:)])
         // iOS 5
         [self presentViewController:myModalViewController animated:YES completion:nil];
@@ -917,7 +921,11 @@
         [self presentModalViewController:myModalViewController animated:YES];
 }
 - (void)done:(ModalViewController *)controller {
-    // check if iOS5 method is supported
+    /****************************************************************************************************
+     * This function is called from inside the modal view to close itself (delegate).
+     */
+    
+    // Check if iOS5 method is supported
     if ([self respondsToSelector:@selector(dismissViewControllerAnimated:completion:)])
         // iOS 5
         [self dismissViewControllerAnimated:YES completion:nil];
@@ -925,7 +933,7 @@
         // iOS 4
         [self dismissModalViewControllerAnimated:YES];
     
-    // in case the orientation changed while being in modal view, restore the 
+    // In case the orientation changed while being in modal view, restore the 
     // webview and stuff to the current orientation
     [indexViewController rotateFromOrientation:self.interfaceOrientation toOrientation:self.interfaceOrientation];
     [self setPageSize:[self getCurrentInterfaceOrientation]];
