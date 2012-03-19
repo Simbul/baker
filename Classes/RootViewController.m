@@ -456,6 +456,17 @@
 - (void)initBook:(NSString *)path {
     NSLog(@"• Init Book");
     
+    // If a previous current page exist remove it before initialization
+    if (currPage)
+    {        
+        currPage.delegate = nil;
+        
+        [currPage removeFromSuperview];
+        [currPage release];
+        
+        currPage = nil;
+    }
+    
     [self initBookProperties:path];
     [self resetPageDetails];
 	
