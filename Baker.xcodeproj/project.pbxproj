@@ -21,9 +21,10 @@
 		9F4F07F411F8DE8200375A8C /* RootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F4F07F211F8DE8200375A8C /* RootViewController.m */; };
 		9F6E6B6012AAA1BE0019EFB6 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F6E6B5F12AAA1BE0019EFB6 /* libz.dylib */; };
 		BF2F99401269379900E356EF /* book in Resources */ = {isa = PBXBuildFile; fileRef = BF2F993F1269379900E356EF /* book */; };
-		BFBACF331274CD38009D9595 /* ios-icon-ipad72.png in Resources */ = {isa = PBXBuildFile; fileRef = BFBACF321274CD38009D9595 /* ios-icon-ipad72.png */; };
-		BFEC41E61309D9CA00628DF3 /* ios-icon-iphone57.png in Resources */ = {isa = PBXBuildFile; fileRef = BFEC41E51309D9CA00628DF3 /* ios-icon-iphone57.png */; };
-		BFEC41E81309D9CE00628DF3 /* ios-icon-iphone114.png in Resources */ = {isa = PBXBuildFile; fileRef = BFEC41E71309D9CE00628DF3 /* ios-icon-iphone114.png */; };
+		BF43CBFD1517F9CE008B2C8B /* ios-icon-ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = BF43CBF91517F9CE008B2C8B /* ios-icon-ipad.png */; };
+		BF43CBFE1517F9CE008B2C8B /* ios-icon-ipad@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BF43CBFA1517F9CE008B2C8B /* ios-icon-ipad@2x.png */; };
+		BF43CBFF1517F9CE008B2C8B /* ios-icon-iphone.png in Resources */ = {isa = PBXBuildFile; fileRef = BF43CBFB1517F9CE008B2C8B /* ios-icon-iphone.png */; };
+		BF43CC001517F9CE008B2C8B /* ios-icon-iphone@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BF43CBFC1517F9CE008B2C8B /* ios-icon-iphone@2x.png */; };
 		D20915C013CB9C7800D3B55B /* Properties.m in Sources */ = {isa = PBXBuildFile; fileRef = D20915BF13CB9C7800D3B55B /* Properties.m */; };
 		D20915C413CB9FDC00D3B55B /* PropertiesTest.m in Sources */ = {isa = PBXBuildFile; fileRef = D20915C313CB9FDC00D3B55B /* PropertiesTest.m */; };
 		D20915C513CBA1C600D3B55B /* Properties.m in Sources */ = {isa = PBXBuildFile; fileRef = D20915BF13CB9C7800D3B55B /* Properties.m */; };
@@ -86,9 +87,10 @@
 		9F4F07F211F8DE8200375A8C /* RootViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = RootViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		9F6E6B5F12AAA1BE0019EFB6 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = /usr/lib/libz.dylib; sourceTree = "<absolute>"; };
 		BF2F993F1269379900E356EF /* book */ = {isa = PBXFileReference; lastKnownFileType = folder; path = book; sourceTree = "<group>"; };
-		BFBACF321274CD38009D9595 /* ios-icon-ipad72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ios-icon-ipad72.png"; sourceTree = "<group>"; };
-		BFEC41E51309D9CA00628DF3 /* ios-icon-iphone57.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ios-icon-iphone57.png"; sourceTree = "<group>"; };
-		BFEC41E71309D9CE00628DF3 /* ios-icon-iphone114.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ios-icon-iphone114.png"; sourceTree = "<group>"; };
+		BF43CBF91517F9CE008B2C8B /* ios-icon-ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ios-icon-ipad.png"; sourceTree = "<group>"; };
+		BF43CBFA1517F9CE008B2C8B /* ios-icon-ipad@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ios-icon-ipad@2x.png"; sourceTree = "<group>"; };
+		BF43CBFB1517F9CE008B2C8B /* ios-icon-iphone.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ios-icon-iphone.png"; sourceTree = "<group>"; };
+		BF43CBFC1517F9CE008B2C8B /* ios-icon-iphone@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ios-icon-iphone@2x.png"; sourceTree = "<group>"; };
 		D20915BE13CB9C7800D3B55B /* Properties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Properties.h; sourceTree = "<group>"; };
 		D20915BF13CB9C7800D3B55B /* Properties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = Properties.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		D20915C213CB9FDC00D3B55B /* PropertiesTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PropertiesTest.h; sourceTree = "<group>"; };
@@ -214,11 +216,9 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				BF43CBF81517F9CE008B2C8B /* icon */,
 				84ED947514FC389D00538EE5 /* back.png */,
 				84ED947214FC389000538EE5 /* forward.png */,
-				BFEC41E51309D9CA00628DF3 /* ios-icon-iphone57.png */,
-				BFEC41E71309D9CE00628DF3 /* ios-icon-iphone114.png */,
-				BFBACF321274CD38009D9595 /* ios-icon-ipad72.png */,
 				8D1107310486CEB800E47090 /* Baker-Info.plist */,
 			);
 			name = Resources;
@@ -235,6 +235,17 @@
 				9F6E6B5F12AAA1BE0019EFB6 /* libz.dylib */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		BF43CBF81517F9CE008B2C8B /* icon */ = {
+			isa = PBXGroup;
+			children = (
+				BF43CBF91517F9CE008B2C8B /* ios-icon-ipad.png */,
+				BF43CBFA1517F9CE008B2C8B /* ios-icon-ipad@2x.png */,
+				BF43CBFB1517F9CE008B2C8B /* ios-icon-iphone.png */,
+				BF43CBFC1517F9CE008B2C8B /* ios-icon-iphone@2x.png */,
+			);
+			path = icon;
 			sourceTree = "<group>";
 		};
 		D2263F29144B2F2900DCBECF /* minizip */ = {
@@ -384,11 +395,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				BF2F99401269379900E356EF /* book in Resources */,
-				BFBACF331274CD38009D9595 /* ios-icon-ipad72.png in Resources */,
-				BFEC41E61309D9CA00628DF3 /* ios-icon-iphone57.png in Resources */,
-				BFEC41E81309D9CE00628DF3 /* ios-icon-iphone114.png in Resources */,
 				84ED947314FC389000538EE5 /* forward.png in Resources */,
 				84ED947614FC389D00538EE5 /* back.png in Resources */,
+				BF43CBFD1517F9CE008B2C8B /* ios-icon-ipad.png in Resources */,
+				BF43CBFE1517F9CE008B2C8B /* ios-icon-ipad@2x.png in Resources */,
+				BF43CBFF1517F9CE008B2C8B /* ios-icon-iphone.png in Resources */,
+				BF43CC001517F9CE008B2C8B /* ios-icon-iphone@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
