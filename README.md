@@ -122,6 +122,17 @@ BUGS AND FEEDBACK
 CHANGELOG
 ---------
 
+* **3.2** (20/03/2012)
+  * iOS 5.1 and Retina display support
+  * Modal WebView opened inside Baker for external links (referrer=Baker)
+  * Custom events fired on window blur and focus
+  * Book.json parameters to disable tap and swipe: -baker-page-turn-tap/swipe
+  * Index bar dynamically sized from index.html size. Use viewport meta property to configure
+  * Change: referrer=Baker variable now not passed to destination website
+  * Fix: "white flash" workaround found
+  * Fix: solved issue with pre-compiled screenshots and books with more than 50 pages
+  * Fix: rare bug of content loaded into index view instead of page
+
 * **3.1** (20/12/2011)
   * Newsstand basic support
   * iOS5/iCloud data storage guidelines support
