@@ -47,7 +47,7 @@
     if (self) {
         NSString *filePath = [[NSBundle mainBundle] pathForResource:fileName ofType:@"json"];
         [self loadManifest:filePath];
-        self.defaults = [self initDefaults];
+        self.defaults = [self doInitDefaults];
     }
     return self;
 }
@@ -119,7 +119,7 @@
     }
 }
 
-- (NSDictionary *)initDefaults {
+- (NSDictionary *)doInitDefaults {
     NSString *json = @"{"
         "\"orientation\": \"both\","
         "\"zoomable\": false,"
