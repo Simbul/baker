@@ -45,7 +45,7 @@
 - (id)getFrom:(NSDictionary *)dictionary withKeys:(NSArray *)keys;
 - (id)getFrom:(NSDictionary *)dictionary withFallback:(NSDictionary *)fallbackDictionary withKeys:(NSArray *)keys;
 - (BOOL)loadManifest:(NSString *)filePath;
-- (NSDictionary *)initDefaults;
+- (NSDictionary *)doInitDefaults;
 - (NSDictionary*)dictionaryFromManifestFile:(NSString*)file;
 + (Properties*)properties;
 
