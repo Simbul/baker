@@ -69,7 +69,7 @@
     /****************************************************************************************************
      * We are going to create the view programmatically in loadView. Skip this.
      */
-    self = [super initWithNibName:nil bundle:nil];
+    self = [super init];
     return self;
 }
 - (id)initWithUrl:(NSURL *)url {
@@ -108,7 +108,7 @@
     
     spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
     spinner.hidesWhenStopped = YES;
-    spinner.frame = CGRectMake(3,3,25,25);
+    spinner.frame = CGRectMake(3, 3, 25, 25);
     [spinner startAnimating];
     UIBarButtonItem *btnSpinner = [[UIBarButtonItem alloc] initWithCustomView:spinner];
     btnSpinner.width = 30;
@@ -129,9 +129,11 @@
     [toolbar setItems:items animated:NO];
     
     
+    uint screenWidth  = [[UIScreen mainScreen] bounds].size.width;
+    uint screenHeight = [[UIScreen mainScreen] bounds].size.height;
+
     // ****** Add WebView
-    webView = [[UIWebView alloc] initWithFrame:CGRectMake(0, 44, 768, 980)];
-    webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    webView = [[UIWebView alloc] initWithFrame:CGRectMake(0, 44, screenWidth, screenHeight - 44)];
     webView.backgroundColor = [UIColor underPageBackgroundColor];
     webView.contentMode = UIViewContentModeScaleToFill;
     webView.scalesPageToFit = YES;
@@ -142,7 +144,7 @@
     self.view = [UIView new];
     
     // Note: without setting the view.frame no other sizeToFit or autoresizeMask in object inside it will work.
-    self.view.frame = CGRectMake(0, 0, [[UIScreen mainScreen] bounds].size.width, [[UIScreen mainScreen] bounds].size.height);
+    self.view.frame = CGRectMake(0, 0, screenWidth, screenHeight);
     [self.view sizeToFit];
     
     
@@ -222,6 +224,24 @@
      */
     return [[self delegate] shouldAutorotateToInterfaceOrientation:orientation];
 }
-
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+{
+    uint screenWidth  = 0;
+    uint screenHeight = 0;
+    
+    if (UIInterfaceOrientationIsPortrait(toInterfaceOrientation))
+    {
+        screenWidth  = [[UIScreen mainScreen] bounds].size.width;
+        screenHeight = [[UIScreen mainScreen] bounds].size.height;
+    }
+    else if (UIInterfaceOrientationIsLandscape(toInterfaceOrientation))
+    {
+        screenWidth  = [[UIScreen mainScreen] bounds].size.height;
+        screenHeight = [[UIScreen mainScreen] bounds].size.width;
+    }
+    
+    self.view.frame = CGRectMake(0, 0, screenWidth, screenHeight);
+    webView.frame = CGRectMake(0, 44, screenWidth, screenHeight - 44);
+}
 
 @end
