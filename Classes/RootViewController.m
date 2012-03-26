@@ -1021,7 +1021,7 @@
 		if (url)
         {
 			// Existing, checking if index...
-            if([[url lastPathComponent] isEqualToString:INDEX_FILE_NAME])
+            if([[url relativePath] isEqualToString:[indexViewController indexPath]])
             {
                 NSLog(@"    Page is index --> load index");
                 return YES;

@@ -49,6 +49,7 @@
     int actualIndexWidth;
     int actualIndexHeight;
     BOOL disabled;
+    BOOL loadedFromBundle;
     
     CGSize cachedContentSize;
     
@@ -72,5 +73,6 @@
 - (CGSize)sizeFromContentOf:(UIView *)view;
 - (void)setActualSize;
 - (void)setViewFrame:(CGRect)frame;
+- (NSString *)indexPath;
 
 @end

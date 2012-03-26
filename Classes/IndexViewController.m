@@ -203,13 +203,8 @@
 }
 
 - (void)loadContentFromBundle:(BOOL)fromBundle{
-    NSString* path;
-    if(fromBundle){
-        NSLog(@"Reloading index from bundle");
-        path = [bookBundlePath stringByAppendingPathComponent:fileName];
-    } else {
-        path = [documentsBookPath stringByAppendingPathComponent:fileName];
-    }
+    loadedFromBundle = fromBundle;
+    NSString* path = [self indexPath];
     
     [self assignProperties];
     
@@ -271,6 +266,15 @@
     view.frame = frame;
     
     return [view sizeThatFits:CGSizeZero];
+}
+
+- (NSString *)indexPath {
+    if(loadedFromBundle){
+        NSLog(@"Reloading index from bundle");
+        return [bookBundlePath stringByAppendingPathComponent:fileName];
+    } else {
+        return [documentsBookPath stringByAppendingPathComponent:fileName];
+    }
 }
 
 /*
