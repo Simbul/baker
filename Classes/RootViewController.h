@@ -132,7 +132,7 @@
 
 #pragma mark - MODAL WEBVIEW
 - (void)loadModalWebView:(NSURL *)url;
-- (void)done:(ModalViewController *)controller;
+- (void)closeModalWebView;
 
 #pragma mark - SCROLLVIEW
 - (CGRect)frameForPage:(int)page;

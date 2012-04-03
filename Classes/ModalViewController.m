@@ -61,25 +61,26 @@
 #import "ModalViewController.h"
 
 @implementation ModalViewController
-@synthesize delegate, toolbar, webView, btnGoBack, btnGoForward, spinner;
 
+@synthesize delegate;
+@synthesize webView;
+@synthesize toolbar;
+@synthesize btnGoBack;
+@synthesize btnGoForward;
+@synthesize spinner;
 
 #pragma mark - INIT
-- (id)init {
-    /****************************************************************************************************
-     * We are going to create the view programmatically in loadView. Skip this.
-     */
-    self = [super init];
-    return self;
-}
 - (id)initWithUrl:(NSURL *)url {
     /****************************************************************************************************
      * This is the main way you'll be using this object.
      * Just create the object and call this function.
      */
-    myUrl = url;
     
-    return [self init];
+    self = [super init];
+    if (self) {
+        myUrl = url;
+    }
+    return self;
 }
 
 #pragma mark - VIEW LIFECYCLE
@@ -88,39 +89,40 @@
      * Creates the UI: buttons, toolbar, webview and container view.
      */
     
+    [super loadView];
+    
+    uint screenWidth  = [[UIScreen mainScreen] bounds].size.width;
+    uint screenHeight = [[UIScreen mainScreen] bounds].size.height;
+    
     // ****** Buttons
-    UIBarButtonItem *btnClose = [[UIBarButtonItem alloc] initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:nil action:@selector(dismissAction:)];
-    btnClose.style = UIBarButtonItemStyleBordered;
+    UIBarButtonItem *btnClose  = [[[UIBarButtonItem alloc] initWithTitle:@"Back" style:UIBarButtonItemStyleBordered target:self action:@selector(dismissAction)] autorelease];    
+    UIBarButtonItem *btnAction = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(openInSafari)] autorelease];
     
-    UIBarButtonItem *btnAction = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:nil action:@selector(openInSafari:)];
-    btnAction.style = UIBarButtonItemStyleBordered;
-    
-    btnGoBack = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"back.png"] style:UIBarButtonItemStylePlain target:nil action:@selector(goBack:)];
-    btnGoBack.style = UIBarButtonItemStylePlain;
-    btnGoBack.width = 30;
+    self.btnGoBack = [[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"back.png"] style:UIBarButtonItemStylePlain target:self action:@selector(goBack)] autorelease];
     btnGoBack.enabled = NO;
+    btnGoBack.width = 30;
 
-    
-    btnGoForward = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"forward.png"] style:UIBarButtonItemStylePlain target:nil action:@selector(goForward:)];
-    btnGoForward.style = UIBarButtonItemStylePlain;
-    btnGoForward.width = 30;
+    self.btnGoForward = [[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"forward.png"] style:UIBarButtonItemStylePlain target:self action:@selector(goForward)] autorelease];
     btnGoForward.enabled = NO;
-    
-    spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-    spinner.hidesWhenStopped = YES;
+    btnGoForward.width = 30;
+        
+    self.spinner = [[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray] autorelease];
     spinner.frame = CGRectMake(3, 3, 25, 25);
+    spinner.hidesWhenStopped = YES;
+    
     [spinner startAnimating];
-    UIBarButtonItem *btnSpinner = [[UIBarButtonItem alloc] initWithCustomView:spinner];
+    
+    UIBarButtonItem *btnSpinner = [[[UIBarButtonItem alloc] initWithCustomView:spinner] autorelease];
     btnSpinner.width = 30;
     
-    UIBarButtonItem *spacer = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
+    UIBarButtonItem *spacer = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease];
     
     
     // ****** Add Toolbar
-    toolbar = [UIToolbar new];
+    self.toolbar = [[[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 44)] autorelease];
     toolbar.barStyle = UIBarStyleDefault;
-    toolbar.frame = CGRectMake(0, 0, [[UIScreen mainScreen] bounds].size.width, 44);
     toolbar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    
     [toolbar sizeToFit];
     
     
@@ -128,12 +130,9 @@
     NSArray *items = [NSArray arrayWithObjects: btnClose, btnGoBack, btnGoForward, btnSpinner, spacer, btnAction, nil];
     [toolbar setItems:items animated:NO];
     
-    
-    uint screenWidth  = [[UIScreen mainScreen] bounds].size.width;
-    uint screenHeight = [[UIScreen mainScreen] bounds].size.height;
 
     // ****** Add WebView
-    webView = [[UIWebView alloc] initWithFrame:CGRectMake(0, 44, screenWidth, screenHeight - 44)];
+    self.webView = [[[UIWebView alloc] initWithFrame:CGRectMake(0, 44, screenWidth, screenHeight - 44)] autorelease];
     webView.backgroundColor = [UIColor underPageBackgroundColor];
     webView.contentMode = UIViewContentModeScaleToFill;
     webView.scalesPageToFit = YES;
@@ -153,26 +152,35 @@
     [self.view addSubview:webView];
 }
 - (void)viewDidLoad {
+    
     [super viewDidLoad];
     
     self.view.backgroundColor = [UIColor whiteColor];
     [webView loadRequest:[NSURLRequest requestWithURL:myUrl]];
 }
-- (void)viewDidUnload {
-    /****************************************************************************************************
-     * Deallocate objects here.
-     */
-}
 - (void)dealloc {
+    
+    [self.webView stopLoading];
+    self.webView.delegate = nil;
+    
+    [btnGoBack release];
+    [btnGoForward release];
+    
+    [spinner release];
+    [toolbar release];
+    
+    [webView release];
+    
 	[super dealloc];
 }
 
 #pragma mark - WEBVIEW
-- (void)webViewDidStartLoad:(UIWebView *)wv {     
+- (void)webViewDidStartLoad:(UIWebView *)webViewIn {     
     /****************************************************************************************************
      * Start loading a new page in the UIWebView.
      */
-    NSLog(@"[Modal] Loading %@", wv.request.URL.absoluteURL);
+    
+    NSLog(@"[Modal] Loading \"%@\"", [webViewIn.request.URL absoluteString]);    
     [spinner startAnimating];     
 }
 - (void)webViewDidFinishLoad:(UIWebView *)webViewIn {
@@ -180,40 +188,45 @@
      * Triggered when the WebView finish.
      * We reset the button status here.
      */
-    NSLog(@"[Modal] Done.");
+    
+    NSLog(@"[Modal] Finish loading.");
     
     // ****** Stop spinner
     [spinner stopAnimating];
     
     // ****** Update buttons
-    btnGoBack.enabled = [webViewIn canGoBack];
+    btnGoBack.enabled    = [webViewIn canGoBack];
     btnGoForward.enabled = [webViewIn canGoForward];
 }
 
 #pragma mark - ACTIONS
-- (IBAction)dismissAction:(id)sender {
+- (void)dismissAction {
     /****************************************************************************************************
      * Close action, it calls the delegate object to unload itself.
      */
-    [[self delegate] done:self];
+    
+    [[self delegate] closeModalWebView];
 }
-- (IBAction)goBack:(id)sender {
+- (void)goBack {
     /****************************************************************************************************
      * WebView back button.
      */
+    
     [webView goBack];
 }
-- (IBAction)goForward:(id)sender {
+- (void)goForward {
     /****************************************************************************************************
      * WebView forward button.
      */
+    
     [webView goForward];
 }
-- (IBAction)openInSafari:(id)sender {
+- (void)openInSafari {
     /****************************************************************************************************
      * Open in Safari.
      * In the future this will trigger the panel to choose between different actions.
      */
+    
     [[UIApplication sharedApplication] openURL:webView.request.URL];
 }
 
@@ -222,6 +235,7 @@
     /****************************************************************************************************
      * We'll use our delegate object to check if we can autorotate or not.
      */
+    
     return [[self delegate] shouldAutorotateToInterfaceOrientation:orientation];
 }
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration

@@ -914,9 +914,10 @@
      * Initializes the modal view and opens the requested url.
      * It contains a fix to avoid an overlapping status bar.
      */
+    
     NSLog(@"» Loading a modal webview for url %@", url.absoluteString);
     
-    myModalViewController = [[[ModalViewController alloc] initWithUrl:url] autorelease];
+    myModalViewController = [[ModalViewController alloc] initWithUrl:url];
     myModalViewController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
     myModalViewController.delegate = self;
     
@@ -924,32 +925,37 @@
     [self hideStatusBar];
     
     // Check if iOS4 or 5
-    if ([self respondsToSelector:@selector(presentViewController:animated:completion:)])
+    if ([self respondsToSelector:@selector(presentViewController:animated:completion:)]) {
         // iOS 5
         [self presentViewController:myModalViewController animated:YES completion:nil];
-    else
+    } else {
         // iOS 4
         [self presentModalViewController:myModalViewController animated:YES];
+    }
+    
+    [myModalViewController release];
 }
-- (void)done:(ModalViewController *)controller {
+- (void)closeModalWebView {
     /****************************************************************************************************
      * This function is called from inside the modal view to close itself (delegate).
      */
     
     // Check if iOS5 method is supported
-    if ([self respondsToSelector:@selector(dismissViewControllerAnimated:completion:)])
+    if ([self respondsToSelector:@selector(dismissViewControllerAnimated:completion:)]) {
         // iOS 5
         [self dismissViewControllerAnimated:YES completion:nil];
-    else
+    } else {
         // iOS 4
         [self dismissModalViewControllerAnimated:YES];
-    
+    }
+        
     // In case the orientation changed while being in modal view, restore the 
     // webview and stuff to the current orientation
     [indexViewController rotateFromOrientation:self.interfaceOrientation toOrientation:self.interfaceOrientation];
+    
     [self setPageSize:[self getCurrentInterfaceOrientation]];
     [self getPageHeight];
-	[self resetScrollView];
+    [self resetScrollView];
 }
 
 #pragma mark - SCROLLVIEW
@@ -1175,7 +1181,8 @@
                         NSRegularExpression *referrerModalRegex = [NSRegularExpression regularExpressionWithPattern:URL_OPEN_MODALLY options:NSRegularExpressionCaseInsensitive error:NULL];
                         NSUInteger matchesModal = [referrerModalRegex numberOfMatchesInString:params options:0 range:NSMakeRange(0, [params length])];
                         
-                        if (matches > 0) {
+                        if (matches > 0)
+                        {
                             NSLog(@"    Link contain param \"%@\" --> open link in Safari", URL_OPEN_EXTERNAL);
                             
                             // Generate new URL without
@@ -1187,8 +1194,11 @@
                             
                             NSLog(@"    Opening with updated URL: %@", newURL);
                             [[UIApplication sharedApplication] openURL:[NSURL URLWithString:newURL]];
+                            
                             return NO;
-                        } else if (matchesModal) {
+                        }
+                        else if (matchesModal)
+                        {
                             NSLog(@"    Link contain param \"%@\" --> open link modally", URL_OPEN_MODALLY);
                             
                             // Generate new URL without
@@ -1200,11 +1210,13 @@
                             
                             NSLog(@"    Opening with updated URL: %@", newURL);
                             [self loadModalWebView:url];
+                            
                             return NO;
                         }
                     }
                     
                     NSLog(@"    Link doesn't contain param \"%@\" --> open link in page", URL_OPEN_EXTERNAL);
+                    
                     return YES;
                 }
             }
@@ -1577,7 +1589,7 @@
 #pragma mark - STATUS BAR
 - (void)toggleStatusBar {
     // if modal view is up, don't toggle.
-    if (! self.modalViewController) {
+    if (!self.modalViewController) {
         NSLog(@"• Toggle status bar visibility");
         
         UIApplication *sharedApplication = [UIApplication sharedApplication];

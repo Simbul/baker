@@ -30,31 +30,33 @@
 //  
 
 #import <UIKit/UIKit.h>
+
 @protocol modalWebViewDelegate;
 
-@interface ModalViewController : UIViewController <UIWebViewDelegate> {
+@interface ModalViewController : UIViewController <UIWebViewDelegate>
+{
     id <modalWebViewDelegate> delegate;
     NSURL *myUrl;
 }
 
-@property (nonatomic, assign) id <modalWebViewDelegate> delegate;
-@property (nonatomic, assign) IBOutlet UIWebView *webView;
-@property (nonatomic, assign) IBOutlet UIToolbar *toolbar;
-@property (nonatomic, assign) IBOutlet UIBarButtonItem *btnGoBack;
-@property (nonatomic, assign) IBOutlet UIBarButtonItem *btnGoForward;
-@property (nonatomic, assign) IBOutlet UIActivityIndicatorView *spinner;
+@property (assign, nonatomic) id <modalWebViewDelegate> delegate;
+@property (strong, nonatomic) UIWebView *webView;
+@property (strong, nonatomic) UIToolbar *toolbar;
+@property (strong, nonatomic) UIBarButtonItem *btnGoBack;
+@property (strong, nonatomic) UIBarButtonItem *btnGoForward;
+@property (strong, nonatomic) UIActivityIndicatorView *spinner;
 
 - (id)initWithUrl:(NSURL *)url;
-- (void)loadView;
-- (void)viewDidLoad;
-- (IBAction)dismissAction:(id)sender;
-- (IBAction)goBack:(id)sender;
-- (IBAction)goForward:(id)sender;
-- (IBAction)openInSafari:(id)sender;
+- (void)dismissAction;
+- (void)goBack;
+- (void)goForward;
+- (void)openInSafari;
 
 @end
 
 @protocol modalWebViewDelegate <NSObject>
-- (void) done:(ModalViewController *)controller;
+
+- (void)closeModalWebView;
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation;
+
 @end
