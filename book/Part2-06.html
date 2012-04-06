@@ -4,9 +4,16 @@
 	<title>2.6 &bull; A Continuation of the Reminiscences of John Watson M.D.</title>
 	<meta name="viewport" content="width=768; initial-scale=1.0;"/>
 	<link rel="stylesheet" type="text/css" href="css/book.css">
+      <script src="js/bookmark.js"></script>
+      <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        Bookmark.init("bookmarks", "bookmark");
+      }, false);
+      </script>
 </head>
 <body>
-	<div id="page" class="chapter">
+      <div id="page" class="chapter">
+      <div id="bookmark"></div>
 		<h1><div>A Continuation of the Reminiscences <br/>of John Watson M.D.</div></h1>
 		
 	  <div id="content" class="chapter">

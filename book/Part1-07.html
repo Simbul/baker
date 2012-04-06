@@ -4,9 +4,16 @@
 	<title>1.7 &bull; Light in the Darkness</title>
 	<meta name="viewport" content="width=768; initial-scale=1.0;"/>
 	<link rel="stylesheet" type="text/css" href="css/book.css">
+      <script src="js/bookmark.js"></script>
+      <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        Bookmark.init("bookmarks", "bookmark");
+      }, false);
+      </script>
 </head>
 <body>
-	<div id="page" class="chapter">
+      <div id="page" class="chapter">
+      <div id="bookmark"></div>
 		<h1><div>Light in the Darkness</div></h1>
 		
 	  <div id="content" class="chapter">
