@@ -91,9 +91,7 @@
     
     [super loadView];
     
-    uint screenWidth  = [[UIScreen mainScreen] bounds].size.width;
-    uint screenHeight = [[UIScreen mainScreen] bounds].size.height;
-    
+
     // ****** Buttons
     UIBarButtonItem *btnClose  = [[[UIBarButtonItem alloc] initWithTitle:@"Back" style:UIBarButtonItemStyleBordered target:self action:@selector(dismissAction)] autorelease];    
     UIBarButtonItem *btnAction = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(openInSafari)] autorelease];
@@ -119,12 +117,9 @@
     
     
     // ****** Add Toolbar
-    self.toolbar = [[[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 44)] autorelease];
+    self.toolbar = [[UIToolbar new] autorelease];
     toolbar.barStyle = UIBarStyleDefault;
-    toolbar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-    
-    [toolbar sizeToFit];
-    
+        
     
     // ****** Add items to toolbar
     NSArray *items = [NSArray arrayWithObjects: btnClose, btnGoBack, btnGoForward, btnSpinner, spacer, btnAction, nil];
@@ -132,7 +127,7 @@
     
 
     // ****** Add WebView
-    self.webView = [[[UIWebView alloc] initWithFrame:CGRectMake(0, 44, screenWidth, screenHeight - 44)] autorelease];
+    self.webView = [[[UIWebView alloc] initWithFrame:CGRectMake(0, 44, 1, 1)] autorelease];
     webView.backgroundColor = [UIColor underPageBackgroundColor];
     webView.contentMode = UIViewContentModeScaleToFill;
     webView.scalesPageToFit = YES;
@@ -142,14 +137,14 @@
     // ****** View
     self.view = [UIView new];
     
-    // Note: without setting the view.frame no other sizeToFit or autoresizeMask in object inside it will work.
-    self.view.frame = CGRectMake(0, 0, screenWidth, screenHeight);
-    [self.view sizeToFit];
-    
     
     // ****** Attach
     [self.view addSubview:toolbar];
     [self.view addSubview:webView];
+    
+    
+    // ****** Set views starting frames according to current interface rotation
+    [self willRotateToInterfaceOrientation:self.interfaceOrientation duration:0];
 }
 - (void)viewDidLoad {
     
@@ -255,6 +250,7 @@
     }
     
     self.view.frame = CGRectMake(0, 0, screenWidth, screenHeight);
+    toolbar.frame = CGRectMake(0, 0, screenWidth, 44);
     webView.frame = CGRectMake(0, 44, screenWidth, screenHeight - 44);
 }
 
