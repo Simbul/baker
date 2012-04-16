@@ -109,6 +109,7 @@
 
 #pragma mark - INIT
 - (id)initWithBookPath:(NSString *)bookPath;
+- (BOOL)loadBookWithBookPath:(NSString *)bookPath pageNumber:(int)pageNumber anchor:(NSString *)anchor;
 - (void)setupWebView:(UIWebView *)webView;
 - (void)setPageSize:(NSString *)orientation;
 - (void)setTappableAreaSize;

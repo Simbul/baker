@@ -93,15 +93,10 @@
 
 #pragma mark - INIT
 
-- (id)initWithBookPath:(NSString *)bookPath
-{
+- (id)initWithBookPath:(NSString *)bookPath {
     self = [super init];
     if (self) {
         NSLog(@"• INIT");
-        
-    
-        // ****** STORING BOOK PATH
-        bundleBookPath = [bookPath retain];
     
         
         // ****** INIT PROPERTIES
@@ -180,21 +175,268 @@
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(downloadBook:) name:@"downloadNotification" object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleDownloadResult:) name:@"handleDownloadResult" object:nil];
         
-        
+                
         // TODO: LOAD BOOK METHOD IN VIEW DID LOAD
-        // ****** BOOK INIT
-        if ([[NSFileManager defaultManager] fileExistsAtPath:documentsBookPath]) {
-            [self initBook:documentsBookPath];
-        } else {
-            if ([[NSFileManager defaultManager] fileExistsAtPath:bundleBookPath]) {
-                [self initBook:bundleBookPath];
-            } else {
-                // Do something if there are no books available to show
-            }
-        }
+        [self loadBookWithBookPath:bookPath pageNumber:0 anchor:nil];
     }
     return self;
 }
+- (int)pageNumberFromPagePath:(NSString *)pagePath {
+    
+    // TODO: DOES NOT WORK BECAUSE PAGES AND TOTALPAGES AREN'T INITIALIZED
+    int ret = 0;
+    for (int i = 0; i < totalPages; i++) {
+        if ([[pages objectAtIndex:i] isEqualToString:pagePath]) {
+            ret = i + 1;
+            break;
+        }
+    }
+    
+    return ret;
+}
+- (BOOL)loadBookWithBookPath:(NSString *)bookPath {    
+    int pageNumber = 1;
+    
+    // ****** INIT CURRENT PAGE FROM LAST PAGE VIEWED
+    NSString *currPageToLoad = [[NSUserDefaults standardUserDefaults] objectForKey:@"lastPageViewed"];    
+    if (currentPageFirstLoading && currPageToLoad) {
+        // on first opening we restore the last viewed page
+        pageNumber = [currPageToLoad intValue];
+    } else {
+        // init current page from JSON
+        pageNumber = [[properties get:@"-baker-start-at-page", nil] intValue];
+    }
+    
+    return [self loadBookWithBookPath:bookPath pageNumber:pageNumber anchor:nil];
+}
+- (BOOL)loadBookWithBookPath:(NSString *)bookPath pagePath:(NSString *)pagePath {
+    
+    return [self loadBookWithBookPath:bookPath pageNumber:[self pageNumberFromPagePath:pagePath] anchor:nil];
+}
+- (BOOL)loadBookWithBookPath:(NSString *)bookPath pageNumber:(int)pageNumber anchor:(NSString *)anchor {
+    NSLog(@"• LOAD BOOK WITH PATH: %@", bookPath);
+
+    
+    // ****** STORING BOOK PATH
+    bundleBookPath = [bookPath retain];
+    
+    
+    // TODO: RENAME TO LOAD BOOK PROPERTIES
+    [self initBookProperties:bookPath];
+
+    
+    // TODO: MOVE INTO CLEANUP METHOD
+    // If a previous current page exist remove it before initialization
+    if (currPage) {        
+        currPage.delegate = nil;
+        
+        [currPage removeFromSuperview];
+        [currPage release];
+        
+        currPage = nil;
+    }
+        
+    [self resetPageDetails];
+    
+    
+    // ****** INITIALIZE PAGES ARRAY WITH PAGE PATHS
+    NSEnumerator *pagesEnumerator = [[properties get:@"contents", nil] objectEnumerator];
+    id page;
+    
+    while ((page = [pagesEnumerator nextObject])) {
+        NSString *pageFile = nil;
+        if ([page isKindOfClass:[NSString class]]) {
+            pageFile = [bookPath stringByAppendingPathComponent:page];
+        } else if ([page isKindOfClass:[NSDictionary class]]) {
+            pageFile = [bookPath stringByAppendingPathComponent:[page objectForKey:@"url"]];
+        }
+        
+        if ([[NSFileManager defaultManager] fileExistsAtPath:pageFile]) {
+            [pages addObject:pageFile];
+        } else {
+            NSLog(@"Page %@ does not exist in %@", page, bookPath);
+        }
+    }
+    
+    totalPages = [pages count];
+	NSLog(@"    Pages in this book: %d", totalPages);
+	
+	if (totalPages > 0) {
+
+        // ****** VERIFY AND ASSIGN CURRENT PAGE
+        if (pageNumber < 0) {
+            currentPageNumber = MAX(1, totalPages + pageNumber + 1);
+        } else if (pageNumber == 0) {
+            currentPageNumber = 1;
+        } else if (pageNumber > 0) {
+            currentPageNumber = MIN(totalPages, pageNumber);
+        }
+        
+        NSLog(@"    Starting page: %i", currentPageNumber);
+		
+        currentPageIsDelayingLoading = YES;
+        [toLoad removeAllObjects];
+		
+        NSString *screenshotFolder = [properties get:@"-baker-page-screenshots", nil];
+        if (screenshotFolder != nil) {
+            cachedScreenshotsPath = [bookPath stringByAppendingPathComponent:screenshotFolder];
+        }
+        
+        if (screenshotFolder == nil || ![[NSFileManager defaultManager] fileExistsAtPath:cachedScreenshotsPath]) {
+            cachedScreenshotsPath = [bookPath stringByAppendingPathComponent:@"baker-screenshots"];
+            if ([bookPath isEqualToString:bundleBookPath]) {
+                cachedScreenshotsPath = defaultScreeshotsPath;
+            }
+        }
+        
+        [cachedScreenshotsPath retain];
+        
+        [self initPageDetails];
+        [self resetScrollView];
+        [self addPageLoading:0];
+        
+        if ([renderingType isEqualToString:@"three-cards"]) {
+            if (currentPageNumber != totalPages) {
+                [self addPageLoading:+1];
+            }
+            
+            if (currentPageNumber != 1) {
+                [self addPageLoading:-1];
+            }
+        }
+        [self handlePageLoading];
+        
+        [indexViewController loadContentFromBundle:[bookPath isEqualToString:bundleBookPath]];
+		
+	} else if (![bookPath isEqualToString:bundleBookPath]) {
+		
+		[[NSFileManager defaultManager] removeItemAtPath:bookPath error:NULL];
+ 		feedbackAlert = [[UIAlertView alloc] initWithTitle:ZERO_PAGES_TITLE
+												   message:ZERO_PAGES_MESSAGE
+												  delegate:self
+										 cancelButtonTitle:ALERT_FEEDBACK_CANCEL
+										 otherButtonTitles:nil];
+		[feedbackAlert show];
+		[feedbackAlert release];		
+	}
+    
+    return NO;
+}
+
+- (void)initBook:(NSString *)path {
+    NSLog(@"• Init Book");
+    
+    // If a previous current page exist remove it before initialization
+    if (currPage)
+    {        
+        currPage.delegate = nil;
+        
+        [currPage removeFromSuperview];
+        [currPage release];
+        
+        currPage = nil;
+    }
+    
+    [self initBookProperties:path];
+    [self resetPageDetails];
+	
+    NSEnumerator *pagesEnumerator = [[properties get:@"contents", nil] objectEnumerator];
+    id page;
+    
+    while ((page = [pagesEnumerator nextObject])) {
+        NSString *pageFile = nil;
+        if ([page isKindOfClass:[NSString class]]) {
+            pageFile = [path stringByAppendingPathComponent:page];
+        } else if ([page isKindOfClass:[NSDictionary class]]) {
+            pageFile = [path stringByAppendingPathComponent:[page objectForKey:@"url"]];
+        }
+        
+        if ([[NSFileManager defaultManager] fileExistsAtPath:pageFile]) {
+            [pages addObject:pageFile];
+        } else {
+            NSLog(@"Page %@ does not exist in %@", page, path);
+        }
+    }
+    
+	totalPages = [pages count];
+	NSLog(@"    Pages in this book: %d", totalPages);
+	
+	if (totalPages > 0) {
+		// Check if there is a saved starting page        
+		NSString *currPageToLoad = [[NSUserDefaults standardUserDefaults] objectForKey:@"lastPageViewed"];
+		
+        int startingPage = [[properties get:@"-baker-start-at-page", nil] intValue];
+        if (startingPage < 0) {
+            startingPage = MAX(1, totalPages + startingPage + 1);
+        } else if (startingPage == 0) {
+            startingPage = 1;
+        } else if (startingPage > 0) {
+            startingPage = MIN(totalPages, startingPage);
+        }
+        
+        currentPageNumber = startingPage;
+        if (currentPageFirstLoading && currPageToLoad != nil) {
+			currentPageNumber = [currPageToLoad intValue];
+		} else if (pageNameFromURL != nil) {
+            pageNameFromURL = nil;
+            NSString *fileNameFromURL = [path stringByAppendingPathComponent:pageNameFromURL];
+            for (int i = 0; i < totalPages; i++) {
+                if ([[pages objectAtIndex:i] isEqualToString:fileNameFromURL]) {
+                    currentPageNumber = i + 1;
+                    break;
+                }
+			}
+		}
+        
+        NSLog(@"    Starting page: %i", currentPageNumber);
+		
+        currentPageIsDelayingLoading = YES;
+        [toLoad removeAllObjects];
+		
+        NSString *screenshotFolder = [properties get:@"-baker-page-screenshots", nil];
+        if (screenshotFolder != nil) {
+            cachedScreenshotsPath = [path stringByAppendingPathComponent:screenshotFolder];
+        }
+        
+        if (screenshotFolder == nil || ![[NSFileManager defaultManager] fileExistsAtPath:cachedScreenshotsPath]) {
+            cachedScreenshotsPath = [path stringByAppendingPathComponent:@"baker-screenshots"];
+            if ([path isEqualToString:bundleBookPath]) {
+                cachedScreenshotsPath = defaultScreeshotsPath;
+            }
+        }
+        
+        [cachedScreenshotsPath retain];
+        
+        [self initPageDetails];
+        [self resetScrollView];
+        [self addPageLoading:0];
+        
+        if ([renderingType isEqualToString:@"three-cards"]) {
+            if (currentPageNumber != totalPages) {
+                [self addPageLoading:+1];
+            }
+            
+            if (currentPageNumber != 1) {
+                [self addPageLoading:-1];
+            }
+        }
+        [self handlePageLoading];
+        
+        [indexViewController loadContentFromBundle:[path isEqualToString:bundleBookPath]];
+		
+	} else if (![path isEqualToString:bundleBookPath]) {
+		
+		[[NSFileManager defaultManager] removeItemAtPath:path error:NULL];
+ 		feedbackAlert = [[UIAlertView alloc] initWithTitle:ZERO_PAGES_TITLE
+												   message:ZERO_PAGES_MESSAGE
+												  delegate:self
+										 cancelButtonTitle:ALERT_FEEDBACK_CANCEL
+										 otherButtonTitles:nil];
+		[feedbackAlert show];
+		[feedbackAlert release];		
+	}
+}
+
 
 - (void)setupWebView:(UIWebView *)webView {
     NSLog(@"• Setup webView");
@@ -471,119 +713,7 @@
         backgroundImagePortrait = [[UIImage imageWithContentsOfFile:backgroundPathPortrait] retain];
     }
 }
-- (void)initBook:(NSString *)path {
-    NSLog(@"• Init Book");
-    
-    // If a previous current page exist remove it before initialization
-    if (currPage)
-    {        
-        currPage.delegate = nil;
-        
-        [currPage removeFromSuperview];
-        [currPage release];
-        
-        currPage = nil;
-    }
-    
-    [self initBookProperties:path];
-    [self resetPageDetails];
-	
-    NSEnumerator *pagesEnumerator = [[properties get:@"contents", nil] objectEnumerator];
-    id page;
-    
-    while ((page = [pagesEnumerator nextObject])) {
-        NSString *pageFile = nil;
-        if ([page isKindOfClass:[NSString class]]) {
-            pageFile = [path stringByAppendingPathComponent:page];
-        } else if ([page isKindOfClass:[NSDictionary class]]) {
-            pageFile = [path stringByAppendingPathComponent:[page objectForKey:@"url"]];
-        }
-        
-        if ([[NSFileManager defaultManager] fileExistsAtPath:pageFile]) {
-            [pages addObject:pageFile];
-        } else {
-            NSLog(@"Page %@ does not exist in %@", page, path);
-        }
-    }
-    
-	totalPages = [pages count];
-	NSLog(@"    Pages in this book: %d", totalPages);
-	
-	if (totalPages > 0) {
-		// Check if there is a saved starting page        
-		NSString *currPageToLoad = [[NSUserDefaults standardUserDefaults] objectForKey:@"lastPageViewed"];
-		
-        int startingPage = [[properties get:@"-baker-start-at-page", nil] intValue];
-        if (startingPage < 0) {
-            startingPage = MAX(1, totalPages + startingPage + 1);
-        } else if (startingPage == 0) {
-            startingPage = 1;
-        } else if (startingPage > 0) {
-            startingPage = MIN(totalPages, startingPage);
-        }
-        
-        currentPageNumber = startingPage;
-        if (currentPageFirstLoading && currPageToLoad != nil) {
-			currentPageNumber = [currPageToLoad intValue];
-		} else if (pageNameFromURL != nil) {
-            pageNameFromURL = nil;
-            NSString *fileNameFromURL = [path stringByAppendingPathComponent:pageNameFromURL];
-            for (int i = 0; i < totalPages; i++) {
-                if ([[pages objectAtIndex:i] isEqualToString:fileNameFromURL]) {
-                    currentPageNumber = i + 1;
-                    break;
-                }
-			}
-		}
-        
-        NSLog(@"    Starting page: %i", currentPageNumber);
-		
-        currentPageIsDelayingLoading = YES;
-        [toLoad removeAllObjects];
-		
-        NSString *screenshotFolder = [properties get:@"-baker-page-screenshots", nil];
-        if (screenshotFolder != nil) {
-            cachedScreenshotsPath = [path stringByAppendingPathComponent:screenshotFolder];
-        }
-        
-        if (screenshotFolder == nil || ![[NSFileManager defaultManager] fileExistsAtPath:cachedScreenshotsPath]) {
-            cachedScreenshotsPath = [path stringByAppendingPathComponent:@"baker-screenshots"];
-            if ([path isEqualToString:bundleBookPath]) {
-                cachedScreenshotsPath = defaultScreeshotsPath;
-            }
-        }
-    
-        [cachedScreenshotsPath retain];
-        
-        [self initPageDetails];
-        [self resetScrollView];
-        [self addPageLoading:0];
-        
-        if ([renderingType isEqualToString:@"three-cards"]) {
-            if (currentPageNumber != totalPages) {
-                [self addPageLoading:+1];
-            }
-            
-            if (currentPageNumber != 1) {
-                [self addPageLoading:-1];
-            }
-        }
-        [self handlePageLoading];
-        
-        [indexViewController loadContentFromBundle:[path isEqualToString:bundleBookPath]];
-		
-	} else if (![path isEqualToString:bundleBookPath]) {
-		
-		[[NSFileManager defaultManager] removeItemAtPath:path error:NULL];
- 		feedbackAlert = [[UIAlertView alloc] initWithTitle:ZERO_PAGES_TITLE
-												   message:ZERO_PAGES_MESSAGE
-												  delegate:self
-										 cancelButtonTitle:ALERT_FEEDBACK_CANCEL
-										 otherButtonTitles:nil];
-		[feedbackAlert show];
-		[feedbackAlert release];		
-	}
-}
+
 - (void)setImageFor:(UIImageView *)view {
     if (pageWidth > pageHeight && backgroundImageLandscape != NULL) {
         // Landscape
