@@ -1310,6 +1310,29 @@
     
     [webView stringByEvaluatingJavaScriptFromString:jsDispatchEvent];
 }
+- (void)webView:(UIWebView *)webView setCorrectOrientation:(UIInterfaceOrientation)interfaceOrientation {
+    
+    // Since the UIWebView doesn't handle orientationchange events correctly we have to set the correct value for window.orientation property ourselves 
+    NSString *jsOrientationGetter;
+    switch (interfaceOrientation) {
+        case UIInterfaceOrientationPortrait:
+            jsOrientationGetter = @"window.__defineGetter__('orientation', function() { return 0; });";
+            break;
+        case UIInterfaceOrientationLandscapeLeft:
+            jsOrientationGetter = @"window.__defineGetter__('orientation', function() { return 90; });";
+            break;
+        case UIInterfaceOrientationPortraitUpsideDown:
+            jsOrientationGetter = @"window.__defineGetter__('orientation', function() { return 180; });";
+            break;
+        case UIInterfaceOrientationLandscapeRight:
+            jsOrientationGetter = @"window.__defineGetter__('orientation', function() { return -90; });";
+            break;
+        default:
+            break;
+    }
+    
+    [webView stringByEvaluatingJavaScriptFromString:jsOrientationGetter];
+}
 
 #pragma mark - SCREENSHOTS
 - (void)initScreenshots {
@@ -1741,35 +1764,11 @@
     // Notify the index view
     [indexViewController willRotate];
     
-    // Since the UIWebView doesn't handle orientationchange events correctly we have to do handle them ourselves 
-    // 1. Set the correct value for window.orientation property
-    NSString *jsOrientationGetter;
-    switch (toInterfaceOrientation) {
-        case UIDeviceOrientationPortrait:
-            jsOrientationGetter = @"window.__defineGetter__('orientation', function() { return 0; });";
-            break;
-        case UIDeviceOrientationLandscapeLeft:
-            jsOrientationGetter = @"window.__defineGetter__('orientation', function() { return 90; });";
-            break;
-        case UIDeviceOrientationLandscapeRight:
-            jsOrientationGetter = @"window.__defineGetter__('orientation', function() { return -90; });";
-            break;
-        case UIDeviceOrientationPortraitUpsideDown:
-            jsOrientationGetter = @"window.__defineGetter__('orientation', function() { return 180; });";
-            break;
-        default:
-            break;
-    }
-    
-    // 2. Create and dispatch a orientationchange event    
-    NSString *jsOrientationChange = @"if (typeof bakerOrientationChangeEvent === 'undefined') {\
-                                          var bakerOrientationChangeEvent = document.createEvent('Events');\
-                                              bakerOrientationChangeEvent.initEvent('orientationchange', false, false);\
-                                      }; window.dispatchEvent(bakerOrientationChangeEvent)";
-    
-    // 3. Merge the scripts and load them on the current UIWebView
-    NSString *jsCommand = [jsOrientationGetter stringByAppendingString:jsOrientationChange];
-    [currPage stringByEvaluatingJavaScriptFromString:jsCommand];
+    // Notify the current loaded views
+    [self webView:currPage setCorrectOrientation:toInterfaceOrientation];
+    if (nextPage) [self webView:nextPage setCorrectOrientation:toInterfaceOrientation];
+    if (prevPage) [self webView:prevPage setCorrectOrientation:toInterfaceOrientation];
+
 }
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
     [indexViewController rotateFromOrientation:fromInterfaceOrientation toOrientation:self.interfaceOrientation];
