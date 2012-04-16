@@ -57,6 +57,7 @@
 @protocol modalWebViewDelegate <NSObject>
 
 - (void)closeModalWebView;
+- (void)webView:(UIWebView *)webView setCorrectOrientation:(UIInterfaceOrientation)interfaceOrientation;
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation;
 
 @end

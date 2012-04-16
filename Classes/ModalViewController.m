@@ -252,6 +252,8 @@
     self.view.frame = CGRectMake(0, 0, screenWidth, screenHeight);
     toolbar.frame = CGRectMake(0, 0, screenWidth, 44);
     webView.frame = CGRectMake(0, 44, screenWidth, screenHeight - 44);
+    
+    [[self delegate] webView:webView setCorrectOrientation:toInterfaceOrientation];
 }
 
 @end
