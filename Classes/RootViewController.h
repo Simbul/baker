@@ -108,6 +108,7 @@
 @property int currentPageNumber;
 
 #pragma mark - INIT
+- (id)initWithBookPath:(NSString *)bookPath;
 - (void)setupWebView:(UIWebView *)webView;
 - (void)setPageSize:(NSString *)orientation;
 - (void)setTappableAreaSize;

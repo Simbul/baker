@@ -53,8 +53,8 @@
 	application.applicationSupportsShakeToEdit = NO;
     
 	// Create the controller for the root view
-	self.rootViewController = [[[RootViewController alloc] init] autorelease];
-	
+	self.rootViewController = [[[RootViewController alloc] initWithBookPath:[[NSBundle mainBundle] pathForResource:@"book" ofType:nil]] autorelease];
+    
 	// Create the application window
 	self.window = [[[InterceptorWindow alloc] initWithTarget:self.rootViewController.scrollView eventsDelegate:self.rootViewController frame:[[UIScreen mainScreen]bounds]] autorelease];
 	window.backgroundColor = [UIColor whiteColor];

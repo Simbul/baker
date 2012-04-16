@@ -92,49 +92,56 @@
 @synthesize currentPageNumber;
 
 #pragma mark - INIT
-- (id)init {
-    self = [super initWithNibName:nil bundle:nil];
+
+- (id)initWithBookPath:(NSString *)bookPath
+{
+    self = [super init];
     if (self) {
         NSLog(@"• INIT");
         
+    
+        // ****** STORING BOOK PATH
+        bundleBookPath = [bookPath retain];
+    
+        
         // ****** INIT PROPERTIES
         properties = [Properties properties];
+        
         
         // ****** DEVICE SCREEN BOUNDS
         screenBounds = [[UIScreen mainScreen] bounds];        
         NSLog(@"    Device Width: %f", screenBounds.size.width);
         NSLog(@"    Device Height: %f", screenBounds.size.height);
         
-        // ****** BOOK DIRECTORIES        
+        
+        // ****** DOWNLOADED BOOKS DIRECTORY        
         NSString *privateDocsPath = [[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:@"Private Documents"];
         if (![[NSFileManager defaultManager] fileExistsAtPath:privateDocsPath]) {
             [[NSFileManager defaultManager] createDirectoryAtPath:privateDocsPath withIntermediateDirectories:YES attributes:nil error:nil];
         }
+        documentsBookPath = [[privateDocsPath stringByAppendingPathComponent:@"book"] retain];
         
+        
+        // ****** SCREENSHOTS DIRECTORY
         NSString *cachePath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0];
         if (![[NSFileManager defaultManager] fileExistsAtPath:cachePath]) {
             [[NSFileManager defaultManager] createDirectoryAtPath:cachePath withIntermediateDirectories:YES attributes:nil error:nil];
         }
-        
-        bundleBookPath        = [[[NSBundle mainBundle] pathForResource:@"book" ofType:nil] retain];
-        documentsBookPath     = [[privateDocsPath stringByAppendingPathComponent:@"book"] retain];
-        
         defaultScreeshotsPath = [[cachePath stringByAppendingPathComponent:@"baker-screenshots"] retain];
         [self addSkipBackupAttributeToItemAtPath:defaultScreeshotsPath];
+
         
         // ****** BOOK ENVIRONMENT
-        pages = [[NSMutableArray array] retain];
+        pages  = [[NSMutableArray array] retain];
         toLoad = [[NSMutableArray array] retain];
         
         pageDetails = [[NSMutableArray array] retain];
+        
         attachedScreenshotPortrait  = [[NSMutableDictionary dictionary] retain];
         attachedScreenshotLandscape = [[NSMutableDictionary dictionary] retain];
-
-        pageNameFromURL = nil;
-        anchorFromURL = nil;
-                
+        
         tapNumber = 0;
-        stackedScrollingAnimations = 0;
+        stackedScrollingAnimations = 0; // TODO: CHECK IF STILL USED!
         
         currentPageFirstLoading = YES;
         currentPageIsDelayingLoading = YES;
@@ -142,14 +149,16 @@
         currentPageIsLocked = NO;
         
         webViewBackground = nil;
-                        
-        // ****** LISTENER FOR DOWNLOAD NOTIFICATION
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(downloadBook:) name:@"downloadNotification" object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleDownloadResult:) name:@"handleDownloadResult" object:nil];
-                
+        
+        pageNameFromURL = nil;
+        anchorFromURL = nil;
+        
+        
+        // TODO: MOVE TO LOADVIEW -->
         [self setPageSize:[self getCurrentInterfaceOrientation]];
         [self hideStatusBar];
         
+
         // ****** SCROLLVIEW INIT
         self.scrollView = [[[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, pageWidth, pageHeight)] autorelease];
         scrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
@@ -161,10 +170,18 @@
         
         [self.view addSubview:scrollView];
         
+        
         // ****** INDEX WEBVIEW INIT
         indexViewController = [[IndexViewController alloc] initWithBookBundlePath:bundleBookPath documentsBookPath:documentsBookPath fileName:INDEX_FILE_NAME webViewDelegate:self];
         [self.view addSubview:indexViewController.view];
         
+
+        // ****** LISTENER FOR DOWNLOAD NOTIFICATION - TODO: MOVE TO VIEWWILLAPPEAR
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(downloadBook:) name:@"downloadNotification" object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleDownloadResult:) name:@"handleDownloadResult" object:nil];
+        
+        
+        // TODO: LOAD BOOK METHOD IN VIEW DID LOAD
         // ****** BOOK INIT
         if ([[NSFileManager defaultManager] fileExistsAtPath:documentsBookPath]) {
             [self initBook:documentsBookPath];
@@ -172,12 +189,13 @@
             if ([[NSFileManager defaultManager] fileExistsAtPath:bundleBookPath]) {
                 [self initBook:bundleBookPath];
             } else {
-              // Do something if there are no books available to show
+                // Do something if there are no books available to show
             }
         }
-	}
-	return self;
+    }
+    return self;
 }
+
 - (void)setupWebView:(UIWebView *)webView {
     NSLog(@"• Setup webView");
     
