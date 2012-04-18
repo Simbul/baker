@@ -1240,6 +1240,7 @@
 }
 - (void)webViewDidFinishLoad:(UIWebView *)webView {
     NSLog(@"• Page did finish load");
+    [self webView:webView setCorrectOrientation:self.interfaceOrientation];
     
     if (webView.hidden == YES)
     {

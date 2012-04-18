@@ -185,6 +185,7 @@
      */
     
     NSLog(@"[Modal] Finish loading.");
+    [[self delegate] webView:webViewIn setCorrectOrientation:self.interfaceOrientation];
     
     // ****** Stop spinner
     [spinner stopAnimating];
