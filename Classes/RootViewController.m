@@ -1035,7 +1035,7 @@
             else
             {
                 NSLog(@"    Page is current page and current page IS NOT delaying loading --> handle clicked link: %@", [url absoluteString]);
-                
+                                
                 // Not index, checking scheme...
                 if ([[url scheme] isEqualToString:@"file"])
                 {
@@ -1161,6 +1161,11 @@
                         }
                     }
                     
+                    return NO;
+                }
+                else if (![[url scheme] isEqualToString:@""] || ![[url scheme] isEqualToString:@"http"] || ![[url scheme] isEqualToString:@"https"])
+                {
+                    [[UIApplication sharedApplication] openURL:url];
                     return NO;
                 }
                 else
