@@ -36,6 +36,8 @@
 	<string>Baker-32</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>UIStatusBarHidden</key>
+	<true/>
 	<key>UINewsstandApp</key>
 	<false/>
 	<key>UISupportedInterfaceOrientations</key>
