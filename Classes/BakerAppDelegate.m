@@ -42,11 +42,11 @@
 #pragma mark -
 #pragma mark Application lifecycle
 
+// Set user agent (the only problem is that we can't modify the User-Agent later in the program)
 + (void)initialize {
-    // Set user agent (the only problem is that we can't modify the User-Agent later in the program)
-    NSDictionary *dictionnary = [[NSDictionary alloc] initWithObjectsAndKeys:@"Baker-3.2", @"UserAgent", nil];
-    [[NSUserDefaults standardUserDefaults] registerDefaults:dictionnary];
-    [dictionnary release];
+    NSDictionary *userAgent = [[NSDictionary alloc] initWithObjectsAndKeys:@"BakerFramework", @"UserAgent", nil];
+    [[NSUserDefaults standardUserDefaults] registerDefaults:userAgent];
+    [userAgent release];
 }
 
 // IOS 3 BUG
