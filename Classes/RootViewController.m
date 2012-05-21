@@ -1163,7 +1163,7 @@
                     
                     return NO;
                 }
-                else if (![[url scheme] isEqualToString:@""] || ![[url scheme] isEqualToString:@"http"] || ![[url scheme] isEqualToString:@"https"])
+                else if (![[url scheme] isEqualToString:@""] && ![[url scheme] isEqualToString:@"http"] && ![[url scheme] isEqualToString:@"https"])
                 {
                     [[UIApplication sharedApplication] openURL:url];
                     return NO;
@@ -1221,7 +1221,6 @@
                     }
                     
                     NSLog(@"    Link doesn't contain param \"%@\" --> open link in page", URL_OPEN_EXTERNAL);
-                    
                     return YES;
                 }
             }
