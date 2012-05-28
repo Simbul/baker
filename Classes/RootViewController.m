@@ -750,7 +750,7 @@
                     [self webView:currPage dispatchHTMLEvent:@"focus"];
                 }
                 
-                [self getPageHeight];
+                [self setCurrentPageHeight];
                 
                 tapNumber = 0;
                 if (direction < 0) {
@@ -954,7 +954,7 @@
     [indexViewController rotateFromOrientation:self.interfaceOrientation toOrientation:self.interfaceOrientation];
     
     [self setPageSize:[self getCurrentInterfaceOrientation]];
-    [self getPageHeight];
+    [self setCurrentPageHeight];
     [self resetScrollView];
 }
 
@@ -1250,7 +1250,7 @@
     {
         if ([webView isEqual:currPage]) {
             currentPageHasChanged = NO;
-            [self getPageHeight];
+            [self setCurrentPageHeight];
         }
         
         [webView removeFromSuperview];
@@ -1297,7 +1297,7 @@
             NSLog(@"   Handle last scroll index if necessary");
             NSString *currPageScrollIndex = [[NSUserDefaults standardUserDefaults] objectForKey:@"lastScrollIndex"];
             if (currPageScrollIndex != nil) {
-                [self goDownInPage:currPageScrollIndex animating:YES];
+                [self scrollDownCurrentPage:[currPageScrollIndex intValue] animating:YES];
             }
             currentPageFirstLoading = NO;
         }
@@ -1502,12 +1502,12 @@
         if (CGRectContainsPoint(upTapArea, tapPoint))
         {
             NSLog(@"    Tap UP /\\!");
-            [self goUpInPage:@"1004" animating:YES];	
+            [self scrollUpCurrentPage:([self getCurrentPageOffset] - pageHeight + 50) animating:YES];	
         }
         else if (CGRectContainsPoint(downTapArea, tapPoint))
         {
             NSLog(@"    Tap DOWN \\/");
-            [self goDownInPage:@"1004" animating:YES];	
+            [self scrollDownCurrentPage:([self getCurrentPageOffset] + pageHeight - 50) animating:YES];	
         }
         else if (CGRectContainsPoint(leftTapArea, tapPoint) || CGRectContainsPoint(rightTapArea, tapPoint))
         {
@@ -1540,7 +1540,7 @@
 }
 
 #pragma mark - PAGE SCROLLING
-- (void)getPageHeight {
+- (void)setCurrentPageHeight {
 	for (UIView *subview in currPage.subviews) {
 		if ([subview isKindOfClass:[UIScrollView class]]) {
 			CGSize size = ((UIScrollView *)subview).contentSize;
@@ -1549,40 +1549,35 @@
 		}
 	}
 }
-- (void)goUpInPage:(NSString *)offset animating:(BOOL)animating {
+- (int)getCurrentPageOffset {
+    
+    int currentPageOffset = [[currPage stringByEvaluatingJavaScriptFromString:@"window.scrollY;"] intValue];
+    if (currentPageOffset < 0) return 0;
+    
+    int currentPageMaxScroll = currentPageHeight - pageHeight;
+    if (currentPageOffset > currentPageMaxScroll) return currentPageMaxScroll;
+    
+    return currentPageOffset;
+}
+- (void)scrollUpCurrentPage:(int)targetOffset animating:(BOOL)animating {	
 	
-	NSString *currPageOffset = [currPage stringByEvaluatingJavaScriptFromString:@"window.scrollY;"];
-	
-	int currentPageOffset = [currPageOffset intValue];
-	if (currentPageOffset > 0) {
-		
-		int targetOffset = currentPageOffset-[offset intValue];
-		if (targetOffset < 0)
-			targetOffset = 0;
-		
+    if ([self getCurrentPageOffset] > 0)
+    {
+		if (targetOffset < 0) targetOffset = 0;
+        
 		NSLog(@"• Scrolling page up to %d", targetOffset);
-		
-		offset = [NSString stringWithFormat:@"%d", targetOffset];
-		[self scrollPage:currPage to:offset animating:animating];
+		[self scrollPage:currPage to:[NSString stringWithFormat:@"%d", targetOffset] animating:animating];
 	}
 }
-- (void)goDownInPage:(NSString *)offset animating:(BOOL)animating {
-	
-	NSString *currPageOffset = [currPage stringByEvaluatingJavaScriptFromString:@"window.scrollY;"];
-	
+- (void)scrollDownCurrentPage:(int)targetOffset animating:(BOOL)animating {
+		
 	int currentPageMaxScroll = currentPageHeight - pageHeight;
-	int currentPageOffset = [currPageOffset intValue];
-	
-	if (currentPageOffset < currentPageMaxScroll) {
+	if ([self getCurrentPageOffset] < currentPageMaxScroll)
+    {
+		if (targetOffset > currentPageMaxScroll) targetOffset = currentPageMaxScroll;
 		
-		int targetOffset = currentPageOffset+[offset intValue];
-		if (targetOffset > currentPageMaxScroll)
-			targetOffset = currentPageMaxScroll;
-		
-		NSLog(@"• Scrolling page down to %d", targetOffset);
-		
-		offset = [NSString stringWithFormat:@"%d", targetOffset];
-		[self scrollPage:currPage to:offset animating:animating];
+		NSLog(@"• Scrolling page down to %d", targetOffset);		
+		[self scrollPage:currPage to:[NSString stringWithFormat:@"%d", targetOffset] animating:animating];
 	}
 
 }
@@ -1599,17 +1594,25 @@
 - (void)handleAnchor:(BOOL)animating {
 	if (anchorFromURL != nil) {
 		NSString *jsAnchorHandler = [NSString stringWithFormat:@"(function() {\
-									 var target = '%@';\
-									 var elem = document.getElementById(target);\
-									 if (!elem) elem = document.getElementsByName(target)[0];\
-									 return elem.offsetTop;\
-									 })();", anchorFromURL];
-		
-		NSString *offset = [currPage stringByEvaluatingJavaScriptFromString:jsAnchorHandler];
-		
-		if (![offset isEqualToString:@""]) {
-			[self goDownInPage:offset animating:animating];
+                                                                     var target = '%@';\
+                                                                     var elem = document.getElementById(target);\
+                                                                     if (!elem) elem = document.getElementsByName(target)[0];\
+                                                                     return elem.offsetTop;\
+                                                                 })();", anchorFromURL];
+        
+        NSString *offsetString = [currPage stringByEvaluatingJavaScriptFromString:jsAnchorHandler];
+		if (![offsetString isEqualToString:@""])
+        {
+            int offset = [offsetString intValue];
+            int currentPageOffset = [self getCurrentPageOffset];
+            
+            if (offset > currentPageOffset) {
+                [self scrollDownCurrentPage:offset animating:animating];
+            } else if (offset < currentPageOffset) {
+                [self scrollUpCurrentPage:offset animating:animating];
+            }
         }
+        
 		anchorFromURL = nil;
 	}
 }
@@ -1779,7 +1782,7 @@
     [indexViewController rotateFromOrientation:fromInterfaceOrientation toOrientation:self.interfaceOrientation];
     
     [self setPageSize:[self getCurrentInterfaceOrientation]];
-    [self getPageHeight];
+    [self setCurrentPageHeight];
 	[self resetScrollView];
 }
 

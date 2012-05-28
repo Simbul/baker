@@ -155,9 +155,10 @@
 - (void)userDidScroll:(UITouch *)touch;
 
 #pragma mark - PAGE SCROLLING
-- (void)getPageHeight;
-- (void)goUpInPage:(NSString *)offset animating:(BOOL)animating;
-- (void)goDownInPage:(NSString *)offset animating:(BOOL)animating;
+- (void)setCurrentPageHeight;
+- (int)getCurrentPageOffset;
+- (void)scrollUpCurrentPage:(int)offset animating:(BOOL)animating;
+- (void)scrollDownCurrentPage:(int)offset animating:(BOOL)animating;
 - (void)scrollPage:(UIWebView *)webView to:(NSString *)offset animating:(BOOL)animating;
 - (void)handleAnchor:(BOOL)animating;
 
