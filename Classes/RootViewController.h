@@ -109,16 +109,20 @@
 
 #pragma mark - INIT
 - (id)initWithBookPath:(NSString *)bookPath;
-- (BOOL)loadBookWithBookPath:(NSString *)bookPath pageNumber:(int)pageNumber anchor:(NSString *)anchor;
+- (BOOL)loadBookWithBookPath:(NSString *)bookPath;
+- (void)cleanupBookEnvironment;
+- (void)resetPageSlot:(UIWebView *)slot;
+- (void)resetPageDetails;
+- (void)loadBookProperties;
+- (void)buildPageArray;
+- (void)startReadingFromPage:(int)pageNumber anchor:(NSString *)anchor;
+- (void)startReading;
 - (void)setupWebView:(UIWebView *)webView;
 - (void)setPageSize:(NSString *)orientation;
 - (void)setTappableAreaSize;
 - (void)resetScrollView;
 - (void)initPageDetails;
 - (void)showPageDetails;
-- (void)resetPageDetails;
-- (void)initBookProperties:(NSString *)path;
-- (void)initBook:(NSString *)path;
 - (void)setImageFor:(UIImageView *)view;
 - (void)addSkipBackupAttributeToItemAtPath:(NSString *)path;
 

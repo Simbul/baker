@@ -188,48 +188,14 @@
     
     // ****** STORING BOOK PATH
     bundleBookPath = [bookPath retain];
+
+    
+    // ****** CLEANUP PREVIOUS BOOK
+    [self cleanupBookEnvironment];
     
     
-    // TODO: RENAME TO LOAD BOOK PROPERTIES
-    [self initBookProperties:bookPath];
-    
-    
-    // TODO: MOVE INTO CLEANUP METHOD
-    // If a previous current page exist remove it before initialization
-    if (currPage) {        
-        currPage.delegate = nil;
-        
-        [currPage removeFromSuperview];
-        [currPage release];
-        
-        currPage = nil;
-    }
-    
-    [self resetPageDetails];
-    
-    
-    // ****** INITIALIZE PAGES ARRAY WITH PAGE PATHS
-    // TODO: MOVE TO A SEPARATE METHOD AND USE FAST ENUMERATION
-    NSEnumerator *pagesEnumerator = [[properties get:@"contents", nil] objectEnumerator];
-    id page;
-    
-    while ((page = [pagesEnumerator nextObject])) {
-        NSString *pageFile = nil;
-        if ([page isKindOfClass:[NSString class]]) {
-            pageFile = [bookPath stringByAppendingPathComponent:page];
-        } else if ([page isKindOfClass:[NSDictionary class]]) {
-            pageFile = [bookPath stringByAppendingPathComponent:[page objectForKey:@"url"]];
-        }
-        
-        if ([[NSFileManager defaultManager] fileExistsAtPath:pageFile]) {
-            [pages addObject:pageFile];
-        } else {
-            NSLog(@"Page %@ does not exist in %@", page, bookPath);
-        }
-    }
-    
-    totalPages = [pages count];
-	NSLog(@"    Pages in this book: %d", totalPages);
+    // ****** LOAD BOOK PROPERTIES FROM BOOK.JSON
+    [self loadBookProperties];
     
     
     if (totalPages > 0) {
@@ -281,20 +247,100 @@
         return NO;
     }
 }
-- (int)pageNumberFromPagePath:(NSString *)pagePath {    
-    int ret = 0;
-    for (int i = 0; i < totalPages; i++) {
-        if ([[pages objectAtIndex:i] isEqualToString:pagePath]) {
-            ret = i + 1;
-            break;
+- (void)cleanupBookEnvironment {
+    
+    [self resetPageSlot:currPage];
+    [self resetPageSlot:nextPage];
+    [self resetPageSlot:prevPage];
+    
+    [self resetPageDetails];
+    
+    [pages removeAllObjects];
+}
+- (void)resetPageSlot:(UIWebView *)slot {    
+    if (slot) {        
+        NSLog(@"• Reset leftover page slot");
+        
+        slot.delegate = nil;
+        [slot removeFromSuperview];
+        [slot release];
+        slot = nil;
+    }
+}
+- (void)resetPageDetails {
+    NSLog(@"• Reset page details array and empty screenshot directory");
+    
+    for (NSMutableDictionary *details in pageDetails) {
+        for (NSString *key in details) {
+            UIView *value = [details objectForKey:key];
+            [value removeFromSuperview];
         }
     }
     
-    return ret;
+    [pageDetails removeAllObjects];
+}
+- (void)loadBookProperties {
+    /****************************************************************************************************
+     * Initializes the 'properties' object from book.json and inits also some static properties.
+     */
+    
+    NSString *filePath = [bundleBookPath stringByAppendingPathComponent:@"book.json"];
+    [properties loadManifest:filePath];
+    
+    // ****** ORIENTATION
+    availableOrientation = [[[properties get:@"orientation", nil] retain] autorelease];
+    NSLog(@"available orientation: %@", availableOrientation);
+    
+    // ****** CONTENTS
+    [self buildPageArray];
+    
+    // ****** BAKER RENDERING
+    renderingType = [[[properties get:@"-baker-rendering", nil] retain] autorelease];
+    NSLog(@"rendering type: %@", renderingType);
+    
+    // ****** BAKER SWIPES
+    scrollView.scrollEnabled = [[properties get:@"-baker-page-turn-swipe", nil] boolValue];
+    
+    // ****** BAKER BACKGROUND
+    scrollView.backgroundColor = [Utils colorWithHexString:[properties get:@"-baker-background", nil]];
+    backgroundImageLandscape   = nil;
+    backgroundImagePortrait    = nil;
+    
+    NSString *backgroundPathLandscape = [properties get:@"-baker-background-image-landscape", nil];
+    if (backgroundPathLandscape != nil) {
+        backgroundPathLandscape  = [bundleBookPath stringByAppendingPathComponent:backgroundPathLandscape];
+        backgroundImageLandscape = [[UIImage imageWithContentsOfFile:backgroundPathLandscape] retain];        
+    }
+    
+    NSString *backgroundPathPortrait = [properties get:@"-baker-background-image-portrait", nil];
+    if (backgroundPathPortrait != nil) {
+        backgroundPathPortrait  = [bundleBookPath stringByAppendingPathComponent:backgroundPathPortrait];
+        backgroundImagePortrait = [[UIImage imageWithContentsOfFile:backgroundPathPortrait] retain];
+    }
+}
+- (void)buildPageArray {
+    for (id page in [properties get:@"contents", nil]) {
+        
+        NSString *pageFile = nil;
+        if ([page isKindOfClass:[NSString class]]) {
+            pageFile = [bundleBookPath stringByAppendingPathComponent:page];
+        } else if ([page isKindOfClass:[NSDictionary class]]) {
+            pageFile = [bundleBookPath stringByAppendingPathComponent:[page objectForKey:@"url"]];
+        }
+        
+        if ([[NSFileManager defaultManager] fileExistsAtPath:pageFile]) {
+            [pages addObject:pageFile];
+        } else {
+            NSLog(@"Page %@ does not exist in %@", page, bundleBookPath);
+        }
+    }
+    
+    totalPages = [pages count];
+	NSLog(@"    Pages in this book: %d", totalPages);    
 }
 - (void)startReadingFromPage:(int)pageNumber anchor:(NSString *)anchor {
     
-    // set current pate number
+    // set current page number
     // set anchor
     
     // open current page
@@ -304,6 +350,8 @@
     // open current page number
     
 }
+
+/*
 - (void)initBook:(NSString *)path {
     NSLog(@"• Init Book");
     
@@ -421,7 +469,7 @@
 		[feedbackAlert release];		
 	}
 }
-
+*/
 
 - (void)setupWebView:(UIWebView *)webView {
     NSLog(@"• Setup webView");
@@ -447,7 +495,7 @@
             ((UIScrollView *)subview).bounces = verticalBounce;
         }
     }
-}
+} 
 - (void)setPageSize:(NSString *)orientation {
 	NSLog(@"• Set size for orientation: %@", orientation);
     
@@ -649,56 +697,6 @@
         } 
 	}
 }
-- (void)resetPageDetails {
-    NSLog(@"• Reset page details array and empty screenshot directory");
-    
-    for (NSMutableDictionary *details in pageDetails) {
-        for (NSString *key in details) {
-            UIView *value = [details objectForKey:key];
-            [value removeFromSuperview];
-        }
-    }
-    
-    [pageDetails removeAllObjects];
-    [pages removeAllObjects];
-}
-- (void)initBookProperties:(NSString *)path {
-    /****************************************************************************************************
-     * Initializes the 'properties' object from book.json and inits also some static properties.
-     */
-    
-    NSString *filePath = [path stringByAppendingPathComponent:@"book.json"];
-    [properties loadManifest:filePath];
-    
-    // ****** ORIENTATION
-    availableOrientation = [[[properties get:@"orientation", nil] retain] autorelease];
-    NSLog(@"available orientation: %@", availableOrientation);
-    
-    // ****** RENDERING
-    renderingType = [[[properties get:@"-baker-rendering", nil] retain] autorelease];
-    NSLog(@"rendering type: %@", renderingType);
-    
-    // ****** SWIPES
-    scrollView.scrollEnabled = [[properties get:@"-baker-page-turn-swipe", nil] boolValue];
-    
-    // ****** BACKGROUND
-    scrollView.backgroundColor = [Utils colorWithHexString:[properties get:@"-baker-background", nil]];
-    backgroundImageLandscape   = nil;
-    backgroundImagePortrait    = nil;
-    
-    NSString *backgroundPathLandscape = [properties get:@"-baker-background-image-landscape", nil];
-    if (backgroundPathLandscape != nil) {
-        backgroundPathLandscape  = [path stringByAppendingPathComponent:backgroundPathLandscape];
-        backgroundImageLandscape = [[UIImage imageWithContentsOfFile:backgroundPathLandscape] retain];        
-    }
-    
-    NSString *backgroundPathPortrait = [properties get:@"-baker-background-image-portrait", nil];
-    if (backgroundPathPortrait != nil) {
-        backgroundPathPortrait  = [path stringByAppendingPathComponent:backgroundPathPortrait];
-        backgroundImagePortrait = [[UIImage imageWithContentsOfFile:backgroundPathPortrait] retain];
-    }
-}
-
 - (void)setImageFor:(UIImageView *)view {
     if (pageWidth > pageHeight && backgroundImageLandscape != NULL) {
         // Landscape
@@ -1789,7 +1787,7 @@
         }
         
         currentPageIsDelayingLoading = YES;
-		[self initBook:bundleBookPath];
+		[self loadBookWithBookPath:bundleBookPath];
     }
     else if ([[alertView buttonTitleAtIndex:buttonIndex] isEqualToString:OPEN_BOOK_CONFIRM])
     {
@@ -1863,7 +1861,7 @@
         [self addSkipBackupAttributeToItemAtPath:documentsBookPath];
         
         [feedbackAlert dismissWithClickedButtonIndex:feedbackAlert.cancelButtonIndex animated:YES];        
-		[self initBook:documentsBookPath];
+		[self loadBookWithBookPath:documentsBookPath];
 	}
 }
 
