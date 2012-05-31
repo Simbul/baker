@@ -4,7 +4,7 @@
 //
 //  ==========================================================================================
 //  
-//  Copyright (c) 2010-2011, Davide Casali, Marco Colombo, Alessandro Morandi
+//  Copyright (c) 2010-2012, Davide Casali, Marco Colombo, Alessandro Morandi
 //  All rights reserved.
 //  
 //  Redistribution and use in source and binary forms, with or without modification, are 
@@ -31,13 +31,15 @@
 
 
 #import <UIKit/UIKit.h>
+#import <MessageUI/MessageUI.h>
 #import "IndexViewController.h"
+#import "ModalViewController.h"
 #import "Properties.h"
 
 
 @class Downloader;
 
-@interface RootViewController : UIViewController < UIWebViewDelegate, UIScrollViewDelegate > {
+@interface RootViewController : UIViewController <UIWebViewDelegate, UIScrollViewDelegate, MFMailComposeViewControllerDelegate, modalWebViewDelegate> {
 	
 	CGRect screenBounds;
 	
@@ -51,7 +53,11 @@
 	
 	NSMutableArray *pages;
     NSMutableArray *toLoad;
+    
     NSMutableArray *pageDetails;
+    NSMutableDictionary *attachedScreenshotPortrait;
+    NSMutableDictionary *attachedScreenshotLandscape;
+    
     UIImage *backgroundImageLandscape;
     UIImage *backgroundImagePortrait;
 
@@ -65,14 +71,14 @@
 	BOOL currentPageIsDelayingLoading;
     BOOL currentPageHasChanged;
     BOOL currentPageIsLocked;
-    
-	BOOL discardNextStatusBarToggle;
-    
+        
     UIScrollView *scrollView;
 	UIWebView *prevPage;
 	UIWebView *currPage;
 	UIWebView *nextPage;
 	
+    UIColor *webViewBackground;
+    
 	CGRect upTapArea;
 	CGRect downTapArea;
 	CGRect leftTapArea;
@@ -91,6 +97,7 @@
 	UIAlertView *feedbackAlert;
     
     IndexViewController *indexViewController;
+    ModalViewController *myModalViewController;
     
     Properties *properties;
 }
@@ -117,11 +124,15 @@
 - (BOOL)changePage:(int)page;
 - (void)gotoPageDelayer;
 - (void)gotoPage;
-- (void)lockPage:(BOOL)lock;
+- (void)lockPage:(NSNumber *)lock;
 - (void)addPageLoading:(int)slot;
 - (void)handlePageLoading;
 - (void)loadSlot:(int)slot withPage:(int)page;
 - (BOOL)loadWebView:(UIWebView *)webview withPage:(int)page;
+
+#pragma mark - MODAL WEBVIEW
+- (void)loadModalWebView:(NSURL *)url;
+- (void)closeModalWebView;
 
 #pragma mark - SCROLLVIEW
 - (CGRect)frameForPage:(int)page;
@@ -130,6 +141,8 @@
 #pragma mark - WEBVIEW
 - (void)webView:(UIWebView *)webView hidden:(BOOL)status animating:(BOOL)animating;
 - (void)webViewDidAppear:(UIWebView *)webView animating:(BOOL)animating;
+- (void)webView:(UIWebView *)webView dispatchHTMLEvent:(NSString *)event;
+- (void)webView:(UIWebView *)webView setCorrectOrientation:(UIInterfaceOrientation)interfaceOrientation;
 
 #pragma mark - SCREENSHOTS
 - (void)initScreenshots;
@@ -142,16 +155,16 @@
 - (void)userDidScroll:(UITouch *)touch;
 
 #pragma mark - PAGE SCROLLING
-- (void)getPageHeight;
-- (void)goUpInPage:(NSString *)offset animating:(BOOL)animating;
-- (void)goDownInPage:(NSString *)offset animating:(BOOL)animating;
+- (void)setCurrentPageHeight;
+- (int)getCurrentPageOffset;
+- (void)scrollUpCurrentPage:(int)offset animating:(BOOL)animating;
+- (void)scrollDownCurrentPage:(int)offset animating:(BOOL)animating;
 - (void)scrollPage:(UIWebView *)webView to:(NSString *)offset animating:(BOOL)animating;
 - (void)handleAnchor:(BOOL)animating;
 
 #pragma mark - STATUS BAR
 - (void)toggleStatusBar;
 - (void)hideStatusBar;
-- (void)hideStatusBarDiscardingToggle:(BOOL)discardToggle;
 
 #pragma mark - DOWNLOAD NEW BOOKS
 - (void)downloadBook:(NSNotification *)notification;
@@ -161,5 +174,8 @@
 
 #pragma mark - ORIENTATION
 - (NSString *)getCurrentInterfaceOrientation;
+
+#pragma mark - INDEX VIEW
+- (BOOL)isIndexView:(UIWebView *)webView;
 
 @end

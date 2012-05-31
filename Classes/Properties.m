@@ -47,7 +47,7 @@
     if (self) {
         NSString *filePath = [[NSBundle mainBundle] pathForResource:fileName ofType:@"json"];
         [self loadManifest:filePath];
-        self.defaults = [self initDefaults];
+        self.defaults = [self doInitDefaults];
     }
     return self;
 }
@@ -119,7 +119,7 @@
     }
 }
 
-- (NSDictionary *)initDefaults {
+- (NSDictionary *)doInitDefaults {
     NSString *json = @"{"
         "\"orientation\": \"both\","
         "\"zoomable\": false,"
@@ -128,10 +128,13 @@
         "\"-baker-media-autoplay\": true,"
         "\"-baker-page-numbers-color\": \"#FFFFFF\","
         "\"-baker-page-numbers-alpha\": 0.3,"
+        "\"-baker-index-width\": null,"
         "\"-baker-index-height\": null,"
         "\"-baker-index-bounce\": false,"
         "\"-baker-vertical-pagination\": false,"
-        "\"-baker-rendering\": \"screenshots\""
+        "\"-baker-rendering\": \"screenshots\","
+        "\"-baker-page-turn-swipe\": true,"
+        "\"-baker-page-turn-tap\": true"
     "}";
     NSError *e;
     return [[json objectFromJSONStringWithParseOptions:JKParseOptionNone error:&e] retain];

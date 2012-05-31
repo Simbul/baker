@@ -35,40 +35,35 @@
 @implementation IndexViewController
 
 - (id)initWithBookBundlePath:(NSString *)path documentsBookPath:(NSString *)docpath fileName:(NSString *)name webViewDelegate:(UIViewController<UIWebViewDelegate> *)delegate {
-    bookBundlePath = path;
-    documentsBookPath = docpath;
-    fileName = name;
-    webViewDelegate = delegate;
-    disabled = NO;
-    indexHeight = 0;
     
-    // ****** INIT PROPERTIES
-    properties = [Properties properties];
-    
-    [self setPageSizeForOrientation:UIInterfaceOrientationPortrait];
-    
-    return [self initWithNibName:nil bundle:nil];
-}
-
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    self = [super init];
     if (self) {
-        // Custom initialization
+        
+        fileName = name;
+        bookBundlePath = path;
+        documentsBookPath = docpath;
+        webViewDelegate = delegate;
+        
+        disabled = NO;
+        indexWidth = 0;
+        indexHeight = 0;
+        
+        // ****** INIT PROPERTIES
+        properties = [Properties properties];
+        
+        [self setPageSizeForOrientation:[self interfaceOrientation]];
     }
     return self;
 }
-
 - (void)dealloc
 {
+    [indexScrollView release];
     [super dealloc];
 }
-
 - (void)didReceiveMemoryWarning
 {
     // Releases the view if it doesn't have a superview.
     [super didReceiveMemoryWarning];
-    
     // Release any cached data, images, etc that aren't in use.
 }
 
@@ -85,16 +80,21 @@
     webView.backgroundColor = [UIColor clearColor];
     [webView setOpaque:NO];
     
-    self.view = webView;
+    
+    self.view = webView;    
+    for (UIView *subView in webView.subviews) {
+        if ([subView isKindOfClass:[UIScrollView class]]) {
+            indexScrollView = [(UIScrollView *)subView retain];
+            break;
+        }
+    }
     [webView release];
     
     [self loadContent];
 }
 
 - (void)setBounceForWebView:(UIWebView *)webView bounces:(BOOL)bounces {
-    for (id subview in webView.subviews)
-        if ([[subview class] isSubclassOfClass: [UIScrollView class]])
-            ((UIScrollView *)subview).bounces = bounces;
+    indexScrollView.bounces = bounces;
 }
 
 - (void)setPageSizeForOrientation:(UIInterfaceOrientation)orientation {
@@ -118,6 +118,11 @@
     NSLog(@"Set IndexView size to %dx%d, with pageY set to %d", pageWidth, pageHeight, pageY);
 }
 
+- (void)setActualSize {
+    actualIndexWidth = MIN(indexWidth, pageWidth);
+    actualIndexHeight = MIN(indexHeight, pageHeight);
+}
+
 - (BOOL)isIndexViewHidden {
     return [UIApplication sharedApplication].statusBarHidden;
 }
@@ -129,22 +134,38 @@
 - (void)setIndexViewHidden:(BOOL)hidden withAnimation:(BOOL)animation {
     CGRect frame;
     if (hidden) {
-        frame = CGRectMake(0, pageHeight + pageY, pageWidth, indexHeight);
+        if ([self stickToLeft]) {
+            frame = CGRectMake(-actualIndexWidth, pageHeight - actualIndexHeight, actualIndexWidth, actualIndexHeight);
+        } else {
+            frame = CGRectMake(0, pageHeight + pageY, actualIndexWidth, actualIndexHeight);
+        }
     } else {
-        frame = CGRectMake(0, pageHeight + pageY - indexHeight, pageWidth, indexHeight);
+        if ([self stickToLeft]) {
+            frame = CGRectMake(0, pageHeight - actualIndexHeight, actualIndexWidth, actualIndexHeight);
+        } else {
+            frame = CGRectMake(0, pageHeight + pageY - indexHeight, actualIndexWidth, actualIndexHeight);
+        }
+
     }
     
     if (animation) {
         [UIView beginAnimations:@"slideIndexView" context:nil]; {
             [UIView setAnimationDuration:0.3];
             
-            self.view.frame = frame;
+            [self setViewFrame:frame];
         }
         [UIView commitAnimations];
     } else {
-        self.view.frame = frame;
+        [self setViewFrame:frame];
     }
+}
+
+- (void)setViewFrame:(CGRect)frame {
+    self.view.frame = frame;
     
+    // Orientation changes tend to screw the content size detection performed by the scrollView embedded in the webView.
+    // Let's show the scrollView who's boss.
+    indexScrollView.contentSize = cachedContentSize;
 }
 
 - (void)fadeOut {
@@ -173,6 +194,7 @@
     BOOL hidden = [self isIndexViewHidden]; // cache hidden status before setting page size
     
     [self setPageSizeForOrientation:toInterfaceOrientation];
+    [self setActualSize];
     [self setIndexViewHidden:hidden withAnimation:NO];
     [self fadeIn];
 }
@@ -181,13 +203,8 @@
 }
 
 - (void)loadContentFromBundle:(BOOL)fromBundle{
-    NSString* path;
-    if(fromBundle){
-        NSLog(@"Reloading index from bundle");
-        path = [bookBundlePath stringByAppendingPathComponent:fileName];
-    } else {
-        path = [documentsBookPath stringByAppendingPathComponent:fileName];
-    }
+    loadedFromBundle = fromBundle;
+    NSString* path = [self indexPath];
     
     [self assignProperties];
     
@@ -210,16 +227,54 @@
 }
 
 -(void)webViewDidFinishLoad:(UIWebView *)webView {
+    id width = [properties get:@"-baker-index-width", nil];
     id height = [properties get:@"-baker-index-height", nil];
+    
+    if (width != [NSNull null]) {
+        indexWidth = (int) [width integerValue];
+    } else {
+        indexWidth = [self sizeFromContentOf:webView].width;
+    }
     if (height != [NSNull null]) {
         indexHeight = (int) [height integerValue];
     } else {
-        indexHeight = [webView sizeThatFits:CGSizeZero].height;        
+        indexHeight = [self sizeFromContentOf:webView].height;
     }
-    NSLog(@"Set height for IndexView to %d", indexHeight);
+
+    cachedContentSize = indexScrollView.contentSize;
+    [self setActualSize];
+    
+    NSLog(@"Set size for IndexView to %dx%d (constrained from %dx%d)", actualIndexWidth, actualIndexHeight, indexWidth, indexHeight);
     
     // After the first load, point the delegate to the main view controller
     webView.delegate = webViewDelegate;
+    
+    [self setIndexViewHidden:[self isIndexViewHidden] withAnimation:NO];
+}
+
+- (BOOL)stickToLeft {
+    return (actualIndexHeight > actualIndexWidth);
+}
+
+- (CGSize)sizeFromContentOf:(UIView *)view {
+    // Setting the frame to 1x1 is required to get meaningful results from sizeThatFits when 
+    // the orientation of the is anything but Portrait.
+    // See: http://stackoverflow.com/questions/3936041/how-to-determine-the-content-size-of-a-uiwebview/3937599#3937599
+    CGRect frame = view.frame;
+    frame.size.width = 1;
+    frame.size.height = 1;
+    view.frame = frame;
+    
+    return [view sizeThatFits:CGSizeZero];
+}
+
+- (NSString *)indexPath {
+    if(loadedFromBundle){
+        NSLog(@"Reloading index from bundle");
+        return [bookBundlePath stringByAppendingPathComponent:fileName];
+    } else {
+        return [documentsBookPath stringByAppendingPathComponent:fileName];
+    }
 }
 
 /*

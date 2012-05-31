@@ -34,16 +34,24 @@
 
 
 @interface IndexViewController : UIViewController <UIWebViewDelegate> {
+    
     NSString *bookBundlePath;
     NSString *documentsBookPath;
     NSString *fileName;
-    UIViewController<UIWebViewDelegate> *webViewDelegate;
+    UIScrollView *indexScrollView;
+    UIViewController <UIWebViewDelegate> *webViewDelegate;
     
     int pageY;
     int pageWidth;
 	int pageHeight;
+    int indexWidth;
     int indexHeight;
+    int actualIndexWidth;
+    int actualIndexHeight;
     BOOL disabled;
+    BOOL loadedFromBundle;
+    
+    CGSize cachedContentSize;
     
     Properties *properties;
 }
@@ -61,5 +69,10 @@
 - (void)fadeOut;
 - (void)fadeIn;
 - (void)assignProperties;
+- (BOOL)stickToLeft;
+- (CGSize)sizeFromContentOf:(UIView *)view;
+- (void)setActualSize;
+- (void)setViewFrame:(CGRect)frame;
+- (NSString *)indexPath;
 
 @end

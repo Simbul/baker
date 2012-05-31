@@ -42,6 +42,13 @@
 #pragma mark -
 #pragma mark Application lifecycle
 
+// Set user agent (the only problem is that we can't modify the User-Agent later in the program)
++ (void)initialize {
+    NSDictionary *userAgent = [[NSDictionary alloc] initWithObjectsAndKeys:@"BakerFramework", @"UserAgent", nil];
+    [[NSUserDefaults standardUserDefaults] registerDefaults:userAgent];
+    [userAgent release];
+}
+
 // IOS 3 BUG
 // IF "(BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions"
 // THEN "(BOOL) application:(UIApplication*)application handleOpenURL:(NSURL*)url" is never called

@@ -4,7 +4,7 @@
 //
 //  ==========================================================================================
 //  
-//  Copyright (c) 2010-2011, Davide Casali, Marco Colombo, Alessandro Morandi
+//  Copyright (c) 2010-2012, Davide Casali, Marco Colombo, Alessandro Morandi
 //  All rights reserved.
 //  
 //  Redistribution and use in source and binary forms, with or without modification, are 
@@ -38,6 +38,7 @@
 #import "PageTitleLabel.h"
 #import "Utils.h"
 
+
 // ALERT LABELS
 #define OPEN_BOOK_MESSAGE       @"Do you want to download "
 #define OPEN_BOOK_CONFIRM       @"Open book"
@@ -58,6 +59,10 @@
 
 #define INDEX_FILE_NAME         @"index.html"
 
+#define URL_OPEN_MODALLY        @"referrer=Baker"
+#define URL_OPEN_EXTERNAL       @"referrer=Safari"
+
+
 // IOS VERSION >= 5.0 MACRO
 #ifndef kCFCoreFoundationVersionNumber_iPhoneOS_5_0
     #define kCFCoreFoundationVersionNumber_iPhoneOS_5_0 675.00
@@ -73,6 +78,11 @@
 #else
     #define IF_IOS5_OR_GREATER(...)
 #endif
+
+
+// SCREENSHOT
+#define MAX_SCREENSHOT_AFTER_CP  10
+#define MAX_SCREENSHOT_BEFORE_CP 10
 
 @implementation RootViewController
 
@@ -91,7 +101,7 @@
         properties = [Properties properties];
         
         // ****** DEVICE SCREEN BOUNDS
-        screenBounds = [[UIScreen mainScreen] bounds];
+        screenBounds = [[UIScreen mainScreen] bounds];        
         NSLog(@"    Device Width: %f", screenBounds.size.width);
         NSLog(@"    Device Height: %f", screenBounds.size.height);
         
@@ -115,7 +125,10 @@
         // ****** BOOK ENVIRONMENT
         pages = [[NSMutableArray array] retain];
         toLoad = [[NSMutableArray array] retain];
+        
         pageDetails = [[NSMutableArray array] retain];
+        attachedScreenshotPortrait  = [[NSMutableDictionary dictionary] retain];
+        attachedScreenshotLandscape = [[NSMutableDictionary dictionary] retain];
 
         pageNameFromURL = nil;
         anchorFromURL = nil;
@@ -128,8 +141,8 @@
         currentPageHasChanged = NO;
         currentPageIsLocked = NO;
         
-        discardNextStatusBarToggle = NO;
-                
+        webViewBackground = nil;
+                        
         // ****** LISTENER FOR DOWNLOAD NOTIFICATION
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(downloadBook:) name:@"downloadNotification" object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleDownloadResult:) name:@"handleDownloadResult" object:nil];
@@ -167,6 +180,15 @@
 }
 - (void)setupWebView:(UIWebView *)webView {
     NSLog(@"• Setup webView");
+    
+    if (webViewBackground == nil)
+    {
+        webViewBackground = webView.backgroundColor;
+        [webViewBackground retain];
+    }
+    
+    webView.backgroundColor = [UIColor clearColor];
+    webView.opaque = NO;
     
     webView.delegate = self;
     webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
@@ -208,7 +230,8 @@
     NSLog(@"• Reset scrollview subviews");
     
     NSLog(@"    Prevent page from changing until scrollview reset is finished");
-    [self lockPage:YES];
+    
+    [self lockPage:[NSNumber numberWithBool:YES]];
     
     [self setTappableAreaSize];
     
@@ -220,13 +243,31 @@
     }
     
     [self showPageDetails];
-
+    
+    if ([renderingType isEqualToString:@"screenshots"])
+    {
+        for (NSNumber *key in attachedScreenshotLandscape) {
+            UIView *value = [attachedScreenshotLandscape objectForKey:key];
+            [value removeFromSuperview];
+        }
+            
+        for (NSNumber *key in attachedScreenshotPortrait) {
+            UIView *value = [attachedScreenshotPortrait objectForKey:key];
+            [value removeFromSuperview];
+        }
+        
+        [attachedScreenshotLandscape removeAllObjects];
+        [attachedScreenshotPortrait removeAllObjects];
+        
+        [self initScreenshots];
+    }
+    
     scrollView.contentSize = CGSizeMake(pageWidth * totalPages, pageHeight);
 
 	int scrollViewY = 0;
 	if (![UIApplication sharedApplication].statusBarHidden) {
 		scrollViewY = -20;
-	}    
+	}
     [UIView animateWithDuration:0.2 
                      animations:^{ scrollView.frame = CGRectMake(0, scrollViewY, pageWidth, pageHeight); }];
 	
@@ -248,7 +289,8 @@
     [scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:NO];
     
     NSLog(@"    Unlock page changing");
-    [self lockPage:NO];
+    
+    [self lockPage:[NSNumber numberWithBool:NO]];
 }
 - (void)initPageDetails {
     NSLog(@"• Init page details for the book pages");
@@ -307,10 +349,6 @@
         NSMutableDictionary *details = [NSMutableDictionary dictionaryWithObjectsAndKeys:spinner, @"spinner", number, @"number", title, @"title", backgroundView, @"background", nil];
         [pageDetails insertObject:details atIndex:i];
     }
-    
-    if ([renderingType isEqualToString:@"screenshots"]) {
-        [self initScreenshots];
-    }
 }
 - (void)showPageDetails {
     NSLog(@"• Show page details for the book pages");
@@ -319,54 +357,47 @@
         
         if (pageDetails.count > i && [pageDetails objectAtIndex:i] != nil) {
             
-            NSDictionary *details = [NSDictionary dictionaryWithDictionary:[pageDetails objectAtIndex:i]];              
-            UIView *screenshotView = [details objectForKey:[NSString stringWithFormat:@"screenshot-%@", [self getCurrentInterfaceOrientation]]];
-            if (screenshotView != nil)
-            {
-                screenshotView.hidden = NO;
-            } 
-            else
-            {
-                for (NSString *key in details) {
-                    UIView *value = [details objectForKey:key];
-                    if (value != nil) {
+            NSDictionary *details = [NSDictionary dictionaryWithDictionary:[pageDetails objectAtIndex:i]];
+            
+            for (NSString *key in details) {
+                UIView *value = [details objectForKey:key];
+                if (value != nil) {
+                    
+                    CGRect frame = value.frame;
+                    if ([key isEqualToString:@"spinner"]) {
                         
-                        CGRect frame = value.frame;
-                        if ([key isEqualToString:@"spinner"]) {
-                            
-                            frame.origin.x = pageWidth * i + (pageWidth - frame.size.width) / 2;
-                            frame.origin.y = (pageHeight - frame.size.height) / 2;
-                            value.frame = frame;
-                            value.hidden = NO;
-                            
-                        } else if ([key isEqualToString:@"number"]) {
-                            
-                            frame.origin.x = pageWidth * i + (pageWidth - 115) / 2;
-                            frame.origin.y = pageHeight / 2 - 55;
-                            value.frame = frame;
-                            value.hidden = NO;
-                            
-                            
-                        } else if ([key isEqualToString:@"title"]) {
-                            
-                            frame.origin.x = pageWidth * i + (pageWidth - frame.size.width) / 2;
-                            frame.origin.y = pageHeight / 2 + 20;
-                            value.frame = frame;
-                            value.hidden = NO;
-                            
-                        } else if ([key isEqualToString:@"background"]) {
-                            
-                            [self setImageFor:(UIImageView *)value];
-                            frame.origin.x = pageWidth * i;
-                            frame.size.width = pageWidth;
-                            frame.size.height = pageHeight;
-                            value.frame = frame;
-                            value.hidden = NO;
-                            
-                        } else {
-                            
-                            value.hidden = YES;
-                        }
+                        frame.origin.x = pageWidth * i + (pageWidth - frame.size.width) / 2;
+                        frame.origin.y = (pageHeight - frame.size.height) / 2;
+                        value.frame = frame;
+                        value.hidden = NO;
+                        
+                    } else if ([key isEqualToString:@"number"]) {
+                        
+                        frame.origin.x = pageWidth * i + (pageWidth - 115) / 2;
+                        frame.origin.y = pageHeight / 2 - 55;
+                        value.frame = frame;
+                        value.hidden = NO;
+                        
+                        
+                    } else if ([key isEqualToString:@"title"]) {
+                        
+                        frame.origin.x = pageWidth * i + (pageWidth - frame.size.width) / 2;
+                        frame.origin.y = pageHeight / 2 + 20;
+                        value.frame = frame;
+                        value.hidden = NO;
+                        
+                    } else if ([key isEqualToString:@"background"]) {
+                        
+                        [self setImageFor:(UIImageView *)value];
+                        frame.origin.x = pageWidth * i;
+                        frame.size.width = pageWidth;
+                        frame.size.height = pageHeight;
+                        value.frame = frame;
+                        value.hidden = NO;
+                        
+                    } else {
+                        
+                        value.hidden = YES;
                     }
                 }
             }
@@ -386,7 +417,11 @@
     [pageDetails removeAllObjects];
     [pages removeAllObjects];
 }
-- (void)initBookProperties:(NSString *)path {        
+- (void)initBookProperties:(NSString *)path {
+    /****************************************************************************************************
+     * Initializes the 'properties' object from book.json and inits also some static properties.
+     */
+    
     NSString *filePath = [path stringByAppendingPathComponent:@"book.json"];
     [properties loadManifest:filePath];
     
@@ -397,6 +432,9 @@
     // ****** RENDERING
     renderingType = [[[properties get:@"-baker-rendering", nil] retain] autorelease];
     NSLog(@"rendering type: %@", renderingType);
+    
+    // ****** SWIPES
+    scrollView.scrollEnabled = [[properties get:@"-baker-page-turn-swipe", nil] boolValue];
     
     // ****** BACKGROUND
     scrollView.backgroundColor = [Utils colorWithHexString:[properties get:@"-baker-background", nil]];
@@ -417,6 +455,17 @@
 }
 - (void)initBook:(NSString *)path {
     NSLog(@"• Init Book");
+    
+    // If a previous current page exist remove it before initialization
+    if (currPage)
+    {        
+        currPage.delegate = nil;
+        
+        [currPage removeFromSuperview];
+        [currPage release];
+        
+        currPage = nil;
+    }
     
     [self initBookProperties:path];
     [self resetPageDetails];
@@ -595,7 +644,11 @@
         if ([renderingType isEqualToString:@"three-cards"])
         {
             // ****** THREE CARD VIEW METHOD
-            // ****** Calculate move direction and normalize tapNumber
+            
+            // Dispatch blur event on old current page
+            [self webView:currPage dispatchHTMLEvent:@"blur"];
+            
+            // Calculate move direction and normalize tapNumber
             int direction = 1;
             if (tapNumber < 0) {
                 direction = -direction;
@@ -606,8 +659,9 @@
             if (tapNumber > 2) {
                 tapNumber = 0;
                 
-                // ****** Moved away for more than 2 pages: RELOAD ALL pages
-                [toLoad removeAllObjects];                
+                // Moved away for more than 2 pages: RELOAD ALL pages
+                [toLoad removeAllObjects];
+                
                 [currPage removeFromSuperview];
                 [nextPage removeFromSuperview];
                 [prevPage removeFromSuperview];
@@ -623,15 +677,15 @@
                 int tmpSlot = 0;
                 if (tapNumber == 2) {
                 
-                    // ****** Moved away for 2 pages: RELOAD CURRENT page
+                    // Moved away for 2 pages: RELOAD CURRENT page
                     if (direction < 0) {
-                        // ****** Move LEFT <<<
+                        // Move LEFT <<<
                         [prevPage removeFromSuperview];
                         UIWebView *tmpView = prevPage;
                         prevPage = nextPage;
                         nextPage = tmpView;
                     } else {
-                        // ****** Move RIGHT >>>
+                        // Move RIGHT >>>
                         [nextPage removeFromSuperview];
                         UIWebView *tmpView = nextPage; 
                         nextPage = prevPage;
@@ -691,9 +745,12 @@
                                         
                     // Since we are not loading anything we have to reset the delayer flag
                     currentPageIsDelayingLoading = NO;
+                    
+                    // Dispatch focus event on new current page
+                    [self webView:currPage dispatchHTMLEvent:@"focus"];
                 }
                 
-                [self getPageHeight];
+                [self setCurrentPageHeight];
                 
                 tapNumber = 0;
                 if (direction < 0) {
@@ -735,13 +792,19 @@
             [toLoad removeAllObjects];
             [currPage removeFromSuperview];            
             
+            [self initScreenshots];
+            
+            if (![self checkScreeshotForPage:currentPageNumber andOrientation:[self getCurrentInterfaceOrientation]]) {
+                [self lockPage:[NSNumber numberWithBool:YES]];
+            }
+            
             [self addPageLoading:0];
             [self handlePageLoading];
         }
     }
 }
-- (void)lockPage:(BOOL)lock {
-    if (lock)
+- (void)lockPage:(NSNumber *)lock {
+    if ([lock boolValue])
     {
         if (scrollView.scrollEnabled) {
             scrollView.scrollEnabled = NO;
@@ -751,7 +814,7 @@
     else
     {
         if (stackedScrollingAnimations == 0) {
-            scrollView.scrollEnabled = YES;
+            scrollView.scrollEnabled = [[properties get:@"-baker-page-turn-swipe", nil] boolValue]; // YES by default, NO if specified
         }
         currentPageIsLocked = NO;
     }
@@ -777,11 +840,6 @@
         NSLog(@"• Handle loading of slot %d with page %d", slot, page);
         
         [toLoad removeObjectAtIndex:0];
-        
-        if ([renderingType isEqualToString:@"screenshots"] && ![self checkScreeshotForPage:page andOrientation:[self getCurrentInterfaceOrientation]]) {
-            [self lockPage:YES];
-        }
-        
         [self loadSlot:slot withPage:page];
     }
 }
@@ -850,13 +908,63 @@
 	return NO;
 }
 
+#pragma mark - MODAL VIEW
+- (void)loadModalWebView:(NSURL *)url {
+    /****************************************************************************************************
+     * Initializes the modal view and opens the requested url.
+     * It contains a fix to avoid an overlapping status bar.
+     */
+    
+    NSLog(@"» Loading a modal webview for url %@", url.absoluteString);
+    
+    myModalViewController = [[ModalViewController alloc] initWithUrl:url];
+    myModalViewController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+    myModalViewController.delegate = self;
+    
+    // Hide the IndexView before opening modal web view
+    [self hideStatusBar];
+    
+    // Check if iOS4 or 5
+    if ([self respondsToSelector:@selector(presentViewController:animated:completion:)]) {
+        // iOS 5
+        [self presentViewController:myModalViewController animated:YES completion:nil];
+    } else {
+        // iOS 4
+        [self presentModalViewController:myModalViewController animated:YES];
+    }
+    
+    [myModalViewController release];
+}
+- (void)closeModalWebView {
+    /****************************************************************************************************
+     * This function is called from inside the modal view to close itself (delegate).
+     */
+    
+    // Check if iOS5 method is supported
+    if ([self respondsToSelector:@selector(dismissViewControllerAnimated:completion:)]) {
+        // iOS 5
+        [self dismissViewControllerAnimated:YES completion:nil];
+    } else {
+        // iOS 4
+        [self dismissModalViewControllerAnimated:YES];
+    }
+        
+    // In case the orientation changed while being in modal view, restore the 
+    // webview and stuff to the current orientation
+    [indexViewController rotateFromOrientation:self.interfaceOrientation toOrientation:self.interfaceOrientation];
+    
+    [self setPageSize:[self getCurrentInterfaceOrientation]];
+    [self setCurrentPageHeight];
+    [self resetScrollView];
+}
+
 #pragma mark - SCROLLVIEW
 - (CGRect)frameForPage:(int)page {
 	return CGRectMake(pageWidth * (page - 1), 0, pageWidth, pageHeight);
 }
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scroll {
     NSLog(@"• Scrollview will begin dragging");
-	[self hideStatusBar];
+    [self hideStatusBar];
 }
 - (void)scrollViewDidEndDragging:(UIScrollView *)scroll willDecelerate:(BOOL)decelerate {
     NSLog(@"• Scrollview did end dragging");
@@ -886,7 +994,7 @@
     stackedScrollingAnimations--;
     if (stackedScrollingAnimations == 0) {
         NSLog(@"    Scroll enabled");
-		scroll.scrollEnabled = YES;
+		scroll.scrollEnabled = [[properties get:@"-baker-page-turn-swipe", nil] boolValue]; // YES by default, NO if specified
 	}
 }
 
@@ -911,17 +1019,15 @@
     {		
 		NSLog(@"    Page is current page and current page IS delaying loading --> load page");
 		currentPageIsDelayingLoading = NO;
-		return YES;
+        return ![self isIndexView:webView];
 	}
     else
-    {
-		[self hideStatusBarDiscardingToggle:YES];
-        
+    {        
 		// ****** Handle URI schemes
 		if (url)
         {
 			// Existing, checking if index...
-            if([[url lastPathComponent] isEqualToString:INDEX_FILE_NAME])
+            if([[url relativePath] isEqualToString:[indexViewController indexPath]])
             {
                 NSLog(@"    Page is index --> load index");
                 return YES;
@@ -929,7 +1035,7 @@
             else
             {
                 NSLog(@"    Page is current page and current page IS NOT delaying loading --> handle clicked link: %@", [url absoluteString]);
-                
+                                
                 // Not index, checking scheme...
                 if ([[url scheme] isEqualToString:@"file"])
                 {
@@ -954,11 +1060,6 @@
                         }
                         
                         [self handleAnchor:YES];                        
-                    }
-                        
-                    else if ([webView isEqual:indexViewController.view])
-                    {
-                        discardNextStatusBarToggle = NO;
                     }
                 }
                 else if ([[url scheme] isEqualToString:@"book"])
@@ -997,26 +1098,147 @@
                 }
                 else if ([[url scheme] isEqualToString:@"mailto"])
                 {
+<<<<<<< HEAD
                     NSLog(@"    Link is a mailto address --> open link in Mail");
                     [[UIApplication sharedApplication] openURL:url];
                     return NO;
                 }
                 else
+=======
+                    // Handle mailto links using MessageUI framework
+                    NSLog(@"    Page is a link with scheme mailto: handle mail link");
+                    
+                    // Build temp array and dictionary
+                    NSArray *tempArray = [[url absoluteString] componentsSeparatedByString:@"?"];
+                    NSMutableDictionary *queryDictionary = [[NSMutableDictionary alloc] init];
+                    
+                    // Check array count to see if we have parameters to query
+                    if ([tempArray count] == 2)
+                    {
+                        NSArray *keyValuePairs = [[tempArray objectAtIndex:1] componentsSeparatedByString:@"&"];
+                        
+                        for (NSString *queryString in keyValuePairs) {
+                            NSArray *keyValuePair = [queryString componentsSeparatedByString:@"="];
+                            if (keyValuePair.count == 2) {
+                                [queryDictionary setObject:[keyValuePair objectAtIndex:1] forKey:[keyValuePair objectAtIndex:0]];
+                            }
+                        }
+                    }
+                    
+                    NSString *email = ([tempArray objectAtIndex:0]) ? [tempArray objectAtIndex:0] : [url resourceSpecifier];
+                    NSString *subject = [queryDictionary objectForKey:@"subject"];
+                    NSString *body = [queryDictionary objectForKey:@"body"];
+                    
+                    [queryDictionary release];
+                    
+                    if ([MFMailComposeViewController canSendMail])
+                    {
+                        MFMailComposeViewController *mailer = [[MFMailComposeViewController alloc] init];
+                        
+                        mailer.mailComposeDelegate = self;
+                        mailer.modalPresentationStyle = UIModalPresentationPageSheet;
+                        
+                        [mailer setToRecipients:[NSArray arrayWithObject:[email stringByReplacingOccurrencesOfString:@"mailto:" withString:@""]]];
+                        [mailer setSubject:[subject stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+                        [mailer setMessageBody:[body stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding] isHTML:NO];
+                        
+                        // Show the view
+                        [self presentModalViewController:mailer animated:YES];
+                        [mailer release];                        
+                    }
+                    else
+                    {
+                        // Check if the system can handle a mailto link
+                        if ([[UIApplication sharedApplication] canOpenURL:url])
+                        {
+                            // Go for it and open the URL within the respective app
+                            [[UIApplication sharedApplication] openURL: url];   
+                        }
+                        else
+                        {
+                            // Display error message
+                            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Failure" 
+                                                                            message:@"Your device doesn't support the sending of emails!" 
+                                                                           delegate:nil 
+                                                                  cancelButtonTitle:@"OK" 
+                                                                  otherButtonTitles:nil];
+                            
+                            [alert show];
+                            [alert release];
+                        }
+                    }
+                    
+                    return NO;
+                }
+                else if (![[url scheme] isEqualToString:@""] && ![[url scheme] isEqualToString:@"http"] && ![[url scheme] isEqualToString:@"https"])
+>>>>>>> upstream/master
                 {
+                    [[UIApplication sharedApplication] openURL:url];
+                    return NO;
+                }
+                else
+                {
+                    // **************************************************************************************************** OPEN OUTSIDE BAKER
+                    // * This is required since the inclusion of external libraries (like Google Maps) requires
+                    // * direct opening of external pages within Baker. So we have to handle when you want to actually
+                    // * open a page outside of Baker.
+                    
                     NSString *params = [url query];
+                    NSLog(@"    Opening absolute URL: %@", [url absoluteString]);
+                    
                     if (params != nil)
                     {                        
-                        NSRegularExpression *referrerRegex = [NSRegularExpression regularExpressionWithPattern:@"referrer=Baker" options:NSRegularExpressionCaseInsensitive error:NULL];
-                        NSUInteger matches = [referrerRegex numberOfMatchesInString:params options:0 range:NSMakeRange(0, [params length])];
+                        NSRegularExpression *referrerExternalRegex = [NSRegularExpression regularExpressionWithPattern:URL_OPEN_EXTERNAL options:NSRegularExpressionCaseInsensitive error:NULL];
+                        NSUInteger matches = [referrerExternalRegex numberOfMatchesInString:params options:0 range:NSMakeRange(0, [params length])];
                         
+<<<<<<< HEAD
                         if (matches > 0) {
                             NSLog(@"    Link contain param \"referrer=Baker\" --> open link in Safari");
                             [[UIApplication sharedApplication] openURL:url];
+=======
+                        NSRegularExpression *referrerModalRegex = [NSRegularExpression regularExpressionWithPattern:URL_OPEN_MODALLY options:NSRegularExpressionCaseInsensitive error:NULL];
+                        NSUInteger matchesModal = [referrerModalRegex numberOfMatchesInString:params options:0 range:NSMakeRange(0, [params length])];
+                        
+                        if (matches > 0)
+                        {
+                            NSLog(@"    Link contain param \"%@\" --> open link in Safari", URL_OPEN_EXTERNAL);
+                            
+                            // Generate new URL without
+                            // We are regexp-ing three things: the string alone, the string first with other content, the string with other content in any other position
+                            NSRegularExpression *replacerRegexp = [NSRegularExpression regularExpressionWithPattern:[[NSString alloc] initWithFormat:@"\\?%@$|(?<=\\?)%@&?|()&?%@", URL_OPEN_EXTERNAL, URL_OPEN_EXTERNAL, URL_OPEN_EXTERNAL] options:NSRegularExpressionCaseInsensitive error:NULL];
+                            NSString *oldURL = [url absoluteString];
+                            NSLog(@"    replacement pattern: %@", [replacerRegexp pattern]);
+                            NSString *newURL = [replacerRegexp stringByReplacingMatchesInString:oldURL options:0 range:NSMakeRange(0, [oldURL length]) withTemplate:@""];
+                            
+                            NSLog(@"    Opening with updated URL: %@", newURL);
+                            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:newURL]];
+                            
+                            return NO;
+                        }
+                        else if (matchesModal)
+                        {
+                            NSLog(@"    Link contain param \"%@\" --> open link modally", URL_OPEN_MODALLY);
+                            
+                            // Generate new URL without
+                            // We are regexp-ing three things: the string alone, the string first with other content, the string with other content in any other position
+                            NSRegularExpression *replacerRegexp = [NSRegularExpression regularExpressionWithPattern:[[NSString alloc] initWithFormat:@"\\?%@$|(?<=\\?)%@&?|()&?%@", URL_OPEN_MODALLY, URL_OPEN_MODALLY, URL_OPEN_MODALLY] options:NSRegularExpressionCaseInsensitive error:NULL];
+                            NSString *oldURL = [url absoluteString];
+                            NSLog(@"    replacement pattern: %@", [replacerRegexp pattern]);
+                            NSString *newURL = [replacerRegexp stringByReplacingMatchesInString:oldURL options:0 range:NSMakeRange(0, [oldURL length]) withTemplate:@""];
+                            
+                            NSLog(@"    Opening with updated URL: %@", newURL);
+                            [self loadModalWebView:url];
+                            
+>>>>>>> upstream/master
                             return NO;
                         }
                     }
                     
+<<<<<<< HEAD
                     NSLog(@"    Link doesn't contain param \"referrer=Baker\" --> open link in page");
+=======
+                    NSLog(@"    Link doesn't contain param \"%@\" --> open link in page", URL_OPEN_EXTERNAL);
+>>>>>>> upstream/master
                     return YES;
                 }
             }
@@ -1040,13 +1262,13 @@
 }
 - (void)webViewDidFinishLoad:(UIWebView *)webView {
     NSLog(@"• Page did finish load");
+    [self webView:webView setCorrectOrientation:self.interfaceOrientation];
     
     if (webView.hidden == YES)
     {
         if ([webView isEqual:currPage]) {
             currentPageHasChanged = NO;
-            // Get current page max scroll offset
-            [self getPageHeight];
+            [self setCurrentPageHeight];
         }
         
         [webView removeFromSuperview];
@@ -1057,6 +1279,7 @@
         } else {
             [self takeScreenshotFromView:webView forPage:currentPageNumber andOrientation:[self getCurrentInterfaceOrientation]];
         }
+        
         [self handlePageLoading];
     }
 }
@@ -1081,37 +1304,101 @@
 }
 - (void)webViewDidAppear:(UIWebView *)webView animating:(BOOL)animating {
         
-    if ([webView isEqual:currPage]) {
+    if ([webView isEqual:currPage])
+    {
+        [self webView:webView dispatchHTMLEvent:@"focus"];
         
         // If is the first time i load something in the currPage web view...
-        if (currentPageFirstLoading) {
+        if (currentPageFirstLoading)
+        {
             // ... check if there is a saved starting scroll index and set it
             NSLog(@"   Handle last scroll index if necessary");
             NSString *currPageScrollIndex = [[NSUserDefaults standardUserDefaults] objectForKey:@"lastScrollIndex"];
             if (currPageScrollIndex != nil) {
-                [self goDownInPage:currPageScrollIndex animating:YES];
+                [self scrollDownCurrentPage:[currPageScrollIndex intValue] animating:YES];
             }
             currentPageFirstLoading = NO;
-        } else {
+        }
+        else
+        {
             NSLog(@"   Handle saved hash reference if necessary");
             [self handleAnchor:YES];
         }
     }
 }
+- (void)webView:(UIWebView *)webView dispatchHTMLEvent:(NSString *)event {
+    NSString *jsDispatchEvent = [NSString stringWithFormat:@"var bakerDispatchedEvent = document.createEvent('Events');\
+                                                             bakerDispatchedEvent.initEvent('%@', false, false);\
+                                                             window.dispatchEvent(bakerDispatchedEvent);", event];
+    
+    [webView stringByEvaluatingJavaScriptFromString:jsDispatchEvent];
+}
+- (void)webView:(UIWebView *)webView setCorrectOrientation:(UIInterfaceOrientation)interfaceOrientation {
+    
+    // Since the UIWebView doesn't handle orientationchange events correctly we have to set the correct value for window.orientation property ourselves 
+    NSString *jsOrientationGetter;
+    switch (interfaceOrientation) {
+        case UIInterfaceOrientationPortrait:
+            jsOrientationGetter = @"window.__defineGetter__('orientation', function() { return 0; });";
+            break;
+        case UIInterfaceOrientationLandscapeLeft:
+            jsOrientationGetter = @"window.__defineGetter__('orientation', function() { return 90; });";
+            break;
+        case UIInterfaceOrientationPortraitUpsideDown:
+            jsOrientationGetter = @"window.__defineGetter__('orientation', function() { return 180; });";
+            break;
+        case UIInterfaceOrientationLandscapeRight:
+            jsOrientationGetter = @"window.__defineGetter__('orientation', function() { return -90; });";
+            break;
+        default:
+            break;
+    }
+    
+    [webView stringByEvaluatingJavaScriptFromString:jsOrientationGetter];
+}
 
 #pragma mark - SCREENSHOTS
 - (void)initScreenshots {
     
-    for (int i = 1; i <= totalPages; i++)
+    NSMutableSet *completeSet = [NSMutableSet new];
+    NSMutableSet *supportSet  = [NSMutableSet new]; 
+    
+    NSString *interfaceOrientation = nil;
+    NSMutableDictionary *attachedScreenshot = nil;
+    
+    if (UIInterfaceOrientationIsPortrait(self.interfaceOrientation))
     {
-        if ([self checkScreeshotForPage:i andOrientation:@"portrait"]) {
-            [self placeScreenshotForView:nil andPage:i andOrientation:@"portrait"];
-        }
+        interfaceOrientation = @"portrait";
+        attachedScreenshot = attachedScreenshotPortrait;
+    }
+    else if (UIInterfaceOrientationIsLandscape(self.interfaceOrientation))
+    {
+        interfaceOrientation = @"landscape";
+        attachedScreenshot = attachedScreenshotLandscape;     
+    }
+    
+    for (NSNumber *num in attachedScreenshot) [completeSet addObject:num];
+    
+    for (int i = MAX(1, currentPageNumber - MAX_SCREENSHOT_BEFORE_CP); i <= MIN(totalPages, currentPageNumber + MAX_SCREENSHOT_AFTER_CP); i++)
+    {
+        NSNumber *num = [NSNumber numberWithInt:i];
+        [supportSet addObject:num];
             
-        if ([self checkScreeshotForPage:i andOrientation:@"landscape"]) {
-            [self placeScreenshotForView:nil andPage:i andOrientation:@"landscape"];
+        if ([self checkScreeshotForPage:i andOrientation:interfaceOrientation] && ![attachedScreenshot objectForKey:num]) {            
+            [self placeScreenshotForView:nil andPage:i andOrientation:interfaceOrientation];
+            [completeSet addObject:num];
         }
     }
+    
+    [completeSet minusSet:supportSet];
+    
+    for (NSNumber *num in completeSet) {
+        [[attachedScreenshot objectForKey:num] removeFromSuperview];
+        [attachedScreenshot removeObjectForKey:num];
+    }
+    
+    [completeSet release];
+    [supportSet release];
 }
 - (BOOL)checkScreeshotForPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation {
     
@@ -1124,12 +1411,12 @@
     return [[NSFileManager defaultManager] fileExistsAtPath:screenshotFile];
 }
 - (void)takeScreenshotFromView:(UIWebView *)webView forPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation {
-    
+        
     BOOL shouldRevealWebView = YES;
     BOOL animating = YES;
     
-    if (![self checkScreeshotForPage:pageNumber andOrientation:interfaceOrientation]) {
-        
+    if (![self checkScreeshotForPage:pageNumber andOrientation:interfaceOrientation])
+    {        
         NSLog(@"• Taking screenshot of page %d", pageNumber);
         
         NSString *screenshotFile = [cachedScreenshotsPath stringByAppendingPathComponent:[NSString stringWithFormat:@"screenshot-%@-%i.jpg", interfaceOrientation, pageNumber]];
@@ -1147,79 +1434,64 @@
                 if (saved) {
                     NSLog(@"    Screenshot succesfully saved to file %@", screenshotFile);
                     [self placeScreenshotForView:webView andPage:pageNumber andOrientation:interfaceOrientation];
-                    
                     shouldRevealWebView = NO;
                 }
             }
         }
-    } 
-    else
-    {
-        animating = NO;
-    }
-    
-    [self lockPage:NO];
-    
-    if (!currentPageHasChanged && shouldRevealWebView) {
         
-        if (animating)
-        {
-            [self webView:webView hidden:NO animating:animating];
-        } 
-        else
-        {
-            webView.hidden = YES;
-            [scrollView addSubview:webView];
-            [webView performSelector:@selector(setHidden:) withObject:NO afterDelay:0.1];
-            [self webViewDidAppear:webView animating:animating];
-        }
+        [self performSelector:@selector(lockPage:) withObject:[NSNumber numberWithBool:NO] afterDelay:0.1];
+    } 
+            
+    if (!currentPageHasChanged && shouldRevealWebView) {
+        [self webView:webView hidden:NO animating:animating];
     }
 }
 - (void)placeScreenshotForView:(UIWebView *)webView andPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation {
             
     int i = pageNumber - 1;
+    NSNumber *num = [NSNumber numberWithInt:pageNumber];
+    
     NSString    *screenshotFile = [cachedScreenshotsPath stringByAppendingPathComponent:[NSString stringWithFormat:@"screenshot-%@-%i.jpg", interfaceOrientation, pageNumber]];
     UIImageView *screenshotView = [[UIImageView alloc] initWithImage:[UIImage imageWithContentsOfFile:screenshotFile]];
- 
+    
+    NSMutableDictionary *attachedScreenshot = attachedScreenshotPortrait;
     CGSize pageSize = CGSizeMake(screenBounds.size.width, screenBounds.size.height);
+    
     if ([interfaceOrientation isEqualToString:@"landscape"]) {
+        attachedScreenshot = attachedScreenshotLandscape;
         pageSize = CGSizeMake(screenBounds.size.height, screenBounds.size.width);
     }
     
     screenshotView.frame = CGRectMake(pageSize.width * i, 0, pageSize.width, pageSize.height);
-    screenshotView.hidden = YES;
     
     BOOL alreadyPlaced = NO;
-    if (pageDetails.count > i && [pageDetails objectAtIndex:i] != nil)
+    UIImageView *oldScreenshot = [attachedScreenshot objectForKey:num];
+    
+    if (oldScreenshot) {
+        [scrollView addSubview:screenshotView];        
+        [attachedScreenshot removeObjectForKey:num];
+        [oldScreenshot removeFromSuperview];
+        
+        alreadyPlaced = YES;
+    }
+    
+    [attachedScreenshot setObject:screenshotView forKey:num];
+    
+    if (webView == nil)
     {
-        NSMutableDictionary *details = [pageDetails objectAtIndex:i];
-        NSString *key = [NSString stringWithFormat:@"screenshot-%@", interfaceOrientation];
-        UIImageView *oldScreenshotView = [details objectForKey:key]; 
-        
-        if (oldScreenshotView != nil) {            
-            [scrollView addSubview:screenshotView];
-            [oldScreenshotView removeFromSuperview];
-            [details removeObjectForKey:key];
-            
-            alreadyPlaced = YES;
-        }
-        [details setObject:screenshotView forKey:[NSString stringWithFormat:@"screenshot-%@", interfaceOrientation]];
-    }
-    
-    if (webView == nil) {
+    	screenshotView.alpha = 0.0;
+    	
         [scrollView addSubview:screenshotView];
+        [UIView animateWithDuration:0.5 animations:^{ screenshotView.alpha = 1.0; }];
     }
-    
-    if (webView != nil) {
-        
-        if (alreadyPlaced) {
-            
-            screenshotView.hidden = NO;
-            [self webView:webView hidden:NO animating:NO];
-            
-        } else if ([interfaceOrientation isEqualToString:[self getCurrentInterfaceOrientation]] && !currentPageHasChanged) {
-        
-            screenshotView.hidden = NO;
+    else if (webView != nil)
+    {
+        if (alreadyPlaced)
+        {    
+            [self webView:webView hidden:NO animating:NO];   
+        }
+        else if ([interfaceOrientation isEqualToString:[self getCurrentInterfaceOrientation]] && !currentPageHasChanged)
+        {
             screenshotView.alpha = 0.0;
             
             [scrollView addSubview:screenshotView];
@@ -1234,41 +1506,59 @@
 
 #pragma mark - GESTURES
 - (void)userDidTap:(UITouch *)touch {
-	
+	/****************************************************************************************************
+     * This function handles all the possible user navigation taps:
+     * up, down, left, right and double-tap.
+     */
+    
     CGPoint tapPoint = [touch locationInView:self.view];
-	NSLog(@"• User tap at [%f, %f]", tapPoint.x, tapPoint.y);
-	
-	// Swipe or scroll the page.
-    if (!currentPageIsLocked) {
-        if (CGRectContainsPoint(upTapArea, tapPoint)) {
+    NSLog(@"• User tap at [%f, %f]", tapPoint.x, tapPoint.y);
+    
+    // Swipe or scroll the page.
+    if (!currentPageIsLocked)
+    {
+        if (CGRectContainsPoint(upTapArea, tapPoint))
+        {
             NSLog(@"    Tap UP /\\!");
-            [self goUpInPage:@"1004" animating:YES];	
-        } else if (CGRectContainsPoint(downTapArea, tapPoint)) {
+            [self scrollUpCurrentPage:([self getCurrentPageOffset] - pageHeight + 50) animating:YES];	
+        }
+        else if (CGRectContainsPoint(downTapArea, tapPoint))
+        {
             NSLog(@"    Tap DOWN \\/");
-            [self goDownInPage:@"1004" animating:YES];	
-        } else if (CGRectContainsPoint(leftTapArea, tapPoint) || CGRectContainsPoint(rightTapArea, tapPoint)) {
+            [self scrollDownCurrentPage:([self getCurrentPageOffset] + pageHeight - 50) animating:YES];	
+        }
+        else if (CGRectContainsPoint(leftTapArea, tapPoint) || CGRectContainsPoint(rightTapArea, tapPoint))
+        {
             int page = 0;
-            if (CGRectContainsPoint(leftTapArea, tapPoint)) {
+            if (CGRectContainsPoint(leftTapArea, tapPoint)) 
+            {
                 NSLog(@"    Tap LEFT >>>");
                 page = currentPageNumber - 1;
-            } else if (CGRectContainsPoint(rightTapArea, tapPoint)) {
+            }
+            else if (CGRectContainsPoint(rightTapArea, tapPoint))
+            {
                 NSLog(@"    Tap RIGHT <<<");
                 page = currentPageNumber + 1;
             }
-            [self changePage:page];
-        } else if ((touch.tapCount%2) == 0) {
-            [self performSelector:@selector(toggleStatusBar) withObject:nil];
+            
+            if ([[properties get:@"-baker-page-turn-tap", nil] boolValue]) [self changePage:page];
+        }
+        else if ((touch.tapCount%2) == 0)
+        {
+            [self toggleStatusBar];
         }
     }
-
 }
 - (void)userDidScroll:(UITouch *)touch {
 	NSLog(@"• User scroll");
 	[self hideStatusBar];
+    
+    currPage.backgroundColor = webViewBackground;
+    currPage.opaque = YES;
 }
 
 #pragma mark - PAGE SCROLLING
-- (void)getPageHeight {
+- (void)setCurrentPageHeight {
 	for (UIView *subview in currPage.subviews) {
 		if ([subview isKindOfClass:[UIScrollView class]]) {
 			CGSize size = ((UIScrollView *)subview).contentSize;
@@ -1277,40 +1567,35 @@
 		}
 	}
 }
-- (void)goUpInPage:(NSString *)offset animating:(BOOL)animating {
+- (int)getCurrentPageOffset {
+    
+    int currentPageOffset = [[currPage stringByEvaluatingJavaScriptFromString:@"window.scrollY;"] intValue];
+    if (currentPageOffset < 0) return 0;
+    
+    int currentPageMaxScroll = currentPageHeight - pageHeight;
+    if (currentPageOffset > currentPageMaxScroll) return currentPageMaxScroll;
+    
+    return currentPageOffset;
+}
+- (void)scrollUpCurrentPage:(int)targetOffset animating:(BOOL)animating {	
 	
-	NSString *currPageOffset = [currPage stringByEvaluatingJavaScriptFromString:@"window.scrollY;"];
-	
-	int currentPageOffset = [currPageOffset intValue];
-	if (currentPageOffset > 0) {
-		
-		int targetOffset = currentPageOffset-[offset intValue];
-		if (targetOffset < 0)
-			targetOffset = 0;
-		
+    if ([self getCurrentPageOffset] > 0)
+    {
+		if (targetOffset < 0) targetOffset = 0;
+        
 		NSLog(@"• Scrolling page up to %d", targetOffset);
-		
-		offset = [NSString stringWithFormat:@"%d", targetOffset];
-		[self scrollPage:currPage to:offset animating:animating];
+		[self scrollPage:currPage to:[NSString stringWithFormat:@"%d", targetOffset] animating:animating];
 	}
 }
-- (void)goDownInPage:(NSString *)offset animating:(BOOL)animating {
-	
-	NSString *currPageOffset = [currPage stringByEvaluatingJavaScriptFromString:@"window.scrollY;"];
-	
+- (void)scrollDownCurrentPage:(int)targetOffset animating:(BOOL)animating {
+		
 	int currentPageMaxScroll = currentPageHeight - pageHeight;
-	int currentPageOffset = [currPageOffset intValue];
-	
-	if (currentPageOffset < currentPageMaxScroll) {
+	if ([self getCurrentPageOffset] < currentPageMaxScroll)
+    {
+		if (targetOffset > currentPageMaxScroll) targetOffset = currentPageMaxScroll;
 		
-		int targetOffset = currentPageOffset+[offset intValue];
-		if (targetOffset > currentPageMaxScroll)
-			targetOffset = currentPageMaxScroll;
-		
-		NSLog(@"• Scrolling page down to %d", targetOffset);
-		
-		offset = [NSString stringWithFormat:@"%d", targetOffset];
-		[self scrollPage:currPage to:offset animating:animating];
+		NSLog(@"• Scrolling page down to %d", targetOffset);		
+		[self scrollPage:currPage to:[NSString stringWithFormat:@"%d", targetOffset] animating:animating];
 	}
 
 }
@@ -1327,43 +1612,45 @@
 - (void)handleAnchor:(BOOL)animating {
 	if (anchorFromURL != nil) {
 		NSString *jsAnchorHandler = [NSString stringWithFormat:@"(function() {\
-									 var target = '%@';\
-									 var elem = document.getElementById(target);\
-									 if (!elem) elem = document.getElementsByName(target)[0];\
-									 return elem.offsetTop;\
-									 })();", anchorFromURL];
-		
-		NSString *offset = [currPage stringByEvaluatingJavaScriptFromString:jsAnchorHandler];
-		
-		if (![offset isEqualToString:@""]) {
-			[self goDownInPage:offset animating:animating];
+                                                                     var target = '%@';\
+                                                                     var elem = document.getElementById(target);\
+                                                                     if (!elem) elem = document.getElementsByName(target)[0];\
+                                                                     return elem.offsetTop;\
+                                                                 })();", anchorFromURL];
+        
+        NSString *offsetString = [currPage stringByEvaluatingJavaScriptFromString:jsAnchorHandler];
+		if (![offsetString isEqualToString:@""])
+        {
+            int offset = [offsetString intValue];
+            int currentPageOffset = [self getCurrentPageOffset];
+            
+            if (offset > currentPageOffset) {
+                [self scrollDownCurrentPage:offset animating:animating];
+            } else if (offset < currentPageOffset) {
+                [self scrollUpCurrentPage:offset animating:animating];
+            }
         }
+        
 		anchorFromURL = nil;
 	}
 }
 
 #pragma mark - STATUS BAR
 - (void)toggleStatusBar {
-	if (discardNextStatusBarToggle) {
-		// do nothing, but reset the variable
-		discardNextStatusBarToggle = NO;
-	} else {
-		NSLog(@"• Toggle status bar visibility");
-		UIApplication *sharedApplication = [UIApplication sharedApplication];
+    // if modal view is up, don't toggle.
+    if (!self.modalViewController) {
+        NSLog(@"• Toggle status bar visibility");
+        
+        UIApplication *sharedApplication = [UIApplication sharedApplication];
         BOOL hidden = sharedApplication.statusBarHidden;
-		[sharedApplication setStatusBarHidden:!hidden withAnimation:UIStatusBarAnimationSlide];
+        [sharedApplication setStatusBarHidden:!hidden withAnimation:UIStatusBarAnimationSlide];
         if(![indexViewController isDisabled]) {
             [indexViewController setIndexViewHidden:!hidden withAnimation:YES];
         }
-	}
+    }
 }
 - (void)hideStatusBar {
-	[self hideStatusBarDiscardingToggle:NO];
-}
-- (void)hideStatusBarDiscardingToggle:(BOOL)discardToggle {
-	NSLog(@"• Hide status bar %@", (discardToggle ? @"discarding toggle" : @""));
-	discardNextStatusBarToggle = discardToggle;
-	[[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
+    [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
     if(![indexViewController isDisabled]) {
         [indexViewController setIndexViewHidden:YES withAnimation:YES];
     }
@@ -1503,41 +1790,17 @@
     // Notify the index view
     [indexViewController willRotate];
     
-    // Since the UIWebView doesn't handle orientationchange events correctly we have to do handle them ourselves 
-    // 1. Set the correct value for window.orientation property
-    NSString *jsOrientationGetter;
-    switch (toInterfaceOrientation) {
-        case UIDeviceOrientationPortrait:
-            jsOrientationGetter = @"window.__defineGetter__('orientation', function() { return 0; });";
-            break;
-        case UIDeviceOrientationLandscapeLeft:
-            jsOrientationGetter = @"window.__defineGetter__('orientation', function() { return 90; });";
-            break;
-        case UIDeviceOrientationLandscapeRight:
-            jsOrientationGetter = @"window.__defineGetter__('orientation', function() { return -90; });";
-            break;
-        case UIDeviceOrientationPortraitUpsideDown:
-            jsOrientationGetter = @"window.__defineGetter__('orientation', function() { return 180; });";
-            break;
-        default:
-            break;
-    }
-    
-    // 2. Create and dispatch a orientationchange event    
-    NSString *jsOrientationChange = @"if (typeof bakerOrientationChangeEvent === 'undefined') {\
-                                          var bakerOrientationChangeEvent = document.createEvent('Events');\
-                                              bakerOrientationChangeEvent.initEvent('orientationchange', true, false);\
-                                      }; window.dispatchEvent(bakerOrientationChangeEvent)";
-    
-    // 3. Merge the scripts and load them on the current UIWebView
-    NSString *jsCommand = [jsOrientationGetter stringByAppendingString:jsOrientationChange];
-    [currPage stringByEvaluatingJavaScriptFromString:jsCommand];
+    // Notify the current loaded views
+    [self webView:currPage setCorrectOrientation:toInterfaceOrientation];
+    if (nextPage) [self webView:nextPage setCorrectOrientation:toInterfaceOrientation];
+    if (prevPage) [self webView:prevPage setCorrectOrientation:toInterfaceOrientation];
+
 }
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
     [indexViewController rotateFromOrientation:fromInterfaceOrientation toOrientation:self.interfaceOrientation];
     
     [self setPageSize:[self getCurrentInterfaceOrientation]];
-    [self getPageHeight];    
+    [self setCurrentPageHeight];
 	[self resetScrollView];
 }
 
@@ -1569,12 +1832,56 @@
     [pages release];
     
     [indexViewController release];
+    [myModalViewController release];
     [scrollView release];
     [currPage release];
 	[nextPage release];
 	[prevPage release];
     
+    [webViewBackground release];
+    
     [super dealloc];
 }
+
+#pragma mark - MFMailComposeController
+- (void)mailComposeController:(MFMailComposeViewController*)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error {
+    
+    // Log the result for debugging purpose
+    switch (result)
+    {
+        case MFMailComposeResultCancelled:
+            NSLog(@"    Mail cancelled.");
+            break;
+            
+        case MFMailComposeResultSaved:
+            NSLog(@"    Mail saved.");
+            break;
+            
+        case MFMailComposeResultSent:
+            NSLog(@"    Mail send.");
+            break;
+            
+        case MFMailComposeResultFailed:
+            NSLog(@"    Mail failed, check NSError.");
+            break;
+            
+        default:
+            NSLog(@"    Mail not sent.");
+            break;
+    }
+    
+    // Remove the mail view
+    [self dismissModalViewControllerAnimated:YES];
+}
+
+#pragma mark - INDEX VIEW
+- (BOOL)isIndexView:(UIWebView *)webView {
+    if (webView == indexViewController.view) {
+        return YES;
+    } else {
+        return NO;
+    }
+}
+
 
 @end
