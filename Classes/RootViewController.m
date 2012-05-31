@@ -161,10 +161,6 @@
         
         [self.view addSubview:scrollView];
         
-        // ****** INDEX WEBVIEW INIT
-        indexViewController = [[IndexViewController alloc] initWithBookBundlePath:bundleBookPath documentsBookPath:documentsBookPath fileName:INDEX_FILE_NAME webViewDelegate:self];
-        [self.view addSubview:indexViewController.view];
-        
         // ****** BOOK INIT
         if ([[NSFileManager defaultManager] fileExistsAtPath:documentsBookPath]) {
             [self initBook:documentsBookPath];
@@ -551,6 +547,18 @@
             }
         }
         [self handlePageLoading];
+        
+        
+        // ****** INDEX WEBVIEW INIT
+        // We move IndexView init here to make IndexView read -baker-index-height & -baker-index-width correct.
+        if (indexViewController != nil) {
+            [indexViewController.view removeFromSuperview];
+            [indexViewController release];
+        }
+        
+        indexViewController = [[IndexViewController alloc] initWithBookBundlePath:bundleBookPath documentsBookPath:documentsBookPath fileName:INDEX_FILE_NAME webViewDelegate:self];
+        [self.view addSubview:indexViewController.view];
+        // ****** INDEX WEBVIEW INIT FINISHED
         
         [indexViewController loadContentFromBundle:[path isEqualToString:bundleBookPath]];
 		
