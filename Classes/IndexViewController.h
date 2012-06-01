@@ -35,8 +35,7 @@
 
 @interface IndexViewController : UIViewController <UIWebViewDelegate> {
     
-    NSString *bookBundlePath;
-    NSString *documentsBookPath;
+    NSString *bookPath;
     NSString *fileName;
     UIScrollView *indexScrollView;
     UIViewController <UIWebViewDelegate> *webViewDelegate;
@@ -56,9 +55,8 @@
     Properties *properties;
 }
 
-- (id)initWithBookBundlePath:(NSString *)path documentsBookPath:(NSString *)docpath fileName:(NSString *)name webViewDelegate:(UIViewController *)delegate;
+- (id)initWithBookPath:(NSString *)path fileName:(NSString *)name webViewDelegate:(UIViewController *)delegate;
 - (void)loadContent;
-- (void)loadContentFromBundle:(BOOL)fromBundle;
 - (void)setBounceForWebView:(UIWebView *)webView bounces:(BOOL)bounces;
 - (void)setPageSizeForOrientation:(UIInterfaceOrientation)orientation;
 - (BOOL)isIndexViewHidden;
