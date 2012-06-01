@@ -65,18 +65,18 @@
 
 // IOS VERSION >= 5.0 MACRO
 #ifndef kCFCoreFoundationVersionNumber_iPhoneOS_5_0
-    #define kCFCoreFoundationVersionNumber_iPhoneOS_5_0 675.00
+#define kCFCoreFoundationVersionNumber_iPhoneOS_5_0 675.00
 #endif
 #ifndef __IPHONE_5_0
-    #define __IPHONE_5_0 50000
+#define __IPHONE_5_0 50000
 #endif
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_5_0
-    #define IF_IOS5_OR_GREATER(...) \
-    if (kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iPhoneOS_5_0) { \
-        __VA_ARGS__ \
-    }
+#define IF_IOS5_OR_GREATER(...) \
+if (kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iPhoneOS_5_0) { \
+__VA_ARGS__ \
+}
 #else
-    #define IF_IOS5_OR_GREATER(...)
+#define IF_IOS5_OR_GREATER(...)
 #endif
 
 
@@ -129,10 +129,10 @@
         pageDetails = [[NSMutableArray array] retain];
         attachedScreenshotPortrait  = [[NSMutableDictionary dictionary] retain];
         attachedScreenshotLandscape = [[NSMutableDictionary dictionary] retain];
-
+        
         pageNameFromURL = nil;
         anchorFromURL = nil;
-                
+        
         tapNumber = 0;
         stackedScrollingAnimations = 0;
         
@@ -142,11 +142,11 @@
         currentPageIsLocked = NO;
         
         webViewBackground = nil;
-                        
+        
         // ****** LISTENER FOR DOWNLOAD NOTIFICATION
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(downloadBook:) name:@"downloadNotification" object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleDownloadResult:) name:@"handleDownloadResult" object:nil];
-                
+        
         [self setPageSize:[self getCurrentInterfaceOrientation]];
         [self hideStatusBar];
         
@@ -168,7 +168,7 @@
             if ([[NSFileManager defaultManager] fileExistsAtPath:bundleBookPath]) {
                 [self initBook:bundleBookPath];
             } else {
-              // Do something if there are no books available to show
+                // Do something if there are no books available to show
             }
         }
 	}
@@ -211,7 +211,7 @@
 }
 - (void)setTappableAreaSize {
     NSLog(@"• Set tappable area size");
-
+    
     int tappableAreaSize = screenBounds.size.width/16;
     if (screenBounds.size.width < 768) {
         tappableAreaSize = screenBounds.size.width/8;
@@ -246,7 +246,7 @@
             UIView *value = [attachedScreenshotLandscape objectForKey:key];
             [value removeFromSuperview];
         }
-            
+        
         for (NSNumber *key in attachedScreenshotPortrait) {
             UIView *value = [attachedScreenshotPortrait objectForKey:key];
             [value removeFromSuperview];
@@ -259,7 +259,7 @@
     }
     
     scrollView.contentSize = CGSizeMake(pageWidth * totalPages, pageHeight);
-
+    
 	int scrollViewY = 0;
 	if (![UIApplication sharedApplication].statusBarHidden) {
 		scrollViewY = -20;
@@ -306,9 +306,9 @@
         UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
         spinner.backgroundColor = [UIColor clearColor];
         IF_IOS5_OR_GREATER(
-            spinner.color = foregroundColor;
-            spinner.alpha = [(NSNumber *)foregroundAlpha floatValue];
-        );
+                           spinner.color = foregroundColor;
+                           spinner.alpha = [(NSNumber *)foregroundAlpha floatValue];
+                           );
         
         CGRect frame = spinner.frame;
         frame.origin.x = pageWidth * i + (pageWidth - frame.size.width) / 2;
@@ -530,7 +530,7 @@
                 cachedScreenshotsPath = defaultScreeshotsPath;
             }
         }
-    
+        
         [cachedScreenshotsPath retain];
         
         [self initPageDetails];
@@ -548,19 +548,12 @@
         }
         [self handlePageLoading];
         
-        
         // ****** INDEX WEBVIEW INIT
-        // We move IndexView init here to make IndexView read -baker-index-height & -baker-index-width correct.
-        if (indexViewController != nil) {
-            [indexViewController.view removeFromSuperview];
-            [indexViewController release];
-        }
-        
-        indexViewController = [[IndexViewController alloc] initWithBookBundlePath:bundleBookPath documentsBookPath:documentsBookPath fileName:INDEX_FILE_NAME webViewDelegate:self];
+        indexViewController = [[IndexViewController alloc] initWithBookPath:path fileName:INDEX_FILE_NAME webViewDelegate:self];
         [self.view addSubview:indexViewController.view];
-        // ****** INDEX WEBVIEW INIT FINISHED
+
         
-        [indexViewController loadContentFromBundle:[path isEqualToString:bundleBookPath]];
+        [indexViewController loadContent];
 		
 	} else if (![path isEqualToString:bundleBookPath]) {
 		
@@ -625,7 +618,7 @@
         [scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:YES];
         
         [self gotoPageDelayer];
-
+        
         pageChanged = YES;
 	}
 	
@@ -679,12 +672,12 @@
                     [self addPageLoading:+1];
                 if (currentPageNumber > 1)
                     [self addPageLoading:-1];
-                            
+                
             } else {
                 
                 int tmpSlot = 0;
                 if (tapNumber == 2) {
-                
+                    
                     // Moved away for 2 pages: RELOAD CURRENT page
                     if (direction < 0) {
                         // Move LEFT <<<
@@ -699,7 +692,7 @@
                         nextPage = prevPage;
                         prevPage = tmpView;
                     }
-                                        
+                    
                     // Adjust pages slot in the stack to reflect the webviews pointer change
                     for (int i = 0; i < [toLoad count]; i++) {
                         tmpSlot =  -1 * [[[toLoad objectAtIndex:i] valueForKey:@"slot"] intValue];
@@ -708,9 +701,9 @@
                     
                     [currPage removeFromSuperview];
                     [self addPageLoading:0];
-                
+                    
                 } else if (tapNumber == 1) {
-                                    
+                    
                     if (direction < 0) {
                         // ****** Move LEFT <<<
                         [prevPage removeFromSuperview];
@@ -750,7 +743,7 @@
                         }
                         [[toLoad objectAtIndex:i] setObject:[NSNumber numberWithInt:tmpSlot] forKey:@"slot"];
                     }
-                                        
+                    
                     // Since we are not loading anything we have to reset the delayer flag
                     currentPageIsDelayingLoading = NO;
                     
@@ -829,7 +822,7 @@
 }
 - (void)addPageLoading:(int)slot {    
     NSLog(@"• Add page to the loding queue");
-
+    
     NSArray *objs = [NSArray arrayWithObjects:[NSNumber numberWithInt:slot], [NSNumber numberWithInt:currentPageNumber + slot], nil];
     NSArray *keys = [NSArray arrayWithObjects:@"slot", @"page", nil];
     
@@ -841,7 +834,7 @@
 }
 - (void)handlePageLoading {
     if ([toLoad count] != 0) {
-                
+        
         int slot = [[[toLoad objectAtIndex:0] valueForKey:@"slot"] intValue];
         int page = [[[toLoad objectAtIndex:0] valueForKey:@"page"] intValue];
         
@@ -885,7 +878,7 @@
             [nextPage release];
         }
         nextPage = [webView retain];
-    
+        
     } else if (slot == -1) {
         
         if (prevPage) {
@@ -900,14 +893,14 @@
     
     
     ((UIScrollView *)[[webView subviews] objectAtIndex:0]).pagingEnabled = [[properties get:@"-baker-vertical-pagination", nil] boolValue];
-
+    
     [scrollView addSubview:webView];
 	[self loadWebView:webView withPage:page];
 }
 - (BOOL)loadWebView:(UIWebView*)webView withPage:(int)page {
 	
 	NSString *path = [NSString stringWithString:[pages objectAtIndex:page - 1]];
-		
+    
 	if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
 		NSLog(@"• Loading: book/%@", [[NSFileManager defaultManager] displayNameAtPath:path]);
 		[webView loadRequest:[NSURLRequest requestWithURL:[NSURL fileURLWithPath:path]]];
@@ -956,7 +949,7 @@
         // iOS 4
         [self dismissModalViewControllerAnimated:YES];
     }
-        
+    
     // In case the orientation changed while being in modal view, restore the 
     // webview and stuff to the current orientation
     [indexViewController rotateFromOrientation:self.interfaceOrientation toOrientation:self.interfaceOrientation];
@@ -1008,7 +1001,7 @@
 
 #pragma mark - WEBVIEW
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
-        
+    
 	// Sent before a web view begins loading content, useful to trigger actions before the WebView.	
 	NSLog(@"• Should webView load the page ?");
     NSURL *url = [request URL];
@@ -1043,7 +1036,7 @@
             else
             {
                 NSLog(@"    Page is current page and current page IS NOT delaying loading --> handle clicked link: %@", [url absoluteString]);
-                                
+                
                 // Not index, checking scheme...
                 if ([[url scheme] isEqualToString:@"file"])
                 {
@@ -1106,13 +1099,6 @@
                 }
                 else if ([[url scheme] isEqualToString:@"mailto"])
                 {
-<<<<<<< HEAD
-                    NSLog(@"    Link is a mailto address --> open link in Mail");
-                    [[UIApplication sharedApplication] openURL:url];
-                    return NO;
-                }
-                else
-=======
                     // Handle mailto links using MessageUI framework
                     NSLog(@"    Page is a link with scheme mailto: handle mail link");
                     
@@ -1179,7 +1165,6 @@
                     return NO;
                 }
                 else if (![[url scheme] isEqualToString:@""] && ![[url scheme] isEqualToString:@"http"] && ![[url scheme] isEqualToString:@"https"])
->>>>>>> upstream/master
                 {
                     [[UIApplication sharedApplication] openURL:url];
                     return NO;
@@ -1199,11 +1184,6 @@
                         NSRegularExpression *referrerExternalRegex = [NSRegularExpression regularExpressionWithPattern:URL_OPEN_EXTERNAL options:NSRegularExpressionCaseInsensitive error:NULL];
                         NSUInteger matches = [referrerExternalRegex numberOfMatchesInString:params options:0 range:NSMakeRange(0, [params length])];
                         
-<<<<<<< HEAD
-                        if (matches > 0) {
-                            NSLog(@"    Link contain param \"referrer=Baker\" --> open link in Safari");
-                            [[UIApplication sharedApplication] openURL:url];
-=======
                         NSRegularExpression *referrerModalRegex = [NSRegularExpression regularExpressionWithPattern:URL_OPEN_MODALLY options:NSRegularExpressionCaseInsensitive error:NULL];
                         NSUInteger matchesModal = [referrerModalRegex numberOfMatchesInString:params options:0 range:NSMakeRange(0, [params length])];
                         
@@ -1237,16 +1217,11 @@
                             NSLog(@"    Opening with updated URL: %@", newURL);
                             [self loadModalWebView:url];
                             
->>>>>>> upstream/master
                             return NO;
                         }
                     }
                     
-<<<<<<< HEAD
-                    NSLog(@"    Link doesn't contain param \"referrer=Baker\" --> open link in page");
-=======
                     NSLog(@"    Link doesn't contain param \"%@\" --> open link in page", URL_OPEN_EXTERNAL);
->>>>>>> upstream/master
                     return YES;
                 }
             }
@@ -1294,7 +1269,7 @@
 - (void)webView:(UIWebView *)webView hidden:(BOOL)status animating:(BOOL)animating {
 	
     NSLog(@"• webView hidden: %d animating: %d", status, animating);
-        
+    
     if (animating) {
         
         webView.hidden = NO;
@@ -1311,7 +1286,7 @@
 	}
 }
 - (void)webViewDidAppear:(UIWebView *)webView animating:(BOOL)animating {
-        
+    
     if ([webView isEqual:currPage])
     {
         [self webView:webView dispatchHTMLEvent:@"focus"];
@@ -1336,8 +1311,8 @@
 }
 - (void)webView:(UIWebView *)webView dispatchHTMLEvent:(NSString *)event {
     NSString *jsDispatchEvent = [NSString stringWithFormat:@"var bakerDispatchedEvent = document.createEvent('Events');\
-                                                             bakerDispatchedEvent.initEvent('%@', false, false);\
-                                                             window.dispatchEvent(bakerDispatchedEvent);", event];
+                                 bakerDispatchedEvent.initEvent('%@', false, false);\
+                                 window.dispatchEvent(bakerDispatchedEvent);", event];
     
     [webView stringByEvaluatingJavaScriptFromString:jsDispatchEvent];
 }
@@ -1391,7 +1366,7 @@
     {
         NSNumber *num = [NSNumber numberWithInt:i];
         [supportSet addObject:num];
-            
+        
         if ([self checkScreeshotForPage:i andOrientation:interfaceOrientation] && ![attachedScreenshot objectForKey:num]) {            
             [self placeScreenshotForView:nil andPage:i andOrientation:interfaceOrientation];
             [completeSet addObject:num];
@@ -1419,7 +1394,7 @@
     return [[NSFileManager defaultManager] fileExistsAtPath:screenshotFile];
 }
 - (void)takeScreenshotFromView:(UIWebView *)webView forPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation {
-        
+    
     BOOL shouldRevealWebView = YES;
     BOOL animating = YES;
     
@@ -1449,13 +1424,13 @@
         
         [self performSelector:@selector(lockPage:) withObject:[NSNumber numberWithBool:NO] afterDelay:0.1];
     } 
-            
+    
     if (!currentPageHasChanged && shouldRevealWebView) {
         [self webView:webView hidden:NO animating:animating];
     }
 }
 - (void)placeScreenshotForView:(UIWebView *)webView andPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation {
-            
+    
     int i = pageNumber - 1;
     NSNumber *num = [NSNumber numberWithInt:pageNumber];
     
@@ -1596,7 +1571,7 @@
 	}
 }
 - (void)scrollDownCurrentPage:(int)targetOffset animating:(BOOL)animating {
-		
+    
 	int currentPageMaxScroll = currentPageHeight - pageHeight;
 	if ([self getCurrentPageOffset] < currentPageMaxScroll)
     {
@@ -1605,7 +1580,7 @@
 		NSLog(@"• Scrolling page down to %d", targetOffset);		
 		[self scrollPage:currPage to:[NSString stringWithFormat:@"%d", targetOffset] animating:animating];
 	}
-
+    
 }
 - (void)scrollPage:(UIWebView *)webView to:(NSString *)offset animating:(BOOL)animating {
     [self hideStatusBar];
@@ -1620,11 +1595,11 @@
 - (void)handleAnchor:(BOOL)animating {
 	if (anchorFromURL != nil) {
 		NSString *jsAnchorHandler = [NSString stringWithFormat:@"(function() {\
-                                                                     var target = '%@';\
-                                                                     var elem = document.getElementById(target);\
-                                                                     if (!elem) elem = document.getElementsByName(target)[0];\
-                                                                     return elem.offsetTop;\
-                                                                 })();", anchorFromURL];
+                                     var target = '%@';\
+                                     var elem = document.getElementById(target);\
+                                     if (!elem) elem = document.getElementsByName(target)[0];\
+                                     return elem.offsetTop;\
+                                     })();", anchorFromURL];
         
         NSString *offsetString = [currPage stringByEvaluatingJavaScriptFromString:jsAnchorHandler];
 		if (![offsetString isEqualToString:@""])
@@ -1705,7 +1680,7 @@
 	
 	NSDictionary *requestSummary = [NSDictionary dictionaryWithDictionary:(NSMutableDictionary *)[notification object]];	
 	[downloader release];
-		
+    
 	if ([requestSummary objectForKey:@"error"] != nil) {
 		
 		NSLog(@"• Error while downloading new book data");
@@ -1716,7 +1691,7 @@
 										 otherButtonTitles:ERROR_FEEDBACK_CONFIRM, nil];
 		[feedbackAlert show];
 		[feedbackAlert release];
-			
+        
 	} else if ([requestSummary objectForKey:@"data"] != nil) {
 		
 		NSLog(@"• New book data received succesfully");
@@ -1725,7 +1700,7 @@
 												  delegate:self
 										 cancelButtonTitle:nil
 										 otherButtonTitles:nil];
-				
+        
 		UIActivityIndicatorView *extractingWheel = [[UIActivityIndicatorView alloc] initWithFrame:CGRectMake(124,50,37,37)];
 		extractingWheel.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhiteLarge;
 		[extractingWheel startAnimating];
@@ -1740,12 +1715,12 @@
 	}
 }
 - (void)manageDownloadData:(NSData *)data {
-			
+    
 	NSArray *URLSections = [NSArray arrayWithArray:[URLDownload pathComponents]];
 	NSString *targetPath = [NSTemporaryDirectory() stringByAppendingString:[URLSections lastObject]];
-		
+    
 	[data writeToFile:targetPath atomically:YES];
-			
+    
 	if ([[NSFileManager defaultManager] fileExistsAtPath:targetPath]) {
 		NSLog(@"• File hpub create successfully at path: %@", targetPath);
 		NSLog(@"    Book destination path: %@", documentsBookPath);
@@ -1754,12 +1729,12 @@
 		if ([[NSFileManager defaultManager] fileExistsAtPath:documentsBookPath]) {
 			[[NSFileManager defaultManager] removeItemAtPath:documentsBookPath error:NULL];
         }
-    
+        
 		[SSZipArchive unzipFileAtPath:targetPath toDestination:documentsBookPath];
 		
         NSLog(@"    Book successfully unzipped. Removing .hpub file");
         [[NSFileManager defaultManager] removeItemAtPath:targetPath error:NULL];
-				
+        
 		NSLog(@"    Add skip backup attribute to book folder");
         [self addSkipBackupAttributeToItemAtPath:documentsBookPath];
         
@@ -1802,7 +1777,7 @@
     [self webView:currPage setCorrectOrientation:toInterfaceOrientation];
     if (nextPage) [self webView:nextPage setCorrectOrientation:toInterfaceOrientation];
     if (prevPage) [self webView:prevPage setCorrectOrientation:toInterfaceOrientation];
-
+    
 }
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
     [indexViewController rotateFromOrientation:fromInterfaceOrientation toOrientation:self.interfaceOrientation];
@@ -1831,10 +1806,10 @@
     
     [cachedScreenshotsPath release];
     [defaultScreeshotsPath release];
-
+    
     [documentsBookPath release];
     [bundleBookPath release];
-
+    
     [pageDetails release];
     [toLoad release];
     [pages release];
