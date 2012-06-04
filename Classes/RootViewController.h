@@ -43,8 +43,10 @@
 	
 	CGRect screenBounds;
 	
-	NSString *documentsBookPath;
+    
+    NSString *currentBookPath;
     NSString *bundleBookPath;
+    NSString *documentsBookPath;
     NSString *defaultScreeshotsPath;
     NSString *cachedScreenshotsPath;
     
@@ -117,13 +119,15 @@
 - (void)buildPageArray;
 - (void)startReadingFromPage:(int)pageNumber anchor:(NSString *)anchor;
 - (void)startReading;
-- (void)setupWebView:(UIWebView *)webView;
+- (void)buildPageDetails;
+- (void)setImageFor:(UIImageView *)view;
+- (void)updateBookLayout;
 - (void)setPageSize:(NSString *)orientation;
 - (void)setTappableAreaSize;
-- (void)resetScrollView;
-- (void)initPageDetails;
 - (void)showPageDetails;
-- (void)setImageFor:(UIImageView *)view;
+- (void)setFrame:(CGRect)frame forPage:(UIWebView *)page;
+
+- (void)setupWebView:(UIWebView *)webView;
 - (void)addSkipBackupAttributeToItemAtPath:(NSString *)path;
 
 #pragma mark - LOADING
@@ -142,7 +146,7 @@
 
 #pragma mark - SCROLLVIEW
 - (CGRect)frameForPage:(int)page;
-- (void)resetScrollView;
+- (void)updateBookLayout;
 
 #pragma mark - WEBVIEW
 - (void)webView:(UIWebView *)webView hidden:(BOOL)status animating:(BOOL)animating;
@@ -151,7 +155,8 @@
 - (void)webView:(UIWebView *)webView setCorrectOrientation:(UIInterfaceOrientation)interfaceOrientation;
 
 #pragma mark - SCREENSHOTS
-- (void)initScreenshots;
+- (void)removeScreenshots;
+- (void)updateScreenshots;
 - (BOOL)checkScreeshotForPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation;
 - (void)takeScreenshotFromView:(UIWebView *)webView forPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation;
 - (void)placeScreenshotForView:(UIWebView *)webView andPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation;

@@ -109,6 +109,10 @@
         NSLog(@"    Device Height: %f", screenBounds.size.height);
         
         
+        // ****** BUNDLED BOOK DIRECTORY
+        bundleBookPath = [[[NSBundle mainBundle] pathForResource:@"book" ofType:nil] retain];
+        
+        
         // ****** DOWNLOADED BOOKS DIRECTORY        
         NSString *privateDocsPath = [[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:@"Private Documents"];
         if (![[NSFileManager defaultManager] fileExistsAtPath:privateDocsPath]) {
@@ -150,7 +154,6 @@
         
         
         // TODO: MOVE TO LOADVIEW -->
-        [self setPageSize:[self getCurrentInterfaceOrientation]];
         [self hideStatusBar];
         
 
@@ -178,7 +181,7 @@
         
         // TODO: LOAD BOOK METHOD IN VIEW DID LOAD
         [self loadBookWithBookPath:bookPath];
-        //[self startReading] TODO: IMPLEMENT
+        [self startReading];
     }
     return self;
 }
@@ -187,7 +190,7 @@
     
     
     // ****** STORING BOOK PATH
-    bundleBookPath = [bookPath retain];
+    currentBookPath = [bookPath retain];
 
     
     // ****** CLEANUP PREVIOUS BOOK
@@ -209,6 +212,33 @@
             currentPageNumber = lastPageViewed;
         } else if (bakerStartAtPage != 0) {
             currentPageNumber = bakerStartAtPage;
+            
+            // TODO: MANGA READING SUPPORT
+            /*
+            if (startingPage < 0) {
+                startingPage = MAX(1, totalPages + startingPage + 1);
+            } else if (startingPage == 0) {
+                startingPage = 1;
+            } else if (startingPage > 0) {
+                startingPage = MIN(totalPages, startingPage);
+            }
+            
+            // TODO: START READING FROM PAGE AND ANCHOR
+             
+            currentPageNumber = startingPage;
+            if (currentPageFirstLoading && currPageToLoad != nil) {
+                currentPageNumber = [currPageToLoad intValue];
+            } else if (pageNameFromURL != nil) {
+                pageNameFromURL = nil;
+                NSString *fileNameFromURL = [path stringByAppendingPathComponent:pageNameFromURL];
+                for (int i = 0; i < totalPages; i++) {
+                    if ([[pages objectAtIndex:i] isEqualToString:fileNameFromURL]) {
+                        currentPageNumber = i + 1;
+                        break;
+                    }
+                }
+            }
+            */
         }
         
         // ****** SET SCREENSHOTS FOLDER
@@ -219,7 +249,6 @@
         
         if (!screenshotFolder || ![[NSFileManager defaultManager] fileExistsAtPath:cachedScreenshotsPath]) {
             cachedScreenshotsPath = [bookPath stringByAppendingPathComponent:@"baker-screenshots"];
-            // CHECK WON'T WORK, NEED ANOTHER METHOD TO CHECK IF FOLDER IS INSIDE MAIN BUNDLE
             if ([bookPath isEqualToString:bundleBookPath]) {
                 cachedScreenshotsPath = defaultScreeshotsPath;
             }
@@ -231,7 +260,6 @@
         
     } else {
         
-        // CHECK WON'T WORK, NEED ANOTHER METHOD TO CHECK IF FOLDER IS INSIDE MAIN BUNDLE
         if (![bookPath isEqualToString:bundleBookPath]) {
             [[NSFileManager defaultManager] removeItemAtPath:bookPath error:nil];
         }
@@ -256,6 +284,7 @@
     [self resetPageDetails];
     
     [pages removeAllObjects];
+    [toLoad removeAllObjects];
 }
 - (void)resetPageSlot:(UIWebView *)slot {    
     if (slot) {        
@@ -284,22 +313,27 @@
      * Initializes the 'properties' object from book.json and inits also some static properties.
      */
     
-    NSString *filePath = [bundleBookPath stringByAppendingPathComponent:@"book.json"];
+    NSString *filePath = [currentBookPath stringByAppendingPathComponent:@"book.json"];
     [properties loadManifest:filePath];
+    
     
     // ****** ORIENTATION
     availableOrientation = [[[properties get:@"orientation", nil] retain] autorelease];
     NSLog(@"available orientation: %@", availableOrientation);
     
+    
     // ****** CONTENTS
     [self buildPageArray];
+    
     
     // ****** BAKER RENDERING
     renderingType = [[[properties get:@"-baker-rendering", nil] retain] autorelease];
     NSLog(@"rendering type: %@", renderingType);
     
+    
     // ****** BAKER SWIPES
     scrollView.scrollEnabled = [[properties get:@"-baker-page-turn-swipe", nil] boolValue];
+    
     
     // ****** BAKER BACKGROUND
     scrollView.backgroundColor = [Utils colorWithHexString:[properties get:@"-baker-background", nil]];
@@ -308,13 +342,13 @@
     
     NSString *backgroundPathLandscape = [properties get:@"-baker-background-image-landscape", nil];
     if (backgroundPathLandscape != nil) {
-        backgroundPathLandscape  = [bundleBookPath stringByAppendingPathComponent:backgroundPathLandscape];
+        backgroundPathLandscape  = [currentBookPath stringByAppendingPathComponent:backgroundPathLandscape];
         backgroundImageLandscape = [[UIImage imageWithContentsOfFile:backgroundPathLandscape] retain];        
     }
     
     NSString *backgroundPathPortrait = [properties get:@"-baker-background-image-portrait", nil];
     if (backgroundPathPortrait != nil) {
-        backgroundPathPortrait  = [bundleBookPath stringByAppendingPathComponent:backgroundPathPortrait];
+        backgroundPathPortrait  = [currentBookPath stringByAppendingPathComponent:backgroundPathPortrait];
         backgroundImagePortrait = [[UIImage imageWithContentsOfFile:backgroundPathPortrait] retain];
     }
 }
@@ -323,15 +357,15 @@
         
         NSString *pageFile = nil;
         if ([page isKindOfClass:[NSString class]]) {
-            pageFile = [bundleBookPath stringByAppendingPathComponent:page];
+            pageFile = [currentBookPath stringByAppendingPathComponent:page];
         } else if ([page isKindOfClass:[NSDictionary class]]) {
-            pageFile = [bundleBookPath stringByAppendingPathComponent:[page objectForKey:@"url"]];
+            pageFile = [currentBookPath stringByAppendingPathComponent:[page objectForKey:@"url"]];
         }
         
         if ([[NSFileManager defaultManager] fileExistsAtPath:pageFile]) {
             [pages addObject:pageFile];
         } else {
-            NSLog(@"Page %@ does not exist in %@", page, bundleBookPath);
+            NSLog(@"Page %@ does not exist in %@", page, currentBookPath);
         }
     }
     
@@ -347,245 +381,27 @@
 }
 - (void)startReading {
     
-    // open current page number
+    [self buildPageDetails];
+    [self updateBookLayout];
     
+    currentPageIsDelayingLoading = YES;
+    
+    [self addPageLoading:0];
+    
+    if ([renderingType isEqualToString:@"three-cards"]) {
+        if (currentPageNumber != totalPages) {
+            [self addPageLoading:+1];
+        }
+        
+        if (currentPageNumber != 1) {
+            [self addPageLoading:-1];
+        }
+    }
+    
+    [self handlePageLoading];
+    [indexViewController loadContentFromBundle:[currentBookPath isEqualToString:bundleBookPath]];    
 }
-
-/*
-- (void)initBook:(NSString *)path {
-    NSLog(@"• Init Book");
-    
-    // If a previous current page exist remove it before initialization
-    if (currPage)
-    {        
-        currPage.delegate = nil;
-        
-        [currPage removeFromSuperview];
-        [currPage release];
-        
-        currPage = nil;
-    }
-    
-    [self initBookProperties:path];
-    [self resetPageDetails];
-	
-    NSEnumerator *pagesEnumerator = [[properties get:@"contents", nil] objectEnumerator];
-    id page;
-    
-    while ((page = [pagesEnumerator nextObject])) {
-        NSString *pageFile = nil;
-        if ([page isKindOfClass:[NSString class]]) {
-            pageFile = [path stringByAppendingPathComponent:page];
-        } else if ([page isKindOfClass:[NSDictionary class]]) {
-            pageFile = [path stringByAppendingPathComponent:[page objectForKey:@"url"]];
-        }
-        
-        if ([[NSFileManager defaultManager] fileExistsAtPath:pageFile]) {
-            [pages addObject:pageFile];
-        } else {
-            NSLog(@"Page %@ does not exist in %@", page, path);
-        }
-    }
-    
-	totalPages = [pages count];
-	NSLog(@"    Pages in this book: %d", totalPages);
-	
-	if (totalPages > 0) {
-		// Check if there is a saved starting page        
-		NSString *currPageToLoad = [[NSUserDefaults standardUserDefaults] objectForKey:@"lastPageViewed"];
-		
-        // start reading
-        int startingPage = [[properties get:@"-baker-start-at-page", nil] intValue];
-        if (startingPage < 0) {
-            startingPage = MAX(1, totalPages + startingPage + 1);
-        } else if (startingPage == 0) {
-            startingPage = 1;
-        } else if (startingPage > 0) {
-            startingPage = MIN(totalPages, startingPage);
-        }
-        
-        // start reading
-        currentPageNumber = startingPage;
-        if (currentPageFirstLoading && currPageToLoad != nil) {
-			currentPageNumber = [currPageToLoad intValue];
-		} else if (pageNameFromURL != nil) {
-            pageNameFromURL = nil;
-            NSString *fileNameFromURL = [path stringByAppendingPathComponent:pageNameFromURL];
-            for (int i = 0; i < totalPages; i++) {
-                if ([[pages objectAtIndex:i] isEqualToString:fileNameFromURL]) {
-                    currentPageNumber = i + 1;
-                    break;
-                }
-			}
-		}
-        
-        NSLog(@"    Starting page: %i", currentPageNumber);
-		
-        currentPageIsDelayingLoading = YES; // start reading
-        [toLoad removeAllObjects]; // clean
-		
-        
-        NSString *screenshotFolder = [properties get:@"-baker-page-screenshots", nil];
-        if (screenshotFolder != nil) {
-            cachedScreenshotsPath = [path stringByAppendingPathComponent:screenshotFolder];
-        }
-        
-        if (screenshotFolder == nil || ![[NSFileManager defaultManager] fileExistsAtPath:cachedScreenshotsPath]) {
-            cachedScreenshotsPath = [path stringByAppendingPathComponent:@"baker-screenshots"];
-            if ([path isEqualToString:bundleBookPath]) {
-                cachedScreenshotsPath = defaultScreeshotsPath;
-            }
-        }
-        
-        [cachedScreenshotsPath retain];
-        
-        [self initPageDetails]; // start reading
-        [self resetScrollView]; // clean
-        
-        [self addPageLoading:0]; // start reading
-        if ([renderingType isEqualToString:@"three-cards"]) {
-            if (currentPageNumber != totalPages) {
-                [self addPageLoading:+1];
-            }
-            
-            if (currentPageNumber != 1) {
-                [self addPageLoading:-1];
-            }
-        }
-        [self handlePageLoading];
-        
-        // start reading
-        [indexViewController loadContentFromBundle:[path isEqualToString:bundleBookPath]];
-		
-	} else if (![path isEqualToString:bundleBookPath]) {
-		
-		[[NSFileManager defaultManager] removeItemAtPath:path error:NULL];
- 		feedbackAlert = [[UIAlertView alloc] initWithTitle:ZERO_PAGES_TITLE
-												   message:ZERO_PAGES_MESSAGE
-												  delegate:self
-										 cancelButtonTitle:ALERT_FEEDBACK_CANCEL
-										 otherButtonTitles:nil];
-		[feedbackAlert show];
-		[feedbackAlert release];		
-	}
-}
-*/
-
-- (void)setupWebView:(UIWebView *)webView {
-    NSLog(@"• Setup webView");
-    
-    if (webViewBackground == nil)
-    {
-        webViewBackground = webView.backgroundColor;
-        [webViewBackground retain];
-    }
-    
-    webView.backgroundColor = [UIColor clearColor];
-    webView.opaque = NO;
-    
-    webView.delegate = self;
-    webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-	
-    webView.mediaPlaybackRequiresUserAction = ![[properties get:@"-baker-media-autoplay", nil] boolValue];
-    webView.scalesPageToFit = [[properties get:@"zoomable", nil] boolValue];
-    BOOL verticalBounce = [[properties get:@"-baker-vertical-bounce", nil] boolValue];
-    
-    for (UIView *subview in webView.subviews) {
-        if ([subview isKindOfClass:[UIScrollView class]]) {
-            ((UIScrollView *)subview).bounces = verticalBounce;
-        }
-    }
-} 
-- (void)setPageSize:(NSString *)orientation {
-	NSLog(@"• Set size for orientation: %@", orientation);
-    
-    pageWidth = screenBounds.size.width;
-    pageHeight = screenBounds.size.height;
-	if ([orientation isEqualToString:@"landscape"]) {
-		pageWidth = screenBounds.size.height;
-		pageHeight = screenBounds.size.width;
-	}
-}
-- (void)setTappableAreaSize {
-    NSLog(@"• Set tappable area size");
-
-    int tappableAreaSize = screenBounds.size.width/16;
-    if (screenBounds.size.width < 768) {
-        tappableAreaSize = screenBounds.size.width/8;
-    }
-    
-    upTapArea    = CGRectMake(tappableAreaSize, 0, pageWidth - (tappableAreaSize * 2), tappableAreaSize);
-    downTapArea  = CGRectMake(tappableAreaSize, pageHeight - tappableAreaSize, pageWidth - (tappableAreaSize * 2), tappableAreaSize);
-    leftTapArea  = CGRectMake(0, tappableAreaSize, tappableAreaSize, pageHeight - (tappableAreaSize * 2));
-    rightTapArea = CGRectMake(pageWidth - tappableAreaSize, tappableAreaSize, tappableAreaSize, pageHeight - (tappableAreaSize * 2));
-}
-- (void)resetScrollView {
-    NSLog(@"• Reset scrollview subviews");
-    
-    NSLog(@"    Prevent page from changing until scrollview reset is finished");
-    
-    [self lockPage:[NSNumber numberWithBool:YES]];
-    
-    [self setTappableAreaSize];
-    
-    for (NSMutableDictionary *details in pageDetails) {
-        for (NSString *key in details) {
-            UIView *value = [details objectForKey:key];
-            value.hidden = YES;
-        }
-    }
-    
-    [self showPageDetails];
-    
-    if ([renderingType isEqualToString:@"screenshots"])
-    {
-        for (NSNumber *key in attachedScreenshotLandscape) {
-            UIView *value = [attachedScreenshotLandscape objectForKey:key];
-            [value removeFromSuperview];
-        }
-            
-        for (NSNumber *key in attachedScreenshotPortrait) {
-            UIView *value = [attachedScreenshotPortrait objectForKey:key];
-            [value removeFromSuperview];
-        }
-        
-        [attachedScreenshotLandscape removeAllObjects];
-        [attachedScreenshotPortrait removeAllObjects];
-        
-        [self initScreenshots];
-    }
-    
-    scrollView.contentSize = CGSizeMake(pageWidth * totalPages, pageHeight);
-
-	int scrollViewY = 0;
-	if (![UIApplication sharedApplication].statusBarHidden) {
-		scrollViewY = -20;
-	}
-    [UIView animateWithDuration:0.2 
-                     animations:^{ scrollView.frame = CGRectMake(0, scrollViewY, pageWidth, pageHeight); }];
-	
-    if (prevPage && [prevPage.superview isEqual:scrollView]) {
-        prevPage.frame = [self frameForPage:currentPageNumber - 1];
-        [scrollView bringSubviewToFront:prevPage];
-    }
-    
-    if (nextPage && [nextPage.superview isEqual:scrollView]) {
-        nextPage.frame = [self frameForPage:currentPageNumber + 1];
-        [scrollView bringSubviewToFront:nextPage];
-    }
-    
-    if (currPage) {
-        currPage.frame = [self frameForPage:currentPageNumber];
-    }
-    
-    [scrollView bringSubviewToFront:currPage];
-    [scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:NO];
-    
-    NSLog(@"    Unlock page changing");
-    
-    [self lockPage:[NSNumber numberWithBool:NO]];
-}
-- (void)initPageDetails {
+- (void)buildPageDetails {
     NSLog(@"• Init page details for the book pages");
     
     for (int i = 0; i < totalPages; i++) {
@@ -593,11 +409,13 @@
         UIColor *foregroundColor = [Utils colorWithHexString:[properties get:@"-baker-page-numbers-color", nil]];
         id foregroundAlpha = [properties get:@"-baker-page-numbers-alpha", nil];
         
+        
         // ****** Background
         UIImageView *backgroundView = [[UIImageView alloc] initWithFrame:CGRectMake(pageWidth * i, 0, pageWidth, pageHeight)];
         [self setImageFor:backgroundView];
         [scrollView addSubview:backgroundView];
         [backgroundView release];
+        
         
         // ****** Spinners
         UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
@@ -616,6 +434,7 @@
         [spinner startAnimating];
         [spinner release];
         
+        
         // ****** Numbers
         UILabel *number = [[UILabel alloc] initWithFrame:CGRectMake(pageWidth * i + (pageWidth - 115) / 2, pageHeight / 2 - 55, 115, 30)];
         number.backgroundColor = [UIColor clearColor];
@@ -632,19 +451,104 @@
         [scrollView addSubview:number];
         [number release];
         
+        
         // ****** Title
         PageTitleLabel *title = [[PageTitleLabel alloc]initWithFile:[pages objectAtIndex: i]];
         [title setX:(pageWidth * i + ((pageWidth - title.frame.size.width) / 2)) Y:(pageHeight / 2 + 20)];
         [scrollView addSubview:title];
         [title release];
         
+        
         // ****** Store instances for later use
         NSMutableDictionary *details = [NSMutableDictionary dictionaryWithObjectsAndKeys:spinner, @"spinner", number, @"number", title, @"title", backgroundView, @"background", nil];
         [pageDetails insertObject:details atIndex:i];
     }
 }
+- (void)setImageFor:(UIImageView *)view {
+    if (pageWidth > pageHeight && backgroundImageLandscape != NULL) {
+        // Landscape
+        view.image = backgroundImageLandscape;
+    } else if (pageWidth < pageHeight && backgroundImagePortrait != NULL) {
+        // Portrait
+        view.image = backgroundImagePortrait;
+    } else {
+        view.image = NULL;
+    }
+}
+- (void)updateBookLayout {    
+    NSLog(@"    Prevent page from changing until layout is updated");
+    [self lockPage:[NSNumber numberWithBool:YES]];
+    
+    [self setPageSize:[self getCurrentInterfaceOrientation]];
+    [self showPageDetails];
+    
+    if ([renderingType isEqualToString:@"screenshots"]) {
+        // TODO: BE SURE TO KNOW THE CORRECT CURRENT PAGE!
+        [self removeScreenshots];
+        [self updateScreenshots];
+    }
+    
+    
+    // HACK TO HANDLE STATUS BAR ON ROTATION, TODO: MOVE IT IN ITS OWN METHOD
+	int scrollViewY = 0;
+	if (![UIApplication sharedApplication].statusBarHidden) {
+		scrollViewY = -20;
+	}
+    
+    [UIView animateWithDuration:0.2 
+                     animations:^{
+                         scrollView.frame = CGRectMake(0, scrollViewY, pageWidth, pageHeight);
+                     }];
+    
+    
+    [self setFrame:[self frameForPage:currentPageNumber] forPage:currPage];
+    [self setFrame:[self frameForPage:currentPageNumber + 1] forPage:nextPage];
+    [self setFrame:[self frameForPage:currentPageNumber - 1] forPage:prevPage];
+
+    [scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:NO];
+
+    
+    NSLog(@"    Unlock page changing");
+    [self lockPage:[NSNumber numberWithBool:NO]];
+}
+- (void)setPageSize:(NSString *)orientation {
+	NSLog(@"• Set size for orientation: %@", orientation);
+    
+    pageWidth  = screenBounds.size.width;
+    pageHeight = screenBounds.size.height;
+	
+    if ([orientation isEqualToString:@"landscape"]) {
+		pageWidth  = screenBounds.size.height;
+		pageHeight = screenBounds.size.width;
+	}
+    
+    [self setTappableAreaSize];
+    
+    scrollView.contentSize = CGSizeMake(pageWidth * totalPages, pageHeight);
+}
+- (void)setTappableAreaSize {
+    NSLog(@"• Set tappable area size");
+    
+    int tappableAreaSize = screenBounds.size.width/16;
+    if (screenBounds.size.width < 768) {
+        tappableAreaSize = screenBounds.size.width/8;
+    }
+    
+    upTapArea    = CGRectMake(tappableAreaSize, 0, pageWidth - (tappableAreaSize * 2), tappableAreaSize);
+    downTapArea  = CGRectMake(tappableAreaSize, pageHeight - tappableAreaSize, pageWidth - (tappableAreaSize * 2), tappableAreaSize);
+    leftTapArea  = CGRectMake(0, tappableAreaSize, tappableAreaSize, pageHeight - (tappableAreaSize * 2));
+    rightTapArea = CGRectMake(pageWidth - tappableAreaSize, tappableAreaSize, tappableAreaSize, pageHeight - (tappableAreaSize * 2));
+}
 - (void)showPageDetails {
     NSLog(@"• Show page details for the book pages");
+    
+    // TODO: IS THIS NEEDED ?
+    for (NSMutableDictionary *details in pageDetails) {
+        for (NSString *key in details) {
+            UIView *value = [details objectForKey:key];
+            value.hidden = YES;
+        }
+    }
     
 	for (int i = 0; i < totalPages; i++) {
         
@@ -671,7 +575,6 @@
                         value.frame = frame;
                         value.hidden = NO;
                         
-                        
                     } else if ([key isEqualToString:@"title"]) {
                         
                         frame.origin.x = pageWidth * i + (pageWidth - frame.size.width) / 2;
@@ -682,6 +585,7 @@
                     } else if ([key isEqualToString:@"background"]) {
                         
                         [self setImageFor:(UIImageView *)value];
+                        
                         frame.origin.x = pageWidth * i;
                         frame.size.width = pageWidth;
                         frame.size.height = pageHeight;
@@ -697,17 +601,38 @@
         } 
 	}
 }
-- (void)setImageFor:(UIImageView *)view {
-    if (pageWidth > pageHeight && backgroundImageLandscape != NULL) {
-        // Landscape
-        view.image = backgroundImageLandscape;
-    } else if (pageWidth < pageHeight && backgroundImagePortrait != NULL) {
-        // Portrait
-        view.image = backgroundImagePortrait;
-    } else {
-        view.image = NULL;
+- (void)setFrame:(CGRect)frame forPage:(UIWebView *)page {
+    if (page && [page.superview isEqual:scrollView]) {
+        page.frame = frame;
+        [scrollView bringSubviewToFront:page];
     }
 }
+
+- (void)setupWebView:(UIWebView *)webView {
+    NSLog(@"• Setup webView");
+    
+    if (webViewBackground == nil)
+    {
+        webViewBackground = webView.backgroundColor;
+        [webViewBackground retain];
+    }
+    
+    webView.backgroundColor = [UIColor clearColor];
+    webView.opaque = NO;
+    
+    webView.delegate = self;
+    webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+	
+    webView.mediaPlaybackRequiresUserAction = ![[properties get:@"-baker-media-autoplay", nil] boolValue];
+    webView.scalesPageToFit = [[properties get:@"zoomable", nil] boolValue];
+    BOOL verticalBounce = [[properties get:@"-baker-vertical-bounce", nil] boolValue];
+    
+    for (UIView *subview in webView.subviews) {
+        if ([subview isKindOfClass:[UIScrollView class]]) {
+            ((UIScrollView *)subview).bounces = verticalBounce;
+        }
+    }
+} 
 - (void)addSkipBackupAttributeToItemAtPath:(NSString *)path {
     const char *filePath = [path fileSystemRepresentation];
     const char *attrName = "com.apple.MobileBackup";
@@ -923,7 +848,7 @@
             [toLoad removeAllObjects];
             [currPage removeFromSuperview];            
             
-            [self initScreenshots];
+            [self updateScreenshots];
             
             if (![self checkScreeshotForPage:currentPageNumber andOrientation:[self getCurrentInterfaceOrientation]]) {
                 [self lockPage:[NSNumber numberWithBool:YES]];
@@ -1086,7 +1011,7 @@
     
     [self setPageSize:[self getCurrentInterfaceOrientation]];
     [self getPageHeight];
-    [self resetScrollView];
+    [self updateBookLayout];
 }
 
 #pragma mark - SCROLLVIEW
@@ -1466,7 +1391,22 @@
 }
 
 #pragma mark - SCREENSHOTS
-- (void)initScreenshots {
+- (void)removeScreenshots {
+    
+    for (NSNumber *key in attachedScreenshotLandscape) {
+        UIView *value = [attachedScreenshotLandscape objectForKey:key];
+        [value removeFromSuperview];
+    }
+    
+    for (NSNumber *key in attachedScreenshotPortrait) {
+        UIView *value = [attachedScreenshotPortrait objectForKey:key];
+        [value removeFromSuperview];
+    }
+    
+    [attachedScreenshotLandscape removeAllObjects];
+    [attachedScreenshotPortrait removeAllObjects];    
+}
+- (void)updateScreenshots {
     
     NSMutableSet *completeSet = [NSMutableSet new];
     NSMutableSet *supportSet  = [NSMutableSet new]; 
@@ -1867,13 +1807,9 @@
 
 #pragma mark - ORIENTATION
 - (NSString *)getCurrentInterfaceOrientation {
-    if ([availableOrientation isEqualToString:@"portrait"] || [availableOrientation isEqualToString:@"landscape"])
-    {
+    if ([availableOrientation isEqualToString:@"portrait"] || [availableOrientation isEqualToString:@"landscape"]) {
         return availableOrientation;
-    } 
-    else {
-		// WARNING!!! Seems like checking [[UIDevice currentDevice] orientation] against "UIInterfaceOrientationPortrait" is broken (return FALSE with the device in portrait orientation)
-		// Safe solution: always check if the device is in landscape orientation, if FALSE then it's in portrait.
+    } else {
         if (UIInterfaceOrientationIsLandscape(self.interfaceOrientation)) {
             return @"landscape";
         } else {
@@ -1904,9 +1840,8 @@
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
     [indexViewController rotateFromOrientation:fromInterfaceOrientation toOrientation:self.interfaceOrientation];
     
-    [self setPageSize:[self getCurrentInterfaceOrientation]];
     [self getPageHeight];
-	[self resetScrollView];
+	[self updateBookLayout];
 }
 
 #pragma mark - MEMORY
@@ -1930,7 +1865,7 @@
     [defaultScreeshotsPath release];
 
     [documentsBookPath release];
-    [bundleBookPath release];
+    [currentBookPath release];
 
     [pageDetails release];
     [toLoad release];
