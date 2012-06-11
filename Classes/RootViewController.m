@@ -210,36 +210,12 @@
         
         if (currentPageFirstLoading && lastPageViewed != 0) {
             currentPageNumber = lastPageViewed;
-        } else if (bakerStartAtPage != 0) {
-            currentPageNumber = bakerStartAtPage;
-            
-            // TODO: MANGA READING SUPPORT
-            /*
-            if (startingPage < 0) {
-                startingPage = MAX(1, totalPages + startingPage + 1);
-            } else if (startingPage == 0) {
-                startingPage = 1;
-            } else if (startingPage > 0) {
-                startingPage = MIN(totalPages, startingPage);
-            }
-            
-            // TODO: START READING FROM PAGE AND ANCHOR
-             
-            currentPageNumber = startingPage;
-            if (currentPageFirstLoading && currPageToLoad != nil) {
-                currentPageNumber = [currPageToLoad intValue];
-            } else if (pageNameFromURL != nil) {
-                pageNameFromURL = nil;
-                NSString *fileNameFromURL = [path stringByAppendingPathComponent:pageNameFromURL];
-                for (int i = 0; i < totalPages; i++) {
-                    if ([[pages objectAtIndex:i] isEqualToString:fileNameFromURL]) {
-                        currentPageNumber = i + 1;
-                        break;
-                    }
-                }
-            }
-            */
+        } else if (bakerStartAtPage < 0) {
+            currentPageNumber = MAX(1, totalPages + bakerStartAtPage + 1);
+        } else if (bakerStartAtPage > 0) {
+            currentPageNumber = MIN(totalPages, bakerStartAtPage);
         }
+        
         
         // ****** SET SCREENSHOTS FOLDER
         NSString *screenshotFolder = [properties get:@"-baker-page-screenshots", nil];
@@ -378,6 +354,23 @@
     // set anchor
     
     // open current page
+    
+    // TODO: START READING FROM PAGE AND ANCHOR
+    /*
+    currentPageNumber = startingPage;
+    if (currentPageFirstLoading && currPageToLoad != nil) {
+        currentPageNumber = [currPageToLoad intValue];
+    } else if (pageNameFromURL != nil) {
+        pageNameFromURL = nil;
+        NSString *fileNameFromURL = [path stringByAppendingPathComponent:pageNameFromURL];
+        for (int i = 0; i < totalPages; i++) {
+            if ([[pages objectAtIndex:i] isEqualToString:fileNameFromURL]) {
+                currentPageNumber = i + 1;
+                break;
+            }
+        }
+    }
+    */
 }
 - (void)startReading {
     
