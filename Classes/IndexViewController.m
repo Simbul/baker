@@ -34,14 +34,13 @@
 
 @implementation IndexViewController
 
-- (id)initWithBookBundlePath:(NSString *)path documentsBookPath:(NSString *)docpath fileName:(NSString *)name webViewDelegate:(UIViewController<UIWebViewDelegate> *)delegate {
+- (id)initWithBookPath:(NSString *)path fileName:(NSString *)name webViewDelegate:(UIViewController<UIWebViewDelegate> *)delegate {
     
     self = [super init];
     if (self) {
         
         fileName = name;
-        bookBundlePath = path;
-        documentsBookPath = docpath;
+        bookPath = path;
         webViewDelegate = delegate;
         
         disabled = NO;
@@ -198,12 +197,8 @@
     [self setIndexViewHidden:hidden withAnimation:NO];
     [self fadeIn];
 }
-- (void)loadContent{
-    [self loadContentFromBundle:true];
-}
 
-- (void)loadContentFromBundle:(BOOL)fromBundle{
-    loadedFromBundle = fromBundle;
+- (void)loadContent {
     NSString* path = [self indexPath];
     
     [self assignProperties];
@@ -242,6 +237,10 @@
     }
 
     cachedContentSize = indexScrollView.contentSize;
+    // get correct contentsize
+    if (cachedContentSize.width < indexWidth) {
+        cachedContentSize = CGSizeMake(indexWidth, indexHeight);
+    }
     [self setActualSize];
     
     NSLog(@"Set size for IndexView to %dx%d (constrained from %dx%d)", actualIndexWidth, actualIndexHeight, indexWidth, indexHeight);
@@ -269,12 +268,7 @@
 }
 
 - (NSString *)indexPath {
-    if(loadedFromBundle){
-        NSLog(@"Reloading index from bundle");
-        return [bookBundlePath stringByAppendingPathComponent:fileName];
-    } else {
-        return [documentsBookPath stringByAppendingPathComponent:fileName];
-    }
+    return [bookPath stringByAppendingPathComponent:fileName];
 }
 
 /*
