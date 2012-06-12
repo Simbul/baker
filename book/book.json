@@ -1,0 +1,38 @@
+{
+    "hpub": 1,
+    "title": "The Study in Scarlet",
+    "author": ["Arthur Conan Doyle"],
+    "creator": ["D. Casali, M. Colombo, A. Morandi"],
+    "date": "2011-06-15",
+    "url": "book://bakerframework.com/books/arthurconandoyle-thestudyinscarlet",
+
+    "orientation": "both",
+    "zoomable": false,
+
+    "-baker-background": "#000000",
+    "-baker-vertical-bounce": true,
+    "-baker-media-autoplay": true,
+    "-baker-background-image-portrait": "gfx/background-portrait.png",
+    "-baker-background-image-landscape": "gfx/background-landscape.png",
+    "-baker-page-numbers-color": "#000000",
+
+    "contents": [
+        "Book Cover.html",
+        "Book Index.html",
+        "Part1-01.html",
+        "Part1-02.html",
+        "Part1-03.html",
+        "Part1-04.html",
+        "Part1-05.html",
+        "Part1-06.html",
+        "Part1-07.html",
+        "Part2-01.html",
+        "Part2-02.html",
+        "Part2-03.html",
+        "Part2-04.html",
+        "Part2-05.html",
+        "Part2-06.html",
+        "Part2-07.html",
+        "Tail.html"
+    ]
+}

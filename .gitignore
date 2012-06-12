@@ -1,0 +1,6 @@
+.DS_Store
+Baker.xcodeproj/*.mode1v3
+Baker.xcodeproj/*.pbxuser
+Baker.xcodeproj/xcuserdata
+Baker.xcodeproj/project.xcworkspace/xcuserdata
+build/
