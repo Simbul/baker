@@ -161,9 +161,6 @@
         
         [self.view addSubview:scrollView];
         
-        // ****** INDEX WEBVIEW INIT
-        indexViewController = [[IndexViewController alloc] initWithBookBundlePath:bundleBookPath documentsBookPath:documentsBookPath fileName:INDEX_FILE_NAME webViewDelegate:self];
-        [self.view addSubview:indexViewController.view];
         
         // ****** BOOK INIT
         if ([[NSFileManager defaultManager] fileExistsAtPath:documentsBookPath]) {
@@ -552,7 +549,19 @@
         }
         [self handlePageLoading];
         
-        [indexViewController loadContentFromBundle:[path isEqualToString:bundleBookPath]];
+        // ****** INDEX WEBVIEW INIT
+        // we move it here to make it more clear and clean
+        
+        if (indexViewController != nil) {
+            // first of all, we need to clean the indexview if it exists.
+            [indexViewController.view removeFromSuperview];
+            [indexViewController release];
+        }
+        indexViewController = [[IndexViewController alloc] initWithBookPath:path fileName:INDEX_FILE_NAME webViewDelegate:self];
+        [self.view addSubview:indexViewController.view];
+        
+        
+        [indexViewController loadContent];
 		
 	} else if (![path isEqualToString:bundleBookPath]) {
 		
