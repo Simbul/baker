@@ -382,6 +382,11 @@
     [self buildPageDetails];
     [self updateBookLayout];
     
+    
+    // TODO: MOVE INTO ANOTHER METHOD
+    [indexViewController loadContentFromBundle:[currentBookPath isEqualToString:bundleBookPath]];
+    
+    
     currentPageIsDelayingLoading = YES;
     
     [self addPageLoading:0];
@@ -397,7 +402,6 @@
     }
     
     [self handlePageLoading];
-    [indexViewController loadContentFromBundle:[currentBookPath isEqualToString:bundleBookPath]];    
 }
 - (void)buildPageDetails {
     NSLog(@"• Init page details for the book pages");
