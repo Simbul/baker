@@ -73,6 +73,7 @@
 	BOOL currentPageIsDelayingLoading;
     BOOL currentPageHasChanged;
     BOOL currentPageIsLocked;
+    BOOL userIsScrolling;
         
     UIScrollView *scrollView;
 	UIWebView *prevPage;
@@ -162,6 +163,7 @@
 - (void)placeScreenshotForView:(UIWebView *)webView andPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation;
 
 #pragma mark - GESTURES
+- (void)handleInterceptedTouch:(NSNotification *)notification;
 - (void)userDidTap:(UITouch *)touch;
 - (void)userDidScroll:(UITouch *)touch;
 

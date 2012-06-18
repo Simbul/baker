@@ -32,18 +32,9 @@
 #import <Foundation/Foundation.h>
 #import	"RootViewController.h"
 
-@interface InterceptorWindow : UIWindow {
-    UIView *target;
-	RootViewController *eventsDelegate;
-	
-    BOOL isScrolling;
-}
- 
-#pragma mark - Init
-- (id)initWithTarget:(UIView *)targetView eventsDelegate:(UIViewController *)delegateController frame:(CGRect)aRect;
+@interface InterceptorWindow : UIWindow
 
 #pragma mark - Events management
-- (void)forwardTap:(UITouch *)touch;
-- (void)forwardScroll:(UITouch *)touch;
+- (void)interceptEvent:(UIEvent *)event;
 
 @end

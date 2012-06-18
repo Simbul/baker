@@ -56,7 +56,7 @@
 	self.rootViewController = [[[RootViewController alloc] initWithBookPath:[[NSBundle mainBundle] pathForResource:@"book" ofType:nil]] autorelease];
     
 	// Create the application window
-	self.window = [[[InterceptorWindow alloc] initWithTarget:self.rootViewController.scrollView eventsDelegate:self.rootViewController frame:[[UIScreen mainScreen]bounds]] autorelease];
+	self.window = [[[InterceptorWindow alloc] initWithFrame:[[UIScreen mainScreen]bounds]] autorelease];
 	window.backgroundColor = [UIColor whiteColor];
 	
 	// Add the root view to the application window

@@ -34,83 +34,26 @@
 
 @implementation InterceptorWindow
 
-#pragma mark - Init
-
-- (id)initWithTarget:(UIView *)targetView eventsDelegate:(UIViewController *)delegateController frame:(CGRect)frame {
-    
-    self = [super initWithFrame:frame];
-    if (self) {
-        target = targetView;
-        eventsDelegate = (RootViewController *)delegateController;
-    }
-    return self;
-}
-
 #pragma mark - Events management
 
 - (void)sendEvent:(UIEvent *)event {
-	
-    // At the moment, all the events are propagated (by calling the sendEvent method
-	// in the parent class) except single-finger multitaps.
-	
-	BOOL shouldCallParent = YES;
-	
-	if (event.type == UIEventTypeTouches) {
-		
-        NSSet *touches = [event allTouches];		
-		if (touches.count == 1) {
-			
-            UITouch *touch = touches.anyObject;
-			
-			if (touch.phase == UITouchPhaseBegan) {
-				isScrolling = NO;
-			} else if (touch.phase == UITouchPhaseMoved) {
-				isScrolling = YES;
-			}
-        
-			if (touch.tapCount > 1) {
-                // Touch is not the first of multiple subsequent touches
-                if (touch.phase == UITouchPhaseEnded && !isScrolling) {
-                    NSLog(@"Multi Tap");
-					[self performSelector:@selector(forwardTap:) withObject:touch];
-				}
-				shouldCallParent = NO;
-                
-			} else if ([touch.view isDescendantOfView:target] == YES) {
-                // Touch was on the target view (or one of its descendants) ...
-                if (isScrolling) {
-					// ... and is not a single tap but a scrollin gesture
-                    NSLog(@"Scrolling");
-					[self performSelector:@selector(forwardScroll:) withObject:touch];
-				
-                } else if (touch.phase == UITouchPhaseEnded) {
-					
-					// ... and a single tap has just been completed
-					NSLog(@"Single Tap");
-					[self performSelector:@selector(forwardTap:) withObject:touch];
-				}
-			}
-		}
-	}
-	
-	if (shouldCallParent) {
-		[super sendEvent:event];
-	}
-}
 
-- (void)forwardTap:(UITouch *)touch {
-	[eventsDelegate userDidTap:touch];
+    [super sendEvent:event];
+    [self interceptEvent:event];
 }
-- (void)forwardScroll:(UITouch *)touch {
-	[eventsDelegate userDidScroll:touch];
-}
-
-- (void)dealloc {
-	
-    [target release];
-	[eventsDelegate release];
+- (void)interceptEvent:(UIEvent *)event {
     
-    [super dealloc];
+    if (event.type == UIEventTypeTouches)
+    {
+        NSSet *touches = [event allTouches];
+		if (touches.count == 1)
+        {
+            UITouch *touch = touches.anyObject;
+
+            NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:touch, @"touch", nil];
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_touch_intercepted" object:nil userInfo:userInfo];
+        }
+ 	}
 }
 
 @end

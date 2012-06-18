@@ -146,6 +146,7 @@
         currentPageIsDelayingLoading = YES;
         currentPageHasChanged = NO;
         currentPageIsLocked = NO;
+        userIsScrolling = NO;
         
         webViewBackground = nil;
         
@@ -173,7 +174,11 @@
         indexViewController = [[IndexViewController alloc] initWithBookBundlePath:bundleBookPath documentsBookPath:documentsBookPath fileName:INDEX_FILE_NAME webViewDelegate:self];
         [self.view addSubview:indexViewController.view];
         
-
+        
+        // ****** LISTENER FOR INTERCEPTOR WINDOW NOTIFICATION
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleInterceptedTouch:) name:@"notification_touch_intercepted" object:nil];
+        
+        
         // ****** LISTENER FOR DOWNLOAD NOTIFICATION - TODO: MOVE TO VIEWWILLAPPEAR
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(downloadBook:) name:@"downloadNotification" object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleDownloadResult:) name:@"handleDownloadResult" object:nil];
@@ -1546,6 +1551,23 @@
 }
 
 #pragma mark - GESTURES
+- (void)handleInterceptedTouch:(NSNotification *)notification {
+    
+    NSDictionary *userInfo = notification.userInfo;
+    UITouch *touch = [userInfo objectForKey:@"touch"];
+    
+    if (touch.phase == UITouchPhaseBegan) {
+        userIsScrolling = NO;
+    } else if (touch.phase == UITouchPhaseMoved) {
+        userIsScrolling = YES;
+    }
+
+    if (userIsScrolling) {
+        [self userDidScroll:touch];
+    } else if (touch.phase == UITouchPhaseEnded) {
+        [self userDidTap:touch];
+    }
+}
 - (void)userDidTap:(UITouch *)touch {
 	/****************************************************************************************************
      * This function handles all the possible user navigation taps:
