@@ -1584,34 +1584,26 @@
     // Swipe or scroll the page.
     if (!currentPageIsLocked)
     {
-        if (CGRectContainsPoint(upTapArea, tapPoint))
-        {
+        if (CGRectContainsPoint(upTapArea, tapPoint)) {
             NSLog(@"    Tap UP /\\!");
             [self goUpInPage:@"1004" animating:YES];	
-        }
-        else if (CGRectContainsPoint(downTapArea, tapPoint))
-        {
+        } else if (CGRectContainsPoint(downTapArea, tapPoint)) {
             NSLog(@"    Tap DOWN \\/");
             [self goDownInPage:@"1004" animating:YES];	
-        }
-        else if (CGRectContainsPoint(leftTapArea, tapPoint) || CGRectContainsPoint(rightTapArea, tapPoint))
-        {
+        } else if (CGRectContainsPoint(leftTapArea, tapPoint) || CGRectContainsPoint(rightTapArea, tapPoint)) {
             int page = 0;
-            if (CGRectContainsPoint(leftTapArea, tapPoint)) 
-            {
+            if (CGRectContainsPoint(leftTapArea, tapPoint)) {
                 NSLog(@"    Tap LEFT >>>");
                 page = currentPageNumber - 1;
-            }
-            else if (CGRectContainsPoint(rightTapArea, tapPoint))
-            {
+            } else if (CGRectContainsPoint(rightTapArea, tapPoint)) {
                 NSLog(@"    Tap RIGHT <<<");
                 page = currentPageNumber + 1;
             }
             
             if ([[properties get:@"-baker-page-turn-tap", nil] boolValue]) [self changePage:page];
         }
-        else if ((touch.tapCount%2) == 0)
-        {
+        else if ((touch.tapCount % 2) == 0) {
+            NSLog(@"    Multi Tap TOGGLE STATUS BAR");
             [self toggleStatusBar];
         }
     }
