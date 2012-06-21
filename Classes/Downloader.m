@@ -7,6 +7,7 @@
 //
 
 #import "Downloader.h"
+#import <sys/xattr.h>
 
 #define DOWNLOAD_FEEDBACK_TITLE @"Downloading..."
 #define DOWNLOAD_FEEDBACK_CANCEL @"Cancel"
@@ -14,6 +15,17 @@
 @implementation Downloader
 
 @synthesize connectionRef;
+
+- (void)addSkipBackupAttributeToItemAtPath:(NSString *)path {
+    const char *filePath = [path fileSystemRepresentation];
+    const char *attrName = "com.apple.MobileBackup";
+    u_int8_t attrValue = 1;
+    
+    int result = setxattr(filePath, attrName, &attrValue, sizeof(attrValue), 0, 0);
+    if (result == 0) {
+        NSLog(@"Successfully added skip backup attribute to item %@", path);
+    }
+}
 
 - (Downloader *)initDownloader:(NSString *)observerName {
 	
@@ -39,6 +51,7 @@
     } else {
         // tempFile not found yet, so we need to create it.
         [[NSFileManager defaultManager] createFileAtPath:tempFile contents:nil attributes:nil];
+        [self addSkipBackupAttributeToItemAtPath:tempFile];
         fileHandle = [[NSFileHandle fileHandleForWritingAtPath:tempFile] retain];
     }
     offset = [fileHandle seekToEndOfFile];
