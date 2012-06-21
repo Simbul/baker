@@ -161,7 +161,6 @@
         
         [self.view addSubview:scrollView];
         
-        
         // ****** BOOK INIT
         if ([[NSFileManager defaultManager] fileExistsAtPath:documentsBookPath]) {
             [self initBook:documentsBookPath];
@@ -559,7 +558,7 @@
         }
         indexViewController = [[IndexViewController alloc] initWithBookPath:path fileName:INDEX_FILE_NAME webViewDelegate:self];
         [self.view addSubview:indexViewController.view];
-        
+
         
         [indexViewController loadContent];
 		
@@ -908,7 +907,7 @@
 - (BOOL)loadWebView:(UIWebView*)webView withPage:(int)page {
 	
 	NSString *path = [NSString stringWithString:[pages objectAtIndex:page - 1]];
-		
+
 	if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
 		NSLog(@"• Loading: book/%@", [[NSFileManager defaultManager] displayNameAtPath:path]);
 		[webView loadRequest:[NSURLRequest requestWithURL:[NSURL fileURLWithPath:path]]];
@@ -1319,8 +1318,8 @@
 }
 - (void)webView:(UIWebView *)webView dispatchHTMLEvent:(NSString *)event {
     NSString *jsDispatchEvent = [NSString stringWithFormat:@"var bakerDispatchedEvent = document.createEvent('Events');\
-                                                             bakerDispatchedEvent.initEvent('%@', false, false);\
-                                                             window.dispatchEvent(bakerDispatchedEvent);", event];
+                                 bakerDispatchedEvent.initEvent('%@', false, false);\
+                                 window.dispatchEvent(bakerDispatchedEvent);", event];
     
     [webView stringByEvaluatingJavaScriptFromString:jsDispatchEvent];
 }
@@ -1579,7 +1578,7 @@
 	}
 }
 - (void)scrollDownCurrentPage:(int)targetOffset animating:(BOOL)animating {
-		
+
 	int currentPageMaxScroll = currentPageHeight - pageHeight;
 	if ([self getCurrentPageOffset] < currentPageMaxScroll)
     {
@@ -1603,11 +1602,11 @@
 - (void)handleAnchor:(BOOL)animating {
 	if (anchorFromURL != nil) {
 		NSString *jsAnchorHandler = [NSString stringWithFormat:@"(function() {\
-                                                                     var target = '%@';\
-                                                                     var elem = document.getElementById(target);\
-                                                                     if (!elem) elem = document.getElementsByName(target)[0];\
-                                                                     return elem.offsetTop;\
-                                                                 })();", anchorFromURL];
+                                     var target = '%@';\
+                                     var elem = document.getElementById(target);\
+                                     if (!elem) elem = document.getElementsByName(target)[0];\
+                                     return elem.offsetTop;\
+                                     })();", anchorFromURL];
         
         NSString *offsetString = [currPage stringByEvaluatingJavaScriptFromString:jsAnchorHandler];
 		if (![offsetString isEqualToString:@""])
@@ -1688,7 +1687,7 @@
 	
 	NSDictionary *requestSummary = [NSDictionary dictionaryWithDictionary:(NSMutableDictionary *)[notification object]];	
 	[downloader release];
-		
+
 	if ([requestSummary objectForKey:@"error"] != nil) {
 		
 		NSLog(@"• Error while downloading new book data");
@@ -1699,7 +1698,7 @@
 										 otherButtonTitles:ERROR_FEEDBACK_CONFIRM, nil];
 		[feedbackAlert show];
 		[feedbackAlert release];
-			
+
 	} else if ([requestSummary objectForKey:@"data"] != nil) {
 		
 		NSLog(@"• New book data received succesfully");
@@ -1708,7 +1707,7 @@
 												  delegate:self
 										 cancelButtonTitle:nil
 										 otherButtonTitles:nil];
-				
+
 		UIActivityIndicatorView *extractingWheel = [[UIActivityIndicatorView alloc] initWithFrame:CGRectMake(124,50,37,37)];
 		extractingWheel.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhiteLarge;
 		[extractingWheel startAnimating];
@@ -1723,12 +1722,12 @@
 	}
 }
 - (void)manageDownloadData:(NSData *)data {
-			
+
 	NSArray *URLSections = [NSArray arrayWithArray:[URLDownload pathComponents]];
 	NSString *targetPath = [NSTemporaryDirectory() stringByAppendingString:[URLSections lastObject]];
-		
+
 	[data writeToFile:targetPath atomically:YES];
-			
+
 	if ([[NSFileManager defaultManager] fileExistsAtPath:targetPath]) {
 		NSLog(@"• File hpub create successfully at path: %@", targetPath);
 		NSLog(@"    Book destination path: %@", documentsBookPath);
@@ -1742,7 +1741,7 @@
 		
         NSLog(@"    Book successfully unzipped. Removing .hpub file");
         [[NSFileManager defaultManager] removeItemAtPath:targetPath error:NULL];
-				
+
 		NSLog(@"    Add skip backup attribute to book folder");
         [self addSkipBackupAttributeToItemAtPath:documentsBookPath];
         

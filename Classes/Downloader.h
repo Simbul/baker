@@ -22,6 +22,10 @@
 	UIActivityIndicatorView * progressWheel;
 	UIProgressView *progressBar;
 	UIAlertView *progressAlert;
+@private
+    NSString *tempFile;
+    NSFileHandle *fileHandle;
+    unsigned long long offset;
 }
 
 @property (nonatomic, retain) NSURLConnection *connectionRef;

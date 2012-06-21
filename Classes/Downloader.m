@@ -7,6 +7,7 @@
 //
 
 #import "Downloader.h"
+#import <sys/xattr.h>
 
 #define DOWNLOAD_FEEDBACK_TITLE @"Downloading..."
 #define DOWNLOAD_FEEDBACK_CANCEL @"Cancel"
@@ -14,6 +15,17 @@
 @implementation Downloader
 
 @synthesize connectionRef;
+
+- (void)addSkipBackupAttributeToItemAtPath:(NSString *)path {
+    const char *filePath = [path fileSystemRepresentation];
+    const char *attrName = "com.apple.MobileBackup";
+    u_int8_t attrValue = 1;
+    
+    int result = setxattr(filePath, attrName, &attrValue, sizeof(attrValue), 0, 0);
+    if (result == 0) {
+        NSLog(@"Successfully added skip backup attribute to item %@", path);
+    }
+}
 
 - (Downloader *)initDownloader:(NSString *)observerName {
 	
@@ -25,16 +37,35 @@
     }
 	return self;
 }
-- (void)makeHTTPRequest:(NSString *)urlAddress {
+- (void)makeHTTPRequest:(NSString *)urlAddress {	    
+    // create tempFile to make possible for recovery download.
+    NSString *urlStr = [urlAddress lastPathComponent];
+    NSString *tempPath = [[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString:@"/"];
+    tempFile = [[[tempPath stringByAppendingString:urlStr] stringByAppendingString:@".tmp"] retain];
+    NSLog(@"tempFile is:%@",tempFile);
     
-    [UIApplication sharedApplication].idleTimerDisabled = YES;
+    [fileHandle closeFile];
+    if ([[NSFileManager defaultManager] fileExistsAtPath:tempFile]){
+        // not first time download, so we can use this tempFile
+        fileHandle = [[NSFileHandle fileHandleForWritingAtPath:tempFile] retain];
+    } else {
+        // tempFile not found yet, so we need to create it.
+        [[NSFileManager defaultManager] createFileAtPath:tempFile contents:nil attributes:nil];
+        [self addSkipBackupAttributeToItemAtPath:tempFile];
+        fileHandle = [[NSFileHandle fileHandleForWritingAtPath:tempFile] retain];
+    }
+    offset = [fileHandle seekToEndOfFile];
+    // preparing for recovery download
+    NSString *range = [NSString stringWithFormat:@"bytes=%llu-",offset];
 	
-	NSLog(@"HTTP Request to %@", urlAddress);
-	
+    NSLog(@"HTTP Request to %@", urlAddress);
+    
 	NSString *urlString = [urlAddress stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];	
 	NSURL *url = [NSURL URLWithString:urlString];
 		
 	NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:url];
+    // tell Server that we are in state of recovery download
+    [request addValue:range forHTTPHeaderField:@"Range"];
 	[request setTimeoutInterval:30.0];
 	[request setHTTPMethod:@"GET"];
 		
@@ -51,7 +82,7 @@
     // redirect, so each time we reset the data.
 	
 	NSLog(@"Connection received response");
-    [receivedData setLength:0];
+    //[receivedData setLength:0];
 	
 	if ([response respondsToSelector:@selector(statusCode)]) {
 		
@@ -70,7 +101,7 @@
 			
 		} else {
 			
-			expectedData = [response expectedContentLength];
+			expectedData = [response expectedContentLength]+offset;
 			fakeProgress = 0.1;
 			
 			[self initProgress];
@@ -81,6 +112,8 @@
 	
     // Connection error, inform the user
 	[connection release];
+    // also we should close the tempFile
+    [fileHandle closeFile];
 	
     NSLog(@"Connection failed! Error - %@", [error localizedDescription]);
 	[requestSummary setObject:[error localizedDescription] forKey:@"error"];
@@ -90,13 +123,15 @@
 }
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
 	
-    // Append received data to receivedData.
+    // Append received data to tempFile.
 	NSLog(@"Connection received %d bytes of data", [data length]);
-	[receivedData appendData:data];
+	
+    [fileHandle writeData:data];
+    offset = [fileHandle offsetInFile];
 	
 	if (expectedData > -1) {
 		
-		long long receivedDataLength = (long long)[receivedData length];
+		long long receivedDataLength = offset;
 		float progress = (float)receivedDataLength/(float)expectedData;
 		progressBar.progress = progress;
 	
@@ -110,6 +145,16 @@
 	
     // Connection finished, do something with the data
 	[connection release];
+    
+    // handle temp file and prepare the data
+    [fileHandle closeFile];
+    
+    NSFileHandle *readHandle = [[NSFileHandle fileHandleForReadingAtPath:tempFile] retain];
+    [receivedData appendData:[readHandle readDataToEndOfFile]];
+    [readHandle closeFile];
+    [readHandle release];
+    // remove tempFile now
+    [[NSFileManager defaultManager] removeItemAtPath:tempFile error:nil];
 	
     NSLog(@"Succeeded! Received %d bytes of data",[receivedData length]);
 	[requestSummary setObject:receivedData forKey:@"data"];
@@ -148,8 +193,6 @@
 	[self performSelector:@selector(postNotification) withObject:nil afterDelay:0.1];
 }
 - (void)postNotification {
-	
-    [UIApplication sharedApplication].idleTimerDisabled = NO;
 	[[NSNotificationCenter defaultCenter] postNotificationName:notificationName object:requestSummary];
 }
 - (void)cancelConnection {
@@ -159,7 +202,9 @@
 }
 
 - (void)dealloc {
-	
+    [fileHandle closeFile];
+    [fileHandle release];
+    [tempFile release];
 	[requestSummary release];
 	[receivedData release];
 	[super dealloc];
