@@ -118,21 +118,13 @@
 
 - (void)saveLastPageReference {
 	
+    NSDictionary *bookStatus = [rootViewController bookCurrentStatus];
 	NSUserDefaults *userDefs = [NSUserDefaults standardUserDefaults];
-	
-	// Save last page viewed reference
-	if (rootViewController.currentPageNumber > 0) {
-		NSString *lastPageViewed = [NSString stringWithFormat:@"%d", rootViewController.currentPageNumber];
-		[userDefs setObject:lastPageViewed forKey:@"lastPageViewed"];
-		NSLog(@"Saved last page viewed: %@", lastPageViewed);
-	}
-	
-	// Save last scroll index reference
-	if (rootViewController.currPage != nil) {
-		NSString *lastScrollIndex = [rootViewController.currPage stringByEvaluatingJavaScriptFromString:@"window.scrollY;"];
-		[userDefs setObject:lastScrollIndex forKey:@"lastScrollIndex"];	
-		NSLog(@"Saved last scroll index: %@", lastScrollIndex);
-	}
+    
+    [userDefs setObject:[bookStatus objectForKey:@"lastPageViewed"] forKey:@"lastPageViewed"];
+    [userDefs setObject:[bookStatus objectForKey:@"lastScrollIndex"] forKey:@"lastScrollIndex"];
+    
+    [userDefs synchronize];
 }
 
 #pragma mark -
