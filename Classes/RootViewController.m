@@ -92,7 +92,6 @@
 @synthesize currentPageNumber;
 
 #pragma mark - INIT
-
 - (id)initWithBookPath:(NSString *)bookPath {
     self = [super init];
     if (self) {
@@ -964,6 +963,19 @@
 		return YES;
 	}
 	return NO;
+}
+- (NSDictionary *)bookCurrentStatus {
+    NSString *lastPageViewed =  nil;
+    if (currentPageNumber > 0) {
+        lastPageViewed = [NSString stringWithFormat:@"%d", currentPageNumber];
+    }
+    
+    NSString *lastScrollIndex = nil;
+    if (currPage != nil) {
+        lastScrollIndex = [currPage stringByEvaluatingJavaScriptFromString:@"window.scrollY;"];
+    }
+    
+    return [NSDictionary dictionaryWithObjectsAndKeys:lastPageViewed, @"lastPageViewed", lastScrollIndex, @"lastScrollIndex", nil];    
 }
 
 #pragma mark - MODAL VIEW

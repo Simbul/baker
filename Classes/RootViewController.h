@@ -140,6 +140,7 @@
 - (void)handlePageLoading;
 - (void)loadSlot:(int)slot withPage:(int)page;
 - (BOOL)loadWebView:(UIWebView *)webview withPage:(int)page;
+- (NSDictionary *)bookCurrentStatus;
 
 #pragma mark - MODAL WEBVIEW
 - (void)loadModalWebView:(NSURL *)url;
