@@ -30,7 +30,6 @@
 //  
 
 #import <Foundation/Foundation.h>
-#import	"RootViewController.h"
 
 @interface InterceptorWindow : UIWindow
 

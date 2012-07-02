@@ -30,7 +30,6 @@
 //  
 
 #import "InterceptorWindow.h"
-#import "RootViewController.h"
 
 @implementation InterceptorWindow
 
