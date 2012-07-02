@@ -146,6 +146,7 @@
         currentPageHasChanged = NO;
         currentPageIsLocked = NO;
         userIsScrolling = NO;
+        shouldPropagateInterceptedTouch = YES;
         
         webViewBackground = nil;
         
@@ -1574,14 +1575,17 @@
     
     if (touch.phase == UITouchPhaseBegan) {
         userIsScrolling = NO;
+        shouldPropagateInterceptedTouch = ([touch.view isDescendantOfView:scrollView]);
     } else if (touch.phase == UITouchPhaseMoved) {
         userIsScrolling = YES;
     }
-
-    if (userIsScrolling) {
-        [self userDidScroll:touch];
-    } else if (touch.phase == UITouchPhaseEnded) {
-        [self userDidTap:touch];
+    
+    if (shouldPropagateInterceptedTouch) {
+        if (userIsScrolling) {
+            [self userDidScroll:touch];
+        } else if (touch.phase == UITouchPhaseEnded) {
+            [self userDidTap:touch];
+        }
     }
 }
 - (void)userDidTap:(UITouch *)touch {

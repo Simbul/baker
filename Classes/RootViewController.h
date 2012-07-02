@@ -74,6 +74,7 @@
     BOOL currentPageHasChanged;
     BOOL currentPageIsLocked;
     BOOL userIsScrolling;
+    BOOL shouldPropagateInterceptedTouch;
         
     UIScrollView *scrollView;
 	UIWebView *prevPage;
