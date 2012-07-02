@@ -31,7 +31,7 @@
 
 
 #import "BakerAppDelegate.h"
-#import "RootViewController.h"
+#import "BakerViewController.h"
 #import "InterceptorWindow.h"
 
 @implementation BakerAppDelegate
@@ -53,7 +53,7 @@
 	application.applicationSupportsShakeToEdit = NO;
     
 	// Create the controller for the root view
-	self.rootViewController = [[[RootViewController alloc] initWithBookPath:[[NSBundle mainBundle] pathForResource:@"book" ofType:nil]] autorelease];
+	self.rootViewController = [[[BakerViewController alloc] initWithBookPath:[[NSBundle mainBundle] pathForResource:@"book" ofType:nil]] autorelease];
     
 	// Create the application window
 	self.window = [[[InterceptorWindow alloc] initWithFrame:[[UIScreen mainScreen]bounds]] autorelease];

@@ -32,7 +32,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import <sys/xattr.h>
 
-#import "RootViewController.h"
+#import "BakerViewController.h"
 #import "Downloader.h"
 #import "SSZipArchive.h"
 #import "PageTitleLabel.h"
@@ -84,7 +84,7 @@
 #define MAX_SCREENSHOT_AFTER_CP  10
 #define MAX_SCREENSHOT_BEFORE_CP 10
 
-@implementation RootViewController
+@implementation BakerViewController
 
 #pragma mark - SYNTHESIS
 @synthesize scrollView;

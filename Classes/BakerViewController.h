@@ -39,7 +39,7 @@
 
 @class Downloader;
 
-@interface RootViewController : UIViewController <UIWebViewDelegate, UIScrollViewDelegate, MFMailComposeViewControllerDelegate, modalWebViewDelegate> {
+@interface BakerViewController : UIViewController <UIWebViewDelegate, UIScrollViewDelegate, MFMailComposeViewControllerDelegate, modalWebViewDelegate> {
 	
 	CGRect screenBounds;
 	

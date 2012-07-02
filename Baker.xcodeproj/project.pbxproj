@@ -16,7 +16,7 @@
 		84E7F05A14F63CDF005B1929 /* ModalViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 84E7F05914F63CDF005B1929 /* ModalViewController.m */; };
 		9F123763129F133700B7E8C8 /* Downloader.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F123762129F133700B7E8C8 /* Downloader.m */; };
 		9F242EDA11FB344D00641757 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F242ED911FB344D00641757 /* QuartzCore.framework */; };
-		9F4F07F411F8DE8200375A8C /* RootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F4F07F211F8DE8200375A8C /* RootViewController.m */; };
+		9F4F07F411F8DE8200375A8C /* BakerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F4F07F211F8DE8200375A8C /* BakerViewController.m */; };
 		9F6E6B6012AAA1BE0019EFB6 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F6E6B5F12AAA1BE0019EFB6 /* libz.dylib */; };
 		BF2F99401269379900E356EF /* book in Resources */ = {isa = PBXBuildFile; fileRef = BF2F993F1269379900E356EF /* book */; };
 		BF43CBFD1517F9CE008B2C8B /* ios-icon-ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = BF43CBF91517F9CE008B2C8B /* ios-icon-ipad.png */; };
@@ -83,8 +83,8 @@
 		9F123761129F133700B7E8C8 /* Downloader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Downloader.h; sourceTree = "<group>"; };
 		9F123762129F133700B7E8C8 /* Downloader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Downloader.m; sourceTree = "<group>"; };
 		9F242ED911FB344D00641757 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		9F4F07F111F8DE8200375A8C /* RootViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RootViewController.h; sourceTree = "<group>"; };
-		9F4F07F211F8DE8200375A8C /* RootViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = RootViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		9F4F07F111F8DE8200375A8C /* BakerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; path = BakerViewController.h; sourceTree = "<group>"; };
+		9F4F07F211F8DE8200375A8C /* BakerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = BakerViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		9F6E6B5F12AAA1BE0019EFB6 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = /usr/lib/libz.dylib; sourceTree = "<absolute>"; };
 		BF2F993F1269379900E356EF /* book */ = {isa = PBXFileReference; lastKnownFileType = folder; path = book; sourceTree = "<group>"; };
 		BF43CBF91517F9CE008B2C8B /* ios-icon-ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ios-icon-ipad.png"; sourceTree = "<group>"; };
@@ -168,8 +168,8 @@
 				D2690B5D13EB46200011CC7D /* ui */,
 				D2A198A81375972600C6BE2F /* IndexViewController.h */,
 				D2A198A91375972600C6BE2F /* IndexViewController.m */,
-				9F4F07F111F8DE8200375A8C /* RootViewController.h */,
-				9F4F07F211F8DE8200375A8C /* RootViewController.m */,
+				9F4F07F111F8DE8200375A8C /* BakerViewController.h */,
+				9F4F07F211F8DE8200375A8C /* BakerViewController.m */,
 				D20915BE13CB9C7800D3B55B /* Properties.h */,
 				D20915BF13CB9C7800D3B55B /* Properties.m */,
 				1D3623240D0F684500981E51 /* BakerAppDelegate.h */,
@@ -444,7 +444,7 @@
 			files = (
 				1D60589B0D05DD56006BFB54 /* main.m in Sources */,
 				1D3623260D0F684500981E51 /* BakerAppDelegate.m in Sources */,
-				9F4F07F411F8DE8200375A8C /* RootViewController.m in Sources */,
+				9F4F07F411F8DE8200375A8C /* BakerViewController.m in Sources */,
 				F4EC203812862D4D008E94D1 /* InterceptorWindow.m in Sources */,
 				9F123763129F133700B7E8C8 /* Downloader.m in Sources */,
 				D2A198AA1375972600C6BE2F /* IndexViewController.m in Sources */,
