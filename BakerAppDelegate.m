@@ -31,8 +31,8 @@
 
 
 #import "BakerAppDelegate.h"
-#import "BakerViewController.h"
-#import "InterceptorWindow.h"
+#import "Baker/BakerViewController.h"
+#import "Baker/InterceptorWindow.h"
 
 @implementation BakerAppDelegate
 
