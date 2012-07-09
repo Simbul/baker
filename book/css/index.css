@@ -12,13 +12,13 @@
  * General
  */
 body {
-	font-family: Helvetica, Arial, sans-serif;
-	font-size: 16px;
-	margin: 0;
-	padding: 25px;
-	background: rgba(240, 240, 240, 0.9);
-	
-	width: 2800px;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    margin: 0;
+    padding: 25px;
+    background: rgba(240, 240, 240, 0.9);
+    
+    width: 2800px;
 }
 
 a {

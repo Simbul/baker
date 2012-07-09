@@ -36,8 +36,8 @@
 
 @interface BakerAppDelegate : NSObject <UIApplicationDelegate> {
     
-	UIWindow *window;
-	BakerViewController *rootViewController;
+    UIWindow *window;
+    BakerViewController *rootViewController;
 }
 
 @property (nonatomic, retain) IBOutlet UIWindow *window;

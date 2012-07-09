@@ -91,7 +91,7 @@
     
     [super loadView];
     
-
+    
     // ****** Buttons
     UIBarButtonItem *btnClose  = [[[UIBarButtonItem alloc] initWithTitle:@"Back" style:UIBarButtonItemStyleBordered target:self action:@selector(dismissAction)] autorelease];    
     UIBarButtonItem *btnAction = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(openInSafari)] autorelease];
@@ -99,11 +99,11 @@
     self.btnGoBack = [[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"back.png"] style:UIBarButtonItemStylePlain target:self action:@selector(goBack)] autorelease];
     btnGoBack.enabled = NO;
     btnGoBack.width = 30;
-
+    
     self.btnGoForward = [[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"forward.png"] style:UIBarButtonItemStylePlain target:self action:@selector(goForward)] autorelease];
     btnGoForward.enabled = NO;
     btnGoForward.width = 30;
-        
+    
     self.spinner = [[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray] autorelease];
     spinner.frame = CGRectMake(3, 3, 25, 25);
     spinner.hidesWhenStopped = YES;
@@ -119,13 +119,13 @@
     // ****** Add Toolbar
     self.toolbar = [[UIToolbar new] autorelease];
     toolbar.barStyle = UIBarStyleDefault;
-        
+    
     
     // ****** Add items to toolbar
     NSArray *items = [NSArray arrayWithObjects: btnClose, btnGoBack, btnGoForward, btnSpinner, spacer, btnAction, nil];
     [toolbar setItems:items animated:NO];
     
-
+    
     // ****** Add WebView
     self.webView = [[[UIWebView alloc] initWithFrame:CGRectMake(0, 44, 1, 1)] autorelease];
     webView.backgroundColor = [UIColor underPageBackgroundColor];
@@ -133,7 +133,7 @@
     webView.scalesPageToFit = YES;
     webView.delegate = self;
     
-        
+    
     // ****** View
     self.view = [UIView new];
     
@@ -166,7 +166,7 @@
     
     [webView release];
     
-	[super dealloc];
+    [super dealloc];
 }
 
 #pragma mark - WEBVIEW

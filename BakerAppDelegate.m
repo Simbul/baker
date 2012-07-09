@@ -55,60 +55,60 @@
 // check http://stackoverflow.com/questions/3612460/lauching-app-with-url-via-uiapplicationdelegates-handleopenurl-working-under-i for hints
 //- (void)applicationDidFinishLaunching:(UIApplication *)application {    
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-	
+    
     // Disable Shake to undo
-	application.applicationSupportsShakeToEdit = NO;
+    application.applicationSupportsShakeToEdit = NO;
     
-	// Create the controller for the root view
-	self.rootViewController = [[[BakerViewController alloc] initWithBookPath:[[NSBundle mainBundle] pathForResource:@"book" ofType:nil]] autorelease];
+    // Create the controller for the root view
+    self.rootViewController = [[[BakerViewController alloc] initWithBookPath:[[NSBundle mainBundle] pathForResource:@"book" ofType:nil]] autorelease];
     
-	// Create the application window
-	self.window = [[[InterceptorWindow alloc] initWithFrame:[[UIScreen mainScreen]bounds]] autorelease];
-	window.backgroundColor = [UIColor whiteColor];
-	
-	// Add the root view to the application window
-	[window addSubview:rootViewController.view];
+    // Create the application window
+    self.window = [[[InterceptorWindow alloc] initWithFrame:[[UIScreen mainScreen]bounds]] autorelease];
+    window.backgroundColor = [UIColor whiteColor];
+    
+    // Add the root view to the application window
+    [window addSubview:rootViewController.view];
     [window makeKeyAndVisible];
-	
-	NSString *reqSysVer = @"3.2";
-	NSString *currSysVer = [[UIDevice currentDevice] systemVersion];
-	if ([currSysVer compare:reqSysVer options:NSNumericSearch] != NSOrderedDescending && [launchOptions objectForKey:UIApplicationLaunchOptionsURLKey] != nil) {
-		NSURL *url = [launchOptions objectForKey:UIApplicationLaunchOptionsURLKey];
-		[self application:application handleOpenURL:url];
-	}
-	
-	return YES;
+    
+    NSString *reqSysVer = @"3.2";
+    NSString *currSysVer = [[UIDevice currentDevice] systemVersion];
+    if ([currSysVer compare:reqSysVer options:NSNumericSearch] != NSOrderedDescending && [launchOptions objectForKey:UIApplicationLaunchOptionsURLKey] != nil) {
+        NSURL *url = [launchOptions objectForKey:UIApplicationLaunchOptionsURLKey];
+        [self application:application handleOpenURL:url];
+    }
+    
+    return YES;
 }
 
 - (BOOL)application:(UIApplication*)application handleOpenURL:(NSURL*)url {
-	
-	NSString *URLString = [url absoluteString];
-	NSLog(@"handleOpenURL -> %@", URLString);
-	
-	// STOP IF: url || URLString is nil
-	if (!url || !URLString)
-		return NO;
-	
-	// STOP IF: not my scheme
-	if (![[url scheme] isEqualToString:@"book"])
-		return NO;
-	
-	NSLog(@"HPub scheme found! -> %@", [url scheme]);
-	
-	NSArray *URLSections = [URLString componentsSeparatedByCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@":"]];
-	NSString *URLDownload = [@"http:" stringByAppendingString:[URLSections objectAtIndex:1]];
-	
-	[[NSNotificationCenter defaultCenter] postNotificationName:@"downloadNotification" object:URLDownload];
-	
-	return YES;
+    
+    NSString *URLString = [url absoluteString];
+    NSLog(@"handleOpenURL -> %@", URLString);
+    
+    // STOP IF: url || URLString is nil
+    if (!url || !URLString)
+        return NO;
+    
+    // STOP IF: not my scheme
+    if (![[url scheme] isEqualToString:@"book"])
+        return NO;
+    
+    NSLog(@"HPub scheme found! -> %@", [url scheme]);
+    
+    NSArray *URLSections = [URLString componentsSeparatedByCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@":"]];
+    NSString *URLDownload = [@"http:" stringByAppendingString:[URLSections objectAtIndex:1]];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"downloadNotification" object:URLDownload];
+    
+    return YES;
 }
 - (void)applicationWillResignActive:(UIApplication *)application {
     /*
      Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
      Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
      */
-	
-	[self saveLastPageReference];
+    
+    [self saveLastPageReference];
 }
 - (void)applicationDidBecomeActive:(UIApplication *)application {
     /*
@@ -116,17 +116,17 @@
      */
 }
 - (void)applicationWillTerminate:(UIApplication *)application {
-	/*
-	 Sent when the main button is pressed in iOS < 4
-	 */
-	
-	[self saveLastPageReference];
+    /*
+     Sent when the main button is pressed in iOS < 4
+     */
+    
+    [self saveLastPageReference];
 }
 
 - (void)saveLastPageReference {
-	
+    
     NSDictionary *bookStatus = [rootViewController bookCurrentStatus];
-	NSUserDefaults *userDefs = [NSUserDefaults standardUserDefaults];
+    NSUserDefaults *userDefs = [NSUserDefaults standardUserDefaults];
     
     [userDefs setObject:[bookStatus objectForKey:@"lastPageViewed"] forKey:@"lastPageViewed"];
     [userDefs setObject:[bookStatus objectForKey:@"lastScrollIndex"] forKey:@"lastScrollIndex"];
@@ -143,8 +143,8 @@
 }
 - (void)dealloc {
     
-	[rootViewController release];
-	[window release];
+    [rootViewController release];
+    [window release];
     [super dealloc];
 }
 

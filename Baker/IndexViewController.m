@@ -97,15 +97,15 @@
 }
 
 - (void)setPageSizeForOrientation:(UIInterfaceOrientation)orientation {
-	CGRect screenBounds = [[UIScreen mainScreen] bounds];
-	
-	if (orientation == UIInterfaceOrientationLandscapeLeft || orientation == UIInterfaceOrientationLandscapeRight) {
-		pageWidth = screenBounds.size.height;
-		pageHeight = screenBounds.size.width;
+    CGRect screenBounds = [[UIScreen mainScreen] bounds];
+    
+    if (orientation == UIInterfaceOrientationLandscapeLeft || orientation == UIInterfaceOrientationLandscapeRight) {
+        pageWidth = screenBounds.size.height;
+        pageHeight = screenBounds.size.width;
     } else {
         pageWidth = screenBounds.size.width;
-		pageHeight = screenBounds.size.height;
-	}
+        pageHeight = screenBounds.size.height;
+    }
     
     UIApplication *sharedApplication = [UIApplication sharedApplication];
     if (sharedApplication.statusBarHidden) {
@@ -144,7 +144,7 @@
         } else {
             frame = CGRectMake(0, pageHeight + pageY - indexHeight, actualIndexWidth, actualIndexHeight);
         }
-
+        
     }
     
     if (animation) {
@@ -206,8 +206,8 @@
     NSLog(@"Path to index view is %@", path);
     if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
         disabled = NO;
-		[(UIWebView *)self.view loadRequest:[NSURLRequest requestWithURL:[NSURL fileURLWithPath:path]]];
-	} else {
+        [(UIWebView *)self.view loadRequest:[NSURLRequest requestWithURL:[NSURL fileURLWithPath:path]]];
+    } else {
         NSLog(@"Could not find index view at that path");
         disabled = YES;
     }
@@ -235,7 +235,7 @@
     } else {
         indexHeight = [self sizeFromContentOf:webView].height;
     }
-
+    
     cachedContentSize = indexScrollView.contentSize;
     // get correct contentsize
     if (cachedContentSize.width < indexWidth) {
@@ -289,7 +289,7 @@
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     // Return YES for supported orientations
-	return YES;
+    return YES;
 }
 
 @end

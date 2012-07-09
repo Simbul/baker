@@ -11,10 +11,10 @@
  */
 body {
   background: #ffffff url(../gfx/background.jpg);
-	font-family: Helvetica, Arial, sans-serif;
-	font-size: 16px;
-	margin: 0;
-	padding: 0;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    margin: 0;
+    padding: 0;
 }
 
 a {
@@ -158,9 +158,9 @@ img.right {
   text-decoration: none;
   
   -webkit-transition: color 0.4s ease;
-	-moz-transition: color 0.4s ease;
-	-o-transition: color 0.4s ease;
-	transition: color 0.4s ease;
+    -moz-transition: color 0.4s ease;
+    -o-transition: color 0.4s ease;
+    transition: color 0.4s ease;
 }
 #page.index .menu li a:hover {
   color: #b50303;

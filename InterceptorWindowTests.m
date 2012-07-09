@@ -36,8 +36,8 @@
 @implementation InterceptorWindowTests
 
 - (void) testInitInterceptorWindow {
-	UIWindow *iWindow = [[InterceptorWindow alloc] initWithFrame:CGRectMake(0,0,100,100)];
-	STAssertNotNil(iWindow, @"Failed to initialize InterceptorWindow");
+    UIWindow *iWindow = [[InterceptorWindow alloc] initWithFrame:CGRectMake(0,0,100,100)];
+    STAssertNotNil(iWindow, @"Failed to initialize InterceptorWindow");
 }
 
 - (void)testReturnsStubbedReturnValue {
@@ -52,7 +52,7 @@
 
 // Uncomment this to force a failure
 //- (void) testFail {
-//	STFail(@"Must fail to succeed");
+//    STFail(@"Must fail to succeed");
 //}
 
 @end

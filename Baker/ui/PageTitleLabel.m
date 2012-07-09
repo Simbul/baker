@@ -47,7 +47,7 @@
     NSRange matchRange = [[titleRegex firstMatchInString:fileContent options:0 range:NSMakeRange(0, [fileContent length])] rangeAtIndex:1];
     if (!NSEqualRanges(matchRange, NSMakeRange(NSNotFound, 0))) {
         NSString *titleText = [[fileContent substringWithRange:matchRange] gtm_stringByUnescapingFromHTML];
-
+        
         CGSize titleDimension = CGSizeMake(672, 330);
         UIFont *titleFont = [UIFont fontWithName:@"Helvetica" size:24.0];
         
@@ -56,16 +56,16 @@
             titleDimension = CGSizeMake(280, 134);
             titleFont = [UIFont fontWithName:@"Helvetica" size:15.0];
         }
-
+        
         CGSize titleTextSize = [titleText sizeWithFont:titleFont constrainedToSize:titleDimension lineBreakMode:UILineBreakModeTailTruncation];
         CGRect titleFrame = CGRectMake(0, 0, titleTextSize.width, titleTextSize.height);
         
         id ret = [super initWithFrame:titleFrame];
-
+        
         [self initStyle];
         self.font = titleFont;
         self.text = titleText;
-
+        
         return ret;
     } else {
         return [super init];

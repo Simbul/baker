@@ -121,20 +121,20 @@
 
 - (NSDictionary *)doInitDefaults {
     NSString *json = @"{"
-        "\"orientation\": \"both\","
-        "\"zoomable\": false,"
-        "\"-baker-background\": \"#000000\","
-        "\"-baker-vertical-bounce\": true,"
-        "\"-baker-media-autoplay\": true,"
-        "\"-baker-page-numbers-color\": \"#FFFFFF\","
-        "\"-baker-page-numbers-alpha\": 0.3,"
-        "\"-baker-index-width\": null,"
-        "\"-baker-index-height\": null,"
-        "\"-baker-index-bounce\": false,"
-        "\"-baker-vertical-pagination\": false,"
-        "\"-baker-rendering\": \"screenshots\","
-        "\"-baker-page-turn-swipe\": true,"
-        "\"-baker-page-turn-tap\": true"
+    "\"orientation\": \"both\","
+    "\"zoomable\": false,"
+    "\"-baker-background\": \"#000000\","
+    "\"-baker-vertical-bounce\": true,"
+    "\"-baker-media-autoplay\": true,"
+    "\"-baker-page-numbers-color\": \"#FFFFFF\","
+    "\"-baker-page-numbers-alpha\": 0.3,"
+    "\"-baker-index-width\": null,"
+    "\"-baker-index-height\": null,"
+    "\"-baker-index-bounce\": false,"
+    "\"-baker-vertical-pagination\": false,"
+    "\"-baker-rendering\": \"screenshots\","
+    "\"-baker-page-turn-swipe\": true,"
+    "\"-baker-page-turn-tap\": true"
     "}";
     NSError *e;
     return [[json objectFromJSONStringWithParseOptions:JKParseOptionNone error:&e] retain];
@@ -150,7 +150,7 @@
      * Use normal NSDictionary and NSArray lookups to find elements.
      *   [json objectForKey:@"name"]
      *   [[json objectForKey:@"items"] objectAtIndex:1]
-	 */
+     */
     
     NSDictionary *ret = nil;
     

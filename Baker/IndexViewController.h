@@ -42,7 +42,7 @@
     
     int pageY;
     int pageWidth;
-	int pageHeight;
+    int pageHeight;
     int indexWidth;
     int indexHeight;
     int actualIndexWidth;

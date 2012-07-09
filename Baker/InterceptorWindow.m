@@ -36,7 +36,7 @@
 #pragma mark - Events management
 
 - (void)sendEvent:(UIEvent *)event {
-
+    
     [super sendEvent:event];
     [self interceptEvent:event];
 }
@@ -45,14 +45,14 @@
     if (event.type == UIEventTypeTouches)
     {
         NSSet *touches = [event allTouches];
-		if (touches.count == 1)
+        if (touches.count == 1)
         {
             UITouch *touch = touches.anyObject;
-
+            
             NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:touch, @"touch", nil];
             [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_touch_intercepted" object:nil userInfo:userInfo];
         }
- 	}
+    }
 }
 
 @end

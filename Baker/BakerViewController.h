@@ -40,9 +40,9 @@
 @class Downloader;
 
 @interface BakerViewController : UIViewController <UIWebViewDelegate, UIScrollViewDelegate, MFMailComposeViewControllerDelegate, modalWebViewDelegate> {
-	
-	CGRect screenBounds;
-	
+    
+    CGRect screenBounds;
+    
     
     NSString *currentBookPath;
     NSString *bundleBookPath;
@@ -52,8 +52,8 @@
     
     NSString *availableOrientation;
     NSString *renderingType;
-	
-	NSMutableArray *pages;
+    
+    NSMutableArray *pages;
     NSMutableArray *toLoad;
     
     NSMutableArray *pageDetails;
@@ -62,43 +62,43 @@
     
     UIImage *backgroundImageLandscape;
     UIImage *backgroundImagePortrait;
-
-	NSString *pageNameFromURL;
-	NSString *anchorFromURL;
-	
+    
+    NSString *pageNameFromURL;
+    NSString *anchorFromURL;
+    
     int tapNumber;
     int stackedScrollingAnimations;
     
-	BOOL currentPageFirstLoading;
-	BOOL currentPageIsDelayingLoading;
+    BOOL currentPageFirstLoading;
+    BOOL currentPageIsDelayingLoading;
     BOOL currentPageHasChanged;
     BOOL currentPageIsLocked;
     BOOL userIsScrolling;
     BOOL shouldPropagateInterceptedTouch;
-        
+    
     UIScrollView *scrollView;
-	UIWebView *prevPage;
-	UIWebView *currPage;
-	UIWebView *nextPage;
-	
+    UIWebView *prevPage;
+    UIWebView *currPage;
+    UIWebView *nextPage;
+    
     UIColor *webViewBackground;
     
-	CGRect upTapArea;
-	CGRect downTapArea;
-	CGRect leftTapArea;
-	CGRect rightTapArea;
-
-	int totalPages;
+    CGRect upTapArea;
+    CGRect downTapArea;
+    CGRect leftTapArea;
+    CGRect rightTapArea;
+    
+    int totalPages;
     int lastPageNumber;
-	int currentPageNumber;
-	
+    int currentPageNumber;
+    
     int pageWidth;
-	int pageHeight;
+    int pageHeight;
     int currentPageHeight;
-	
-	NSString *URLDownload;
+    
+    NSString *URLDownload;
     Downloader *downloader;
-	UIAlertView *feedbackAlert;
+    UIAlertView *feedbackAlert;
     
     IndexViewController *indexViewController;
     ModalViewController *myModalViewController;
