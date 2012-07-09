@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AB8829BD15ABA010001A3584 /* ShelfManager.m in Sources */ = {isa = PBXBuildFile; fileRef = AB8829BC15ABA010001A3584 /* ShelfManager.m */; };
+		AB8829BE15ABA010001A3584 /* ShelfManager.m in Sources */ = {isa = PBXBuildFile; fileRef = AB8829BC15ABA010001A3584 /* ShelfManager.m */; };
 		ABAFB58C15AB9A2E002FA498 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABAFB58B15AB9A2E002FA498 /* UIKit.framework */; };
 		ABAFB58E15AB9A2E002FA498 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABAFB58D15AB9A2E002FA498 /* Foundation.framework */; };
 		ABAFB59015AB9A2E002FA498 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABAFB58F15AB9A2E002FA498 /* CoreGraphics.framework */; };
@@ -31,6 +33,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		AB8829BB15ABA010001A3584 /* ShelfManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShelfManager.h; sourceTree = "<group>"; };
+		AB8829BC15ABA010001A3584 /* ShelfManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShelfManager.m; sourceTree = "<group>"; };
 		ABAFB58715AB9A2E002FA498 /* Baker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Baker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		ABAFB58B15AB9A2E002FA498 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		ABAFB58D15AB9A2E002FA498 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -73,9 +77,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		AB8829B615AB9FDA001A3584 /* Shelf */ = {
+			isa = PBXGroup;
+			children = (
+				AB8829BB15ABA010001A3584 /* ShelfManager.h */,
+				AB8829BC15ABA010001A3584 /* ShelfManager.m */,
+			);
+			name = Shelf;
+			sourceTree = "<group>";
+		};
 		ABAFB57C15AB9A2E002FA498 = {
 			isa = PBXGroup;
 			children = (
+				AB8829B615AB9FDA001A3584 /* Shelf */,
 				ABAFB59115AB9A2E002FA498 /* Baker */,
 				ABAFB5A915AB9A2E002FA498 /* BakerTests */,
 				ABAFB58A15AB9A2E002FA498 /* Frameworks */,
@@ -250,6 +264,7 @@
 			files = (
 				ABAFB59815AB9A2E002FA498 /* main.m in Sources */,
 				ABAFB59C15AB9A2E002FA498 /* AppDelegate.m in Sources */,
+				AB8829BD15ABA010001A3584 /* ShelfManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -258,6 +273,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				ABAFB5B115AB9A2F002FA498 /* BakerTests.m in Sources */,
+				AB8829BE15ABA010001A3584 /* ShelfManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -411,6 +427,7 @@
 				ABAFB5B615AB9A2F002FA498 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		ABAFB5B715AB9A2F002FA498 /* Build configuration list for PBXNativeTarget "BakerTests" */ = {
 			isa = XCConfigurationList;
@@ -419,6 +436,7 @@
 				ABAFB5B915AB9A2F002FA498 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
