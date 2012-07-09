@@ -31,8 +31,8 @@
 
 
 #import "BakerAppDelegate.h"
-#import "RootViewController.h"
-#import "InterceptorWindow.h"
+#import "Baker/BakerViewController.h"
+#import "Baker/InterceptorWindow.h"
 
 @implementation BakerAppDelegate
 
@@ -60,10 +60,10 @@
 	application.applicationSupportsShakeToEdit = NO;
     
 	// Create the controller for the root view
-	self.rootViewController = [[[RootViewController alloc] init] autorelease];
-	
+	self.rootViewController = [[[BakerViewController alloc] initWithBookPath:[[NSBundle mainBundle] pathForResource:@"book" ofType:nil]] autorelease];
+    
 	// Create the application window
-	self.window = [[[InterceptorWindow alloc] initWithTarget:self.rootViewController.scrollView eventsDelegate:self.rootViewController frame:[[UIScreen mainScreen]bounds]] autorelease];
+	self.window = [[[InterceptorWindow alloc] initWithFrame:[[UIScreen mainScreen]bounds]] autorelease];
 	window.backgroundColor = [UIColor whiteColor];
 	
 	// Add the root view to the application window
@@ -125,21 +125,13 @@
 
 - (void)saveLastPageReference {
 	
+    NSDictionary *bookStatus = [rootViewController bookCurrentStatus];
 	NSUserDefaults *userDefs = [NSUserDefaults standardUserDefaults];
-	
-	// Save last page viewed reference
-	if (rootViewController.currentPageNumber > 0) {
-		NSString *lastPageViewed = [NSString stringWithFormat:@"%d", rootViewController.currentPageNumber];
-		[userDefs setObject:lastPageViewed forKey:@"lastPageViewed"];
-		NSLog(@"Saved last page viewed: %@", lastPageViewed);
-	}
-	
-	// Save last scroll index reference
-	if (rootViewController.currPage != nil) {
-		NSString *lastScrollIndex = [rootViewController.currPage stringByEvaluatingJavaScriptFromString:@"window.scrollY;"];
-		[userDefs setObject:lastScrollIndex forKey:@"lastScrollIndex"];	
-		NSLog(@"Saved last scroll index: %@", lastScrollIndex);
-	}
+    
+    [userDefs setObject:[bookStatus objectForKey:@"lastPageViewed"] forKey:@"lastPageViewed"];
+    [userDefs setObject:[bookStatus objectForKey:@"lastScrollIndex"] forKey:@"lastScrollIndex"];
+    
+    [userDefs synchronize];
 }
 
 #pragma mark -

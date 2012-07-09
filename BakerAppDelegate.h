@@ -32,16 +32,16 @@
 
 #import <UIKit/UIKit.h>
 
-@class RootViewController;
+@class BakerViewController;
 
 @interface BakerAppDelegate : NSObject <UIApplicationDelegate> {
     
 	UIWindow *window;
-	RootViewController *rootViewController;
+	BakerViewController *rootViewController;
 }
 
 @property (nonatomic, retain) IBOutlet UIWindow *window;
-@property (nonatomic, retain) RootViewController *rootViewController;
+@property (nonatomic, retain) BakerViewController *rootViewController;
 
 - (void)saveLastPageReference;
 
