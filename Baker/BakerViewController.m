@@ -1858,6 +1858,7 @@
         
         [feedbackAlert dismissWithClickedButtonIndex:feedbackAlert.cancelButtonIndex animated:YES];
         [self loadBookWithBookPath:documentsBookPath];
+        [self startReading];
     }
 }
 
