@@ -255,24 +255,34 @@
 }
 - (void)cleanupBookEnvironment {
     
-    [self resetPageSlot:currPage];
-    [self resetPageSlot:nextPage];
-    [self resetPageSlot:prevPage];
-    
+    [self resetPageSlots];    
     [self resetPageDetails];
     
     [pages removeAllObjects];
     [toLoad removeAllObjects];
 }
-- (void)resetPageSlot:(UIWebView *)slot {
-    if (slot) {
-        NSLog(@"• Reset leftover page slot");
-        
-        slot.delegate = nil;
-        [slot removeFromSuperview];
-        [slot release];
-        slot = nil;
+- (void)resetPageSlots {
+    NSLog(@"• Reset leftover page slot");
+    
+    if (currPage) {
+        [currPage setDelegate:nil];
+        [currPage removeFromSuperview];
+        [currPage release];
     }
+    if (nextPage) {
+        [nextPage setDelegate:nil];
+        [nextPage removeFromSuperview];
+        [nextPage release];
+    }
+    if (prevPage) {
+        [prevPage setDelegate:nil];
+        [prevPage removeFromSuperview];
+        [prevPage release];
+    }
+    
+    currPage = nil;
+    nextPage = nil;
+    prevPage = nil;
 }
 - (void)resetPageDetails {
     NSLog(@"• Reset page details array and empty screenshot directory");

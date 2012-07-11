@@ -115,7 +115,7 @@
 - (id)initWithBookPath:(NSString *)bookPath;
 - (BOOL)loadBookWithBookPath:(NSString *)bookPath;
 - (void)cleanupBookEnvironment;
-- (void)resetPageSlot:(UIWebView *)slot;
+- (void)resetPageSlots;
 - (void)resetPageDetails;
 - (void)loadBookProperties;
 - (void)buildPageArray;
