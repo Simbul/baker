@@ -41,6 +41,7 @@
 @property (nonatomic, retain) NSDictionary *defaults;
 
 - (id)initWithManifest:(NSString *)fileName;
+- (id)initWithManifestString:(NSString *)string;
 - (id)get:(NSString *)rootName, ...;
 - (id)getFrom:(NSDictionary *)dictionary withKeys:(NSArray *)keys;
 - (id)getFrom:(NSDictionary *)dictionary withFallback:(NSDictionary *)fallbackDictionary withKeys:(NSArray *)keys;

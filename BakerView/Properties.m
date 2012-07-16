@@ -52,6 +52,15 @@
     return self;
 }
 
+- (id)initWithManifestString:(NSString *)string {
+    self = [super init];
+    if (self) {
+        self.manifest = [self dictionaryFromManifestString:string];
+        self.defaults = [self doInitDefaults];
+    }
+    return self;
+}
+
 - (id)get:(NSString *)rootName, ... {
     
     /****************************************************************************************************
@@ -152,18 +161,22 @@
      *   [[json objectForKey:@"items"] objectAtIndex:1]
      */
     
-    NSDictionary *ret = nil;
-    
     if (filePath) {  
         NSString *fileJSON = [NSString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
-        
-        NSError *e = nil;
-        ret = [fileJSON objectFromJSONStringWithParseOptions:JKParseOptionNone error:&e];
-        if ([e userInfo] != nil) {
-            NSLog(@"Error loading JSON: %@", [e userInfo]);
-        }
+        return [self dictionaryFromManifestString:fileJSON];
+    } else {
+        return nil;
     }
+}
+
+- (NSDictionary *)dictionaryFromManifestString:(NSString *)string {
+    NSDictionary *ret = nil;
+    NSError *e = nil;
     
+    ret = [string objectFromJSONStringWithParseOptions:JKParseOptionNone error:&e];
+    if ([e userInfo] != nil) {
+        NSLog(@"Error loading JSON: %@", [e userInfo]);
+    }
     return ret;
 }
 

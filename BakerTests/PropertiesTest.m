@@ -125,4 +125,12 @@
     STAssertEquals([property boolValue], NO, @"Should return expected default value for -baker-vertical-pagination");
 }
 
+- (void)testInitWithManifestString {
+    NSString *json = @"{\"string\": \"blah\"}";
+    Properties *properties = [[Properties alloc] initWithManifestString:json];
+    
+    id property = [properties get:@"string", nil];
+    STAssertEqualObjects(property, @"blah", @"Should return the item the object was initialised with");
+}
+
 @end
