@@ -1,0 +1,216 @@
+/*
+ * Baker Ebook Framework - Basic Book
+ * last update: 2011-10-10
+ * 
+ * Copyright (C) 2011 by Davide S. Casali <folletto AT gmail DOT com>
+ * 
+ */
+
+/****************************************************************************************************
+ * General
+ */
+body {
+  background: #ffffff url(../gfx/background.jpg);
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    margin: 0;
+    padding: 0;
+}
+
+a {
+  color: #b50303;
+}
+
+/****************************************************************************************************
+ * Typography
+ */
+p, ul, ol {
+  font-size: 18px;
+  line-height: 40px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: "BodoniSvtyTwoITCTT-Book", Times, serif;
+  font-weight: normal;
+  text-align: center;
+  
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+h1 {
+  border-bottom: 1px solid #cf0000;
+  color: #cf0000;
+  font-size: 70px;
+  
+  height: 264px;
+  position: relative;
+}
+h1 div {
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  margin: 0 0 20px;
+}
+
+h2 {
+  font-size: 50px;
+  letter-spacing: -2px;
+  margin: 8px 0 2px;
+  padding: 5px 0 2px;
+}
+
+ul, ol {
+  line-height: 1.25em;
+}
+
+img.right {
+  float: right;
+  margin: 8px -100px 8px 25px;
+  padding: 15px 0 15px 0;
+}
+
+/****************************************************************************************************
+ * Pages
+ */
+#page {
+  background: #ffffff url(../gfx/background.jpg);
+  min-height: 1024px;
+  overflow: hidden;
+  margin: 0 auto;
+}
+
+/****** Blood */
+#blood {
+  background: transparent url(../gfx/blood.png) no-repeat;
+  width: 17px;
+  height: 55px;
+  
+  position: absolute;
+  top: 0;
+  right: 20px;
+  
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+
+.blood-drop {
+  background: transparent url(../gfx/blood-drop.png) no-repeat;
+  display: block;
+  width: 10px;
+  height: 26px;
+}
+
+
+/****************************************************************************************************
+ * Book Cover
+ */
+#page.cover img.central {
+  display: block;
+  margin: 70px auto 50px;
+}
+
+#page.cover .footer {
+  text-align: center;
+}
+
+#page.cover .footer p {
+  font-size: 12px;
+  padding: 15px 0 5px;
+}
+
+
+/****************************************************************************************************
+ * Book Index
+ */
+#page.index .menu {
+  margin: 30px auto;
+  width: 670px;
+}
+
+#page.index .menu small {
+  display: block;
+  text-align: center;
+  width: 400px;
+  margin: 0 auto;
+}
+
+#page.index .menu ol {
+  list-style: none;
+  padding: 0;
+}
+
+#page.index .menu li {
+  position: relative;
+  background: transparent url(../gfx/dots-menu.png) repeat-x -1px;
+}
+
+#page.index .menu li a .count {
+  background: #ffffff url(../gfx/background.jpg);
+  padding-left: 3px;
+  position: absolute;
+  right: 0;
+}
+
+#page.index .menu li a {
+  background: #ffffff url(../gfx/background.jpg);
+  color: #000000;
+  text-decoration: none;
+  
+  -webkit-transition: color 0.4s ease;
+    -moz-transition: color 0.4s ease;
+    -o-transition: color 0.4s ease;
+    transition: color 0.4s ease;
+}
+#page.index .menu li a:hover {
+  color: #b50303;
+}
+
+/****************************************************************************************************
+ * Chapter
+ */
+#page.chapter h1 {
+  font-size: 42px;
+}
+
+#page.chapter #content {
+  min-height: 1024px;
+  width: 530px;
+  
+  margin: 120px auto;
+}
+
+#page.chapter p,
+#page.chapter ol,
+#page.chapter ul {
+  font-size: 22px;
+  text-align: justify;
+  text-indent: 1em;
+  line-height: 1.6em;
+}
+
+
+/****************************************************************************************************
+ * Media queries
+ */
+@media only screen and (max-device-width : 768px) and (orientation : portrait) {
+  /* Rules only for iPad - Portrait */
+  
+}
+
+@media only screen and (max-device-width : 1024px) and (orientation : landscape) {
+  /* Rules only for iPad - Landscape */
+  #page.cover img.central {
+    display: none;
+  }
+  
+  #page {
+    min-height: 768px;
+  }
+  
+  #page.cover .footer {
+    margin-top: 240px;
+  }
+}
+
+
