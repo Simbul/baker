@@ -49,6 +49,10 @@
 		AB40047F15B4B8B800D87E2A /* ShelfManager.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40047D15B4B8B800D87E2A /* ShelfManager.m */; };
 		AB40048115B4B90200D87E2A /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB40048015B4B90200D87E2A /* MessageUI.framework */; };
 		AB40048315B4B90A00D87E2A /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = AB40048215B4B90A00D87E2A /* libz.dylib */; };
+		AB40048915B4BC4000D87E2A /* PropertiesTest.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40048815B4BC4000D87E2A /* PropertiesTest.m */; };
+		AB40048A15B4BDA600D87E2A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABAFB58F15AB9A2E002FA498 /* CoreGraphics.framework */; };
+		AB40048B15B4BDB400D87E2A /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB40048015B4B90200D87E2A /* MessageUI.framework */; };
+		AB40048E15B4BDCE00D87E2A /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = AB40048215B4B90A00D87E2A /* libz.dylib */; };
 		ABAFB58C15AB9A2E002FA498 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABAFB58B15AB9A2E002FA498 /* UIKit.framework */; };
 		ABAFB58E15AB9A2E002FA498 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABAFB58D15AB9A2E002FA498 /* Foundation.framework */; };
 		ABAFB59015AB9A2E002FA498 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABAFB58F15AB9A2E002FA498 /* CoreGraphics.framework */; };
@@ -113,6 +117,8 @@
 		AB40047D15B4B8B800D87E2A /* ShelfManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShelfManager.m; sourceTree = "<group>"; };
 		AB40048015B4B90200D87E2A /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		AB40048215B4B90A00D87E2A /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
+		AB40048715B4BC4000D87E2A /* PropertiesTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PropertiesTest.h; sourceTree = "<group>"; };
+		AB40048815B4BC4000D87E2A /* PropertiesTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PropertiesTest.m; sourceTree = "<group>"; };
 		ABAFB58715AB9A2E002FA498 /* Baker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Baker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		ABAFB58B15AB9A2E002FA498 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		ABAFB58D15AB9A2E002FA498 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -148,6 +154,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AB40048E15B4BDCE00D87E2A /* libz.dylib in Frameworks */,
+				AB40048B15B4BDB400D87E2A /* MessageUI.framework in Frameworks */,
+				AB40048A15B4BDA600D87E2A /* CoreGraphics.framework in Frameworks */,
 				ABAFB5A415AB9A2E002FA498 /* SenTestingKit.framework in Frameworks */,
 				ABAFB5A515AB9A2E002FA498 /* UIKit.framework in Frameworks */,
 				ABAFB5A615AB9A2E002FA498 /* Foundation.framework in Frameworks */,
@@ -307,6 +316,8 @@
 		ABAFB5A915AB9A2E002FA498 /* BakerTests */ = {
 			isa = PBXGroup;
 			children = (
+				AB40048715B4BC4000D87E2A /* PropertiesTest.h */,
+				AB40048815B4BC4000D87E2A /* PropertiesTest.m */,
 				ABAFB5AF15AB9A2F002FA498 /* BakerTests.h */,
 				ABAFB5B015AB9A2F002FA498 /* BakerTests.m */,
 				ABAFB5AA15AB9A2E002FA498 /* Supporting Files */,
@@ -478,6 +489,7 @@
 				AB40047615B4B83000D87E2A /* Properties.m in Sources */,
 				AB40047815B4B83000D87E2A /* PageTitleLabel.m in Sources */,
 				AB40047F15B4B8B800D87E2A /* ShelfManager.m in Sources */,
+				AB40048915B4BC4000D87E2A /* PropertiesTest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
