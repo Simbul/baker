@@ -11,10 +11,15 @@
 @implementation AppDelegate
 
 @synthesize window;
+@synthesize rootViewController;
+@synthesize rootNavigationController;
 
 - (void)dealloc
 {
     [window release];
+    [rootViewController release];
+    [rootNavigationController release];
+    
     [super dealloc];
 }
 
@@ -22,7 +27,15 @@
 {
     self.window = [[[InterceptorWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]] autorelease];
     self.window.backgroundColor = [UIColor whiteColor];
+
+    self.rootViewController = [[[ShelfViewController alloc] init] autorelease];    
+    
+    self.rootNavigationController = [[UINavigationController alloc] initWithRootViewController:self.rootViewController];
+    self.rootNavigationController.navigationBar.barStyle = UIBarStyleBlack;
+    
+    [self.window addSubview:rootNavigationController.view];
     [self.window makeKeyAndVisible];
+    
     return YES;
 }
 
