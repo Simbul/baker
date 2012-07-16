@@ -7,7 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "AQGridViewController.h"
 
-@interface ShelfViewController : UIViewController
+@interface ShelfViewController : AQGridViewController
 
 @end
