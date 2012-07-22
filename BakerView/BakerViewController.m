@@ -155,7 +155,7 @@
         
         
         // TODO: MOVE TO LOADVIEW -->
-        [self hideStatusBar];
+        //[self hideStatusBar];
         
         
         // ****** SCROLLVIEW INIT
@@ -664,6 +664,16 @@
     if (result == 0) {
         NSLog(@"Successfully added skip backup attribute to item %@", path);
     }
+}
+
+#pragma mark - View lifecycle
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+
+    self.navigationController.navigationBar.translucent = NO;
+    self.navigationController.navigationBarHidden = YES;
+
+    [self hideStatusBar];
 }
 
 #pragma mark - LOADING
@@ -1745,6 +1755,7 @@
         UIApplication *sharedApplication = [UIApplication sharedApplication];
         BOOL hidden = sharedApplication.statusBarHidden;
         [sharedApplication setStatusBarHidden:!hidden withAnimation:UIStatusBarAnimationSlide];
+        [self.navigationController setNavigationBarHidden:!hidden animated:YES];
         if(![indexViewController isDisabled]) {
             [indexViewController setIndexViewHidden:!hidden withAnimation:YES];
         }
@@ -1752,6 +1763,7 @@
 }
 - (void)hideStatusBar {
     [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
+    [self.navigationController setNavigationBarHidden:YES animated:YES];
     if(![indexViewController isDisabled]) {
         [indexViewController setIndexViewHidden:YES withAnimation:YES];
     }
