@@ -30,11 +30,31 @@
 //
 
 #import "ShelfManager.h"
+#import "Properties.h"
 
 @implementation ShelfManager
 
 + (NSArray *)localBooksList{
-    return [NSArray array];
+    NSMutableArray *booksList = [NSMutableArray array];
+    NSFileManager *localFileManager = [NSFileManager defaultManager];
+    NSString *booksDir = [[NSBundle mainBundle] pathForResource:@"books" ofType:nil];
+
+    NSArray *dirContents = [localFileManager contentsOfDirectoryAtPath:booksDir error:nil];
+    
+    for (NSString *file in dirContents) {
+        NSString *manifestFile = [booksDir stringByAppendingPathComponent:[file stringByAppendingPathComponent:@"book.json"]];
+        if ([localFileManager fileExistsAtPath:manifestFile]) {
+            Properties *p = [[Properties alloc] init];
+            [p loadManifest:manifestFile];
+            [booksList addObject:p];
+        } else {
+            NSLog(@"CANNOT FIND MANIFEST %@", manifestFile);
+        }
+    }
+    
+    [localFileManager release];
+    
+    return [NSArray arrayWithArray:booksList];
 }
 
 @end

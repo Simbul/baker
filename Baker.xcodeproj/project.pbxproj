@@ -67,6 +67,7 @@
 		AB40048A15B4BDA600D87E2A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABAFB58F15AB9A2E002FA498 /* CoreGraphics.framework */; };
 		AB40048B15B4BDB400D87E2A /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB40048015B4B90200D87E2A /* MessageUI.framework */; };
 		AB40048E15B4BDCE00D87E2A /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = AB40048215B4B90A00D87E2A /* libz.dylib */; };
+		AB40049415B4C28100D87E2A /* ShelfManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40049315B4C28100D87E2A /* ShelfManagerTest.m */; };
 		ABAFB58C15AB9A2E002FA498 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABAFB58B15AB9A2E002FA498 /* UIKit.framework */; };
 		ABAFB58E15AB9A2E002FA498 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABAFB58D15AB9A2E002FA498 /* Foundation.framework */; };
 		ABAFB59015AB9A2E002FA498 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABAFB58F15AB9A2E002FA498 /* CoreGraphics.framework */; };
@@ -160,6 +161,8 @@
 		AB40048415B4BB8B00D87E2A /* books */ = {isa = PBXFileReference; lastKnownFileType = folder; path = books; sourceTree = "<group>"; };
 		AB40048715B4BC4000D87E2A /* PropertiesTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PropertiesTest.h; sourceTree = "<group>"; };
 		AB40048815B4BC4000D87E2A /* PropertiesTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PropertiesTest.m; sourceTree = "<group>"; };
+		AB40049215B4C28100D87E2A /* ShelfManagerTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShelfManagerTest.h; sourceTree = "<group>"; };
+		AB40049315B4C28100D87E2A /* ShelfManagerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShelfManagerTest.m; sourceTree = "<group>"; };
 		ABAFB58715AB9A2E002FA498 /* Baker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Baker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		ABAFB58B15AB9A2E002FA498 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		ABAFB58D15AB9A2E002FA498 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -406,6 +409,8 @@
 				ABAFB5AF15AB9A2F002FA498 /* BakerTests.h */,
 				ABAFB5B015AB9A2F002FA498 /* BakerTests.m */,
 				ABAFB5AA15AB9A2E002FA498 /* Supporting Files */,
+				AB40049215B4C28100D87E2A /* ShelfManagerTest.h */,
+				AB40049315B4C28100D87E2A /* ShelfManagerTest.m */,
 			);
 			path = BakerTests;
 			sourceTree = "<group>";
@@ -588,6 +593,7 @@
 				AB40047815B4B83000D87E2A /* PageTitleLabel.m in Sources */,
 				AB40047F15B4B8B800D87E2A /* ShelfManager.m in Sources */,
 				AB40048915B4BC4000D87E2A /* PropertiesTest.m in Sources */,
+				AB40049415B4C28100D87E2A /* ShelfManagerTest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
