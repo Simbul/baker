@@ -7,21 +7,34 @@
 //
 
 #import "ShelfViewController.h"
+#import "ShelfManager.h"
 
-@interface ShelfViewController ()
-
-@end
 
 @implementation ShelfViewController
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+@synthesize books;
+
+#pragma mark - Init
+
+- (id)init {
+
+    self = [super init];
     if (self) {
-        // Custom initialization
+        self.books = [ShelfManager localBooksList];
     }
     return self;
 }
+
+#pragma mark - Memory management
+
+- (void)dealloc
+{
+    [books release];
+
+    [super dealloc];
+}
+
+#pragma mark - View lifecycle
 
 - (void)viewDidLoad
 {

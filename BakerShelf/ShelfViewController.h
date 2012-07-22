@@ -11,4 +11,6 @@
 
 @interface ShelfViewController : AQGridViewController
 
+@property (copy, nonatomic) NSArray *books;
+
 @end
