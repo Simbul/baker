@@ -34,26 +34,27 @@
 
 @implementation ShelfManager
 
-+ (NSArray *)localBooksList{
++ (NSArray *)localBooksList {
     NSMutableArray *booksList = [NSMutableArray array];
     NSFileManager *localFileManager = [NSFileManager defaultManager];
     NSString *booksDir = [[NSBundle mainBundle] pathForResource:@"books" ofType:nil];
 
     NSArray *dirContents = [localFileManager contentsOfDirectoryAtPath:booksDir error:nil];
-    
     for (NSString *file in dirContents) {
         NSString *manifestFile = [booksDir stringByAppendingPathComponent:[file stringByAppendingPathComponent:@"book.json"]];
         if ([localFileManager fileExistsAtPath:manifestFile]) {
-            Properties *p = [[Properties alloc] init];
-            [p loadManifest:manifestFile];
-            [booksList addObject:p];
+            // SINCE BAKERVIEW NOW ACCEPT ONLY A BOOK PATH ON INIT RETURN THE BOOK PATH
+            [booksList addObject:[booksDir stringByAppendingPathComponent:file]];
+
+            // TODO: UPDATE BAKERVIEW TO ACCEPT BOOK PROPERTIES ON INIT
+            //Properties *p = [[Properties new] autorelease];
+            //[p loadManifest:manifestFile];
+            //[booksList addObject:p];
         } else {
             NSLog(@"CANNOT FIND MANIFEST %@", manifestFile);
         }
     }
-    
-    [localFileManager release];
-    
+
     return [NSArray arrayWithArray:booksList];
 }
 
