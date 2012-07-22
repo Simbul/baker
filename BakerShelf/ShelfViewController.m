@@ -9,6 +9,7 @@
 #import "ShelfViewController.h"
 #import "ShelfManager.h"
 
+#import "BakerViewController.h"
 
 @implementation ShelfViewController
 
@@ -83,6 +84,18 @@
 - (CGSize)portraitGridCellSizeForGridView:(AQGridView *)aGridView
 {
     return CGSizeMake(153.6, 240);
+}
+
+#pragma mark - Navigation management
+
+- (void)gridView:(AQGridView *)gridView didSelectItemAtIndex:(NSUInteger)index
+{
+    [gridView deselectItemAtIndex:index animated:NO];
+
+    BakerViewController *bakerViewController = [[BakerViewController alloc] initWithBookPath:[self.books objectAtIndex:index]];
+
+    [self.navigationController pushViewController:bakerViewController animated:YES];
+    [bakerViewController release];
 }
 
 @end
