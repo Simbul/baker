@@ -76,6 +76,12 @@
 	{
 		cell = [[[AQGridViewCell alloc] initWithFrame:CGRectMake(0, 0, 100, 150) reuseIdentifier:cellIdentifier] autorelease];
 		cell.selectionGlowColor = [UIColor clearColor];
+
+        NSString *bookPath = [self.books objectAtIndex:index];
+        UIImage *thumbImg  = [UIImage imageWithContentsOfFile:[bookPath stringByAppendingPathComponent:@"thumb.png"]];
+        UIImageView *thumb = [[[UIImageView alloc] initWithImage:thumbImg] autorelease];
+
+        [cell.contentView addSubview:thumb];
 	}
 
     return cell;
