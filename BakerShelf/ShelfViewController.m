@@ -100,7 +100,7 @@
 		cell = [[[AQGridViewCell alloc] initWithFrame:CGRectMake(0, 0, 100, 150) reuseIdentifier:cellIdentifier] autorelease];
 		cell.selectionGlowColor = [UIColor clearColor];
 
-        NSString *bookPath = [self.books objectAtIndex:index];
+        NSString *bookPath = [[self.books objectAtIndex:index] path];
         UIImage *thumbImg  = [UIImage imageWithContentsOfFile:[bookPath stringByAppendingPathComponent:@"thumb.png"]];
         UIImageView *thumb = [[[UIImageView alloc] initWithImage:thumbImg] autorelease];
 
@@ -121,7 +121,7 @@
 {
     [gridView deselectItemAtIndex:index animated:NO];
 
-    BakerViewController *bakerViewController = [[BakerViewController alloc] initWithBookPath:[self.books objectAtIndex:index]];
+    BakerViewController *bakerViewController = [[BakerViewController alloc] initWithBook:[self.books objectAtIndex:index]];
 
     [self.navigationController pushViewController:bakerViewController animated:YES];
     [bakerViewController release];
