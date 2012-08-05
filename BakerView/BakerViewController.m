@@ -158,20 +158,6 @@
         //[self hideStatusBar];
         
         
-        // ****** SCROLLVIEW INIT
-        self.scrollView = [[[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, pageWidth, pageHeight)] autorelease];
-        scrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        scrollView.showsHorizontalScrollIndicator = YES;
-        scrollView.showsVerticalScrollIndicator = NO;
-        scrollView.delaysContentTouches = NO;
-        scrollView.pagingEnabled = YES;
-        scrollView.delegate = self;
-        
-        [self.view addSubview:scrollView];
-        
-        
-        
-        
         // ****** LISTENER FOR INTERCEPTOR WINDOW NOTIFICATION
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleInterceptedTouch:) name:@"notification_touch_intercepted" object:nil];
         
@@ -186,6 +172,20 @@
         [self startReading];
     }
     return self;
+}
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+    // ****** SCROLLVIEW INIT
+    self.scrollView = [[[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, pageWidth, pageHeight)] autorelease];
+    scrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    scrollView.showsHorizontalScrollIndicator = YES;
+    scrollView.showsVerticalScrollIndicator = NO;
+    scrollView.delaysContentTouches = NO;
+    scrollView.pagingEnabled = YES;
+    scrollView.delegate = self;
+    
+    [self.view addSubview:scrollView];
 }
 - (BOOL)loadBookWithBookPath:(NSString *)bookPath {
     NSLog(@"• LOAD BOOK WITH PATH: %@", bookPath);
