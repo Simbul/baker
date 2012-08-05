@@ -30,6 +30,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "BakerBook.h"
 
 @interface ShelfManager : NSObject
 

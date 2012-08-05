@@ -157,8 +157,8 @@
     self.bakerBackground               = [bookData objectForKey:@"-baker-background"];
     self.bakerBackgroundImagePortrait  = [bookData objectForKey:@"-baker-background-image-portrait"];
     self.bakerBackgroundImageLandscape = [bookData objectForKey:@"-baker-background-image-landscape"];
-    self.bakerPageNumbersColor         = [bookData objectForKey:@"-baker-page-number-color"];
-    self.bakerPageNumbersAlpha         = [bookData objectForKey:@"-baker-page-number-alpha"];
+    self.bakerPageNumbersColor         = [bookData objectForKey:@"-baker-page-numbers-color"];
+    self.bakerPageNumbersAlpha         = [bookData objectForKey:@"-baker-page-numbers-alpha"];
     self.bakerPageScreenshots          = [bookData objectForKey:@"-baker-page-screenshots"];
     
     self.bakerRendering          = [bookData objectForKey:@"-baker-rendering"];
@@ -298,7 +298,7 @@
                                                         @"-baker-background",
                                                         @"-baker-background-image-portrait",
                                                         @"-baker-background-image-landscape",
-                                                        @"-baker-page-number-color",
+                                                        @"-baker-page-numbers-color",
                                                         @"-baker-page-screenshots",
                                                         @"-baker-rendering", nil];
     
@@ -312,7 +312,7 @@
         return NO;
     }
     
-    if (([param isEqualToString:@"-baker-background"] || [param isEqualToString:@"-baker-page-number-color"]) /*&& TODO: not a valid hex*/) {
+    if (([param isEqualToString:@"-baker-background"] || [param isEqualToString:@"-baker-page-numbers-color"]) /*&& TODO: not a valid hex*/) {
         // return NO;
     }
     

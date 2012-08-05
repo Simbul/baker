@@ -91,6 +91,10 @@
 @synthesize currPage;
 @synthesize currentPageNumber;
 
+- (id)initWithBook:(BakerBook *)book {
+    return [self initWithBookPath:book.path];
+}
+
 #pragma mark - INIT
 - (id)initWithBookPath:(NSString *)bookPath {
     self = [super init];

@@ -35,6 +35,7 @@
 #import "IndexViewController.h"
 #import "ModalViewController.h"
 #import "Properties.h"
+#import "BakerBook.h"
 
 
 @class Downloader;
@@ -112,6 +113,7 @@
 @property int currentPageNumber;
 
 #pragma mark - INIT
+- (id)initWithBook:(BakerBook *)book;
 - (id)initWithBookPath:(NSString *)bookPath;
 - (BOOL)loadBookWithBookPath:(NSString *)bookPath;
 - (void)cleanupBookEnvironment;

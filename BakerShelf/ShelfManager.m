@@ -43,13 +43,8 @@
     for (NSString *file in dirContents) {
         NSString *manifestFile = [booksDir stringByAppendingPathComponent:[file stringByAppendingPathComponent:@"book.json"]];
         if ([localFileManager fileExistsAtPath:manifestFile]) {
-            // SINCE BAKERVIEW NOW ACCEPT ONLY A BOOK PATH ON INIT RETURN THE BOOK PATH
-            [booksList addObject:[booksDir stringByAppendingPathComponent:file]];
-
-            // TODO: UPDATE BAKERVIEW TO ACCEPT BOOK PROPERTIES ON INIT
-            //Properties *p = [[Properties new] autorelease];
-            //[p loadManifest:manifestFile];
-            //[booksList addObject:p];
+            BakerBook *book = [[[BakerBook alloc] initWithBookPath:[booksDir stringByAppendingPathComponent:file] bundled:YES] autorelease];
+            [booksList addObject:book];
         } else {
             NSLog(@"CANNOT FIND MANIFEST %@", manifestFile);
         }
