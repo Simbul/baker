@@ -510,28 +510,27 @@
         [self updateScreenshots];
     }
     
-    
-    // HACK TO HANDLE STATUS BAR ON ROTATION, TODO: MOVE IT IN ITS OWN METHOD
-    int scrollViewY = 0;
-    if (![UIApplication sharedApplication].statusBarHidden) {
-        scrollViewY = -20;
-    }
-    
-    [UIView animateWithDuration:0.2
-                     animations:^{
-                         scrollView.frame = CGRectMake(0, scrollViewY, pageWidth, pageHeight);
-                     }];
-    
+    [self adjustScrollViewPosition];
     
     [self setFrame:[self frameForPage:currentPageNumber] forPage:currPage];
     [self setFrame:[self frameForPage:currentPageNumber + 1] forPage:nextPage];
     [self setFrame:[self frameForPage:currentPageNumber - 1] forPage:prevPage];
     
     [scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:NO];
-    
-    
+        
     NSLog(@"    Unlock page changing");
     [self lockPage:[NSNumber numberWithBool:NO]];
+}
+- (void)adjustScrollViewPosition {
+    int scrollViewY = 0;
+    if (![UIApplication sharedApplication].statusBarHidden) {
+        scrollViewY = -20;
+    }
+    
+    [UIView animateWithDuration:UINavigationControllerHideShowBarDuration
+                     animations:^{
+                         scrollView.frame = CGRectMake(0, scrollViewY, pageWidth, pageHeight);
+                     }];
 }
 - (void)setPageSize:(NSString *)orientation {
     NSLog(@"• Set size for orientation: %@", orientation);

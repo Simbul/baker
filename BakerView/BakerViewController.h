@@ -124,6 +124,7 @@
 - (void)buildPageDetails;
 - (void)setImageFor:(UIImageView *)view;
 - (void)updateBookLayout;
+- (void)adjustScrollViewPosition;
 - (void)setPageSize:(NSString *)orientation;
 - (void)setTappableAreaSize;
 - (void)showPageDetails;
