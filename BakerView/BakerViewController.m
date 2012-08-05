@@ -700,7 +700,7 @@
         
         tapNumber = tapNumber + (lastPageNumber - currentPageNumber);
         
-        [self hideStatusBar];
+        [self hideBars:YES];
         [scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:YES];
         
         [self gotoPageDelayer];
@@ -1022,7 +1022,7 @@
     myModalViewController.delegate = self;
     
     // Hide the IndexView before opening modal web view
-    [self hideStatusBar];
+    [self hideBars:YES];
     
     // Check if iOS4 or 5
     if ([self respondsToSelector:@selector(presentViewController:animated:completion:)]) {
@@ -1064,7 +1064,7 @@
 }
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scroll {
     NSLog(@"• Scrollview will begin dragging");
-    [self hideStatusBar];
+    [self hideBars:YES];
 }
 - (void)scrollViewDidEndDragging:(UIScrollView *)scroll willDecelerate:(BOOL)decelerate {
     NSLog(@"• Scrollview did end dragging");
@@ -1655,13 +1655,13 @@
         }
         else if ((touch.tapCount % 2) == 0) {
             NSLog(@"    Multi Tap TOGGLE STATUS BAR");
-            [self toggleStatusBar];
+            [self toggleBars];
         }
     }
 }
 - (void)userDidScroll:(UITouch *)touch {
     NSLog(@"• User scroll");
-    [self hideStatusBar];
+    [self hideBars:YES];
     
     currPage.backgroundColor = webViewBackground;
     currPage.opaque = YES;
@@ -1710,7 +1710,7 @@
     
 }
 - (void)scrollPage:(UIWebView *)webView to:(NSString *)offset animating:(BOOL)animating {
-    [self hideStatusBar];
+    [self hideBars:YES];
     
     NSString *jsCommand = [NSString stringWithFormat:@"window.scrollTo(0,%@);", offset];
     if (animating) {
@@ -1745,24 +1745,71 @@
     }
 }
 
-#pragma mark - STATUS BAR
-- (void)toggleStatusBar {
+#pragma mark - BARS VISIBILITY
+- (CGRect)getNewNavigationFrame:(BOOL)hidden {
+    UINavigationBar *navigationBar = self.navigationController.navigationBar;
+    
+    int navX = navigationBar.frame.origin.x;
+    int navW = navigationBar.frame.size.width;
+    int navH = navigationBar.frame.size.height;
+    
+    if (hidden) {
+        return CGRectMake(navX, -44, navW, navH);
+    } else {
+        return CGRectMake(navX, 20, navW, navH);
+    }
+}
+- (void)toggleBars {
     // if modal view is up, don't toggle.
     if (!self.modalViewController) {
-        NSLog(@"• Toggle status bar visibility");
+        NSLog(@"• Toggle bars visibility");
         
         UIApplication *sharedApplication = [UIApplication sharedApplication];
         BOOL hidden = sharedApplication.statusBarHidden;
-        [sharedApplication setStatusBarHidden:!hidden withAnimation:UIStatusBarAnimationSlide];
-        [self.navigationController setNavigationBarHidden:!hidden animated:YES];
+        
+        if (hidden) {
+            [sharedApplication setStatusBarHidden:NO withAnimation:UIStatusBarAnimationSlide];
+            [self performSelector:@selector(showNavigationBar) withObject:nil afterDelay:UINavigationControllerHideShowBarDuration];
+        } else {
+            [self hideBars:YES];
+        }
+                
         if(![indexViewController isDisabled]) {
             [indexViewController setIndexViewHidden:!hidden withAnimation:YES];
         }
     }
 }
-- (void)hideStatusBar {
-    [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
-    [self.navigationController setNavigationBarHidden:YES animated:YES];
+- (void)showNavigationBar {
+    CGRect newNavigationFrame = [self getNewNavigationFrame:NO];
+    UINavigationBar *navigationBar = self.navigationController.navigationBar;
+
+    navigationBar.frame = CGRectMake(newNavigationFrame.origin.x, -24, newNavigationFrame.size.width, newNavigationFrame.size.height);
+    navigationBar.hidden = NO;
+    
+    [UIView animateWithDuration:UINavigationControllerHideShowBarDuration
+                     animations:^{
+                         navigationBar.frame = newNavigationFrame;
+                     }];
+}
+- (void)hideBars:(BOOL)animated {
+    CGRect newNavigationFrame = [self getNewNavigationFrame:YES];
+    UINavigationBar *navigationBar = self.navigationController.navigationBar;
+    
+    if (animated) {
+        [UIView animateWithDuration:UINavigationControllerHideShowBarDuration
+                         animations:^{
+                             navigationBar.frame = newNavigationFrame;
+                         }
+                         completion:^(BOOL finished) {
+                             navigationBar.hidden = YES;
+                             [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
+                         }];
+    } else {
+        navigationBar.frame = newNavigationFrame;
+        navigationBar.hidden = YES;
+        [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
+    }
+    
     if(![indexViewController isDisabled]) {
         [indexViewController setIndexViewHidden:YES withAnimation:YES];
     }

@@ -178,9 +178,11 @@
 - (void)scrollPage:(UIWebView *)webView to:(NSString *)offset animating:(BOOL)animating;
 - (void)handleAnchor:(BOOL)animating;
 
-#pragma mark - STATUS BAR
-- (void)toggleStatusBar;
-- (void)hideStatusBar;
+#pragma mark - BARS VISIBILITY
+- (CGRect)getNewNavigationFrame:(BOOL)hidden;
+- (void)toggleBars;
+- (void)showNavigationBar;
+- (void)hideBars:(BOOL)animated;
 
 #pragma mark - DOWNLOAD NEW BOOKS
 - (void)downloadBook:(NSNotification *)notification;
