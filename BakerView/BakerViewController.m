@@ -153,23 +153,8 @@
         pageNameFromURL = nil;
         anchorFromURL = nil;
         
-        
-        // TODO: MOVE TO LOADVIEW -->
-        //[self hideStatusBar];
-        
-        
-        // ****** LISTENER FOR INTERCEPTOR WINDOW NOTIFICATION
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleInterceptedTouch:) name:@"notification_touch_intercepted" object:nil];
-        
-        
-        // ****** LISTENER FOR DOWNLOAD NOTIFICATION - TODO: MOVE TO VIEWWILLAPPEAR
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(downloadBook:) name:@"downloadNotification" object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleDownloadResult:) name:@"handleDownloadResult" object:nil];
-        
-        
         // TODO: LOAD BOOK METHOD IN VIEW DID LOAD
         [self loadBookWithBookPath:bookPath];
-        [self startReading];
     }
     return self;
 }
@@ -186,6 +171,26 @@
     scrollView.delegate = self;
     
     [self.view addSubview:scrollView];
+}
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
+    
+    // ****** HIDE STATUS AND NAVIGATION BAR
+    [self.navigationController.navigationBar setTranslucent:YES];
+    [self hideBars:NO];
+    
+    
+    // ****** LISTENER FOR INTERCEPTOR WINDOW NOTIFICATION
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleInterceptedTouch:) name:@"notification_touch_intercepted" object:nil];
+    
+    
+    // ****** LISTENER FOR DOWNLOAD NOTIFICATION - TODO: MOVE TO VIEWWILLAPPEAR
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(downloadBook:) name:@"downloadNotification" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleDownloadResult:) name:@"handleDownloadResult" object:nil];
+    
+    
+    [self startReading];
 }
 - (BOOL)loadBookWithBookPath:(NSString *)bookPath {
     NSLog(@"• LOAD BOOK WITH PATH: %@", bookPath);
@@ -663,16 +668,6 @@
     if (result == 0) {
         NSLog(@"Successfully added skip backup attribute to item %@", path);
     }
-}
-
-#pragma mark - View lifecycle
-- (void)viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
-
-    self.navigationController.navigationBar.translucent = NO;
-    self.navigationController.navigationBarHidden = YES;
-
-    [self hideStatusBar];
 }
 
 #pragma mark - LOADING
