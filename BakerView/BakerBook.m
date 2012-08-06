@@ -316,7 +316,7 @@
         // return NO;
     }
     
-    if ([param isEqualToString:@"-baker-rendering"] && (![param isEqualToString:@"screenshots"] || ![param isEqualToString:@"three-cards"])) {
+    if ([param isEqualToString:@"-baker-rendering"] && (![string isEqualToString:@"screenshots"] && ![string isEqualToString:@"three-cards"])) {
         NSLog(@"Error: param \"-baker-rendering\" should be equal to \"screenshots\" or \"three-cards\" but it's not");
         return NO;
     }
