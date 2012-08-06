@@ -54,8 +54,6 @@
 		AB40047215B4B83000D87E2A /* Utils.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40044B15B4B83000D87E2A /* Utils.m */; };
 		AB40047315B4B83000D87E2A /* ModalViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40044D15B4B83000D87E2A /* ModalViewController.m */; };
 		AB40047415B4B83000D87E2A /* ModalViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40044D15B4B83000D87E2A /* ModalViewController.m */; };
-		AB40047515B4B83000D87E2A /* Properties.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40044F15B4B83000D87E2A /* Properties.m */; };
-		AB40047615B4B83000D87E2A /* Properties.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40044F15B4B83000D87E2A /* Properties.m */; };
 		AB40047715B4B83000D87E2A /* PageTitleLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40045215B4B83000D87E2A /* PageTitleLabel.m */; };
 		AB40047815B4B83000D87E2A /* PageTitleLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40045215B4B83000D87E2A /* PageTitleLabel.m */; };
 		AB40047E15B4B8B800D87E2A /* ShelfManager.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40047D15B4B8B800D87E2A /* ShelfManager.m */; };
@@ -64,7 +62,6 @@
 		AB40048315B4B90A00D87E2A /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = AB40048215B4B90A00D87E2A /* libz.dylib */; };
 		AB40048515B4BB8B00D87E2A /* books in Resources */ = {isa = PBXBuildFile; fileRef = AB40048415B4BB8B00D87E2A /* books */; };
 		AB40048615B4BB8B00D87E2A /* books in Resources */ = {isa = PBXBuildFile; fileRef = AB40048415B4BB8B00D87E2A /* books */; };
-		AB40048915B4BC4000D87E2A /* PropertiesTest.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40048815B4BC4000D87E2A /* PropertiesTest.m */; };
 		AB40048A15B4BDA600D87E2A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABAFB58F15AB9A2E002FA498 /* CoreGraphics.framework */; };
 		AB40048B15B4BDB400D87E2A /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB40048015B4B90200D87E2A /* MessageUI.framework */; };
 		AB40048E15B4BDCE00D87E2A /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = AB40048215B4B90A00D87E2A /* libz.dylib */; };
@@ -153,8 +150,6 @@
 		AB40044B15B4B83000D87E2A /* Utils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Utils.m; sourceTree = "<group>"; };
 		AB40044C15B4B83000D87E2A /* ModalViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModalViewController.h; sourceTree = "<group>"; };
 		AB40044D15B4B83000D87E2A /* ModalViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ModalViewController.m; sourceTree = "<group>"; };
-		AB40044E15B4B83000D87E2A /* Properties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Properties.h; sourceTree = "<group>"; };
-		AB40044F15B4B83000D87E2A /* Properties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Properties.m; sourceTree = "<group>"; };
 		AB40045115B4B83000D87E2A /* PageTitleLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageTitleLabel.h; sourceTree = "<group>"; };
 		AB40045215B4B83000D87E2A /* PageTitleLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PageTitleLabel.m; sourceTree = "<group>"; };
 		AB40047C15B4B8B800D87E2A /* ShelfManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShelfManager.h; sourceTree = "<group>"; };
@@ -162,8 +157,6 @@
 		AB40048015B4B90200D87E2A /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		AB40048215B4B90A00D87E2A /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		AB40048415B4BB8B00D87E2A /* books */ = {isa = PBXFileReference; lastKnownFileType = folder; path = books; sourceTree = "<group>"; };
-		AB40048715B4BC4000D87E2A /* PropertiesTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PropertiesTest.h; sourceTree = "<group>"; };
-		AB40048815B4BC4000D87E2A /* PropertiesTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PropertiesTest.m; sourceTree = "<group>"; };
 		AB40049215B4C28100D87E2A /* ShelfManagerTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShelfManagerTest.h; sourceTree = "<group>"; };
 		AB40049315B4C28100D87E2A /* ShelfManagerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShelfManagerTest.m; sourceTree = "<group>"; };
 		ABAFB58715AB9A2E002FA498 /* Baker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Baker.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -269,8 +262,6 @@
 				AB40043715B4B83000D87E2A /* lib */,
 				AB40044C15B4B83000D87E2A /* ModalViewController.h */,
 				AB40044D15B4B83000D87E2A /* ModalViewController.m */,
-				AB40044E15B4B83000D87E2A /* Properties.h */,
-				AB40044F15B4B83000D87E2A /* Properties.m */,
 				AB40045015B4B83000D87E2A /* ui */,
 			);
 			path = BakerView;
@@ -409,8 +400,6 @@
 		ABAFB5A915AB9A2E002FA498 /* BakerTests */ = {
 			isa = PBXGroup;
 			children = (
-				AB40048715B4BC4000D87E2A /* PropertiesTest.h */,
-				AB40048815B4BC4000D87E2A /* PropertiesTest.m */,
 				ABAFB5AF15AB9A2F002FA498 /* BakerTests.h */,
 				ABAFB5B015AB9A2F002FA498 /* BakerTests.m */,
 				ABAFB5AA15AB9A2E002FA498 /* Supporting Files */,
@@ -559,7 +548,6 @@
 				AB40046F15B4B83000D87E2A /* SSZipArchive.m in Sources */,
 				AB40047115B4B83000D87E2A /* Utils.m in Sources */,
 				AB40047315B4B83000D87E2A /* ModalViewController.m in Sources */,
-				AB40047515B4B83000D87E2A /* Properties.m in Sources */,
 				AB40047715B4B83000D87E2A /* PageTitleLabel.m in Sources */,
 				AB40047E15B4B8B800D87E2A /* ShelfManager.m in Sources */,
 				9FF7959915B4C4F600899E51 /* AQGridView.m in Sources */,
@@ -595,10 +583,8 @@
 				AB40047015B4B83000D87E2A /* SSZipArchive.m in Sources */,
 				AB40047215B4B83000D87E2A /* Utils.m in Sources */,
 				AB40047415B4B83000D87E2A /* ModalViewController.m in Sources */,
-				AB40047615B4B83000D87E2A /* Properties.m in Sources */,
 				AB40047815B4B83000D87E2A /* PageTitleLabel.m in Sources */,
 				AB40047F15B4B8B800D87E2A /* ShelfManager.m in Sources */,
-				AB40048915B4BC4000D87E2A /* PropertiesTest.m in Sources */,
 				AB40049415B4C28100D87E2A /* ShelfManagerTest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
