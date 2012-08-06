@@ -108,13 +108,13 @@
 }
 
 #pragma mark - PROPERTIES
+@property (strong, nonatomic) BakerBook *book;
 @property (nonatomic, retain) UIScrollView *scrollView;
 @property (nonatomic, retain) UIWebView *currPage;
 @property int currentPageNumber;
 
 #pragma mark - INIT
-- (id)initWithBook:(BakerBook *)book;
-- (id)initWithBookPath:(NSString *)bookPath;
+- (id)initWithBook:(BakerBook *)bakerBook;
 - (BOOL)loadBookWithBookPath:(NSString *)bookPath;
 - (void)cleanupBookEnvironment;
 - (void)resetPageSlots;

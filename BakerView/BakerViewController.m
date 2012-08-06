@@ -78,19 +78,18 @@
 @implementation BakerViewController
 
 #pragma mark - SYNTHESIS
+@synthesize book;
 @synthesize scrollView;
 @synthesize currPage;
 @synthesize currentPageNumber;
 
-- (id)initWithBook:(BakerBook *)book {
-    return [self initWithBookPath:book.path];
-}
-
 #pragma mark - INIT
-- (id)initWithBookPath:(NSString *)bookPath {
+- (id)initWithBook:(BakerBook *)bakerBook {
+
     self = [super init];
     if (self) {
         NSLog(@"• INIT");
+        self.book = bakerBook;
         
         
         // ****** INIT PROPERTIES
@@ -149,7 +148,7 @@
         anchorFromURL = nil;
         
         // TODO: LOAD BOOK METHOD IN VIEW DID LOAD
-        [self loadBookWithBookPath:bookPath];
+        [self loadBookWithBookPath:book.path];
     }
     return self;
 }
@@ -1972,7 +1971,7 @@
 - (void)viewDidUnload {
     
     [super viewDidUnload];
-    
+
     // Set web views delegates to nil, mandatory before releasing UIWebview instances
     currPage.delegate = nil;
     nextPage.delegate = nil;
@@ -1992,6 +1991,8 @@
     
     [indexViewController release];
     [myModalViewController release];
+    
+    [book release];
     [scrollView release];
     [currPage release];
     [nextPage release];
