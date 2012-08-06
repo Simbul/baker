@@ -1739,7 +1739,7 @@
         
         if (hidden) {
             [sharedApplication setStatusBarHidden:NO withAnimation:UIStatusBarAnimationSlide];
-            [self performSelector:@selector(showNavigationBar) withObject:nil afterDelay:UINavigationControllerHideShowBarDuration];
+            [self performSelector:@selector(showNavigationBar) withObject:nil afterDelay:0.1];
         } else {
             [self hideBars:YES];
         }
@@ -1756,24 +1756,29 @@
     navigationBar.frame = CGRectMake(newNavigationFrame.origin.x, -24, newNavigationFrame.size.width, newNavigationFrame.size.height);
     navigationBar.hidden = NO;
     
-    [UIView animateWithDuration:UINavigationControllerHideShowBarDuration
+    [UIView animateWithDuration:0.3
+                          delay:0
+                        options:UIViewAnimationOptionCurveEaseOut
                      animations:^{
                          navigationBar.frame = newNavigationFrame;
-                     }];
+                     }
+                     completion:nil];
 }
 - (void)hideBars:(BOOL)animated {
     CGRect newNavigationFrame = [self getNewNavigationFrame:YES];
     UINavigationBar *navigationBar = self.navigationController.navigationBar;
     
     if (animated) {
-        [UIView animateWithDuration:UINavigationControllerHideShowBarDuration
+        [UIView animateWithDuration:0.3
+                              delay:0
+                            options:UIViewAnimationOptionCurveEaseOut
                          animations:^{
                              navigationBar.frame = newNavigationFrame;
                          }
                          completion:^(BOOL finished) {
                              navigationBar.hidden = YES;
-                             [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
                          }];
+        [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
     } else {
         navigationBar.frame = newNavigationFrame;
         navigationBar.hidden = YES;

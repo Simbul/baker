@@ -77,6 +77,10 @@
 		ABAFB5A615AB9A2E002FA498 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABAFB58D15AB9A2E002FA498 /* Foundation.framework */; };
 		ABAFB5AE15AB9A2E002FA498 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = ABAFB5AC15AB9A2E002FA498 /* InfoPlist.strings */; };
 		ABAFB5B115AB9A2F002FA498 /* BakerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = ABAFB5B015AB9A2F002FA498 /* BakerTests.m */; };
+		BF3CCCA215D080560087B9CA /* ios-icon-ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = BF3CCC9E15D080560087B9CA /* ios-icon-ipad.png */; };
+		BF3CCCA315D080560087B9CA /* ios-icon-ipad@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BF3CCC9F15D080560087B9CA /* ios-icon-ipad@2x.png */; };
+		BF3CCCA415D080560087B9CA /* ios-icon-iphone.png in Resources */ = {isa = PBXBuildFile; fileRef = BF3CCCA015D080560087B9CA /* ios-icon-iphone.png */; };
+		BF3CCCA515D080560087B9CA /* ios-icon-iphone@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BF3CCCA115D080560087B9CA /* ios-icon-iphone@2x.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -175,6 +179,10 @@
 		ABAFB5AD15AB9A2E002FA498 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		ABAFB5AF15AB9A2F002FA498 /* BakerTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BakerTests.h; sourceTree = "<group>"; };
 		ABAFB5B015AB9A2F002FA498 /* BakerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BakerTests.m; sourceTree = "<group>"; };
+		BF3CCC9E15D080560087B9CA /* ios-icon-ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ios-icon-ipad.png"; sourceTree = "<group>"; };
+		BF3CCC9F15D080560087B9CA /* ios-icon-ipad@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ios-icon-ipad@2x.png"; sourceTree = "<group>"; };
+		BF3CCCA015D080560087B9CA /* ios-icon-iphone.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ios-icon-iphone.png"; sourceTree = "<group>"; };
+		BF3CCCA115D080560087B9CA /* ios-icon-iphone@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ios-icon-iphone@2x.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -389,6 +397,7 @@
 		ABAFB59215AB9A2E002FA498 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				BF3CCC9D15D080560087B9CA /* icon */,
 				ABAFB59315AB9A2E002FA498 /* Baker-Info.plist */,
 				ABAFB59415AB9A2E002FA498 /* InfoPlist.strings */,
 				ABAFB59715AB9A2E002FA498 /* main.m */,
@@ -416,6 +425,17 @@
 				ABAFB5AC15AB9A2E002FA498 /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		BF3CCC9D15D080560087B9CA /* icon */ = {
+			isa = PBXGroup;
+			children = (
+				BF3CCC9E15D080560087B9CA /* ios-icon-ipad.png */,
+				BF3CCC9F15D080560087B9CA /* ios-icon-ipad@2x.png */,
+				BF3CCCA015D080560087B9CA /* ios-icon-iphone.png */,
+				BF3CCCA115D080560087B9CA /* ios-icon-iphone@2x.png */,
+			);
+			path = icon;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -494,6 +514,10 @@
 				AB40045B15B4B83000D87E2A /* forward.png in Resources */,
 				AB40045D15B4B83000D87E2A /* forward@2x.png in Resources */,
 				AB40048515B4BB8B00D87E2A /* books in Resources */,
+				BF3CCCA215D080560087B9CA /* ios-icon-ipad.png in Resources */,
+				BF3CCCA315D080560087B9CA /* ios-icon-ipad@2x.png in Resources */,
+				BF3CCCA415D080560087B9CA /* ios-icon-iphone.png in Resources */,
+				BF3CCCA515D080560087B9CA /* ios-icon-iphone@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
