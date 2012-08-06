@@ -63,21 +63,12 @@
 #define URL_OPEN_EXTERNAL       @"referrer=Safari"
 
 
-// IOS VERSION >= 5.0 MACRO
-#ifndef kCFCoreFoundationVersionNumber_iPhoneOS_5_0
-    #define kCFCoreFoundationVersionNumber_iPhoneOS_5_0 675.00
-#endif
-#ifndef __IPHONE_5_0
-    #define __IPHONE_5_0 50000
-#endif
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_5_0
-    #define IF_IOS5_OR_GREATER(...) \
-    if (kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iPhoneOS_5_0) { \
-        __VA_ARGS__ \
-    }
-#else
-    #define IF_IOS5_OR_GREATER(...)
-#endif
+// IOS VERSION COMPARISON MACROS
+#define SYSTEM_VERSION_EQUAL_TO(version)                  ([[[UIDevice currentDevice] systemVersion] compare:version options:NSNumericSearch] == NSOrderedSame)
+#define SYSTEM_VERSION_GREATER_THAN(version)              ([[[UIDevice currentDevice] systemVersion] compare:version options:NSNumericSearch] == NSOrderedDescending)
+#define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(version)  ([[[UIDevice currentDevice] systemVersion] compare:version options:NSNumericSearch] != NSOrderedAscending)
+#define SYSTEM_VERSION_LESS_THAN(version)                 ([[[UIDevice currentDevice] systemVersion] compare:version options:NSNumericSearch] == NSOrderedAscending)
+#define SYSTEM_VERSION_LESS_THAN_OR_EQUAL_TO(version)     ([[[UIDevice currentDevice] systemVersion] compare:version options:NSNumericSearch] != NSOrderedDescending)
 
 
 // SCREENSHOT
@@ -451,10 +442,10 @@
         // ****** Spinners
         UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
         spinner.backgroundColor = [UIColor clearColor];
-        IF_IOS5_OR_GREATER(
-                           spinner.color = foregroundColor;
-                           spinner.alpha = [(NSNumber *)foregroundAlpha floatValue];
-                           );
+        if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"5.0")) {
+            spinner.color = foregroundColor;
+            spinner.alpha = [(NSNumber *)foregroundAlpha floatValue];
+        };
         
         CGRect frame = spinner.frame;
         frame.origin.x = pageWidth * i + (pageWidth - frame.size.width) / 2;
@@ -664,13 +655,27 @@
     }
 }
 - (void)addSkipBackupAttributeToItemAtPath:(NSString *)path {
-    const char *filePath = [path fileSystemRepresentation];
-    const char *attrName = "com.apple.MobileBackup";
-    u_int8_t attrValue = 1;
     
-    int result = setxattr(filePath, attrName, &attrValue, sizeof(attrValue), 0, 0);
-    if (result == 0) {
-        NSLog(@"Successfully added skip backup attribute to item %@", path);
+    if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
+        
+        if (SYSTEM_VERSION_LESS_THAN_OR_EQUAL_TO(@"5.0.1")) {
+            
+            const char *filePath = [path fileSystemRepresentation];
+            const char *attrName = "com.apple.MobileBackup";
+            u_int8_t attrValue = 1;
+            
+            int result = setxattr(filePath, attrName, &attrValue, sizeof(attrValue), 0, 0);
+            if (result == 0) {
+                NSLog(@"Successfully added skip backup attribute to item %@ (iOS <= 5.0.1)", path);
+            }
+
+        } else if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"5.1")) {
+            
+            BOOL success = [[NSURL fileURLWithPath:path] setResourceValue:[NSNumber numberWithBool: YES] forKey:NSURLIsExcludedFromBackupKey error:nil];
+            if(success) {
+                NSLog(@"Successfully added skip backup attribute to item %@ (iOS >= 5.1)", path);
+            }
+        }
     }
 }
 
