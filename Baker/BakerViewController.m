@@ -647,13 +647,27 @@
     }
 }
 - (void)addSkipBackupAttributeToItemAtPath:(NSString *)path {
-    const char *filePath = [path fileSystemRepresentation];
-    const char *attrName = "com.apple.MobileBackup";
-    u_int8_t attrValue = 1;
     
-    int result = setxattr(filePath, attrName, &attrValue, sizeof(attrValue), 0, 0);
-    if (result == 0) {
-        NSLog(@"Successfully added skip backup attribute to item %@", path);
+    if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
+        
+        if (SYSTEM_VERSION_LESS_THAN_OR_EQUAL_TO(@"5.0.1")) {
+            
+            const char *filePath = [path fileSystemRepresentation];
+            const char *attrName = "com.apple.MobileBackup";
+            u_int8_t attrValue = 1;
+            
+            int result = setxattr(filePath, attrName, &attrValue, sizeof(attrValue), 0, 0);
+            if (result == 0) {
+                NSLog(@"Successfully added skip backup attribute to item %@ (iOS <= 5.0.1)", path);
+            }
+
+        } else if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"5.1")) {
+            
+            BOOL success = [[NSURL fileURLWithPath:path] setResourceValue:[NSNumber numberWithBool: YES] forKey:NSURLIsExcludedFromBackupKey error:nil];
+            if(success) {
+                NSLog(@"Successfully added skip backup attribute to item %@ (iOS >= 5.1)", path);
+            }
+        }
     }
 }
 
