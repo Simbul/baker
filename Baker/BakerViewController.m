@@ -63,21 +63,12 @@
 #define URL_OPEN_EXTERNAL       @"referrer=Safari"
 
 
-// IOS VERSION >= 5.0 MACRO
-#ifndef kCFCoreFoundationVersionNumber_iPhoneOS_5_0
-    #define kCFCoreFoundationVersionNumber_iPhoneOS_5_0 675.00
-#endif
-#ifndef __IPHONE_5_0
-    #define __IPHONE_5_0 50000
-#endif
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_5_0
-    #define IF_IOS5_OR_GREATER(...) \
-    if (kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iPhoneOS_5_0) { \
-        __VA_ARGS__ \
-    }
-#else
-    #define IF_IOS5_OR_GREATER(...)
-#endif
+// IOS VERSION COMPARISON MACROS
+#define SYSTEM_VERSION_EQUAL_TO(version)                  ([[[UIDevice currentDevice] systemVersion] compare:version options:NSNumericSearch] == NSOrderedSame)
+#define SYSTEM_VERSION_GREATER_THAN(version)              ([[[UIDevice currentDevice] systemVersion] compare:version options:NSNumericSearch] == NSOrderedDescending)
+#define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(version)  ([[[UIDevice currentDevice] systemVersion] compare:version options:NSNumericSearch] != NSOrderedAscending)
+#define SYSTEM_VERSION_LESS_THAN(version)                 ([[[UIDevice currentDevice] systemVersion] compare:version options:NSNumericSearch] == NSOrderedAscending)
+#define SYSTEM_VERSION_LESS_THAN_OR_EQUAL_TO(version)     ([[[UIDevice currentDevice] systemVersion] compare:version options:NSNumericSearch] != NSOrderedDescending)
 
 
 // SCREENSHOT
@@ -442,10 +433,10 @@
         // ****** Spinners
         UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
         spinner.backgroundColor = [UIColor clearColor];
-        IF_IOS5_OR_GREATER(
-                           spinner.color = foregroundColor;
-                           spinner.alpha = [(NSNumber *)foregroundAlpha floatValue];
-                           );
+        if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"5.0")) {
+            spinner.color = foregroundColor;
+            spinner.alpha = [(NSNumber *)foregroundAlpha floatValue];
+        };
         
         CGRect frame = spinner.frame;
         frame.origin.x = pageWidth * i + (pageWidth - frame.size.width) / 2;
