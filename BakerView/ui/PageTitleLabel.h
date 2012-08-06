@@ -30,16 +30,11 @@
 //  
 
 #import <Foundation/Foundation.h>
-#import "Properties.h"
 
+@interface PageTitleLabel : UILabel
 
-@interface PageTitleLabel : UILabel {
-    Properties *properties;
-}
-
-- (id)initWithFile:(NSString *)path;
-- (id)initWithFileContent:(NSString *)fileContent;
-- (void)initStyle;
+- (id)initWithFile:(NSString *)path color:(UIColor *)color alpha:(float)alpha;
+- (id)initWithFileContent:(NSString *)fileContent color:(UIColor *)color alpha:(float)alpha;
 - (void)setX:(CGFloat) x Y:(CGFloat) y;
 
 @end

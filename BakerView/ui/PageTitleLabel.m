@@ -35,53 +35,44 @@
 
 @implementation PageTitleLabel
 
-- (id)initWithFile:(NSString *)path {
+- (id)initWithFile:(NSString *)path color:(UIColor *)color alpha:(float)alpha {
     NSString *fileContent = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:NULL];
-    return [self initWithFileContent:fileContent];
+    return [self initWithFileContent:fileContent color:(UIColor *)color alpha:(float)alpha];
 }
 
-- (id)initWithFileContent:(NSString *)fileContent {
-    properties = [Properties properties];
-    
-    NSRegularExpression *titleRegex = [NSRegularExpression regularExpressionWithPattern:@"<title>(.*)</title>" options:NSRegularExpressionCaseInsensitive error:NULL];
-    NSRange matchRange = [[titleRegex firstMatchInString:fileContent options:0 range:NSMakeRange(0, [fileContent length])] rangeAtIndex:1];
-    if (!NSEqualRanges(matchRange, NSMakeRange(NSNotFound, 0))) {
-        NSString *titleText = [[fileContent substringWithRange:matchRange] gtm_stringByUnescapingFromHTML];
-        
-        CGSize titleDimension = CGSizeMake(672, 330);
-        UIFont *titleFont = [UIFont fontWithName:@"Helvetica" size:24.0];
-        
-        CGRect screenBounds = [[UIScreen mainScreen] bounds];
-        if (screenBounds.size.width < 768) {
-            titleDimension = CGSizeMake(280, 134);
-            titleFont = [UIFont fontWithName:@"Helvetica" size:15.0];
+- (id)initWithFileContent:(NSString *)fileContent color:(UIColor *)color alpha:(float)alpha {
+
+    self = [super init];
+    if (self) {
+        NSRegularExpression *titleRegex = [NSRegularExpression regularExpressionWithPattern:@"<title>(.*)</title>" options:NSRegularExpressionCaseInsensitive error:NULL];
+        NSRange matchRange = [[titleRegex firstMatchInString:fileContent options:0 range:NSMakeRange(0, [fileContent length])] rangeAtIndex:1];
+        if (!NSEqualRanges(matchRange, NSMakeRange(NSNotFound, 0))) {
+            NSString *titleText = [[fileContent substringWithRange:matchRange] gtm_stringByUnescapingFromHTML];
+            
+            CGSize titleDimension = CGSizeMake(672, 330);
+            UIFont *titleFont = [UIFont fontWithName:@"Helvetica" size:24.0];
+            
+            CGRect screenBounds = [[UIScreen mainScreen] bounds];
+            if (screenBounds.size.width < 768) {
+                titleDimension = CGSizeMake(280, 134);
+                titleFont = [UIFont fontWithName:@"Helvetica" size:15.0];
+            }
+            
+            CGSize titleTextSize = [titleText sizeWithFont:titleFont constrainedToSize:titleDimension lineBreakMode:UILineBreakModeTailTruncation];
+            
+            self.frame = CGRectMake(0, 0, titleTextSize.width, titleTextSize.height);
+            self.backgroundColor = [UIColor clearColor];
+            self.textAlignment = UITextAlignmentCenter;
+            self.lineBreakMode = UILineBreakModeTailTruncation;
+            self.numberOfLines = 0;
+            self.textColor = color;
+            self.alpha = alpha;
+            self.font = titleFont;
+            self.text = titleText;
         }
-        
-        CGSize titleTextSize = [titleText sizeWithFont:titleFont constrainedToSize:titleDimension lineBreakMode:UILineBreakModeTailTruncation];
-        CGRect titleFrame = CGRectMake(0, 0, titleTextSize.width, titleTextSize.height);
-        
-        id ret = [super initWithFrame:titleFrame];
-        
-        [self initStyle];
-        self.font = titleFont;
-        self.text = titleText;
-        
-        return ret;
-    } else {
-        return [super init];
     }
+    return self;
 }
-
-- (void)initStyle {
-    self.backgroundColor = [UIColor clearColor];
-    id alpha = [properties get:@"-baker-page-numbers-alpha", nil];
-    self.alpha = [(NSNumber*) alpha floatValue];
-    self.textColor = [Utils colorWithHexString:[properties get:@"-baker-page-numbers-color", nil]];
-    self.textAlignment = UITextAlignmentCenter;
-    self.lineBreakMode = UILineBreakModeTailTruncation;
-    self.numberOfLines = 0;
-}
-
 - (void)setX:(CGFloat)x Y:(CGFloat)y {
     CGRect titleFrame = self.frame;
     titleFrame.origin.x = x;
