@@ -44,8 +44,6 @@
     
     CGRect screenBounds;
     
-    
-    NSString *currentBookPath;
     NSString *bundleBookPath;
     NSString *documentsBookPath;
     NSString *defaultScreeshotsPath;
@@ -103,8 +101,6 @@
     
     IndexViewController *indexViewController;
     ModalViewController *myModalViewController;
-    
-    Properties *properties;
 }
 
 #pragma mark - PROPERTIES
@@ -119,7 +115,6 @@
 - (void)cleanupBookEnvironment;
 - (void)resetPageSlots;
 - (void)resetPageDetails;
-- (void)loadBookProperties;
 - (void)buildPageArray;
 - (void)startReadingFromPage:(int)pageNumber anchor:(NSString *)anchor;
 - (void)startReading;

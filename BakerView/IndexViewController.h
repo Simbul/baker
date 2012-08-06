@@ -30,12 +30,10 @@
 //  
 
 #import <UIKit/UIKit.h>
-#import "Properties.h"
-
+#import "BakerBook.h"
 
 @interface IndexViewController : UIViewController <UIWebViewDelegate> {
     
-    NSString *bookPath;
     NSString *fileName;
     UIScrollView *indexScrollView;
     UIViewController <UIWebViewDelegate> *webViewDelegate;
@@ -47,15 +45,16 @@
     int indexHeight;
     int actualIndexWidth;
     int actualIndexHeight;
+    
     BOOL disabled;
     BOOL loadedFromBundle;
     
     CGSize cachedContentSize;
-    
-    Properties *properties;
 }
 
-- (id)initWithBookPath:(NSString *)path fileName:(NSString *)name webViewDelegate:(UIViewController *)delegate;
+@property (strong, nonatomic) BakerBook *book;
+
+- (id)initWithBook:(BakerBook *)bakerBook fileName:(NSString *)name webViewDelegate:(UIViewController *)delegate;
 - (void)loadContent;
 - (void)setBounceForWebView:(UIWebView *)webView bounces:(BOOL)bounces;
 - (void)setPageSizeForOrientation:(UIInterfaceOrientation)orientation;
@@ -66,7 +65,6 @@
 - (void)rotateFromOrientation:(UIInterfaceOrientation)fromInterfaceOrientation toOrientation:(UIInterfaceOrientation)toInterfaceOrientation;
 - (void)fadeOut;
 - (void)fadeIn;
-- (void)assignProperties;
 - (BOOL)stickToLeft;
 - (CGSize)sizeFromContentOf:(UIView *)view;
 - (void)setActualSize;

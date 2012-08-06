@@ -31,24 +31,22 @@
 
 #import "IndexViewController.h"
 
-
 @implementation IndexViewController
 
-- (id)initWithBookPath:(NSString *)path fileName:(NSString *)name webViewDelegate:(UIViewController<UIWebViewDelegate> *)delegate {
-    
+@synthesize book;
+
+- (id)initWithBook:(BakerBook *)bakerBook fileName:(NSString *)name webViewDelegate:(UIViewController<UIWebViewDelegate> *)delegate {
     self = [super init];
     if (self) {
         
+        self.book = bakerBook;
+        
         fileName = name;
-        bookPath = path;
         webViewDelegate = delegate;
         
         disabled = NO;
         indexWidth = 0;
         indexHeight = 0;
-        
-        // ****** INIT PROPERTIES
-        properties = [Properties properties];
         
         [self setPageSizeForOrientation:[self interfaceOrientation]];
     }
@@ -56,14 +54,10 @@
 }
 - (void)dealloc
 {
+    [book release];
     [indexScrollView release];
+    
     [super dealloc];
-}
-- (void)didReceiveMemoryWarning
-{
-    // Releases the view if it doesn't have a superview.
-    [super didReceiveMemoryWarning];
-    // Release any cached data, images, etc that aren't in use.
 }
 
 #pragma mark - View lifecycle
@@ -201,7 +195,9 @@
 - (void)loadContent {
     NSString* path = [self indexPath];
     
-    [self assignProperties];
+    UIWebView *webView = (UIWebView*) self.view;
+    webView.mediaPlaybackRequiresUserAction = ![book.bakerMediaAutoplay boolValue];
+    [self setBounceForWebView:webView bounces:[book.bakerIndexBounce boolValue]];
     
     NSLog(@"Path to index view is %@", path);
     if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
@@ -212,26 +208,17 @@
         disabled = YES;
     }
 }
-
-- (void)assignProperties {
-    UIWebView *webView = (UIWebView*) self.view;
-    webView.mediaPlaybackRequiresUserAction = ![[properties get:@"-baker-media-autoplay", nil] boolValue];
-    
-    BOOL bounce = [[properties get:@"-baker-index-bounce", nil] boolValue];
-    [self setBounceForWebView:webView bounces:bounce];
-}
-
 -(void)webViewDidFinishLoad:(UIWebView *)webView {
-    id width = [properties get:@"-baker-index-width", nil];
-    id height = [properties get:@"-baker-index-height", nil];
+    id width = book.bakerIndexWidth;
+    id height = book.bakerIndexHeight;
     
-    if (width != [NSNull null]) {
-        indexWidth = (int) [width integerValue];
+    if (width != nil) {
+        indexWidth = (int)[width integerValue];
     } else {
         indexWidth = [self sizeFromContentOf:webView].width;
     }
-    if (height != [NSNull null]) {
-        indexHeight = (int) [height integerValue];
+    if (height != nil) {
+        indexHeight = (int)[height integerValue];
     } else {
         indexHeight = [self sizeFromContentOf:webView].height;
     }
@@ -268,28 +255,7 @@
 }
 
 - (NSString *)indexPath {
-    return [bookPath stringByAppendingPathComponent:fileName];
-}
-
-/*
-// Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-}
-*/
-
-- (void)viewDidUnload
-{
-    [super viewDidUnload];
-    // Release any retained subviews of the main view.
-    // e.g. self.myOutlet = nil;
-}
-
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-{
-    // Return YES for supported orientations
-    return YES;
+    return [book.path stringByAppendingPathComponent:fileName];
 }
 
 @end
