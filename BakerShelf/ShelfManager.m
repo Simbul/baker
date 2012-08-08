@@ -30,7 +30,6 @@
 //
 
 #import "ShelfManager.h"
-#import "Properties.h"
 
 @implementation ShelfManager
 

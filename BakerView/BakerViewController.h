@@ -34,7 +34,6 @@
 #import <MessageUI/MessageUI.h>
 #import "IndexViewController.h"
 #import "ModalViewController.h"
-#import "Properties.h"
 #import "BakerBook.h"
 
 
