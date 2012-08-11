@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		9F55576815B4C6C3003072A3 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F55576515B4C6B7003072A3 /* QuartzCore.framework */; };
+		9F58D86515D682EA0027902C /* shelf-bg-landscape.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F58D86315D682EA0027902C /* shelf-bg-landscape.png */; };
+		9F58D86615D682EA0027902C /* shelf-bg-portrait.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F58D86415D682EA0027902C /* shelf-bg-portrait.png */; };
 		9F8FC1C415C55E8C0065F0A3 /* BakerBook.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F8FC1C315C55E8C0065F0A3 /* BakerBook.m */; };
 		9FF7959915B4C4F600899E51 /* AQGridView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF7958315B4C4F600899E51 /* AQGridView.m */; };
 		9FF7959A15B4C4F600899E51 /* AQGridViewAnimatorItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF7958515B4C4F600899E51 /* AQGridViewAnimatorItem.m */; };
@@ -95,6 +97,8 @@
 
 /* Begin PBXFileReference section */
 		9F55576515B4C6B7003072A3 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		9F58D86315D682EA0027902C /* shelf-bg-landscape.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "shelf-bg-landscape.png"; sourceTree = "<group>"; };
+		9F58D86415D682EA0027902C /* shelf-bg-portrait.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "shelf-bg-portrait.png"; sourceTree = "<group>"; };
 		9F8FC1C215C55E8C0065F0A3 /* BakerBook.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BakerBook.h; sourceTree = "<group>"; };
 		9F8FC1C315C55E8C0065F0A3 /* BakerBook.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BakerBook.m; sourceTree = "<group>"; };
 		9FF7958015B4C4F600899E51 /* AQGridView+CellLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "AQGridView+CellLayout.h"; sourceTree = "<group>"; };
@@ -215,6 +219,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		9F58D85E15D6743C0027902C /* img */ = {
+			isa = PBXGroup;
+			children = (
+				9F58D86315D682EA0027902C /* shelf-bg-landscape.png */,
+				9F58D86415D682EA0027902C /* shelf-bg-portrait.png */,
+			);
+			path = img;
+			sourceTree = "<group>";
+		};
 		9FF7957E15B4C4F600899E51 /* lib */ = {
 			isa = PBXGroup;
 			children = (
@@ -256,21 +269,21 @@
 		AB40042915B4B83000D87E2A /* BakerView */ = {
 			isa = PBXGroup;
 			children = (
+				AB40042E15B4B83000D87E2A /* img */,
+				AB40043715B4B83000D87E2A /* lib */,
+				AB40045015B4B83000D87E2A /* ui */,
 				9F8FC1C215C55E8C0065F0A3 /* BakerBook.h */,
 				9F8FC1C315C55E8C0065F0A3 /* BakerBook.m */,
 				AB40042A15B4B83000D87E2A /* BakerViewController.h */,
 				AB40042B15B4B83000D87E2A /* BakerViewController.m */,
 				AB40042C15B4B83000D87E2A /* Downloader.h */,
 				AB40042D15B4B83000D87E2A /* Downloader.m */,
-				AB40042E15B4B83000D87E2A /* img */,
 				AB40043315B4B83000D87E2A /* IndexViewController.h */,
 				AB40043415B4B83000D87E2A /* IndexViewController.m */,
 				AB40043515B4B83000D87E2A /* InterceptorWindow.h */,
 				AB40043615B4B83000D87E2A /* InterceptorWindow.m */,
-				AB40043715B4B83000D87E2A /* lib */,
 				AB40044C15B4B83000D87E2A /* ModalViewController.h */,
 				AB40044D15B4B83000D87E2A /* ModalViewController.m */,
-				AB40045015B4B83000D87E2A /* ui */,
 			);
 			path = BakerView;
 			sourceTree = "<group>";
@@ -339,6 +352,7 @@
 		AB40047B15B4B8B800D87E2A /* BakerShelf */ = {
 			isa = PBXGroup;
 			children = (
+				9F58D85E15D6743C0027902C /* img */,
 				9FF7957E15B4C4F600899E51 /* lib */,
 				AB40047C15B4B8B800D87E2A /* ShelfManager.h */,
 				AB40047D15B4B8B800D87E2A /* ShelfManager.m */,
@@ -518,6 +532,8 @@
 				BF3CCCA315D080560087B9CA /* ios-icon-ipad@2x.png in Resources */,
 				BF3CCCA415D080560087B9CA /* ios-icon-iphone.png in Resources */,
 				BF3CCCA515D080560087B9CA /* ios-icon-iphone@2x.png in Resources */,
+				9F58D86515D682EA0027902C /* shelf-bg-landscape.png in Resources */,
+				9F58D86615D682EA0027902C /* shelf-bg-portrait.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -662,7 +678,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -680,7 +696,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";

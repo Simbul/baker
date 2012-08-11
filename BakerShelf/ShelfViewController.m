@@ -66,21 +66,28 @@
 
     self.navigationItem.title = @"Baker Shelf";
 
-    self.gridView.backgroundColor  = [UIColor scrollViewTexturedBackgroundColor];
     self.gridView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
 	self.gridView.autoresizesSubviews = YES;
 
+    [self willRotateToInterfaceOrientation:self.interfaceOrientation duration:0];
     [self.gridView reloadData];
 }
+- (void)viewWillAppear:(BOOL)animated {
 
-- (void)viewDidUnload
-{
-    [super viewDidUnload];
+    [super viewWillAppear:animated];
+
 }
-
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     return YES;
+}
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+{
+    if (UIInterfaceOrientationIsPortrait(toInterfaceOrientation)) {
+        self.gridView.backgroundColor  = [UIColor colorWithPatternImage:[UIImage imageNamed:@"shelf-bg-portrait.png"]];
+    } else if (UIInterfaceOrientationIsLandscape(toInterfaceOrientation)) {
+        self.gridView.backgroundColor  = [UIColor colorWithPatternImage:[UIImage imageNamed:@"shelf-bg-landscape.png"]];
+    }
 }
 
 #pragma mark - Shelf data source
@@ -98,7 +105,7 @@
 	if (cell == nil)
 	{
 		cell = [[[AQGridViewCell alloc] initWithFrame:CGRectMake(0, 0, 100, 150) reuseIdentifier:cellIdentifier] autorelease];
-		cell.selectionGlowColor = [UIColor clearColor];
+		cell.selectionStyle = AQGridViewCellSelectionStyleNone;
 
         NSString *bookPath = [[self.books objectAtIndex:index] path];
         UIImage *thumbImg  = [UIImage imageWithContentsOfFile:[bookPath stringByAppendingPathComponent:@"thumb.png"]];
@@ -112,7 +119,7 @@
 
 - (CGSize)portraitGridCellSizeForGridView:(AQGridView *)aGridView
 {
-    return CGSizeMake(153.6, 240);
+    return CGSizeMake(153.6, 192);
 }
 
 #pragma mark - Navigation management
