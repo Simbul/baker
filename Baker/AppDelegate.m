@@ -7,6 +7,7 @@
 //
 
 #import "AppDelegate.h"
+#import "UICustomNavigationController.h"
 
 @implementation AppDelegate
 
@@ -28,11 +29,9 @@
     self.window = [[[InterceptorWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]] autorelease];
     self.window.backgroundColor = [UIColor whiteColor];
 
-    self.rootViewController = [[[ShelfViewController alloc] init] autorelease];    
-    
-    self.rootNavigationController = [[UINavigationController alloc] initWithRootViewController:self.rootViewController];
-    self.rootNavigationController.navigationBar.barStyle = UIBarStyleBlack;
-    
+    self.rootViewController = [[[ShelfViewController alloc] init] autorelease];
+    self.rootNavigationController = [[UICustomNavigationController alloc] initWithRootViewController:self.rootViewController];
+
     [self.window addSubview:rootNavigationController.view];
     [self.window makeKeyAndVisible];
     

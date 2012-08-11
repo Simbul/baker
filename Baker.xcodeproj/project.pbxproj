@@ -10,6 +10,7 @@
 		9F55576815B4C6C3003072A3 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F55576515B4C6B7003072A3 /* QuartzCore.framework */; };
 		9F58D85115D66E870027902C /* UICustomNavigationBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F58D84E15D66E870027902C /* UICustomNavigationBar.m */; };
 		9F58D85215D66E870027902C /* UICustomNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F58D85015D66E870027902C /* UICustomNavigationController.m */; };
+		9F58D86015D6743C0027902C /* navigation-bar-bg.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F58D85F15D6743C0027902C /* navigation-bar-bg.png */; };
 		9F58D86515D682EA0027902C /* shelf-bg-landscape.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F58D86315D682EA0027902C /* shelf-bg-landscape.png */; };
 		9F58D86615D682EA0027902C /* shelf-bg-portrait.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F58D86415D682EA0027902C /* shelf-bg-portrait.png */; };
 		9F8FC1C415C55E8C0065F0A3 /* BakerBook.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F8FC1C315C55E8C0065F0A3 /* BakerBook.m */; };
@@ -103,6 +104,7 @@
 		9F58D84E15D66E870027902C /* UICustomNavigationBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UICustomNavigationBar.m; sourceTree = "<group>"; };
 		9F58D84F15D66E870027902C /* UICustomNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UICustomNavigationController.h; sourceTree = "<group>"; };
 		9F58D85015D66E870027902C /* UICustomNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UICustomNavigationController.m; sourceTree = "<group>"; };
+		9F58D85F15D6743C0027902C /* navigation-bar-bg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "navigation-bar-bg.png"; sourceTree = "<group>"; };
 		9F58D86315D682EA0027902C /* shelf-bg-landscape.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "shelf-bg-landscape.png"; sourceTree = "<group>"; };
 		9F58D86415D682EA0027902C /* shelf-bg-portrait.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "shelf-bg-portrait.png"; sourceTree = "<group>"; };
 		9F8FC1C215C55E8C0065F0A3 /* BakerBook.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BakerBook.h; sourceTree = "<group>"; };
@@ -228,6 +230,7 @@
 		9F58D85E15D6743C0027902C /* img */ = {
 			isa = PBXGroup;
 			children = (
+				9F58D85F15D6743C0027902C /* navigation-bar-bg.png */,
 				9F58D86315D682EA0027902C /* shelf-bg-landscape.png */,
 				9F58D86415D682EA0027902C /* shelf-bg-portrait.png */,
 			);
@@ -542,6 +545,7 @@
 				BF3CCCA315D080560087B9CA /* ios-icon-ipad@2x.png in Resources */,
 				BF3CCCA415D080560087B9CA /* ios-icon-iphone.png in Resources */,
 				BF3CCCA515D080560087B9CA /* ios-icon-iphone@2x.png in Resources */,
+				9F58D86015D6743C0027902C /* navigation-bar-bg.png in Resources */,
 				9F58D86515D682EA0027902C /* shelf-bg-landscape.png in Resources */,
 				9F58D86615D682EA0027902C /* shelf-bg-portrait.png in Resources */,
 			);
@@ -724,6 +728,7 @@
 				INFOPLIST_FILE = "Baker/Baker-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -736,6 +741,7 @@
 				INFOPLIST_FILE = "Baker/Baker-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

@@ -31,6 +31,7 @@
 
 #import "ShelfViewController.h"
 #import "ShelfManager.h"
+#import "UICustomNavigationBar.h"
 
 #import "BakerViewController.h"
 
@@ -76,6 +77,11 @@
 
     [super viewWillAppear:animated];
 
+    UICustomNavigationBar *navigationBar = (UICustomNavigationBar *)self.navigationController.navigationBar;
+
+    [navigationBar setTranslucent:NO];
+    [navigationBar setTintColor:[UIColor clearColor]];
+    [navigationBar setBackgroundImage:[UIImage imageNamed:@"navigation-bar-bg.png"] forBarMetrics:UIBarMetricsDefault];
 }
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
