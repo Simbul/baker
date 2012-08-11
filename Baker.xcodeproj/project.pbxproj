@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		9F55576815B4C6C3003072A3 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F55576515B4C6B7003072A3 /* QuartzCore.framework */; };
+		9F58D85115D66E870027902C /* UICustomNavigationBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F58D84E15D66E870027902C /* UICustomNavigationBar.m */; };
+		9F58D85215D66E870027902C /* UICustomNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F58D85015D66E870027902C /* UICustomNavigationController.m */; };
 		9F58D86515D682EA0027902C /* shelf-bg-landscape.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F58D86315D682EA0027902C /* shelf-bg-landscape.png */; };
 		9F58D86615D682EA0027902C /* shelf-bg-portrait.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F58D86415D682EA0027902C /* shelf-bg-portrait.png */; };
 		9F8FC1C415C55E8C0065F0A3 /* BakerBook.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F8FC1C315C55E8C0065F0A3 /* BakerBook.m */; };
@@ -97,6 +99,10 @@
 
 /* Begin PBXFileReference section */
 		9F55576515B4C6B7003072A3 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		9F58D84D15D66E870027902C /* UICustomNavigationBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UICustomNavigationBar.h; sourceTree = "<group>"; };
+		9F58D84E15D66E870027902C /* UICustomNavigationBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UICustomNavigationBar.m; sourceTree = "<group>"; };
+		9F58D84F15D66E870027902C /* UICustomNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UICustomNavigationController.h; sourceTree = "<group>"; };
+		9F58D85015D66E870027902C /* UICustomNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UICustomNavigationController.m; sourceTree = "<group>"; };
 		9F58D86315D682EA0027902C /* shelf-bg-landscape.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "shelf-bg-landscape.png"; sourceTree = "<group>"; };
 		9F58D86415D682EA0027902C /* shelf-bg-portrait.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "shelf-bg-portrait.png"; sourceTree = "<group>"; };
 		9F8FC1C215C55E8C0065F0A3 /* BakerBook.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BakerBook.h; sourceTree = "<group>"; };
@@ -358,6 +364,10 @@
 				AB40047D15B4B8B800D87E2A /* ShelfManager.m */,
 				9FF795A515B4C57D00899E51 /* ShelfViewController.h */,
 				9FF795A615B4C57E00899E51 /* ShelfViewController.m */,
+				9F58D84D15D66E870027902C /* UICustomNavigationBar.h */,
+				9F58D84E15D66E870027902C /* UICustomNavigationBar.m */,
+				9F58D84F15D66E870027902C /* UICustomNavigationController.h */,
+				9F58D85015D66E870027902C /* UICustomNavigationController.m */,
 			);
 			path = BakerShelf;
 			sourceTree = "<group>";
@@ -602,6 +612,8 @@
 				9FF795A215B4C4F600899E51 /* UIColor+AQGridView.m in Sources */,
 				9FF795A715B4C57E00899E51 /* ShelfViewController.m in Sources */,
 				9F8FC1C415C55E8C0065F0A3 /* BakerBook.m in Sources */,
+				9F58D85115D66E870027902C /* UICustomNavigationBar.m in Sources */,
+				9F58D85215D66E870027902C /* UICustomNavigationController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
