@@ -40,7 +40,7 @@
 
 
 // ALERT LABELS
-#define OPEN_BOOK_MESSAGE       @"Do you want to download "
+#define OPEN_BOOK_MESSAGE       @"Do you want to download %@?"
 #define OPEN_BOOK_CONFIRM       @"Open book"
 
 #define CLOSE_BOOK_MESSAGE      @"Do you want to close this book?"
@@ -1771,7 +1771,7 @@
     NSLog(@"• Download file %@", URLDownload);
     
     feedbackAlert = [[UIAlertView alloc] initWithTitle:@""
-                                               message:[OPEN_BOOK_MESSAGE stringByAppendingFormat:@"%@?", URLDownload]
+                                               message:[NSString stringWithFormat:OPEN_BOOK_MESSAGE, URLDownload]
                                               delegate:self
                                      cancelButtonTitle:ALERT_FEEDBACK_CANCEL
                                      otherButtonTitles:OPEN_BOOK_CONFIRM, nil];
