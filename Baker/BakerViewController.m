@@ -1789,6 +1789,7 @@
         
         currentPageIsDelayingLoading = YES;
         [self loadBookWithBookPath:bundleBookPath];
+        [self startReading];
     }
     else if ([[alertView buttonTitleAtIndex:buttonIndex] isEqualToString:OPEN_BOOK_CONFIRM])
     {
