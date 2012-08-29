@@ -36,8 +36,14 @@
 @implementation PageTitleLabel
 
 - (id)initWithFile:(NSString *)path {
-    NSString *fileContent = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:NULL];
-    return [self initWithFileContent:fileContent];
+    NSError *error = nil;
+    NSString *fileContent = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:&error];
+    if (error == nil) {
+        return [self initWithFileContent:fileContent];
+    } else {
+        NSLog(@"Error while loading %@ : %@ : Check that encoding is UTF8 for the file.", path, [error localizedDescription]);
+        return [super init];
+    }
 }
 
 - (id)initWithFileContent:(NSString *)fileContent {
