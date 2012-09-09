@@ -13,6 +13,7 @@
 		9F58D86015D6743C0027902C /* navigation-bar-bg.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F58D85F15D6743C0027902C /* navigation-bar-bg.png */; };
 		9F58D86515D682EA0027902C /* shelf-bg-landscape.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F58D86315D682EA0027902C /* shelf-bg-landscape.png */; };
 		9F58D86615D682EA0027902C /* shelf-bg-portrait.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F58D86415D682EA0027902C /* shelf-bg-portrait.png */; };
+		9F5EB3BD15FCA3A100E13796 /* NSString+Extensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F5EB3BC15FCA3A100E13796 /* NSString+Extensions.m */; };
 		9F8FC1C415C55E8C0065F0A3 /* BakerBook.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F8FC1C315C55E8C0065F0A3 /* BakerBook.m */; };
 		9FF7959915B4C4F600899E51 /* AQGridView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF7958315B4C4F600899E51 /* AQGridView.m */; };
 		9FF7959A15B4C4F600899E51 /* AQGridViewAnimatorItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF7958515B4C4F600899E51 /* AQGridViewAnimatorItem.m */; };
@@ -107,6 +108,8 @@
 		9F58D85F15D6743C0027902C /* navigation-bar-bg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "navigation-bar-bg.png"; sourceTree = "<group>"; };
 		9F58D86315D682EA0027902C /* shelf-bg-landscape.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "shelf-bg-landscape.png"; sourceTree = "<group>"; };
 		9F58D86415D682EA0027902C /* shelf-bg-portrait.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "shelf-bg-portrait.png"; sourceTree = "<group>"; };
+		9F5EB3BB15FCA3A100E13796 /* NSString+Extensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Extensions.h"; sourceTree = "<group>"; };
+		9F5EB3BC15FCA3A100E13796 /* NSString+Extensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Extensions.m"; sourceTree = "<group>"; };
 		9F8FC1C215C55E8C0065F0A3 /* BakerBook.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BakerBook.h; sourceTree = "<group>"; };
 		9F8FC1C315C55E8C0065F0A3 /* BakerBook.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BakerBook.m; sourceTree = "<group>"; };
 		9FF7958015B4C4F600899E51 /* AQGridView+CellLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "AQGridView+CellLayout.h"; sourceTree = "<group>"; };
@@ -241,6 +244,8 @@
 			isa = PBXGroup;
 			children = (
 				9FF7957F15B4C4F600899E51 /* AQGridView */,
+				9F5EB3BB15FCA3A100E13796 /* NSString+Extensions.h */,
+				9F5EB3BC15FCA3A100E13796 /* NSString+Extensions.m */,
 			);
 			path = lib;
 			sourceTree = "<group>";
@@ -311,11 +316,11 @@
 		AB40043715B4B83000D87E2A /* lib */ = {
 			isa = PBXGroup;
 			children = (
+				AB40043B15B4B83000D87E2A /* JSONKit */,
+				AB40043E15B4B83000D87E2A /* minizip */,
 				AB40043815B4B83000D87E2A /* GTMDefines.h */,
 				AB40043915B4B83000D87E2A /* GTMNSString+HTML.h */,
 				AB40043A15B4B83000D87E2A /* GTMNSString+HTML.m */,
-				AB40043B15B4B83000D87E2A /* JSONKit */,
-				AB40043E15B4B83000D87E2A /* minizip */,
 				AB40044815B4B83000D87E2A /* SSZipArchive.h */,
 				AB40044915B4B83000D87E2A /* SSZipArchive.m */,
 				AB40044A15B4B83000D87E2A /* Utils.h */,
@@ -618,6 +623,7 @@
 				9F8FC1C415C55E8C0065F0A3 /* BakerBook.m in Sources */,
 				9F58D85115D66E870027902C /* UICustomNavigationBar.m in Sources */,
 				9F58D85215D66E870027902C /* UICustomNavigationController.m in Sources */,
+				9F5EB3BD15FCA3A100E13796 /* NSString+Extensions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
