@@ -5,6 +5,7 @@
     "creator": ["D. Casali, M. Colombo, A. Morandi"],
     "date": "2011-06-15",
     "url": "book://bakerframework.com/books/arthurconandoyle-thestudyinscarlet",
+    "cover": "thumb.png",
 
     "orientation": "both",
     "zoomable": false,

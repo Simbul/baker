@@ -114,7 +114,15 @@
 		cell.selectionStyle = AQGridViewCellSelectionStyleNone;
 
         NSString *bookPath = [[self.books objectAtIndex:index] path];
-        UIImage *thumbImg  = [UIImage imageWithContentsOfFile:[bookPath stringByAppendingPathComponent:@"thumb.png"]];
+        NSString *cover = [[self.books objectAtIndex:index] cover];
+        NSString *coverPath = [[NSString alloc] init];
+        if (cover == nil) {
+            // TODO: set path to a default cover (right now a blank box will be displayed)
+            NSLog(@"Could not find a cover for book at %@, probably missing from book.json", bookPath);
+        } else {
+            coverPath = [bookPath stringByAppendingPathComponent:cover];
+        }
+        UIImage *thumbImg  = [UIImage imageWithContentsOfFile:coverPath];
         UIImageView *thumb = [[[UIImageView alloc] initWithImage:thumbImg] autorelease];
 
         [cell.contentView addSubview:thumb];
