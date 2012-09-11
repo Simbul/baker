@@ -115,7 +115,7 @@
         if (![[NSFileManager defaultManager] fileExistsAtPath:cachePath]) {
             [[NSFileManager defaultManager] createDirectoryAtPath:cachePath withIntermediateDirectories:YES attributes:nil error:nil];
         }
-        defaultScreeshotsPath = [[cachePath stringByAppendingPathComponent:@"baker-screenshots"] retain];
+        defaultScreeshotsPath = [[[cachePath stringByAppendingPathComponent:book.ID] stringByAppendingPathComponent:@"baker-screenshots"] retain];
         [self addSkipBackupAttributeToItemAtPath:defaultScreeshotsPath];
         
         
@@ -233,15 +233,15 @@
         // ****** SET SCREENSHOTS FOLDER
         NSString *screenshotFolder = book.bakerPageScreenshots;
         if (screenshotFolder) {
+            // When a screenshots folder is specified in book.json
             cachedScreenshotsPath = [bookPath stringByAppendingPathComponent:screenshotFolder];
         }
         
         if (!screenshotFolder || ![[NSFileManager defaultManager] fileExistsAtPath:cachedScreenshotsPath]) {
-            cachedScreenshotsPath = [bookPath stringByAppendingPathComponent:@"baker-screenshots"];
-            if ([bookPath isEqualToString:bundleBookPath]) {
-                cachedScreenshotsPath = defaultScreeshotsPath;
-            }
+            // When a screenshot folder is not specified in book.json, or is specified but not actually existing
+            cachedScreenshotsPath = defaultScreeshotsPath;
         }
+        NSLog(@"Screenshots are stored in %@", cachedScreenshotsPath);
         
         [cachedScreenshotsPath retain];
         
