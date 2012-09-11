@@ -112,14 +112,30 @@
 {
     self = [super init];
     if (self && [self loadBookData:bookData]) {
-        // TODO: generate book unique identifier
-        self.ID = @"ID";
+        // TODO: append SHA of self.url for added uniqueness?
+        self.ID = [self sanitizeForPath:self.title];
         
         NSLog(@"JSON Parsed successfully, book \"%@ - %@\" created", self.ID, self.title);
         return self;
     }
     
     return nil;
+}
+- (NSString *)sanitizeForPath:(NSString *)string
+{
+    NSError *error;
+    NSString *newString;
+    NSRegularExpression *regex;
+    
+    // Strip everything except numbers, ASCII letters and spaces
+    regex = [NSRegularExpression regularExpressionWithPattern:@"[^1-9a-z ]" options:NSRegularExpressionCaseInsensitive error:&error];
+    newString = [regex stringByReplacingMatchesInString:string options:0 range:NSMakeRange(0, [string length]) withTemplate:@""];
+    
+    // Replace spaces with dashes
+    regex = [NSRegularExpression regularExpressionWithPattern:@" +" options:NSRegularExpressionCaseInsensitive error:&error];
+    newString = [regex stringByReplacingMatchesInString:newString options:0 range:NSMakeRange(0, [newString length]) withTemplate:@"-"];
+    
+    return [newString lowercaseString];
 }
 - (BOOL)loadBookData:(NSDictionary *)bookData
 {
