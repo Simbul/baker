@@ -31,6 +31,7 @@
 
 #import "BakerBook.h"
 #import "JSONKit.h"
+#import "NSString+Extensions.h"
 
 @implementation BakerBook
 
@@ -112,8 +113,8 @@
 {
     self = [super init];
     if (self && [self loadBookData:bookData]) {
-        // TODO: append SHA of self.url for added uniqueness?
-        self.ID = [self sanitizeForPath:self.title];
+        NSString *baseID = [self.title stringByAppendingFormat:@" %@", [self.url stringSHAEncoded]];
+        self.ID = [self sanitizeForPath:baseID];
         
         NSLog(@"JSON Parsed successfully, book \"%@ - %@\" created", self.ID, self.title);
         return self;
