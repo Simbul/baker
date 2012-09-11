@@ -209,9 +209,6 @@
     if (self.bakerPageNumbersAlpha == nil) {
         self.bakerPageNumbersAlpha = [NSNumber numberWithFloat:0.3];
     }
-    if (self.bakerPageScreenshots == nil) {
-        self.bakerPageScreenshots = @"baker-screenshots";
-    }
 
     if (self.bakerRendering == nil) {
         self.bakerRendering = @"screenshots";
