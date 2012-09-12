@@ -103,6 +103,7 @@
         
         
         // ****** DOWNLOADED BOOKS DIRECTORY
+        // TODO: remove this
         NSString *privateDocsPath = [[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:@"Private Documents"];
         if (![[NSFileManager defaultManager] fileExistsAtPath:privateDocsPath]) {
             [[NSFileManager defaultManager] createDirectoryAtPath:privateDocsPath withIntermediateDirectories:YES attributes:nil error:nil];
@@ -110,13 +111,19 @@
         documentsBookPath = [[privateDocsPath stringByAppendingPathComponent:@"book"] retain];
         
         
-        // ****** SCREENSHOTS DIRECTORY //TODO: set in load book only if is necessary
         NSString *cachePath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0];
         if (![[NSFileManager defaultManager] fileExistsAtPath:cachePath]) {
             [[NSFileManager defaultManager] createDirectoryAtPath:cachePath withIntermediateDirectories:YES attributes:nil error:nil];
         }
-        defaultScreeshotsPath = [[[cachePath stringByAppendingPathComponent:book.ID] stringByAppendingPathComponent:@"baker-screenshots"] retain];
+        
+        // ****** SCREENSHOTS DIRECTORY //TODO: set in load book only if is necessary
+        defaultScreeshotsPath = [[[cachePath stringByAppendingPathComponent:@"screenshots"] stringByAppendingPathComponent:book.ID] retain];
         [self addSkipBackupAttributeToItemAtPath:defaultScreeshotsPath];
+        
+        // ****** STATUS FILE
+        statusPath = [[[[cachePath stringByAppendingPathComponent:@"statuses"] stringByAppendingPathComponent:book.ID] stringByAppendingPathExtension:@"json"] retain];
+        [self addSkipBackupAttributeToItemAtPath:statusPath];
+
         
         
         // ****** BOOK ENVIRONMENT
