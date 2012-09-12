@@ -115,7 +115,7 @@
 
         NSString *bookPath = [[self.books objectAtIndex:index] path];
         NSString *cover = [[self.books objectAtIndex:index] cover];
-        NSString *coverPath = [[NSString alloc] init];
+        NSString *coverPath = @"";
         if (cover == nil) {
             // TODO: set path to a default cover (right now a blank box will be displayed)
             NSLog(@"Could not find a cover for book at %@, probably missing from book.json", bookPath);
