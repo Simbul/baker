@@ -35,6 +35,7 @@
 #import "IndexViewController.h"
 #import "ModalViewController.h"
 #import "BakerBook.h"
+#import "BakerBookStatus.h"
 
 
 @class Downloader;
@@ -101,6 +102,8 @@
     
     IndexViewController *indexViewController;
     ModalViewController *myModalViewController;
+
+    BakerBookStatus *bookStatus;
 }
 
 #pragma mark - PROPERTIES

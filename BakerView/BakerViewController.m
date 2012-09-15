@@ -123,7 +123,9 @@
         // ****** STATUS FILE
         statusPath = [[[[cachePath stringByAppendingPathComponent:@"statuses"] stringByAppendingPathComponent:book.ID] stringByAppendingPathExtension:@"json"] retain];
         [self addSkipBackupAttributeToItemAtPath:statusPath];
-
+        bookStatus = [[BakerBookStatus alloc] initWithJSONPath:statusPath];
+        NSLog(@"STATUS: page: %@", bookStatus.page);
+        NSLog(@"STATUS: scrollIndex: %@", bookStatus.scrollIndex);
         
         
         // ****** BOOK ENVIRONMENT
@@ -224,7 +226,7 @@
     if (totalPages > 0) {
         
         // ****** SET STARTING PAGE
-        int lastPageViewed   = [[[NSUserDefaults standardUserDefaults] objectForKey:@"lastPageViewed"] intValue];
+        int lastPageViewed = [bookStatus.page intValue];
         int bakerStartAtPage = [book.bakerStartAtPage intValue];
         currentPageNumber = 1;
         
@@ -235,7 +237,7 @@
         } else if (bakerStartAtPage > 0) {
             currentPageNumber = MIN(totalPages, bakerStartAtPage);
         }
-        
+        bookStatus.page = [NSNumber numberWithInt:currentPageNumber];
         
         // ****** SET SCREENSHOTS FOLDER
         NSString *screenshotFolder = book.bakerPageScreenshots;
@@ -684,6 +686,7 @@
         
         pageChanged = YES;
     }
+    bookStatus.page = [NSNumber numberWithInt:currentPageNumber];
     
     return pageChanged;
 }
@@ -1373,7 +1376,7 @@
         {
             // ... check if there is a saved starting scroll index and set it
             NSLog(@"   Handle last scroll index if necessary");
-            NSString *currPageScrollIndex = [[NSUserDefaults standardUserDefaults] objectForKey:@"lastScrollIndex"];
+            NSString *currPageScrollIndex = bookStatus.scrollIndex;
             if (currPageScrollIndex != nil) {
                 [self scrollDownCurrentPage:[currPageScrollIndex intValue] animating:YES];
             }
@@ -1942,6 +1945,14 @@
 }
 
 #pragma mark - MEMORY
+- (void)viewWillDisappear:(BOOL)animated {
+    // Save status
+    if (currPage != nil) {
+        bookStatus.scrollIndex = [currPage stringByEvaluatingJavaScriptFromString:@"window.scrollY;"];
+    }
+    [bookStatus save];
+    NSLog(@"saved status");
+}
 - (void)didReceiveMemoryWarning {
     // Releases the view if it doesn't have a superview.
     [super didReceiveMemoryWarning];
@@ -1950,6 +1961,10 @@
 - (void)viewDidUnload {
     
     [super viewDidUnload];
+    
+    // Save status
+    [bookStatus save];
+    NSLog(@"saved status");
 
     // Set web views delegates to nil, mandatory before releasing UIWebview instances
     currPage.delegate = nil;
@@ -1970,6 +1985,7 @@
     [myModalViewController release];
     
     [book release];
+    [bookStatus release];
     [scrollView release];
     [currPage release];
     [nextPage release];
