@@ -26,6 +26,7 @@
 		9FF795A115B4C4F600899E51 /* NSIndexSet+AQIsSetContiguous.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF7959415B4C4F600899E51 /* NSIndexSet+AQIsSetContiguous.m */; };
 		9FF795A215B4C4F600899E51 /* UIColor+AQGridView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF7959615B4C4F600899E51 /* UIColor+AQGridView.m */; };
 		9FF795A715B4C57E00899E51 /* ShelfViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF795A615B4C57E00899E51 /* ShelfViewController.m */; };
+		AB26005116011D9D00E9AA66 /* BakerBookStatus.m in Sources */ = {isa = PBXBuildFile; fileRef = AB26005016011D9D00E9AA66 /* BakerBookStatus.m */; };
 		AB40045315B4B83000D87E2A /* BakerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40042B15B4B83000D87E2A /* BakerViewController.m */; };
 		AB40045415B4B83000D87E2A /* BakerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40042B15B4B83000D87E2A /* BakerViewController.m */; };
 		AB40045515B4B83000D87E2A /* Downloader.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40042D15B4B83000D87E2A /* Downloader.m */; };
@@ -137,6 +138,8 @@
 		9FF7959615B4C4F600899E51 /* UIColor+AQGridView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+AQGridView.m"; sourceTree = "<group>"; };
 		9FF795A515B4C57D00899E51 /* ShelfViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShelfViewController.h; sourceTree = "<group>"; };
 		9FF795A615B4C57E00899E51 /* ShelfViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShelfViewController.m; sourceTree = "<group>"; };
+		AB26004F16011D9D00E9AA66 /* BakerBookStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BakerBookStatus.h; sourceTree = "<group>"; };
+		AB26005016011D9D00E9AA66 /* BakerBookStatus.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BakerBookStatus.m; sourceTree = "<group>"; };
 		AB40042A15B4B83000D87E2A /* BakerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BakerViewController.h; sourceTree = "<group>"; };
 		AB40042B15B4B83000D87E2A /* BakerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BakerViewController.m; sourceTree = "<group>"; };
 		AB40042C15B4B83000D87E2A /* Downloader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Downloader.h; sourceTree = "<group>"; };
@@ -298,6 +301,8 @@
 				AB40043615B4B83000D87E2A /* InterceptorWindow.m */,
 				AB40044C15B4B83000D87E2A /* ModalViewController.h */,
 				AB40044D15B4B83000D87E2A /* ModalViewController.m */,
+				AB26004F16011D9D00E9AA66 /* BakerBookStatus.h */,
+				AB26005016011D9D00E9AA66 /* BakerBookStatus.m */,
 			);
 			path = BakerView;
 			sourceTree = "<group>";
@@ -624,6 +629,7 @@
 				9F58D85115D66E870027902C /* UICustomNavigationBar.m in Sources */,
 				9F58D85215D66E870027902C /* UICustomNavigationController.m in Sources */,
 				9F5EB3BD15FCA3A100E13796 /* NSString+Extensions.m in Sources */,
+				AB26005116011D9D00E9AA66 /* BakerBookStatus.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
