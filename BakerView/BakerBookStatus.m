@@ -42,8 +42,11 @@
 {
     self = [super init];
     
-    path = JSONPath;
-    [self load];
+    if (self) {
+        path = JSONPath;
+        [self load];
+    }
+
     return self;
 }
 
