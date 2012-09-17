@@ -29,8 +29,6 @@
 		AB26005116011D9D00E9AA66 /* BakerBookStatus.m in Sources */ = {isa = PBXBuildFile; fileRef = AB26005016011D9D00E9AA66 /* BakerBookStatus.m */; };
 		AB40045315B4B83000D87E2A /* BakerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40042B15B4B83000D87E2A /* BakerViewController.m */; };
 		AB40045415B4B83000D87E2A /* BakerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40042B15B4B83000D87E2A /* BakerViewController.m */; };
-		AB40045515B4B83000D87E2A /* Downloader.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40042D15B4B83000D87E2A /* Downloader.m */; };
-		AB40045615B4B83000D87E2A /* Downloader.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40042D15B4B83000D87E2A /* Downloader.m */; };
 		AB40045715B4B83000D87E2A /* back.png in Resources */ = {isa = PBXBuildFile; fileRef = AB40042F15B4B83000D87E2A /* back.png */; };
 		AB40045815B4B83000D87E2A /* back.png in Resources */ = {isa = PBXBuildFile; fileRef = AB40042F15B4B83000D87E2A /* back.png */; };
 		AB40045915B4B83000D87E2A /* back@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = AB40043015B4B83000D87E2A /* back@2x.png */; };
@@ -142,8 +140,6 @@
 		AB26005016011D9D00E9AA66 /* BakerBookStatus.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BakerBookStatus.m; sourceTree = "<group>"; };
 		AB40042A15B4B83000D87E2A /* BakerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BakerViewController.h; sourceTree = "<group>"; };
 		AB40042B15B4B83000D87E2A /* BakerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BakerViewController.m; sourceTree = "<group>"; };
-		AB40042C15B4B83000D87E2A /* Downloader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Downloader.h; sourceTree = "<group>"; };
-		AB40042D15B4B83000D87E2A /* Downloader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Downloader.m; sourceTree = "<group>"; };
 		AB40042F15B4B83000D87E2A /* back.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = back.png; sourceTree = "<group>"; };
 		AB40043015B4B83000D87E2A /* back@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "back@2x.png"; sourceTree = "<group>"; };
 		AB40043115B4B83000D87E2A /* forward.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = forward.png; sourceTree = "<group>"; };
@@ -293,8 +289,6 @@
 				9F8FC1C315C55E8C0065F0A3 /* BakerBook.m */,
 				AB40042A15B4B83000D87E2A /* BakerViewController.h */,
 				AB40042B15B4B83000D87E2A /* BakerViewController.m */,
-				AB40042C15B4B83000D87E2A /* Downloader.h */,
-				AB40042D15B4B83000D87E2A /* Downloader.m */,
 				AB40043315B4B83000D87E2A /* IndexViewController.h */,
 				AB40043415B4B83000D87E2A /* IndexViewController.m */,
 				AB40043515B4B83000D87E2A /* InterceptorWindow.h */,
@@ -600,7 +594,6 @@
 				ABAFB59815AB9A2E002FA498 /* main.m in Sources */,
 				ABAFB59C15AB9A2E002FA498 /* AppDelegate.m in Sources */,
 				AB40045315B4B83000D87E2A /* BakerViewController.m in Sources */,
-				AB40045515B4B83000D87E2A /* Downloader.m in Sources */,
 				AB40045F15B4B83000D87E2A /* IndexViewController.m in Sources */,
 				AB40046115B4B83000D87E2A /* InterceptorWindow.m in Sources */,
 				AB40046315B4B83000D87E2A /* GTMNSString+HTML.m in Sources */,
@@ -639,7 +632,6 @@
 			files = (
 				ABAFB5B115AB9A2F002FA498 /* BakerTests.m in Sources */,
 				AB40045415B4B83000D87E2A /* BakerViewController.m in Sources */,
-				AB40045615B4B83000D87E2A /* Downloader.m in Sources */,
 				AB40046015B4B83000D87E2A /* IndexViewController.m in Sources */,
 				AB40046215B4B83000D87E2A /* InterceptorWindow.m in Sources */,
 				AB40046415B4B83000D87E2A /* GTMNSString+HTML.m in Sources */,

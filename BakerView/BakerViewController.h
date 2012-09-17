@@ -183,12 +183,6 @@
 - (void)showNavigationBar;
 - (void)hideBars:(NSNumber *)animated;
 
-#pragma mark - DOWNLOAD NEW BOOKS
-- (void)downloadBook:(NSNotification *)notification;
-- (void)startDownloadRequest;
-- (void)handleDownloadResult:(NSNotification *)notification;
-- (void)manageDownloadData:(NSData *)data;
-
 #pragma mark - ORIENTATION
 - (NSString *)getCurrentInterfaceOrientation;
 

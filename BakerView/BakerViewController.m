@@ -32,29 +32,10 @@
 #import <QuartzCore/QuartzCore.h>
 
 #import "BakerViewController.h"
-#import "Downloader.h"
 #import "SSZipArchive.h"
 #import "PageTitleLabel.h"
 #import "Utils.h"
 
-
-// ALERT LABELS
-#define OPEN_BOOK_MESSAGE       @"Do you want to download "
-#define OPEN_BOOK_CONFIRM       @"Open book"
-
-#define CLOSE_BOOK_MESSAGE      @"Do you want to close this book?"
-#define CLOSE_BOOK_CONFIRM      @"Close book"
-
-#define ZERO_PAGES_TITLE        @"Whoops!"
-#define ZERO_PAGES_MESSAGE      @"Sorry, that book had no pages."
-
-#define ERROR_FEEDBACK_TITLE    @"Whoops!"
-#define ERROR_FEEDBACK_MESSAGE  @"There was a problem downloading the book."
-#define ERROR_FEEDBACK_CONFIRM  @"Retry"
-
-#define EXTRACT_FEEDBACK_TITLE  @"Extracting..."
-
-#define ALERT_FEEDBACK_CANCEL   @"Cancel"
 
 #define INDEX_FILE_NAME         @"index.html"
 
@@ -93,15 +74,6 @@
         bundleBookPath = [[[NSBundle mainBundle] pathForResource:@"book" ofType:nil] retain];
         
         
-        // ****** DOWNLOADED BOOKS DIRECTORY
-        // TODO: remove this
-        NSString *privateDocsPath = [[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:@"Private Documents"];
-        if (![[NSFileManager defaultManager] fileExistsAtPath:privateDocsPath]) {
-            [[NSFileManager defaultManager] createDirectoryAtPath:privateDocsPath withIntermediateDirectories:YES attributes:nil error:nil];
-        }
-        documentsBookPath = [[privateDocsPath stringByAppendingPathComponent:@"book"] retain];
-        
-        
         NSString *cachePath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0];
         if (![[NSFileManager defaultManager] fileExistsAtPath:cachePath]) {
             [[NSFileManager defaultManager] createDirectoryAtPath:cachePath withIntermediateDirectories:YES attributes:nil error:nil];
@@ -114,6 +86,7 @@
         // ****** STATUS FILE
         statusPath = [[[[cachePath stringByAppendingPathComponent:@"statuses"] stringByAppendingPathComponent:book.ID] stringByAppendingPathExtension:@"json"] retain];
         bookStatus = [[BakerBookStatus alloc] initWithJSONPath:statusPath];
+        
         NSLog(@"STATUS: page: %@", bookStatus.page);
         NSLog(@"STATUS: scrollIndex: %@", bookStatus.scrollIndex);
         
@@ -193,10 +166,6 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleInterceptedTouch:) name:@"notification_touch_intercepted" object:nil];
     
     
-    // ****** LISTENER FOR DOWNLOAD NOTIFICATION
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(downloadBook:) name:@"downloadNotification" object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleDownloadResult:) name:@"handleDownloadResult" object:nil];
-    
     // ****** LISTENER FOR CLOSING APPLICATION
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleApplicationWillResignActive:) name:@"applicationWillResignActiveNotification" object:nil];
 
@@ -214,64 +183,42 @@
 - (BOOL)loadBookWithBookPath:(NSString *)bookPath {
     NSLog(@"• LOAD BOOK WITH PATH: %@", bookPath);
     
-    
     // ****** CLEANUP PREVIOUS BOOK
     [self cleanupBookEnvironment];
-    
     
     // ****** LOAD CONTENTS
     [self buildPageArray];
     
+    // ****** SET STARTING PAGE
+    int lastPageViewed = [bookStatus.page intValue];
+    int bakerStartAtPage = [book.bakerStartAtPage intValue];
+    currentPageNumber = 1;
     
-    if (totalPages > 0) {
-        
-        // ****** SET STARTING PAGE
-        int lastPageViewed = [bookStatus.page intValue];
-        int bakerStartAtPage = [book.bakerStartAtPage intValue];
-        currentPageNumber = 1;
-        
-        if (currentPageFirstLoading && lastPageViewed != 0) {
-            currentPageNumber = lastPageViewed;
-        } else if (bakerStartAtPage < 0) {
-            currentPageNumber = MAX(1, totalPages + bakerStartAtPage + 1);
-        } else if (bakerStartAtPage > 0) {
-            currentPageNumber = MIN(totalPages, bakerStartAtPage);
-        }
-        bookStatus.page = [NSNumber numberWithInt:currentPageNumber];
-        
-        // ****** SET SCREENSHOTS FOLDER
-        NSString *screenshotFolder = book.bakerPageScreenshots;
-        if (screenshotFolder) {
-            // When a screenshots folder is specified in book.json
-            cachedScreenshotsPath = [bookPath stringByAppendingPathComponent:screenshotFolder];
-        }
-        
-        if (!screenshotFolder || ![[NSFileManager defaultManager] fileExistsAtPath:cachedScreenshotsPath]) {
-            // When a screenshot folder is not specified in book.json, or is specified but not actually existing
-            cachedScreenshotsPath = defaultScreeshotsPath;
-        }
-        NSLog(@"Screenshots are stored in %@", cachedScreenshotsPath);
-        
-        [cachedScreenshotsPath retain];
-        
-        return YES;
-        
-    } else {
-        
-        if (![bookPath isEqualToString:bundleBookPath]) {
-            [[NSFileManager defaultManager] removeItemAtPath:bookPath error:nil];
-        }
-        
-        feedbackAlert = [[UIAlertView alloc] initWithTitle:ZERO_PAGES_TITLE
-                                                   message:ZERO_PAGES_MESSAGE
-                                                  delegate:self
-                                         cancelButtonTitle:ALERT_FEEDBACK_CANCEL
-                                         otherButtonTitles:nil];
-        [feedbackAlert show];
-        [feedbackAlert release];
-        
-        return NO;
+    if (currentPageFirstLoading && lastPageViewed != 0) {
+        currentPageNumber = lastPageViewed;
+    } else if (bakerStartAtPage < 0) {
+        currentPageNumber = MAX(1, totalPages + bakerStartAtPage + 1);
+    } else if (bakerStartAtPage > 0) {
+        currentPageNumber = MIN(totalPages, bakerStartAtPage);
     }
+    bookStatus.page = [NSNumber numberWithInt:currentPageNumber];
+    
+    // ****** SET SCREENSHOTS FOLDER
+    NSString *screenshotFolder = book.bakerPageScreenshots;
+    if (screenshotFolder) {
+        // When a screenshots folder is specified in book.json
+        cachedScreenshotsPath = [bookPath stringByAppendingPathComponent:screenshotFolder];
+    }
+    
+    if (!screenshotFolder || ![[NSFileManager defaultManager] fileExistsAtPath:cachedScreenshotsPath]) {
+        // When a screenshot folder is not specified in book.json, or is specified but not actually existing
+        cachedScreenshotsPath = defaultScreeshotsPath;
+    }
+    NSLog(@"Screenshots are stored in %@", cachedScreenshotsPath);
+    
+    [cachedScreenshotsPath retain];
+    
+    return YES;
 }
 - (void)cleanupBookEnvironment {
     
@@ -1119,16 +1066,8 @@
                     // ****** Handle: book://
                     NSLog(@"    Page is a link with scheme book:// --> download new book");
                     
-                    if ([[url host] isEqualToString:@"local"] && [[NSFileManager defaultManager] fileExistsAtPath:bundleBookPath]) {
-                        // *** Back to bundled book
-                        feedbackAlert = [[UIAlertView alloc] initWithTitle:@""
-                                                                   message:[NSString stringWithFormat:CLOSE_BOOK_MESSAGE]
-                                                                  delegate:self
-                                                         cancelButtonTitle:ALERT_FEEDBACK_CANCEL
-                                                         otherButtonTitles:CLOSE_BOOK_CONFIRM, nil];
-                        [feedbackAlert show];
-                        [feedbackAlert release];
-                        
+                    if ([[url host] isEqualToString:@"local"]) {
+                        // TODO: BACK TO THE SHELF (IF ANY)                        
                     } else {
                         
                         if ([[url pathExtension] isEqualToString:@"html"]) {
@@ -1138,14 +1077,14 @@
                             url = [NSURL URLWithString:[tmpUrl stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"/"]]];
                         }
                         
-                        // ****** Download book
+                        // ****** Download book url
                         URLDownload = [[@"http:" stringByAppendingString:[url resourceSpecifier]] retain];
                         
                         if ([[[NSURL URLWithString:URLDownload] pathExtension] isEqualToString:@""]) {
                             URLDownload = [[URLDownload stringByAppendingString:@".hpub"] retain];
                         }
                         
-                        [self downloadBook:nil];
+                        // TODO: download book
                     }
                 }
                 else if ([[url scheme] isEqualToString:@"mailto"])
@@ -1772,111 +1711,6 @@
 
     if(![indexViewController isDisabled]) {
         [indexViewController setIndexViewHidden:YES withAnimation:YES];
-    }
-}
-
-#pragma mark - DOWNLOAD NEW BOOKS
-- (void)downloadBook:(NSNotification *)notification {
-    
-    if (notification != nil) {
-        URLDownload = [[NSString stringWithString:(NSString *)[notification object]] retain];
-    }
-    NSLog(@"• Download file %@", URLDownload);
-    
-    feedbackAlert = [[UIAlertView alloc] initWithTitle:@""
-                                               message:[OPEN_BOOK_MESSAGE stringByAppendingFormat:@"%@?", URLDownload]
-                                              delegate:self
-                                     cancelButtonTitle:ALERT_FEEDBACK_CANCEL
-                                     otherButtonTitles:OPEN_BOOK_CONFIRM, nil];
-    [feedbackAlert show];
-    [feedbackAlert release];
-}
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-    
-    if ([[alertView buttonTitleAtIndex:buttonIndex] isEqualToString:CLOSE_BOOK_CONFIRM])
-    {
-        // If a "book" directory already exists remove it (quick solution, improvement needed)
-        if ([[NSFileManager defaultManager] fileExistsAtPath:documentsBookPath]) {
-            [[NSFileManager defaultManager] removeItemAtPath:documentsBookPath error:NULL];
-        }
-        
-        currentPageIsDelayingLoading = YES;
-        [self loadBookWithBookPath:bundleBookPath];
-    }
-    else if ([[alertView buttonTitleAtIndex:buttonIndex] isEqualToString:OPEN_BOOK_CONFIRM])
-    {
-        [self startDownloadRequest];
-    }
-}
-- (void)startDownloadRequest {
-    downloader = [[Downloader alloc] initDownloader:@"handleDownloadResult"];
-    [downloader makeHTTPRequest:URLDownload];
-}
-- (void)handleDownloadResult:(NSNotification *)notification {
-    
-    NSDictionary *requestSummary = [NSDictionary dictionaryWithDictionary:(NSMutableDictionary *)[notification object]];
-    [downloader release];
-    
-    if ([requestSummary objectForKey:@"error"] != nil) {
-        
-        NSLog(@"• Error while downloading new book data");
-        feedbackAlert = [[UIAlertView alloc] initWithTitle:ERROR_FEEDBACK_TITLE
-                                                   message:ERROR_FEEDBACK_MESSAGE
-                                                  delegate:self
-                                         cancelButtonTitle:ALERT_FEEDBACK_CANCEL
-                                         otherButtonTitles:ERROR_FEEDBACK_CONFIRM, nil];
-        [feedbackAlert show];
-        [feedbackAlert release];
-        
-    } else if ([requestSummary objectForKey:@"data"] != nil) {
-        
-        NSLog(@"• New book data received succesfully");
-        feedbackAlert = [[UIAlertView alloc] initWithTitle:EXTRACT_FEEDBACK_TITLE
-                                                   message:nil
-                                                  delegate:self
-                                         cancelButtonTitle:nil
-                                         otherButtonTitles:nil];
-        
-        UIActivityIndicatorView *extractingWheel = [[UIActivityIndicatorView alloc] initWithFrame:CGRectMake(124,50,37,37)];
-        extractingWheel.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhiteLarge;
-        [extractingWheel startAnimating];
-        
-        [feedbackAlert addSubview:extractingWheel];
-        [feedbackAlert show];
-        
-        [extractingWheel release];
-        [feedbackAlert release];
-        
-        [self performSelector:@selector(manageDownloadData:) withObject:[requestSummary objectForKey:@"data"] afterDelay:0.1];
-    }
-}
-- (void)manageDownloadData:(NSData *)data {
-    
-    NSArray *URLSections = [NSArray arrayWithArray:[URLDownload pathComponents]];
-    NSString *targetPath = [NSTemporaryDirectory() stringByAppendingString:[URLSections lastObject]];
-    
-    [data writeToFile:targetPath atomically:YES];
-    
-    if ([[NSFileManager defaultManager] fileExistsAtPath:targetPath]) {
-        NSLog(@"• File hpub create successfully at path: %@", targetPath);
-        NSLog(@"    Book destination path: %@", documentsBookPath);
-        
-        // If a "book" directory already exists remove it (quick solution, improvement needed)
-        if ([[NSFileManager defaultManager] fileExistsAtPath:documentsBookPath]) {
-            [[NSFileManager defaultManager] removeItemAtPath:documentsBookPath error:NULL];
-        }
-        
-        [SSZipArchive unzipFileAtPath:targetPath toDestination:documentsBookPath];
-        
-        NSLog(@"    Book successfully unzipped. Removing .hpub file");
-        [[NSFileManager defaultManager] removeItemAtPath:targetPath error:NULL];
-        
-        NSLog(@"    Add skip backup attribute to book folder");
-        [Utils addSkipBackupAttributeToItemAtPath:documentsBookPath];
-        
-        [feedbackAlert dismissWithClickedButtonIndex:feedbackAlert.cancelButtonIndex animated:YES];
-        [self loadBookWithBookPath:documentsBookPath];
-        [self startReading];
     }
 }
 
