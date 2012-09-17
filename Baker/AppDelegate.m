@@ -9,6 +9,9 @@
 #import "AppDelegate.h"
 #import "UICustomNavigationController.h"
 
+#import "ShelfManager.h"
+#import "BakerViewController.h"
+
 @implementation AppDelegate
 
 @synthesize window;
@@ -29,7 +32,14 @@
     self.window = [[[InterceptorWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]] autorelease];
     self.window.backgroundColor = [UIColor whiteColor];
 
-    self.rootViewController = [[[ShelfViewController alloc] init] autorelease];
+    NSArray *books = [ShelfManager localBooksList];
+
+    if ([books count] == 1) {
+        self.rootViewController = [[[BakerViewController alloc] initWithBook:[books objectAtIndex:0]] autorelease];
+    } else  {
+        self.rootViewController = [[[ShelfViewController alloc] initWithBooks:books] autorelease];
+    }
+
     self.rootNavigationController = [[UICustomNavigationController alloc] initWithRootViewController:self.rootViewController];
 
     [self.window addSubview:rootNavigationController.view];

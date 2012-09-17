@@ -14,7 +14,7 @@
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) InterceptorWindow *window;
-@property (strong, nonatomic) ShelfViewController *rootViewController;
+@property (strong, nonatomic) UIViewController *rootViewController;
 @property (strong, nonatomic) UINavigationController *rootNavigationController;
 
 @end
