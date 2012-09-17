@@ -77,6 +77,11 @@
         [Utils addSkipBackupAttributeToItemAtPath:dirPath];
     }
 
+    if (![[NSFileManager defaultManager] fileExistsAtPath:path]) {
+        [[NSFileManager defaultManager] createFileAtPath:path contents:nil attributes:nil];
+        [Utils addSkipBackupAttributeToItemAtPath:path];
+    }
+
     [json writeToFile:path atomically:YES encoding:NSUTF8StringEncoding error:&error];
     if (error) {
         NSLog(@"Error when saving book status: %@", error);
