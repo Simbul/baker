@@ -75,9 +75,10 @@
             [[NSFileManager defaultManager] createDirectoryAtPath:cachePath withIntermediateDirectories:YES attributes:nil error:nil];
         }
         
+        
         // ****** SCREENSHOTS DIRECTORY //TODO: set in load book only if is necessary
         defaultScreeshotsPath = [[[cachePath stringByAppendingPathComponent:@"screenshots"] stringByAppendingPathComponent:book.ID] retain];
-        [Utils addSkipBackupAttributeToItemAtPath:defaultScreeshotsPath];
+
         
         // ****** STATUS FILE
         statusPath = [[[[cachePath stringByAppendingPathComponent:@"statuses"] stringByAppendingPathComponent:book.ID] stringByAppendingPathExtension:@"json"] retain];
@@ -278,30 +279,6 @@
     
     totalPages = [pages count];
     NSLog(@"    Pages in this book: %d", totalPages);
-}
-- (void)startReadingFromPage:(int)pageNumber anchor:(NSString *)anchor {
-    
-    // set current page number
-    // set anchor
-    
-    // open current page
-    
-    // TODO: START READING FROM PAGE AND ANCHOR
-    /*
-    currentPageNumber = startingPage;
-    if (currentPageFirstLoading && currPageToLoad != nil) {
-        currentPageNumber = [currPageToLoad intValue];
-    } else if (pageNameFromURL != nil) {
-        pageNameFromURL = nil;
-        NSString *fileNameFromURL = [path stringByAppendingPathComponent:pageNameFromURL];
-        for (int i = 0; i < totalPages; i++) {
-            if ([[pages objectAtIndex:i] isEqualToString:fileNameFromURL]) {
-                currentPageNumber = i + 1;
-                break;
-            }
-        }
-    }
-    */
 }
 - (void)startReading {
     
@@ -885,19 +862,6 @@
         return YES;
     }
     return NO;
-}
-- (NSDictionary *)bookCurrentStatus {
-    NSString *lastPageViewed =  nil;
-    if (currentPageNumber > 0) {
-        lastPageViewed = [NSString stringWithFormat:@"%d", currentPageNumber];
-    }
-    
-    NSString *lastScrollIndex = nil;
-    if (currPage != nil) {
-        lastScrollIndex = [currPage stringByEvaluatingJavaScriptFromString:@"window.scrollY;"];
-    }
-    
-    return [NSDictionary dictionaryWithObjectsAndKeys:lastPageViewed, @"lastPageViewed", lastScrollIndex, @"lastScrollIndex", nil];
 }
 
 #pragma mark - MODAL VIEW
