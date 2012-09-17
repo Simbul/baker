@@ -208,6 +208,10 @@
     
     [self startReading];
 }
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    [self performSelector:@selector(hideBars:) withObject:[NSNumber numberWithBool:YES] afterDelay:0.5];
+}
 - (BOOL)loadBookWithBookPath:(NSString *)bookPath {
     NSLog(@"• LOAD BOOK WITH PATH: %@", bookPath);
     
