@@ -182,7 +182,7 @@
 - (CGRect)getNewNavigationFrame:(BOOL)hidden;
 - (void)toggleBars;
 - (void)showNavigationBar;
-- (void)hideBars:(BOOL)animated;
+- (void)hideBars:(NSNumber *)animated;
 
 #pragma mark - DOWNLOAD NEW BOOKS
 - (void)downloadBook:(NSNotification *)notification;

@@ -192,12 +192,9 @@
     }
 }
 - (void)viewWillAppear:(BOOL)animated {
+    
     [super viewWillAppear:animated];
-    
-    
-    // ****** HIDE STATUS AND NAVIGATION BAR
     [self.navigationController.navigationBar setTranslucent:YES];
-    [self hideBars:NO];
     
     
     // ****** LISTENER FOR INTERCEPTOR WINDOW NOTIFICATION
@@ -378,15 +375,12 @@
     }
     indexViewController = [[IndexViewController alloc] initWithBook:book fileName:INDEX_FILE_NAME webViewDelegate:self];
     [self.view addSubview:indexViewController.view];
-    
-    
     [indexViewController loadContent];
-    
-    
+
     currentPageIsDelayingLoading = YES;
-    
+
     [self addPageLoading:0];
-    
+
     if ([book.bakerRendering isEqualToString:@"three-cards"]) {
         if (currentPageNumber != totalPages) {
             [self addPageLoading:+1];
@@ -679,7 +673,7 @@
         
         tapNumber = tapNumber + (lastPageNumber - currentPageNumber);
         
-        [self hideBars:YES];
+        [self hideBars:[NSNumber numberWithBool:YES]];
         [scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:YES];
         
         [self gotoPageDelayer];
@@ -1002,7 +996,7 @@
     myModalViewController.delegate = self;
     
     // Hide the IndexView before opening modal web view
-    [self hideBars:YES];
+    [self hideBars:[NSNumber numberWithBool:YES]];
     
     // Check if iOS4 or 5
     if ([self respondsToSelector:@selector(presentViewController:animated:completion:)]) {
@@ -1044,7 +1038,7 @@
 }
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scroll {
     NSLog(@"• Scrollview will begin dragging");
-    [self hideBars:YES];
+    [self hideBars:[NSNumber numberWithBool:YES]];
 }
 - (void)scrollViewDidEndDragging:(UIScrollView *)scroll willDecelerate:(BOOL)decelerate {
     NSLog(@"• Scrollview did end dragging");
@@ -1641,7 +1635,7 @@
 }
 - (void)userDidScroll:(UITouch *)touch {
     NSLog(@"• User scroll");
-    [self hideBars:YES];
+    [self hideBars:[NSNumber numberWithBool:YES]];
     
     currPage.backgroundColor = webViewBackground;
     currPage.opaque = YES;
@@ -1690,7 +1684,7 @@
     
 }
 - (void)scrollPage:(UIWebView *)webView to:(NSString *)offset animating:(BOOL)animating {
-    [self hideBars:YES];
+    [self hideBars:[NSNumber numberWithBool:YES]];
     
     NSString *jsCommand = [NSString stringWithFormat:@"window.scrollTo(0,%@);", offset];
     if (animating) {
@@ -1751,7 +1745,7 @@
             [sharedApplication setStatusBarHidden:NO withAnimation:UIStatusBarAnimationSlide];
             [self performSelector:@selector(showNavigationBar) withObject:nil afterDelay:0.1];
         } else {
-            [self hideBars:YES];
+            [self hideBars:[NSNumber numberWithBool:YES]];
         }
                 
         if(![indexViewController isDisabled]) {
@@ -1774,11 +1768,14 @@
                      }
                      completion:nil];
 }
-- (void)hideBars:(BOOL)animated {
+- (void)hideBars:(NSNumber *)animated {
+
+    BOOL animateHiding = [animated boolValue];
+
     CGRect newNavigationFrame = [self getNewNavigationFrame:YES];
     UINavigationBar *navigationBar = self.navigationController.navigationBar;
-    
-    if (animated) {
+
+    if (animateHiding) {
         [UIView animateWithDuration:0.3
                               delay:0
                             options:UIViewAnimationOptionCurveEaseOut
@@ -1794,7 +1791,7 @@
         navigationBar.hidden = YES;
         [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
     }
-    
+
     if(![indexViewController isDisabled]) {
         [indexViewController setIndexViewHidden:YES withAnimation:YES];
     }
