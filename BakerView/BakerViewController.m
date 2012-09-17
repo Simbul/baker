@@ -197,8 +197,15 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(downloadBook:) name:@"downloadNotification" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleDownloadResult:) name:@"handleDownloadResult" object:nil];
     
+    // ****** LISTENER FOR CLOSING APPLICATION
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleApplicationWillResignActive:) name:@"applicationWillResignActiveNotification" object:nil];
+
     
     [self startReading];
+}
+- (void)handleApplicationWillResignActive:(NSNotification *)notification {
+    NSLog(@"RESIGN, SAVING");
+    [self saveBookStatusWithScrollIndex];
 }
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
@@ -1914,7 +1921,9 @@
 
 #pragma mark - MEMORY
 - (void)viewWillDisappear:(BOOL)animated {
-    // Save status
+    [self saveBookStatusWithScrollIndex];
+}
+- (void)saveBookStatusWithScrollIndex {
     if (currPage != nil) {
         bookStatus.scrollIndex = [currPage stringByEvaluatingJavaScriptFromString:@"window.scrollY;"];
     }
