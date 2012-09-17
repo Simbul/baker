@@ -1929,10 +1929,6 @@
 - (void)viewDidUnload {
     
     [super viewDidUnload];
-    
-    // Save status
-    [bookStatus save];
-    NSLog(@"saved status");
 
     // Set web views delegates to nil, mandatory before releasing UIWebview instances
     currPage.delegate = nil;
