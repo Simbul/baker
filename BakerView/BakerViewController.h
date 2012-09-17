@@ -44,8 +44,6 @@
     
     CGRect screenBounds;
     
-    NSString *bundleBookPath;
-    NSString *documentsBookPath;
     NSString *defaultScreeshotsPath;
     NSString *cachedScreenshotsPath;
     NSString *statusPath;

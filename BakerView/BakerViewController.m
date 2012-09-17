@@ -70,10 +70,6 @@
         NSLog(@"    Device Height: %f", screenBounds.size.height);
         
         
-        // ****** BUNDLED BOOK DIRECTORY
-        bundleBookPath = [[[NSBundle mainBundle] pathForResource:@"book" ofType:nil] retain];
-        
-        
         NSString *cachePath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0];
         if (![[NSFileManager defaultManager] fileExistsAtPath:cachePath]) {
             [[NSFileManager defaultManager] createDirectoryAtPath:cachePath withIntermediateDirectories:YES attributes:nil error:nil];
@@ -312,9 +308,6 @@
     [self buildPageDetails];
     [self updateBookLayout];
     
-    
-    // TODO: MOVE INTO ANOTHER METHOD
-    // [indexViewController loadContentFromBundle:[book.path isEqualToString:bundleBookPath]];
     // ****** INDEX WEBVIEW INIT
     // we move it here to make it more clear and clean
     
