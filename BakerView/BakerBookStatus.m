@@ -30,6 +30,7 @@
 //
 
 #import "BakerBookStatus.h"
+#import "Utils.h"
 #import "JSONKit.h"
 
 @implementation BakerBookStatus
@@ -73,7 +74,7 @@
         if (error) {
             NSLog(@"Error when creating statuses folder: %@", error);
         }
-        // TODO: call something like [self addSkipBackupAttributeToItemAtPath:dirPath] on the statuses folder
+        [Utils addSkipBackupAttributeToItemAtPath:dirPath];
     }
 
     [json writeToFile:path atomically:YES encoding:NSUTF8StringEncoding error:&error];
