@@ -30,7 +30,6 @@
 //
 
 #import <QuartzCore/QuartzCore.h>
-#import <sys/xattr.h>
 
 #import "BakerViewController.h"
 #import "Downloader.h"
@@ -61,14 +60,6 @@
 
 #define URL_OPEN_MODALLY        @"referrer=Baker"
 #define URL_OPEN_EXTERNAL       @"referrer=Safari"
-
-
-// IOS VERSION COMPARISON MACROS
-#define SYSTEM_VERSION_EQUAL_TO(version)                  ([[[UIDevice currentDevice] systemVersion] compare:version options:NSNumericSearch] == NSOrderedSame)
-#define SYSTEM_VERSION_GREATER_THAN(version)              ([[[UIDevice currentDevice] systemVersion] compare:version options:NSNumericSearch] == NSOrderedDescending)
-#define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(version)  ([[[UIDevice currentDevice] systemVersion] compare:version options:NSNumericSearch] != NSOrderedAscending)
-#define SYSTEM_VERSION_LESS_THAN(version)                 ([[[UIDevice currentDevice] systemVersion] compare:version options:NSNumericSearch] == NSOrderedAscending)
-#define SYSTEM_VERSION_LESS_THAN_OR_EQUAL_TO(version)     ([[[UIDevice currentDevice] systemVersion] compare:version options:NSNumericSearch] != NSOrderedDescending)
 
 
 // SCREENSHOT
@@ -118,11 +109,11 @@
         
         // ****** SCREENSHOTS DIRECTORY //TODO: set in load book only if is necessary
         defaultScreeshotsPath = [[[cachePath stringByAppendingPathComponent:@"screenshots"] stringByAppendingPathComponent:book.ID] retain];
-        [self addSkipBackupAttributeToItemAtPath:defaultScreeshotsPath];
+        [Utils addSkipBackupAttributeToItemAtPath:defaultScreeshotsPath];
         
         // ****** STATUS FILE
         statusPath = [[[[cachePath stringByAppendingPathComponent:@"statuses"] stringByAppendingPathComponent:book.ID] stringByAppendingPathExtension:@"json"] retain];
-        [self addSkipBackupAttributeToItemAtPath:statusPath];
+        [Utils addSkipBackupAttributeToItemAtPath:statusPath];
         bookStatus = [[BakerBookStatus alloc] initWithJSONPath:statusPath];
         NSLog(@"STATUS: page: %@", bookStatus.page);
         NSLog(@"STATUS: scrollIndex: %@", bookStatus.scrollIndex);
@@ -625,30 +616,6 @@
     for (UIView *subview in webView.subviews) {
         if ([subview isKindOfClass:[UIScrollView class]]) {
             ((UIScrollView *)subview).bounces = verticalBounce;
-        }
-    }
-}
-- (void)addSkipBackupAttributeToItemAtPath:(NSString *)path {
-    
-    if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
-        
-        if (SYSTEM_VERSION_LESS_THAN_OR_EQUAL_TO(@"5.0.1")) {
-            
-            const char *filePath = [path fileSystemRepresentation];
-            const char *attrName = "com.apple.MobileBackup";
-            u_int8_t attrValue = 1;
-            
-            int result = setxattr(filePath, attrName, &attrValue, sizeof(attrValue), 0, 0);
-            if (result == 0) {
-                NSLog(@"Successfully added skip backup attribute to item %@ (iOS <= 5.0.1)", path);
-            }
-
-        } else if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"5.1")) {
-            
-            BOOL success = [[NSURL fileURLWithPath:path] setResourceValue:[NSNumber numberWithBool: YES] forKey:NSURLIsExcludedFromBackupKey error:nil];
-            if(success) {
-                NSLog(@"Successfully added skip backup attribute to item %@ (iOS >= 5.1)", path);
-            }
         }
     }
 }
@@ -1481,7 +1448,7 @@
     
     if (![[NSFileManager defaultManager] fileExistsAtPath:cachedScreenshotsPath]) {
         [[NSFileManager defaultManager] createDirectoryAtPath:cachedScreenshotsPath withIntermediateDirectories:YES attributes:nil error:nil];
-        [self addSkipBackupAttributeToItemAtPath:cachedScreenshotsPath];
+        [Utils addSkipBackupAttributeToItemAtPath:cachedScreenshotsPath];
     }
     
     NSString *screenshotFile = [cachedScreenshotsPath stringByAppendingPathComponent:[NSString stringWithFormat:@"screenshot-%@-%i.jpg", interfaceOrientation, pageNumber]];
@@ -1899,7 +1866,7 @@
         [[NSFileManager defaultManager] removeItemAtPath:targetPath error:NULL];
         
         NSLog(@"    Add skip backup attribute to book folder");
-        [self addSkipBackupAttributeToItemAtPath:documentsBookPath];
+        [Utils addSkipBackupAttributeToItemAtPath:documentsBookPath];
         
         [feedbackAlert dismissWithClickedButtonIndex:feedbackAlert.cancelButtonIndex animated:YES];
         [self loadBookWithBookPath:documentsBookPath];

@@ -131,7 +131,6 @@
 - (void)setFrame:(CGRect)frame forPage:(UIWebView *)page;
 
 - (void)setupWebView:(UIWebView *)webView;
-- (void)addSkipBackupAttributeToItemAtPath:(NSString *)path;
 
 #pragma mark - LOADING
 - (BOOL)changePage:(int)page;
