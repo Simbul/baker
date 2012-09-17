@@ -83,11 +83,7 @@
 
     [super viewWillAppear:animated];
 
-    UICustomNavigationBar *navigationBar = (UICustomNavigationBar *)self.navigationController.navigationBar;
-
-    [navigationBar setTranslucent:NO];
-    [navigationBar setTintColor:[UIColor clearColor]];
-    [navigationBar setBackgroundImage:[UIImage imageNamed:@"navigation-bar-bg.png"] forBarMetrics:UIBarMetricsDefault];
+    [self.navigationController.navigationBar setTranslucent:NO];
 }
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {

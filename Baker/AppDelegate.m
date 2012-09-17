@@ -8,6 +8,7 @@
 
 #import "AppDelegate.h"
 #import "UICustomNavigationController.h"
+#import "UICustomNavigationBar.h"
 
 #import "ShelfManager.h"
 #import "BakerViewController.h"
@@ -41,6 +42,9 @@
     }
 
     self.rootNavigationController = [[UICustomNavigationController alloc] initWithRootViewController:self.rootViewController];
+    UICustomNavigationBar *navigationBar = (UICustomNavigationBar *)self.rootNavigationController.navigationBar;
+    [navigationBar setBackgroundImage:[UIImage imageNamed:@"navigation-bar-bg.png"] forBarMetrics:UIBarMetricsDefault];
+    [navigationBar setTintColor:[UIColor clearColor]];
 
     [self.window addSubview:rootNavigationController.view];
     [self.window makeKeyAndVisible];
