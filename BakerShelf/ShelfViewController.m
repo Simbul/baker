@@ -42,10 +42,16 @@
 #pragma mark - Init
 
 - (id)init {
-
     self = [super init];
     if (self) {
         self.books = [ShelfManager localBooksList];
+    }
+    return self;
+}
+- (id)initWithBooks:(NSArray *)currentBooks {
+    self = [super init];
+    if (self) {
+        self.books = currentBooks;
     }
     return self;
 }

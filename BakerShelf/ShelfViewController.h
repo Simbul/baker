@@ -36,4 +36,7 @@
 
 @property (copy, nonatomic) NSArray *books;
 
+#pragma mark - Init
+- (id)initWithBooks:(NSArray *)currentBooks;
+
 @end
