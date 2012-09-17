@@ -1775,7 +1775,6 @@
     
     [cachedScreenshotsPath release];
     [defaultScreeshotsPath release];
-    [documentsBookPath release];
     
     [pageDetails release];
     [toLoad release];
