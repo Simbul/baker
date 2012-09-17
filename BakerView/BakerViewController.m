@@ -615,10 +615,9 @@
     
     webView.backgroundColor = [UIColor clearColor];
     webView.opaque = NO;
-    
+
     webView.delegate = self;
-    webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    
+
     webView.mediaPlaybackRequiresUserAction = ![book.bakerMediaAutoplay boolValue];
     webView.scalesPageToFit = [book.zoomable boolValue];
     BOOL verticalBounce = [book.bakerVerticalBounce boolValue];
