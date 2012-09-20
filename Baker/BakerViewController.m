@@ -151,7 +151,6 @@
         
         // ****** SCROLLVIEW INIT
         self.scrollView = [[[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, pageWidth, pageHeight)] autorelease];
-        scrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         scrollView.showsHorizontalScrollIndicator = YES;
         scrollView.showsVerticalScrollIndicator = NO;
         scrollView.delaysContentTouches = NO;
@@ -1880,15 +1879,26 @@
         }
     }
 }
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    // Overriden to allow any orientation.
+- (NSInteger)supportedInterfaceOrientations {
     if ([availableOrientation isEqualToString:@"portrait"]) {
-        return (interfaceOrientation == UIInterfaceOrientationPortrait || interfaceOrientation == UIInterfaceOrientationPortraitUpsideDown);
+        return (UIInterfaceOrientationMaskPortrait | UIInterfaceOrientationPortraitUpsideDown);
     } else if ([availableOrientation isEqualToString:@"landscape"]) {
-        return (interfaceOrientation == UIInterfaceOrientationLandscapeRight || interfaceOrientation == UIInterfaceOrientationLandscapeLeft);
+        return UIInterfaceOrientationMaskLandscape;
+    } else {
+        return UIInterfaceOrientationMaskAll;
+    }
+}
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+    if ([availableOrientation isEqualToString:@"portrait"]) {
+        return UIInterfaceOrientationIsPortrait(interfaceOrientation);
+    } else if ([availableOrientation isEqualToString:@"landscape"]) {
+        return UIInterfaceOrientationIsLandscape(interfaceOrientation);
     } else {
         return YES;
     }
+}
+- (BOOL)shouldAutorotate {
+    return YES;
 }
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
     // Notify the index view

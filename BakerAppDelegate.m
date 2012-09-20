@@ -67,7 +67,7 @@
     window.backgroundColor = [UIColor whiteColor];
     
     // Add the root view to the application window
-    [window addSubview:rootViewController.view];
+    self.window.rootViewController = self.rootViewController;
     [window makeKeyAndVisible];
     
     NSString *reqSysVer = @"3.2";
