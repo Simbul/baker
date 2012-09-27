@@ -206,9 +206,9 @@
 
         CGRect screenBounds = [[UIScreen mainScreen] bounds];
         if (screenBounds.size.width < 768) {
-            errorLabel.font = [UIFont fontWithName:@"Helvetica" size:15.0];
+            errorLabel.font = [UIFont fontWithName:@"Helvetica" size:14.0];
         } else {
-            errorLabel.font = [UIFont fontWithName:@"Helvetica" size:24.0];
+            errorLabel.font = [UIFont fontWithName:@"Helvetica" size:18.0];
         }
 
         [self.view addSubview:errorLabel];
