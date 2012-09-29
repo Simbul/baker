@@ -37,7 +37,6 @@
 @synthesize title;
 @synthesize date;
 @synthesize url;
-@synthesize status;
 @synthesize path;
 @synthesize bakerBook;
 
@@ -47,8 +46,7 @@
         self.ID = book.ID;
         self.title = book.title;
         self.date = book.date;
-        self.url = book.url;
-        self.status = @"bundled";
+        self.url = [NSURL URLWithString:book.url];
         self.path = book.path;
 
         self.bakerBook = book;
@@ -64,6 +62,7 @@
     return self;
 }
 
+#ifdef BAKER_NEWSSTAND
 -(id)initWithIssueData:(NSDictionary *)issueData {
     self = [super init];
     if (self) {
@@ -71,7 +70,7 @@
         self.title = [issueData objectForKey:@"title"];
         self.date = [issueData objectForKey:@"date"];
         self.coverURL = [NSURL URLWithString:[issueData objectForKey:@"cover"]];
-        self.url = [issueData objectForKey:@"url"];
+        self.url = [NSURL URLWithString:[issueData objectForKey:@"url"]];
         
         NSString *cachePath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0];
         self.coverPath = [cachePath stringByAppendingPathComponent:self.ID];
@@ -79,10 +78,8 @@
         NKLibrary *nkLib = [NKLibrary sharedLibrary];
         NKIssue *nkIssue = [nkLib issueWithName:self.ID];
         if (nkIssue) {
-            self.status = [self nkIssueContentStatusToString:[nkIssue status]];
             self.path = [[nkIssue contentURL] path];
         } else {
-            self.status = nil;
             self.path = nil;
         }
         
@@ -90,7 +87,6 @@
     }
     return self;
 }
-
 -(NSString *)nkIssueContentStatusToString:(NKIssueContentStatus) contentStatus{
     if (contentStatus == NKIssueContentStatusNone) {
         return @"remote";
@@ -101,6 +97,14 @@
     }
     return @"";
 }
+-(void)downloadWithDelegate:(id < NSURLConnectionDownloadDelegate >)delegate {
+    NKLibrary *nkLib = [NKLibrary sharedLibrary];
+    NKIssue *nkIssue = [nkLib issueWithName:self.ID];
+    NSURLRequest *req = [NSURLRequest requestWithURL:self.url];
+    NKAssetDownload *assetDownload = [nkIssue addAssetWithRequest:req];
+    [assetDownload downloadWithDelegate:delegate];
+}
+#endif
 
 -(void)getCover:(void(^)(UIImage *img))completionBlock {
     UIImage *image = [UIImage imageWithContentsOfFile:self.coverPath];
@@ -121,6 +125,15 @@
                            });
         }
     }
+}
+-(NSString *)getStatus {
+#ifdef BAKER_NEWSSTAND
+    NKLibrary *nkLib = [NKLibrary sharedLibrary];
+    NKIssue *nkIssue = [nkLib issueWithName:self.ID];
+    return [self nkIssueContentStatusToString:[nkIssue status]];
+#else
+    return @"bundled";
+#endif
 }
 
 @end

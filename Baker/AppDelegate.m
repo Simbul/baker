@@ -6,16 +6,19 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
+#import "Constants.h"
+
 #import "AppDelegate.h"
 #import "UICustomNavigationController.h"
 #import "UICustomNavigationBar.h"
 
 #import "ShelfManager.h"
-#import "IssuesManager.h"
-#import "BakerViewController.h"
 
-#define BAKER_NEWSSTAND YES
-#define NEWSSTAND_MANIFEST_URL @"http://localhost/baker/list.json"
+#ifdef BAKER_NEWSSTAND
+#import "IssuesManager.h"
+#endif
+
+#import "BakerViewController.h"
 
 @implementation AppDelegate
 

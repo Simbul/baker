@@ -29,8 +29,13 @@
 //  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
+#import "Constants.h"
 #import <Foundation/Foundation.h>
+
+#ifdef BAKER_NEWSSTAND
 #import <NewsstandKit/NewsstandKit.h>
+#endif
+
 #import "BakerBook.h"
 
 @interface BakerIssue : NSObject
@@ -38,8 +43,7 @@
 @property (copy, nonatomic) NSString *ID;
 @property (copy, nonatomic) NSString *title;
 @property (copy, nonatomic) NSString *date;
-@property (copy, nonatomic) NSString *url;
-@property (copy, nonatomic) NSString *status;
+@property (copy, nonatomic) NSURL *url;
 @property (copy, nonatomic) NSString *path;
 
 @property (copy, nonatomic) NSString *coverPath;
@@ -49,6 +53,11 @@
 
 -(id)initWithBakerBook:(BakerBook *)bakerBook;
 -(void)getCover:(void(^)(UIImage *img))completionBlock;
+-(NSString *)getStatus;
+
+#ifdef BAKER_NEWSSTAND
 -(id)initWithIssueData:(NSDictionary *)issueData;
+-(void)downloadWithDelegate:(id < NSURLConnectionDownloadDelegate >)delegate;
+#endif
 
 @end

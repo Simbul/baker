@@ -52,6 +52,8 @@
 -(void)refresh {
     NSString *json = [NSString stringWithContentsOfURL:self.url encoding:NSUTF8StringEncoding error:nil];
     NSArray *jsonArr = [json objectFromJSONString];
+
+    [self updateNewsstandIssuesList:jsonArr];
     
     if (self.issues) {
         [self.issues release];
@@ -63,17 +65,15 @@
         [tmpIssues addObject:issue];
     }];
     self.issues = [[NSArray alloc] initWithArray:tmpIssues];
-    [self updateNewsstandIssuesList];
 }
--(void)updateNewsstandIssuesList {
+-(void)updateNewsstandIssuesList:(NSArray *)issuesList {
     NKLibrary *nkLib = [NKLibrary sharedLibrary];
     
-    for (BakerIssue *issue in self.issues) {
-        NSString *name = issue.ID;
-        
+    for (NSDictionary *issue in issuesList) {
         NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
         [dateFormat setDateFormat:@"YYYY-MM-DD HH:MM:SS"];
-        NSDate *date = [dateFormat dateFromString:issue.date];
+        NSDate *date = [dateFormat dateFromString:[issue objectForKey:@"date"]];
+        NSString *name = [issue objectForKey:@"name"];
         
         NKIssue *nkIssue = [nkLib issueWithName:name];
         if(!nkIssue) {

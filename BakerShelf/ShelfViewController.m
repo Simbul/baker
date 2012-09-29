@@ -35,6 +35,8 @@
 
 #import "BakerViewController.h"
 
+#import "SSZipArchive.h"
+
 @implementation ShelfViewController
 
 @synthesize issues;
@@ -137,12 +139,50 @@
     [gridView deselectItemAtIndex:index animated:NO];
     
     BakerIssue *issue = [self.issues objectAtIndex:index];
+    NSLog(@"clicked on issue %@ with status %@", issue.ID, [issue getStatus]);
 
-    if (issue.status == @"downloaded" || issue.status == @"bundled") {
-        BakerViewController *bakerViewController = [[BakerViewController alloc] initWithBook:[issue bakerBook]];
-        [self.navigationController pushViewController:bakerViewController animated:YES];
-        [bakerViewController release];
+    BakerBook *book = nil;
+#ifdef BAKER_NEWSSTAND
+    if ([issue getStatus] == @"downloaded") {
+        book = [[[BakerBook alloc] initWithBookPath:issue.path bundled:NO] autorelease];
+        [self pushViewControllerWithBook:book];
+    } else if ([issue getStatus] == @"remote") {
+        [issue downloadWithDelegate:self];
     }
+#else
+    if ([issue getStatus] == @"bundled") {
+        book = [issue bakerBook];
+        [self pushViewControllerWithBook:book];
+    }
+#endif
 }
+-(void)pushViewControllerWithBook:(BakerBook *)book {
+    BakerViewController *bakerViewController = [[BakerViewController alloc] initWithBook:book];
+    [self.navigationController pushViewController:bakerViewController animated:YES];
+    [bakerViewController release];
+}
+
+#ifdef BAKER_NEWSSTAND
+#pragma mark - Newsstand download
+
+- (void)connection:(NSURLConnection *)connection didWriteData:(long long)bytesWritten totalBytesWritten:(long long)totalBytesWritten expectedTotalBytes:(long long)expectedTotalBytes {
+    NSLog(@"CONNECTION DID WRITE DATA %lld %lld %lld", bytesWritten, totalBytesWritten, expectedTotalBytes);
+}
+- (void)connectionDidFinishDownloading:(NSURLConnection *)connection destinationURL:(NSURL *)destinationURL {
+    NSLog(@"CONNECTION DID FINISH DOWNLOADING %@", destinationURL);
+    
+    NKAssetDownload *dnl = connection.newsstandAssetDownload;
+    NKIssue *nkIssue = dnl.issue;
+    NSString *destinationPath = [[nkIssue contentURL] path];
+    
+    NSLog(@"File is being unzipped to %@", destinationPath);
+    [SSZipArchive unzipFileAtPath:[destinationURL path] toDestination:destinationPath];
+    
+    // TODO: update Newsstand icon and add badge
+}
+- (void)connectionDidResumeDownloading:(NSURLConnection *)connection totalBytesWritten:(long long)totalBytesWritten expectedTotalBytes:(long long)expectedTotalBytes {
+    NSLog(@"CONNECTION DID RESUME DOWNLOADING %lld %lld", totalBytesWritten, expectedTotalBytes);
+}
+#endif
 
 @end
