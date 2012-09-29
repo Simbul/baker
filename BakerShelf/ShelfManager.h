@@ -31,6 +31,7 @@
 
 #import <Foundation/Foundation.h>
 #import "BakerBook.h"
+#import "BakerIssue.h"
 
 @interface ShelfManager : NSObject
 

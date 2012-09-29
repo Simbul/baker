@@ -144,7 +144,7 @@
 {
     [gridView deselectItemAtIndex:index animated:NO];
 
-    BakerViewController *bakerViewController = [[BakerViewController alloc] initWithBook:[self.books objectAtIndex:index]];
+    BakerViewController *bakerViewController = [[BakerViewController alloc] initWithBook:[[self.books objectAtIndex:index] bakerBook]];
 
     [self.navigationController pushViewController:bakerViewController animated:YES];
     [bakerViewController release];

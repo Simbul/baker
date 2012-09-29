@@ -82,6 +82,7 @@
 		ABAFB5A615AB9A2E002FA498 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABAFB58D15AB9A2E002FA498 /* Foundation.framework */; };
 		ABAFB5AE15AB9A2E002FA498 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = ABAFB5AC15AB9A2E002FA498 /* InfoPlist.strings */; };
 		ABAFB5B115AB9A2F002FA498 /* BakerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = ABAFB5B015AB9A2F002FA498 /* BakerTests.m */; };
+		ABD7D45F1616FC5B008B13B5 /* BakerIssue.m in Sources */ = {isa = PBXBuildFile; fileRef = ABD7D45E1616FC5B008B13B5 /* BakerIssue.m */; };
 		BF3CCCA215D080560087B9CA /* ios-icon-ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = BF3CCC9E15D080560087B9CA /* ios-icon-ipad.png */; };
 		BF3CCCA315D080560087B9CA /* ios-icon-ipad@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BF3CCC9F15D080560087B9CA /* ios-icon-ipad@2x.png */; };
 		BF3CCCA415D080560087B9CA /* ios-icon-iphone.png in Resources */ = {isa = PBXBuildFile; fileRef = BF3CCCA015D080560087B9CA /* ios-icon-iphone.png */; };
@@ -193,6 +194,8 @@
 		ABAFB5AD15AB9A2E002FA498 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		ABAFB5AF15AB9A2F002FA498 /* BakerTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BakerTests.h; sourceTree = "<group>"; };
 		ABAFB5B015AB9A2F002FA498 /* BakerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BakerTests.m; sourceTree = "<group>"; };
+		ABD7D45D1616FC5B008B13B5 /* BakerIssue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BakerIssue.h; sourceTree = "<group>"; };
+		ABD7D45E1616FC5B008B13B5 /* BakerIssue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BakerIssue.m; sourceTree = "<group>"; };
 		BF3CCC9E15D080560087B9CA /* ios-icon-ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ios-icon-ipad.png"; sourceTree = "<group>"; };
 		BF3CCC9F15D080560087B9CA /* ios-icon-ipad@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ios-icon-ipad@2x.png"; sourceTree = "<group>"; };
 		BF3CCCA015D080560087B9CA /* ios-icon-iphone.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ios-icon-iphone.png"; sourceTree = "<group>"; };
@@ -375,6 +378,8 @@
 				9F58D84E15D66E870027902C /* UICustomNavigationBar.m */,
 				9F58D84F15D66E870027902C /* UICustomNavigationController.h */,
 				9F58D85015D66E870027902C /* UICustomNavigationController.m */,
+				ABD7D45D1616FC5B008B13B5 /* BakerIssue.h */,
+				ABD7D45E1616FC5B008B13B5 /* BakerIssue.m */,
 			);
 			path = BakerShelf;
 			sourceTree = "<group>";
@@ -623,6 +628,7 @@
 				9F58D85215D66E870027902C /* UICustomNavigationController.m in Sources */,
 				9F5EB3BD15FCA3A100E13796 /* NSString+Extensions.m in Sources */,
 				AB26005116011D9D00E9AA66 /* BakerBookStatus.m in Sources */,
+				ABD7D45F1616FC5B008B13B5 /* BakerIssue.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

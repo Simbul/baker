@@ -1,5 +1,5 @@
 //
-//  ShelfManager.m
+//  BakerIssue.m
 //  Baker
 //
 //  ==========================================================================================
@@ -29,28 +29,33 @@
 //  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-#import "ShelfManager.h"
+#import "BakerIssue.h"
 
-@implementation ShelfManager
+@implementation BakerIssue
 
-+ (NSArray *)localBooksList {
-    NSMutableArray *booksList = [NSMutableArray array];
-    NSFileManager *localFileManager = [NSFileManager defaultManager];
-    NSString *booksDir = [[NSBundle mainBundle] pathForResource:@"books" ofType:nil];
+@synthesize ID;
+@synthesize title;
+@synthesize date;
+@synthesize cover;
+@synthesize url;
+@synthesize status;
+@synthesize path;
+@synthesize bakerBook;
 
-    NSArray *dirContents = [localFileManager contentsOfDirectoryAtPath:booksDir error:nil];
-    for (NSString *file in dirContents) {
-        NSString *manifestFile = [booksDir stringByAppendingPathComponent:[file stringByAppendingPathComponent:@"book.json"]];
-        if ([localFileManager fileExistsAtPath:manifestFile]) {
-            BakerBook *book = [[[BakerBook alloc] initWithBookPath:[booksDir stringByAppendingPathComponent:file] bundled:YES] autorelease];
-            BakerIssue *issue = [[[BakerIssue alloc] initWithBakerBook:book] autorelease];
-            [booksList addObject:issue];
-        } else {
-            NSLog(@"CANNOT FIND MANIFEST %@", manifestFile);
-        }
+-(id)initWithBakerBook:(BakerBook *)book {
+    self = [super init];
+    if (self) {
+        self.ID = book.ID;
+        self.title = book.title;
+        self.date = book.date;
+        self.cover = book.cover;
+        self.url = book.url;
+        self.status = @"bundled";
+        self.path = book.path;
+
+        self.bakerBook = book;
     }
-
-    return [NSArray arrayWithArray:booksList];
+    return self;
 }
 
 @end
