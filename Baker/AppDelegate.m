@@ -11,7 +11,11 @@
 #import "UICustomNavigationBar.h"
 
 #import "ShelfManager.h"
+#import "IssuesManager.h"
 #import "BakerViewController.h"
+
+#define BAKER_NEWSSTAND YES
+#define NEWSSTAND_MANIFEST_URL @"http://localhost/baker/list.json"
 
 @implementation AppDelegate
 
@@ -33,13 +37,25 @@
     self.window = [[[InterceptorWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]] autorelease];
     self.window.backgroundColor = [UIColor whiteColor];
 
+    #ifdef BAKER_NEWSSTAND
+    
+    NSLog(@"====== Newsstand is enabled ======");
+    IssuesManager *issuesManager = [[IssuesManager alloc] initWithURL:NEWSSTAND_MANIFEST_URL];
+    [issuesManager refresh];
+    NSArray *books = issuesManager.issues;
+    self.rootViewController = [[[ShelfViewController alloc] initWithBooks:books] autorelease];
+    
+    #else
+    
+    NSLog(@"====== Newsstand is not enabled ======");
     NSArray *books = [ShelfManager localBooksList];
-
     if ([books count] == 1) {
         self.rootViewController = [[[BakerViewController alloc] initWithBook:[books objectAtIndex:0]] autorelease];
     } else  {
         self.rootViewController = [[[ShelfViewController alloc] initWithBooks:books] autorelease];
     }
+    
+    #endif
 
     self.rootNavigationController = [[UICustomNavigationController alloc] initWithRootViewController:self.rootViewController];
     UICustomNavigationBar *navigationBar = (UICustomNavigationBar *)self.rootNavigationController.navigationBar;

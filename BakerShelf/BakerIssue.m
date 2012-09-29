@@ -53,22 +53,73 @@
 
         self.bakerBook = book;
         
-        coverPath = @"";
+        self.coverPath = @"";
         if (book.cover == nil) {
             // TODO: set path to a default cover (right now a blank box will be displayed)
             NSLog(@"Cover not specified for %@, probably missing from book.json", book.ID);
         } else {
-            coverPath = [book.path stringByAppendingPathComponent:book.cover];
+            self.coverPath = [book.path stringByAppendingPathComponent:book.cover];
         }
     }
     return self;
 }
+
+-(id)initWithIssueData:(NSDictionary *)issueData {
+    self = [super init];
+    if (self) {
+        self.ID = [issueData objectForKey:@"name"];
+        self.title = [issueData objectForKey:@"title"];
+        self.date = [issueData objectForKey:@"date"];
+        self.coverURL = [NSURL URLWithString:[issueData objectForKey:@"cover"]];
+        self.url = [issueData objectForKey:@"url"];
+        
+        NSString *cachePath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+        self.coverPath = [cachePath stringByAppendingPathComponent:self.ID];
+        
+        NKLibrary *nkLib = [NKLibrary sharedLibrary];
+        NKIssue *nkIssue = [nkLib issueWithName:self.ID];
+        if (nkIssue) {
+            self.status = [self nkIssueContentStatusToString:[nkIssue status]];
+            self.path = [[nkIssue contentURL] path];
+        } else {
+            self.status = nil;
+            self.path = nil;
+        }
+        
+        self.bakerBook = nil;
+    }
+    return self;
+}
+
+-(NSString *)nkIssueContentStatusToString:(NKIssueContentStatus) contentStatus{
+    if (contentStatus == NKIssueContentStatusNone) {
+        return @"remote";
+    } else if (contentStatus == NKIssueContentStatusDownloading) {
+        return @"downloading";
+    } else if (contentStatus == NKIssueContentStatusAvailable) {
+        return @"downloaded";
+    }
+    return @"";
+}
+
 -(void)getCover:(void(^)(UIImage *img))completionBlock {
-    UIImage *image = [UIImage imageWithContentsOfFile:coverPath];
+    UIImage *image = [UIImage imageWithContentsOfFile:self.coverPath];
     if (image) {
         completionBlock(image);
     } else {
-        NSLog(@"Cover not found for %@ at path '%@'", self.ID, coverPath);
+        NSLog(@"Cover not found for %@ at path '%@'", self.ID, self.coverPath);
+        if (self.coverURL) {
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0),
+                           ^{
+                               NSLog(@"Downloading cover from %@ to %@", self.coverURL, self.coverPath);
+                               NSData *imageData = [NSData dataWithContentsOfURL:self.coverURL];
+                               UIImage *image = [UIImage imageWithData:imageData];
+                               if(image) {
+                                   [imageData writeToFile:self.coverPath atomically:YES];
+                                   completionBlock(image);
+                               }
+                           });
+        }
     }
 }
 

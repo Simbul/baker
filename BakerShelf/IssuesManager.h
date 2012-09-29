@@ -1,5 +1,5 @@
 //
-//  ShelfViewController.h
+//  IssuesManager.h
 //  Baker
 //
 //  ==========================================================================================
@@ -29,14 +29,15 @@
 //  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-#import <UIKit/UIKit.h>
-#import "AQGridViewController.h"
+#import <Foundation/Foundation.h>
+#import <NewsstandKit/NewsstandKit.h>
 
-@interface ShelfViewController : AQGridViewController
+@interface IssuesManager : NSObject
 
+@property (copy, nonatomic) NSURL *url;
 @property (copy, nonatomic) NSArray *issues;
 
-#pragma mark - Init
-- (id)initWithBooks:(NSArray *)currentBooks;
+-(id)initWithURL:(NSString *)urlString;
+-(void)refresh;
 
 @end

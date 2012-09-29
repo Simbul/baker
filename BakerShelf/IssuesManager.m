@@ -1,5 +1,5 @@
 //
-//  ShelfViewController.h
+//  IssuesManager.m
 //  Baker
 //
 //  ==========================================================================================
@@ -29,14 +29,64 @@
 //  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-#import <UIKit/UIKit.h>
-#import "AQGridViewController.h"
+#import "IssuesManager.h"
+#import "BakerIssue.h"
 
-@interface ShelfViewController : AQGridViewController
+#import "JSONKit.h"
 
-@property (copy, nonatomic) NSArray *issues;
+@implementation IssuesManager
 
-#pragma mark - Init
-- (id)initWithBooks:(NSArray *)currentBooks;
+@synthesize issues;
+
+-(id)initWithURL:(NSString *)urlString {
+    self = [super init];
+    
+    if (self) {
+        self.url = [NSURL URLWithString:urlString];
+        self.issues = nil;
+    }
+    
+    return self;
+}
+
+-(void)refresh {
+    NSString *json = [NSString stringWithContentsOfURL:self.url encoding:NSUTF8StringEncoding error:nil];
+    NSArray *jsonArr = [json objectFromJSONString];
+    
+    if (self.issues) {
+        [self.issues release];
+    }
+    
+    NSMutableArray *tmpIssues = [NSMutableArray array];
+    [jsonArr enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        BakerIssue *issue = [[[BakerIssue alloc] initWithIssueData:obj] autorelease];
+        [tmpIssues addObject:issue];
+    }];
+    self.issues = [[NSArray alloc] initWithArray:tmpIssues];
+    [self updateNewsstandIssuesList];
+}
+-(void)updateNewsstandIssuesList {
+    NKLibrary *nkLib = [NKLibrary sharedLibrary];
+    
+    for (BakerIssue *issue in self.issues) {
+        NSString *name = issue.ID;
+        
+        NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
+        [dateFormat setDateFormat:@"YYYY-MM-DD HH:MM:SS"];
+        NSDate *date = [dateFormat dateFromString:issue.date];
+        
+        NKIssue *nkIssue = [nkLib issueWithName:name];
+        if(!nkIssue) {
+            @try {
+                nkIssue = [nkLib addIssueWithName:name date:date];
+                NSLog(@"added %@ %@", name, date);
+            } @catch (NSException *exception) {
+                NSLog(@"EXCEPTION %@", exception);
+            }
+            
+        }
+        [dateFormat release];
+    }
+}
 
 @end

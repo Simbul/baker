@@ -71,6 +71,7 @@
 		AB40048B15B4BDB400D87E2A /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB40048015B4B90200D87E2A /* MessageUI.framework */; };
 		AB40048E15B4BDCE00D87E2A /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = AB40048215B4B90A00D87E2A /* libz.dylib */; };
 		AB40049415B4C28100D87E2A /* ShelfManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40049315B4C28100D87E2A /* ShelfManagerTest.m */; };
+		AB5D48D01609178900828D16 /* NewsstandKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB5D48CD1609176A00828D16 /* NewsstandKit.framework */; };
 		ABAFB58C15AB9A2E002FA498 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABAFB58B15AB9A2E002FA498 /* UIKit.framework */; };
 		ABAFB58E15AB9A2E002FA498 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABAFB58D15AB9A2E002FA498 /* Foundation.framework */; };
 		ABAFB59015AB9A2E002FA498 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABAFB58F15AB9A2E002FA498 /* CoreGraphics.framework */; };
@@ -82,6 +83,7 @@
 		ABAFB5A615AB9A2E002FA498 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABAFB58D15AB9A2E002FA498 /* Foundation.framework */; };
 		ABAFB5AE15AB9A2E002FA498 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = ABAFB5AC15AB9A2E002FA498 /* InfoPlist.strings */; };
 		ABAFB5B115AB9A2F002FA498 /* BakerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = ABAFB5B015AB9A2F002FA498 /* BakerTests.m */; };
+		ABC270D11616F3CB00AD97E9 /* IssuesManager.m in Sources */ = {isa = PBXBuildFile; fileRef = ABC270D01616F3CB00AD97E9 /* IssuesManager.m */; };
 		ABD7D45F1616FC5B008B13B5 /* BakerIssue.m in Sources */ = {isa = PBXBuildFile; fileRef = ABD7D45E1616FC5B008B13B5 /* BakerIssue.m */; };
 		BF3CCCA215D080560087B9CA /* ios-icon-ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = BF3CCC9E15D080560087B9CA /* ios-icon-ipad.png */; };
 		BF3CCCA315D080560087B9CA /* ios-icon-ipad@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BF3CCC9F15D080560087B9CA /* ios-icon-ipad@2x.png */; };
@@ -178,6 +180,7 @@
 		AB40048415B4BB8B00D87E2A /* books */ = {isa = PBXFileReference; lastKnownFileType = folder; path = books; sourceTree = "<group>"; };
 		AB40049215B4C28100D87E2A /* ShelfManagerTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShelfManagerTest.h; sourceTree = "<group>"; };
 		AB40049315B4C28100D87E2A /* ShelfManagerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShelfManagerTest.m; sourceTree = "<group>"; };
+		AB5D48CD1609176A00828D16 /* NewsstandKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NewsstandKit.framework; path = System/Library/Frameworks/NewsstandKit.framework; sourceTree = SDKROOT; };
 		ABAFB58715AB9A2E002FA498 /* Baker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Baker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		ABAFB58B15AB9A2E002FA498 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		ABAFB58D15AB9A2E002FA498 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -194,6 +197,8 @@
 		ABAFB5AD15AB9A2E002FA498 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		ABAFB5AF15AB9A2F002FA498 /* BakerTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BakerTests.h; sourceTree = "<group>"; };
 		ABAFB5B015AB9A2F002FA498 /* BakerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BakerTests.m; sourceTree = "<group>"; };
+		ABC270CF1616F3CB00AD97E9 /* IssuesManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IssuesManager.h; sourceTree = "<group>"; };
+		ABC270D01616F3CB00AD97E9 /* IssuesManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IssuesManager.m; sourceTree = "<group>"; };
 		ABD7D45D1616FC5B008B13B5 /* BakerIssue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BakerIssue.h; sourceTree = "<group>"; };
 		ABD7D45E1616FC5B008B13B5 /* BakerIssue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BakerIssue.m; sourceTree = "<group>"; };
 		BF3CCC9E15D080560087B9CA /* ios-icon-ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ios-icon-ipad.png"; sourceTree = "<group>"; };
@@ -207,6 +212,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AB5D48D01609178900828D16 /* NewsstandKit.framework in Frameworks */,
 				ABAFB58C15AB9A2E002FA498 /* UIKit.framework in Frameworks */,
 				ABAFB58E15AB9A2E002FA498 /* Foundation.framework in Frameworks */,
 				ABAFB59015AB9A2E002FA498 /* CoreGraphics.framework in Frameworks */,
@@ -380,6 +386,8 @@
 				9F58D85015D66E870027902C /* UICustomNavigationController.m */,
 				ABD7D45D1616FC5B008B13B5 /* BakerIssue.h */,
 				ABD7D45E1616FC5B008B13B5 /* BakerIssue.m */,
+				ABC270CF1616F3CB00AD97E9 /* IssuesManager.h */,
+				ABC270D01616F3CB00AD97E9 /* IssuesManager.m */,
 			);
 			path = BakerShelf;
 			sourceTree = "<group>";
@@ -409,6 +417,7 @@
 		ABAFB58A15AB9A2E002FA498 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				AB5D48CD1609176A00828D16 /* NewsstandKit.framework */,
 				ABAFB58B15AB9A2E002FA498 /* UIKit.framework */,
 				ABAFB58D15AB9A2E002FA498 /* Foundation.framework */,
 				ABAFB58F15AB9A2E002FA498 /* CoreGraphics.framework */,
@@ -629,6 +638,7 @@
 				9F5EB3BD15FCA3A100E13796 /* NSString+Extensions.m in Sources */,
 				AB26005116011D9D00E9AA66 /* BakerBookStatus.m in Sources */,
 				ABD7D45F1616FC5B008B13B5 /* BakerIssue.m in Sources */,
+				ABC270D11616F3CB00AD97E9 /* IssuesManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

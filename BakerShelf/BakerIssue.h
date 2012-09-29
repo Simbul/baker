@@ -30,11 +30,10 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <NewsstandKit/NewsstandKit.h>
 #import "BakerBook.h"
 
-@interface BakerIssue : NSObject {
-    NSString *coverPath;
-}
+@interface BakerIssue : NSObject
 
 @property (copy, nonatomic) NSString *ID;
 @property (copy, nonatomic) NSString *title;
@@ -42,9 +41,14 @@
 @property (copy, nonatomic) NSString *url;
 @property (copy, nonatomic) NSString *status;
 @property (copy, nonatomic) NSString *path;
+
+@property (copy, nonatomic) NSString *coverPath;
+@property (copy, nonatomic) NSURL *coverURL;
+
 @property (retain, nonatomic) BakerBook *bakerBook;
 
 -(id)initWithBakerBook:(BakerBook *)bakerBook;
 -(void)getCover:(void(^)(UIImage *img))completionBlock;
+-(id)initWithIssueData:(NSDictionary *)issueData;
 
 @end

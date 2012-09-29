@@ -37,21 +37,21 @@
 
 @implementation ShelfViewController
 
-@synthesize books;
+@synthesize issues;
 
 #pragma mark - Init
 
 - (id)init {
     self = [super init];
     if (self) {
-        self.books = [ShelfManager localBooksList];
+        self.issues = [ShelfManager localBooksList];
     }
     return self;
 }
 - (id)initWithBooks:(NSArray *)currentBooks {
     self = [super init];
     if (self) {
-        self.books = currentBooks;
+        self.issues = currentBooks;
     }
     return self;
 }
@@ -60,7 +60,7 @@
 
 - (void)dealloc
 {
-    [books release];
+    [issues release];
 
     [super dealloc];
 }
@@ -102,7 +102,7 @@
 
 - (NSUInteger)numberOfItemsInGridView:(AQGridView *)aGridView
 {
-    return [books count];
+    return [issues count];
 }
 
 - (AQGridViewCell *)gridView:(AQGridView *)aGridView cellForItemAtIndex:(NSUInteger)index
@@ -115,7 +115,7 @@
 		cell = [[[AQGridViewCell alloc] initWithFrame:CGRectMake(0, 0, 100, 150) reuseIdentifier:cellIdentifier] autorelease];
 		cell.selectionStyle = AQGridViewCellSelectionStyleNone;
 
-        BakerIssue *issue = [self.books objectAtIndex:index];
+        BakerIssue *issue = [self.issues objectAtIndex:index];
         [issue getCover:^(UIImage *img) {
             UIImageView *thumb = [[[UIImageView alloc] initWithImage:img] autorelease];
             [cell.contentView addSubview:thumb];
@@ -135,11 +135,14 @@
 - (void)gridView:(AQGridView *)gridView didSelectItemAtIndex:(NSUInteger)index
 {
     [gridView deselectItemAtIndex:index animated:NO];
+    
+    BakerIssue *issue = [self.issues objectAtIndex:index];
 
-    BakerViewController *bakerViewController = [[BakerViewController alloc] initWithBook:[[self.books objectAtIndex:index] bakerBook]];
-
-    [self.navigationController pushViewController:bakerViewController animated:YES];
-    [bakerViewController release];
+    if (issue.status == @"downloaded" || issue.status == @"bundled") {
+        BakerViewController *bakerViewController = [[BakerViewController alloc] initWithBook:[issue bakerBook]];
+        [self.navigationController pushViewController:bakerViewController animated:YES];
+        [bakerViewController release];
+    }
 }
 
 @end
