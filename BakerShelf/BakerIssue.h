@@ -32,17 +32,19 @@
 #import <Foundation/Foundation.h>
 #import "BakerBook.h"
 
-@interface BakerIssue : NSObject
+@interface BakerIssue : NSObject {
+    NSString *coverPath;
+}
 
 @property (copy, nonatomic) NSString *ID;
 @property (copy, nonatomic) NSString *title;
 @property (copy, nonatomic) NSString *date;
 @property (copy, nonatomic) NSString *url;
-@property (copy, nonatomic) NSString *cover;
 @property (copy, nonatomic) NSString *status;
 @property (copy, nonatomic) NSString *path;
 @property (retain, nonatomic) BakerBook *bakerBook;
 
 -(id)initWithBakerBook:(BakerBook *)bakerBook;
+-(void)getCover:(void(^)(UIImage *img))completionBlock;
 
 @end

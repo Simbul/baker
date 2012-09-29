@@ -36,7 +36,6 @@
 @synthesize ID;
 @synthesize title;
 @synthesize date;
-@synthesize cover;
 @synthesize url;
 @synthesize status;
 @synthesize path;
@@ -48,14 +47,29 @@
         self.ID = book.ID;
         self.title = book.title;
         self.date = book.date;
-        self.cover = book.cover;
         self.url = book.url;
         self.status = @"bundled";
         self.path = book.path;
 
         self.bakerBook = book;
+        
+        coverPath = @"";
+        if (book.cover == nil) {
+            // TODO: set path to a default cover (right now a blank box will be displayed)
+            NSLog(@"Cover not specified for %@, probably missing from book.json", book.ID);
+        } else {
+            coverPath = [book.path stringByAppendingPathComponent:book.cover];
+        }
     }
     return self;
+}
+-(void)getCover:(void(^)(UIImage *img))completionBlock {
+    UIImage *image = [UIImage imageWithContentsOfFile:coverPath];
+    if (image) {
+        completionBlock(image);
+    } else {
+        NSLog(@"Cover not found for %@ at path '%@'", self.ID, coverPath);
+    }
 }
 
 @end

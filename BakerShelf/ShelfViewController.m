@@ -115,19 +115,11 @@
 		cell = [[[AQGridViewCell alloc] initWithFrame:CGRectMake(0, 0, 100, 150) reuseIdentifier:cellIdentifier] autorelease];
 		cell.selectionStyle = AQGridViewCellSelectionStyleNone;
 
-        NSString *bookPath = [[self.books objectAtIndex:index] path];
-        NSString *cover = [[self.books objectAtIndex:index] cover];
-        NSString *coverPath = @"";
-        if (cover == nil) {
-            // TODO: set path to a default cover (right now a blank box will be displayed)
-            NSLog(@"Could not find a cover for book at %@, probably missing from book.json", bookPath);
-        } else {
-            coverPath = [bookPath stringByAppendingPathComponent:cover];
-        }
-        UIImage *thumbImg  = [UIImage imageWithContentsOfFile:coverPath];
-        UIImageView *thumb = [[[UIImageView alloc] initWithImage:thumbImg] autorelease];
-
-        [cell.contentView addSubview:thumb];
+        BakerIssue *issue = [self.books objectAtIndex:index];
+        [issue getCover:^(UIImage *img) {
+            UIImageView *thumb = [[[UIImageView alloc] initWithImage:img] autorelease];
+            [cell.contentView addSubview:thumb];
+        }];
 	}
 
     return cell;
