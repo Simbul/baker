@@ -81,13 +81,21 @@
     [self willRotateToInterfaceOrientation:self.interfaceOrientation duration:0];
     [self.gridView reloadData];
 }
-- (void)viewWillAppear:(BOOL)animated {
-
+- (void)viewWillAppear:(BOOL)animated
+{
     [super viewWillAppear:animated];
 
     [self.navigationController.navigationBar setTranslucent:NO];
 }
+- (NSInteger)supportedInterfaceOrientations
+{
+    return UIInterfaceOrientationMaskAll;
+}
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
+    return YES;
+}
+- (BOOL)shouldAutorotate
 {
     return YES;
 }

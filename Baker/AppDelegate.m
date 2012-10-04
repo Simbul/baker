@@ -65,7 +65,7 @@
     [navigationBar setBackgroundImage:[UIImage imageNamed:@"navigation-bar-bg.png"] forBarMetrics:UIBarMetricsDefault];
     [navigationBar setTintColor:[UIColor clearColor]];
 
-    [self.window addSubview:rootNavigationController.view];
+    self.window.rootViewController = self.rootNavigationController;
     [self.window makeKeyAndVisible];
     
     return YES;

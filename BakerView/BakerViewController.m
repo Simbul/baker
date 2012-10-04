@@ -124,7 +124,6 @@
     
     // ****** SCROLLVIEW INIT
     self.scrollView = [[[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, pageWidth, pageHeight)] autorelease];
-    scrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     scrollView.showsHorizontalScrollIndicator = YES;
     scrollView.showsVerticalScrollIndicator = NO;
     scrollView.delaysContentTouches = NO;
@@ -282,6 +281,7 @@
 }
 - (void)startReading {
     
+    [self setPageSize:[self getCurrentInterfaceOrientation:self.interfaceOrientation]];
     [self buildPageDetails];
     [self updateBookLayout];
     
@@ -389,8 +389,6 @@
 - (void)updateBookLayout {
     NSLog(@"    Prevent page from changing until layout is updated");
     [self lockPage:[NSNumber numberWithBool:YES]];
-    
-    [self setPageSize:[self getCurrentInterfaceOrientation]];
     [self showPageDetails];
     
     if ([book.bakerRendering isEqualToString:@"screenshots"]) {
@@ -750,7 +748,7 @@
             
             [self updateScreenshots];
             
-            if (![self checkScreeshotForPage:currentPageNumber andOrientation:[self getCurrentInterfaceOrientation]]) {
+            if (![self checkScreeshotForPage:currentPageNumber andOrientation:[self getCurrentInterfaceOrientation:self.interfaceOrientation]]) {
                 [self lockPage:[NSNumber numberWithBool:YES]];
             }
             
@@ -909,9 +907,9 @@
     // webview and stuff to the current orientation
     [indexViewController rotateFromOrientation:self.interfaceOrientation toOrientation:self.interfaceOrientation];
     
-    [self setPageSize:[self getCurrentInterfaceOrientation]];
-    [self setCurrentPageHeight];
+    [self setPageSize:[self getCurrentInterfaceOrientation:self.interfaceOrientation]];
     [self updateBookLayout];
+    [self setCurrentPageHeight];
 }
 
 #pragma mark - SCROLLVIEW
@@ -1208,7 +1206,7 @@
         if ([book.bakerRendering isEqualToString:@"three-cards"]) {
             [self webView:webView hidden:NO animating:YES];
         } else {
-            [self takeScreenshotFromView:webView forPage:currentPageNumber andOrientation:[self getCurrentInterfaceOrientation]];
+            [self takeScreenshotFromView:webView forPage:currentPageNumber andOrientation:[self getCurrentInterfaceOrientation:self.interfaceOrientation]];
         }
         
         [self handlePageLoading];
@@ -1312,6 +1310,15 @@
     NSString *interfaceOrientation = nil;
     NSMutableDictionary *attachedScreenshot = nil;
     
+    if (pageWidth < pageHeight) {
+        interfaceOrientation = @"portrait";
+        attachedScreenshot = attachedScreenshotPortrait;
+    } else if (pageWidth > pageHeight) {
+        interfaceOrientation = @"landscape";
+        attachedScreenshot = attachedScreenshotLandscape;
+    }
+    /*
+    DEPRECATED - Won't work if called during rotation
     if (UIInterfaceOrientationIsPortrait(self.interfaceOrientation))
     {
         interfaceOrientation = @"portrait";
@@ -1322,6 +1329,7 @@
         interfaceOrientation = @"landscape";
         attachedScreenshot = attachedScreenshotLandscape;
     }
+    */
     
     for (NSNumber *num in attachedScreenshot) [completeSet addObject:num];
     
@@ -1368,7 +1376,7 @@
         NSString *screenshotFile = [cachedScreenshotsPath stringByAppendingPathComponent:[NSString stringWithFormat:@"screenshot-%@-%i.jpg", interfaceOrientation, pageNumber]];
         UIImage *screenshot = nil;
         
-        if ([interfaceOrientation isEqualToString:[self getCurrentInterfaceOrientation]] && !currentPageHasChanged) {
+        if ([interfaceOrientation isEqualToString:[self getCurrentInterfaceOrientation:self.interfaceOrientation]] && !currentPageHasChanged) {
             
             UIGraphicsBeginImageContextWithOptions(webView.frame.size, NO, [[UIScreen mainScreen] scale]);
             [webView.layer renderInContext:UIGraphicsGetCurrentContext()];
@@ -1436,7 +1444,7 @@
         {
             [self webView:webView hidden:NO animating:NO];
         }
-        else if ([interfaceOrientation isEqualToString:[self getCurrentInterfaceOrientation]] && !currentPageHasChanged)
+        else if ([interfaceOrientation isEqualToString:[self getCurrentInterfaceOrientation:self.interfaceOrientation]] && !currentPageHasChanged)
         {
             screenshotView.alpha = 0.0;
             
@@ -1672,26 +1680,37 @@
 }
 
 #pragma mark - ORIENTATION
-- (NSString *)getCurrentInterfaceOrientation {
-    if ([book.orientation isEqualToString:@"portrait"] || [book.orientation isEqualToString:@"landscape"]) {
-        return book.orientation;
+- (NSString *)getCurrentInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+    if ([availableOrientation isEqualToString:@"portrait"] || [availableOrientation isEqualToString:@"landscape"]) {
+        return availableOrientation;
     } else {
-        if (UIInterfaceOrientationIsLandscape(self.interfaceOrientation)) {
+        if (UIInterfaceOrientationIsLandscape(interfaceOrientation)) {
             return @"landscape";
         } else {
             return @"portrait";
         }
     }
 }
+- (NSInteger)supportedInterfaceOrientations {
+    if ([availableOrientation isEqualToString:@"portrait"]) {
+        return (UIInterfaceOrientationMaskPortrait | UIInterfaceOrientationPortraitUpsideDown);
+    } else if ([availableOrientation isEqualToString:@"landscape"]) {
+        return UIInterfaceOrientationMaskLandscape;
+    } else {
+        return UIInterfaceOrientationMaskAll;
+    }
+}
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    // Overriden to allow any orientation.
-    if ([book.orientation isEqualToString:@"portrait"]) {
-        return (interfaceOrientation == UIInterfaceOrientationPortrait || interfaceOrientation == UIInterfaceOrientationPortraitUpsideDown);
-    } else if ([book.orientation isEqualToString:@"landscape"]) {
-        return (interfaceOrientation == UIInterfaceOrientationLandscapeRight || interfaceOrientation == UIInterfaceOrientationLandscapeLeft);
+    if ([availableOrientation isEqualToString:@"portrait"]) {
+        return UIInterfaceOrientationIsPortrait(interfaceOrientation);
+    } else if ([availableOrientation isEqualToString:@"landscape"]) {
+        return UIInterfaceOrientationIsLandscape(interfaceOrientation);
     } else {
         return YES;
     }
+}
+- (BOOL)shouldAutorotate {
+    return YES;
 }
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
     // Notify the index view
@@ -1702,12 +1721,12 @@
     if (nextPage) [self webView:nextPage setCorrectOrientation:toInterfaceOrientation];
     if (prevPage) [self webView:prevPage setCorrectOrientation:toInterfaceOrientation];
     
+    [self setPageSize:[self getCurrentInterfaceOrientation:toInterfaceOrientation]];
+    [self updateBookLayout];
 }
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
     [indexViewController rotateFromOrientation:fromInterfaceOrientation toOrientation:self.interfaceOrientation];
-    
     [self setCurrentPageHeight];
-    [self updateBookLayout];
 }
 
 #pragma mark - MEMORY

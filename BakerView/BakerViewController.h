@@ -179,7 +179,7 @@
 - (void)hideBars:(NSNumber *)animated;
 
 #pragma mark - ORIENTATION
-- (NSString *)getCurrentInterfaceOrientation;
+- (NSString *)getCurrentInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation;
 
 #pragma mark - INDEX VIEW
 - (BOOL)isIndexView:(UIWebView *)webView;
