@@ -32,11 +32,7 @@
 #import <UIKit/UIKit.h>
 #import "AQGridViewController.h"
 
-#ifdef BAKER_NEWSSTAND
 @interface ShelfViewController : AQGridViewController <NSURLConnectionDownloadDelegate>
-#else
-@interface ShelfViewController : AQGridViewController
-#endif
 
 @property (copy, nonatomic) NSArray *issues;
 
