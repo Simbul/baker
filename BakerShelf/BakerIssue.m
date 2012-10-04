@@ -39,6 +39,8 @@
 @synthesize url;
 @synthesize path;
 @synthesize bakerBook;
+@synthesize coverPath;
+@synthesize coverURL;
 
 -(id)initWithBakerBook:(BakerBook *)book {
     self = [super init];
