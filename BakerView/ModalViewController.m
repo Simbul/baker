@@ -194,6 +194,29 @@
     btnGoBack.enabled    = [webViewIn canGoBack];
     btnGoForward.enabled = [webViewIn canGoForward];
 }
+- (void)webView:(UIWebView *)webViewIn didFailLoadWithError:(NSError *)error {
+    NSLog(@"[Modal] Failed to load \"%@\", error code %i", [webViewIn.request.URL absoluteString], [error code]);
+    if ([error code] == -1009) {
+        UILabel *errorLabel = [[[UILabel alloc] initWithFrame:self.webView.frame] autorelease];
+        errorLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        errorLabel.textAlignment = UITextAlignmentCenter;
+        errorLabel.textColor = [UIColor grayColor];
+        errorLabel.text = @"Unable to connect.";
+        errorLabel.numberOfLines = 1;
+
+        CGRect screenBounds = [[UIScreen mainScreen] bounds];
+        if (screenBounds.size.width < 768) {
+            errorLabel.font = [UIFont fontWithName:@"Helvetica" size:14.0];
+        } else {
+            errorLabel.font = [UIFont fontWithName:@"Helvetica" size:18.0];
+        }
+
+        [self.view addSubview:errorLabel];
+    }
+
+    // ****** Stop spinner
+    [spinner stopAnimating];
+}
 
 #pragma mark - ACTIONS
 - (void)dismissAction {
