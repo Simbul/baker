@@ -29,49 +29,26 @@
 		AB26005116011D9D00E9AA66 /* BakerBookStatus.m in Sources */ = {isa = PBXBuildFile; fileRef = AB26005016011D9D00E9AA66 /* BakerBookStatus.m */; };
 		AB37931416175A2000B4C1A3 /* Constants.h in Sources */ = {isa = PBXBuildFile; fileRef = AB379313161759A900B4C1A3 /* Constants.h */; };
 		AB40045315B4B83000D87E2A /* BakerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40042B15B4B83000D87E2A /* BakerViewController.m */; };
-		AB40045415B4B83000D87E2A /* BakerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40042B15B4B83000D87E2A /* BakerViewController.m */; };
 		AB40045715B4B83000D87E2A /* back.png in Resources */ = {isa = PBXBuildFile; fileRef = AB40042F15B4B83000D87E2A /* back.png */; };
-		AB40045815B4B83000D87E2A /* back.png in Resources */ = {isa = PBXBuildFile; fileRef = AB40042F15B4B83000D87E2A /* back.png */; };
 		AB40045915B4B83000D87E2A /* back@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = AB40043015B4B83000D87E2A /* back@2x.png */; };
-		AB40045A15B4B83000D87E2A /* back@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = AB40043015B4B83000D87E2A /* back@2x.png */; };
 		AB40045B15B4B83000D87E2A /* forward.png in Resources */ = {isa = PBXBuildFile; fileRef = AB40043115B4B83000D87E2A /* forward.png */; };
-		AB40045C15B4B83000D87E2A /* forward.png in Resources */ = {isa = PBXBuildFile; fileRef = AB40043115B4B83000D87E2A /* forward.png */; };
 		AB40045D15B4B83000D87E2A /* forward@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = AB40043215B4B83000D87E2A /* forward@2x.png */; };
-		AB40045E15B4B83000D87E2A /* forward@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = AB40043215B4B83000D87E2A /* forward@2x.png */; };
 		AB40045F15B4B83000D87E2A /* IndexViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40043415B4B83000D87E2A /* IndexViewController.m */; };
-		AB40046015B4B83000D87E2A /* IndexViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40043415B4B83000D87E2A /* IndexViewController.m */; };
 		AB40046115B4B83000D87E2A /* InterceptorWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40043615B4B83000D87E2A /* InterceptorWindow.m */; };
-		AB40046215B4B83000D87E2A /* InterceptorWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40043615B4B83000D87E2A /* InterceptorWindow.m */; };
 		AB40046315B4B83000D87E2A /* GTMNSString+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40043A15B4B83000D87E2A /* GTMNSString+HTML.m */; };
-		AB40046415B4B83000D87E2A /* GTMNSString+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40043A15B4B83000D87E2A /* GTMNSString+HTML.m */; };
 		AB40046515B4B83000D87E2A /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40043D15B4B83000D87E2A /* JSONKit.m */; };
-		AB40046615B4B83000D87E2A /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40043D15B4B83000D87E2A /* JSONKit.m */; };
 		AB40046715B4B83000D87E2A /* ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = AB40044015B4B83000D87E2A /* ioapi.c */; };
-		AB40046815B4B83000D87E2A /* ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = AB40044015B4B83000D87E2A /* ioapi.c */; };
 		AB40046915B4B83000D87E2A /* mztools.c in Sources */ = {isa = PBXBuildFile; fileRef = AB40044215B4B83000D87E2A /* mztools.c */; };
-		AB40046A15B4B83000D87E2A /* mztools.c in Sources */ = {isa = PBXBuildFile; fileRef = AB40044215B4B83000D87E2A /* mztools.c */; };
 		AB40046B15B4B83000D87E2A /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = AB40044415B4B83000D87E2A /* unzip.c */; };
-		AB40046C15B4B83000D87E2A /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = AB40044415B4B83000D87E2A /* unzip.c */; };
 		AB40046D15B4B83000D87E2A /* zip.c in Sources */ = {isa = PBXBuildFile; fileRef = AB40044615B4B83000D87E2A /* zip.c */; };
-		AB40046E15B4B83000D87E2A /* zip.c in Sources */ = {isa = PBXBuildFile; fileRef = AB40044615B4B83000D87E2A /* zip.c */; };
 		AB40046F15B4B83000D87E2A /* SSZipArchive.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40044915B4B83000D87E2A /* SSZipArchive.m */; };
-		AB40047015B4B83000D87E2A /* SSZipArchive.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40044915B4B83000D87E2A /* SSZipArchive.m */; };
 		AB40047115B4B83000D87E2A /* Utils.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40044B15B4B83000D87E2A /* Utils.m */; };
-		AB40047215B4B83000D87E2A /* Utils.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40044B15B4B83000D87E2A /* Utils.m */; };
 		AB40047315B4B83000D87E2A /* ModalViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40044D15B4B83000D87E2A /* ModalViewController.m */; };
-		AB40047415B4B83000D87E2A /* ModalViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40044D15B4B83000D87E2A /* ModalViewController.m */; };
 		AB40047715B4B83000D87E2A /* PageTitleLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40045215B4B83000D87E2A /* PageTitleLabel.m */; };
-		AB40047815B4B83000D87E2A /* PageTitleLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40045215B4B83000D87E2A /* PageTitleLabel.m */; };
 		AB40047E15B4B8B800D87E2A /* ShelfManager.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40047D15B4B8B800D87E2A /* ShelfManager.m */; };
-		AB40047F15B4B8B800D87E2A /* ShelfManager.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40047D15B4B8B800D87E2A /* ShelfManager.m */; };
 		AB40048115B4B90200D87E2A /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB40048015B4B90200D87E2A /* MessageUI.framework */; };
 		AB40048315B4B90A00D87E2A /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = AB40048215B4B90A00D87E2A /* libz.dylib */; };
 		AB40048515B4BB8B00D87E2A /* books in Resources */ = {isa = PBXBuildFile; fileRef = AB40048415B4BB8B00D87E2A /* books */; };
-		AB40048615B4BB8B00D87E2A /* books in Resources */ = {isa = PBXBuildFile; fileRef = AB40048415B4BB8B00D87E2A /* books */; };
-		AB40048A15B4BDA600D87E2A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABAFB58F15AB9A2E002FA498 /* CoreGraphics.framework */; };
-		AB40048B15B4BDB400D87E2A /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB40048015B4B90200D87E2A /* MessageUI.framework */; };
-		AB40048E15B4BDCE00D87E2A /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = AB40048215B4B90A00D87E2A /* libz.dylib */; };
-		AB40049415B4C28100D87E2A /* ShelfManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40049315B4C28100D87E2A /* ShelfManagerTest.m */; };
 		AB5D48D01609178900828D16 /* NewsstandKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB5D48CD1609176A00828D16 /* NewsstandKit.framework */; };
 		ABAFB58C15AB9A2E002FA498 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABAFB58B15AB9A2E002FA498 /* UIKit.framework */; };
 		ABAFB58E15AB9A2E002FA498 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABAFB58D15AB9A2E002FA498 /* Foundation.framework */; };
@@ -79,11 +56,6 @@
 		ABAFB59615AB9A2E002FA498 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = ABAFB59415AB9A2E002FA498 /* InfoPlist.strings */; };
 		ABAFB59815AB9A2E002FA498 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = ABAFB59715AB9A2E002FA498 /* main.m */; };
 		ABAFB59C15AB9A2E002FA498 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = ABAFB59B15AB9A2E002FA498 /* AppDelegate.m */; };
-		ABAFB5A415AB9A2E002FA498 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABAFB5A315AB9A2E002FA498 /* SenTestingKit.framework */; };
-		ABAFB5A515AB9A2E002FA498 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABAFB58B15AB9A2E002FA498 /* UIKit.framework */; };
-		ABAFB5A615AB9A2E002FA498 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABAFB58D15AB9A2E002FA498 /* Foundation.framework */; };
-		ABAFB5AE15AB9A2E002FA498 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = ABAFB5AC15AB9A2E002FA498 /* InfoPlist.strings */; };
-		ABAFB5B115AB9A2F002FA498 /* BakerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = ABAFB5B015AB9A2F002FA498 /* BakerTests.m */; };
 		ABC270D11616F3CB00AD97E9 /* IssuesManager.m in Sources */ = {isa = PBXBuildFile; fileRef = ABC270D01616F3CB00AD97E9 /* IssuesManager.m */; };
 		ABD7D45F1616FC5B008B13B5 /* BakerIssue.m in Sources */ = {isa = PBXBuildFile; fileRef = ABD7D45E1616FC5B008B13B5 /* BakerIssue.m */; };
 		BF3CCCA215D080560087B9CA /* ios-icon-ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = BF3CCC9E15D080560087B9CA /* ios-icon-ipad.png */; };
@@ -91,16 +63,6 @@
 		BF3CCCA415D080560087B9CA /* ios-icon-iphone.png in Resources */ = {isa = PBXBuildFile; fileRef = BF3CCCA015D080560087B9CA /* ios-icon-iphone.png */; };
 		BF3CCCA515D080560087B9CA /* ios-icon-iphone@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BF3CCCA115D080560087B9CA /* ios-icon-iphone@2x.png */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		ABAFB5A715AB9A2E002FA498 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = ABAFB57E15AB9A2E002FA498 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = ABAFB58615AB9A2E002FA498;
-			remoteInfo = Baker;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		9F55576515B4C6B7003072A3 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
@@ -180,8 +142,6 @@
 		AB40048015B4B90200D87E2A /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		AB40048215B4B90A00D87E2A /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		AB40048415B4BB8B00D87E2A /* books */ = {isa = PBXFileReference; lastKnownFileType = folder; path = books; sourceTree = "<group>"; };
-		AB40049215B4C28100D87E2A /* ShelfManagerTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShelfManagerTest.h; sourceTree = "<group>"; };
-		AB40049315B4C28100D87E2A /* ShelfManagerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShelfManagerTest.m; sourceTree = "<group>"; };
 		AB5D48CD1609176A00828D16 /* NewsstandKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NewsstandKit.framework; path = System/Library/Frameworks/NewsstandKit.framework; sourceTree = SDKROOT; };
 		ABAFB58715AB9A2E002FA498 /* Baker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Baker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		ABAFB58B15AB9A2E002FA498 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -193,12 +153,6 @@
 		ABAFB59915AB9A2E002FA498 /* Baker-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Baker-Prefix.pch"; sourceTree = "<group>"; };
 		ABAFB59A15AB9A2E002FA498 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		ABAFB59B15AB9A2E002FA498 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		ABAFB5A215AB9A2E002FA498 /* BakerTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BakerTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
-		ABAFB5A315AB9A2E002FA498 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
-		ABAFB5AB15AB9A2E002FA498 /* BakerTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "BakerTests-Info.plist"; sourceTree = "<group>"; };
-		ABAFB5AD15AB9A2E002FA498 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		ABAFB5AF15AB9A2F002FA498 /* BakerTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BakerTests.h; sourceTree = "<group>"; };
-		ABAFB5B015AB9A2F002FA498 /* BakerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BakerTests.m; sourceTree = "<group>"; };
 		ABC270CF1616F3CB00AD97E9 /* IssuesManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IssuesManager.h; sourceTree = "<group>"; };
 		ABC270D01616F3CB00AD97E9 /* IssuesManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IssuesManager.m; sourceTree = "<group>"; };
 		ABD7D45D1616FC5B008B13B5 /* BakerIssue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BakerIssue.h; sourceTree = "<group>"; };
@@ -221,19 +175,6 @@
 				9F55576815B4C6C3003072A3 /* QuartzCore.framework in Frameworks */,
 				AB40048115B4B90200D87E2A /* MessageUI.framework in Frameworks */,
 				AB40048315B4B90A00D87E2A /* libz.dylib in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		ABAFB59E15AB9A2E002FA498 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				AB40048E15B4BDCE00D87E2A /* libz.dylib in Frameworks */,
-				AB40048B15B4BDB400D87E2A /* MessageUI.framework in Frameworks */,
-				AB40048A15B4BDA600D87E2A /* CoreGraphics.framework in Frameworks */,
-				ABAFB5A415AB9A2E002FA498 /* SenTestingKit.framework in Frameworks */,
-				ABAFB5A515AB9A2E002FA498 /* UIKit.framework in Frameworks */,
-				ABAFB5A615AB9A2E002FA498 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -402,7 +343,6 @@
 				AB40047B15B4B8B800D87E2A /* BakerShelf */,
 				AB40042915B4B83000D87E2A /* BakerView */,
 				ABAFB59115AB9A2E002FA498 /* Baker */,
-				ABAFB5A915AB9A2E002FA498 /* BakerTests */,
 				ABAFB58A15AB9A2E002FA498 /* Frameworks */,
 				ABAFB58815AB9A2E002FA498 /* Products */,
 			);
@@ -412,7 +352,6 @@
 			isa = PBXGroup;
 			children = (
 				ABAFB58715AB9A2E002FA498 /* Baker.app */,
-				ABAFB5A215AB9A2E002FA498 /* BakerTests.octest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -426,7 +365,6 @@
 				ABAFB58F15AB9A2E002FA498 /* CoreGraphics.framework */,
 				9F55576515B4C6B7003072A3 /* QuartzCore.framework */,
 				AB40048015B4B90200D87E2A /* MessageUI.framework */,
-				ABAFB5A315AB9A2E002FA498 /* SenTestingKit.framework */,
 				AB40048215B4B90A00D87E2A /* libz.dylib */,
 			);
 			name = Frameworks;
@@ -450,27 +388,6 @@
 				ABAFB59415AB9A2E002FA498 /* InfoPlist.strings */,
 				ABAFB59715AB9A2E002FA498 /* main.m */,
 				ABAFB59915AB9A2E002FA498 /* Baker-Prefix.pch */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		ABAFB5A915AB9A2E002FA498 /* BakerTests */ = {
-			isa = PBXGroup;
-			children = (
-				ABAFB5AF15AB9A2F002FA498 /* BakerTests.h */,
-				ABAFB5B015AB9A2F002FA498 /* BakerTests.m */,
-				ABAFB5AA15AB9A2E002FA498 /* Supporting Files */,
-				AB40049215B4C28100D87E2A /* ShelfManagerTest.h */,
-				AB40049315B4C28100D87E2A /* ShelfManagerTest.m */,
-			);
-			path = BakerTests;
-			sourceTree = "<group>";
-		};
-		ABAFB5AA15AB9A2E002FA498 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				ABAFB5AB15AB9A2E002FA498 /* BakerTests-Info.plist */,
-				ABAFB5AC15AB9A2E002FA498 /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -506,25 +423,6 @@
 			productReference = ABAFB58715AB9A2E002FA498 /* Baker.app */;
 			productType = "com.apple.product-type.application";
 		};
-		ABAFB5A115AB9A2E002FA498 /* BakerTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = ABAFB5B715AB9A2F002FA498 /* Build configuration list for PBXNativeTarget "BakerTests" */;
-			buildPhases = (
-				ABAFB59D15AB9A2E002FA498 /* Sources */,
-				ABAFB59E15AB9A2E002FA498 /* Frameworks */,
-				ABAFB59F15AB9A2E002FA498 /* Resources */,
-				ABAFB5A015AB9A2E002FA498 /* ShellScript */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				ABAFB5A815AB9A2E002FA498 /* PBXTargetDependency */,
-			);
-			name = BakerTests;
-			productName = BakerTests;
-			productReference = ABAFB5A215AB9A2E002FA498 /* BakerTests.octest */;
-			productType = "com.apple.product-type.bundle";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -546,7 +444,6 @@
 			projectRoot = "";
 			targets = (
 				ABAFB58615AB9A2E002FA498 /* Baker */,
-				ABAFB5A115AB9A2E002FA498 /* BakerTests */,
 			);
 		};
 /* End PBXProject section */
@@ -572,36 +469,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		ABAFB59F15AB9A2E002FA498 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				ABAFB5AE15AB9A2E002FA498 /* InfoPlist.strings in Resources */,
-				AB40045815B4B83000D87E2A /* back.png in Resources */,
-				AB40045A15B4B83000D87E2A /* back@2x.png in Resources */,
-				AB40045C15B4B83000D87E2A /* forward.png in Resources */,
-				AB40045E15B4B83000D87E2A /* forward@2x.png in Resources */,
-				AB40048615B4BB8B00D87E2A /* books in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		ABAFB5A015AB9A2E002FA498 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		ABAFB58315AB9A2E002FA498 /* Sources */ = {
@@ -646,52 +514,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		ABAFB59D15AB9A2E002FA498 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				ABAFB5B115AB9A2F002FA498 /* BakerTests.m in Sources */,
-				AB40045415B4B83000D87E2A /* BakerViewController.m in Sources */,
-				AB40046015B4B83000D87E2A /* IndexViewController.m in Sources */,
-				AB40046215B4B83000D87E2A /* InterceptorWindow.m in Sources */,
-				AB40046415B4B83000D87E2A /* GTMNSString+HTML.m in Sources */,
-				AB40046615B4B83000D87E2A /* JSONKit.m in Sources */,
-				AB40046815B4B83000D87E2A /* ioapi.c in Sources */,
-				AB40046A15B4B83000D87E2A /* mztools.c in Sources */,
-				AB40046C15B4B83000D87E2A /* unzip.c in Sources */,
-				AB40046E15B4B83000D87E2A /* zip.c in Sources */,
-				AB40047015B4B83000D87E2A /* SSZipArchive.m in Sources */,
-				AB40047215B4B83000D87E2A /* Utils.m in Sources */,
-				AB40047415B4B83000D87E2A /* ModalViewController.m in Sources */,
-				AB40047815B4B83000D87E2A /* PageTitleLabel.m in Sources */,
-				AB40047F15B4B8B800D87E2A /* ShelfManager.m in Sources */,
-				AB40049415B4C28100D87E2A /* ShelfManagerTest.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		ABAFB5A815AB9A2E002FA498 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = ABAFB58615AB9A2E002FA498 /* Baker */;
-			targetProxy = ABAFB5A715AB9A2E002FA498 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		ABAFB59415AB9A2E002FA498 /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
 				ABAFB59515AB9A2E002FA498 /* en */,
-			);
-			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-		ABAFB5AC15AB9A2E002FA498 /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				ABAFB5AD15AB9A2E002FA498 /* en */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -770,40 +599,6 @@
 			};
 			name = Release;
 		};
-		ABAFB5B815AB9A2F002FA498 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Baker.app/Baker";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
-				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Baker/Baker-Prefix.pch";
-				INFOPLIST_FILE = "BakerTests/BakerTests-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUNDLE_LOADER)";
-				WRAPPER_EXTENSION = octest;
-			};
-			name = Debug;
-		};
-		ABAFB5B915AB9A2F002FA498 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Baker.app/Baker";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
-				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Baker/Baker-Prefix.pch";
-				INFOPLIST_FILE = "BakerTests/BakerTests-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUNDLE_LOADER)";
-				WRAPPER_EXTENSION = octest;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -821,15 +616,6 @@
 			buildConfigurations = (
 				ABAFB5B515AB9A2F002FA498 /* Debug */,
 				ABAFB5B615AB9A2F002FA498 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		ABAFB5B715AB9A2F002FA498 /* Build configuration list for PBXNativeTarget "BakerTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				ABAFB5B815AB9A2F002FA498 /* Debug */,
-				ABAFB5B915AB9A2F002FA498 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
