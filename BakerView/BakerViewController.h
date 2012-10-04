@@ -117,7 +117,6 @@
 - (void)resetPageSlots;
 - (void)resetPageDetails;
 - (void)buildPageArray;
-- (void)startReadingFromPage:(int)pageNumber anchor:(NSString *)anchor;
 - (void)startReading;
 - (void)buildPageDetails;
 - (void)setImageFor:(UIImageView *)view;
@@ -127,7 +126,6 @@
 - (void)setTappableAreaSize;
 - (void)showPageDetails;
 - (void)setFrame:(CGRect)frame forPage:(UIWebView *)page;
-
 - (void)setupWebView:(UIWebView *)webView;
 
 #pragma mark - LOADING
@@ -139,7 +137,6 @@
 - (void)handlePageLoading;
 - (void)loadSlot:(int)slot withPage:(int)page;
 - (BOOL)loadWebView:(UIWebView *)webview withPage:(int)page;
-- (NSDictionary *)bookCurrentStatus;
 
 #pragma mark - MODAL WEBVIEW
 - (void)loadModalWebView:(NSURL *)url;
