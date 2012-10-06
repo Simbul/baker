@@ -34,6 +34,7 @@
 #import "UICustomNavigationBar.h"
 
 #import "BakerViewController.h"
+#import "IssueViewController.h"
 
 #import "SSZipArchive.h"
 
@@ -126,10 +127,8 @@
 		cell.selectionStyle = AQGridViewCellSelectionStyleNone;
 
         BakerIssue *issue = [self.issues objectAtIndex:index];
-        [issue getCover:^(UIImage *img) {
-            UIImageView *thumb = [[[UIImageView alloc] initWithImage:img] autorelease];
-            [cell.contentView addSubview:thumb];
-        }];
+        IssueViewController *ivc = [[IssueViewController alloc] initWithBakerIssue:issue];
+        [cell.contentView addSubview:ivc.view];
 	}
 
     return cell;
