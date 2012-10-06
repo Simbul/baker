@@ -36,6 +36,7 @@
 
 @implementation IssuesManager
 
+@synthesize url;
 @synthesize issues;
 
 -(id)initWithURL:(NSString *)urlString {
@@ -87,6 +88,13 @@
         }
         [dateFormat release];
     }
+}
+
+-(void)dealloc {
+    [issues release];
+    [url release];
+    
+    [super dealloc];
 }
 
 @end

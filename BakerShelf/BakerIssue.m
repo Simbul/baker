@@ -138,4 +138,17 @@
 #endif
 }
 
+-(void)dealloc {
+    [ID release];
+    [title release];
+    [date release];
+    [url release];
+    [path release];
+    [bakerBook release];
+    [coverPath release];
+    [coverURL release];
+    
+    [super dealloc];
+}
+
 @end
