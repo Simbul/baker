@@ -31,6 +31,7 @@
 
 #import <UIKit/UIKit.h>
 #import "AQGridViewController.h"
+#import "BakerIssue.h"
 
 @interface ShelfViewController : AQGridViewController
 
@@ -39,5 +40,7 @@
 
 #pragma mark - Init
 - (id)initWithBooks:(NSArray *)currentBooks;
+- (void)readIssue:(BakerIssue *)issue;
+- (void)handleReadIssue:(NSNotification *)notification;
 
 @end

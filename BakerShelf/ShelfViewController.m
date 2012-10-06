@@ -57,6 +57,7 @@
         NSMutableArray *controllers = [NSMutableArray array];
         for (BakerIssue *issue in self.issues) {
             IssueViewController *ivc = [[[IssueViewController alloc] initWithBakerIssue:issue] autorelease];
+            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleReadIssue:) name:@"read_issue_request" object:ivc];
             [controllers addObject:ivc];
         }
         self.issueViewControllers = [NSArray arrayWithArray:controllers];
@@ -154,22 +155,36 @@
     BakerIssue *issue = [self.issues objectAtIndex:index];
     NSLog(@"clicked on issue %@ with status %@", issue.ID, [issue getStatus]);
 
-    BakerBook *book = nil;
-#ifdef BAKER_NEWSSTAND
-    if ([issue getStatus] == @"downloaded") {
-        book = [[[BakerBook alloc] initWithBookPath:issue.path bundled:NO] autorelease];
-        [self pushViewControllerWithBook:book];
-    } else if ([issue getStatus] == @"remote") {
+    NSString *status = [issue getStatus];
+    if (status == @"downloaded" || status == @"bundled") {
+        [self readIssue:issue];
+    } else if (status == @"remote") {
         IssueViewController *ivc = [self.issueViewControllers objectAtIndex:index];
         [ivc download];
     }
+}
+
+- (void)readIssue:(BakerIssue *)issue {
+    BakerBook *book = nil;
+    NSString *status = [issue getStatus];
+#ifdef BAKER_NEWSSTAND
+    if (status == @"downloaded") {
+        book = [[[BakerBook alloc] initWithBookPath:issue.path bundled:NO] autorelease];
+        [self pushViewControllerWithBook:book];
+    }
 #else
-    if ([issue getStatus] == @"bundled") {
+    if (status == @"bundled") {
         book = [issue bakerBook];
         [self pushViewControllerWithBook:book];
     }
 #endif
 }
+
+- (void)handleReadIssue:(NSNotification *)notification {
+    IssueViewController *ivc = notification.object;
+    [self readIssue:ivc.issue];
+}
+
 -(void)pushViewControllerWithBook:(BakerBook *)book {
     BakerViewController *bakerViewController = [[BakerViewController alloc] initWithBook:book];
     [self.navigationController pushViewController:bakerViewController animated:YES];

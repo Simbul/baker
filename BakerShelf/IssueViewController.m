@@ -109,7 +109,7 @@
     if (status == @"remote") {
         [self download];
     } else if (status == @"downloaded" || status == @"bundled") {
-        // TODO
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"read_issue_request" object:self];
     } else if (status == @"downloading") {
         // TODO
     }
