@@ -33,6 +33,8 @@
 
 #import "SSZipArchive.h"
 
+#define DOWNLOADING_TEXT @"Downloading..."
+
 @interface IssueViewController ()
 
 @end
@@ -116,18 +118,16 @@
 }
 
 - (void)download {
+    self.progress.hidden = NO;
+    self.button.enabled = NO;
+    [self.button setTitle:DOWNLOADING_TEXT forState:UIControlStateNormal];
     [self.issue downloadWithDelegate:self];
 }
 
 #ifdef BAKER_NEWSSTAND
 #pragma mark - Newsstand download
 
-- (void)connection:(NSURLConnection *)connection didWriteData:(long long)bytesWritten totalBytesWritten:(long long)totalBytesWritten expectedTotalBytes:(long long)expectedTotalBytes {    
-    NSString *downloadingText = @"Downloading...";
-    if (self.button.currentTitle != downloadingText) {
-        self.progress.hidden = NO;
-        [self.button setTitle:downloadingText forState:UIControlStateNormal];
-    }
+- (void)connection:(NSURLConnection *)connection didWriteData:(long long)bytesWritten totalBytesWritten:(long long)totalBytesWritten expectedTotalBytes:(long long)expectedTotalBytes {
     
     [self.progress setProgress:((float)totalBytesWritten/(float)expectedTotalBytes) animated:YES];
 }
@@ -143,17 +143,12 @@
     
     self.progress.hidden = YES;
     [self.button setTitle:@"View" forState:UIControlStateNormal];
+    self.button.enabled = YES;
     
     // TODO: update Newsstand icon and add badge
 }
 - (void)connectionDidResumeDownloading:(NSURLConnection *)connection totalBytesWritten:(long long)totalBytesWritten expectedTotalBytes:(long long)expectedTotalBytes {
     NSLog(@"CONNECTION DID RESUME DOWNLOADING %lld %lld", totalBytesWritten, expectedTotalBytes);
-    
-    NSString *downloadingText = @"Downloading...";
-    if (self.button.currentTitle != downloadingText) {
-        self.progress.hidden = NO;
-        [self.button setTitle:downloadingText forState:UIControlStateNormal];
-    }
     
     [self.progress setProgress:((float)totalBytesWritten/(float)expectedTotalBytes) animated:YES];
 }
