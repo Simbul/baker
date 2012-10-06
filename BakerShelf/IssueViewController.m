@@ -52,16 +52,33 @@
 - (void)loadView {
     [super loadView];
     
-    self.view = [UIView new];
+    self.view = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, 384, 192)] autorelease];
     
-    UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-    spinner.backgroundColor = [UIColor clearColor];    
+    UIActivityIndicatorView *spinner = [[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray] autorelease];
+    spinner.backgroundColor = [UIColor clearColor];
+    spinner.center = CGPointMake(71, 96);
     [self.view addSubview:spinner];
     [spinner startAnimating];
-    [spinner release];
+    
+    UILabel *title = [[[UILabel alloc]initWithFrame:CGRectMake(142, 21, 221, 25)] autorelease];
+    title.text = self.issue.title;
+    [self.view addSubview:title];
+    
+    UIButton *button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    button.frame = CGRectMake(142, 50, 221, 30);
+    NSString *status = [self.issue getStatus];
+    if (status == @"remote") {
+        [button setTitle:@"Download" forState:UIControlStateNormal];
+    } else if (status == @"downloaded" || status == @"bundled") {
+        [button setTitle:@"View" forState:UIControlStateNormal];
+    } else if (status == @"downloading") {
+        [button setTitle:@"Downloading" forState:UIControlStateNormal];
+    }
+    [self.view addSubview:button];
     
     [self.issue getCover:^(UIImage *img) {
         UIImageView *thumb = [[[UIImageView alloc] initWithImage:img] autorelease];
+        thumb.frame = CGRectMake(21, 21, 100, 150);
         [self.view addSubview:thumb];
     }];
 }

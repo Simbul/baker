@@ -123,11 +123,11 @@
     AQGridViewCell *cell = (AQGridViewCell *)[self.gridView dequeueReusableCellWithIdentifier:cellIdentifier];
 	if (cell == nil)
 	{
-		cell = [[[AQGridViewCell alloc] initWithFrame:CGRectMake(0, 0, 100, 150) reuseIdentifier:cellIdentifier] autorelease];
-		cell.selectionStyle = AQGridViewCellSelectionStyleNone;
-
         BakerIssue *issue = [self.issues objectAtIndex:index];
         IssueViewController *ivc = [[IssueViewController alloc] initWithBakerIssue:issue];
+
+		cell = [[[AQGridViewCell alloc] initWithFrame:CGRectMake(0, 0, ivc.view.frame.size.width, ivc.view.frame.size.height) reuseIdentifier:cellIdentifier] autorelease];
+		cell.selectionStyle = AQGridViewCellSelectionStyleNone;
         [cell.contentView addSubview:ivc.view];
 	}
 
@@ -136,7 +136,7 @@
 
 - (CGSize)portraitGridCellSizeForGridView:(AQGridView *)aGridView
 {
-    return CGSizeMake(153.6, 192);
+    return CGSizeMake(384, 192);
 }
 
 #pragma mark - Navigation management
