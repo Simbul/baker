@@ -57,6 +57,7 @@
     [super loadView];
     
     self.view = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, 384, 192)] autorelease];
+    self.view.backgroundColor = [UIColor clearColor];
     
     UIActivityIndicatorView *spinner = [[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray] autorelease];
     spinner.backgroundColor = [UIColor clearColor];
@@ -66,6 +67,9 @@
     
     UILabel *title = [[[UILabel alloc]initWithFrame:CGRectMake(142, 21, 221, 25)] autorelease];
     title.text = self.issue.title;
+    [title setFont:[UIFont fontWithName:@"Arial-BoldMT" size:16]];
+    title.textColor = [UIColor whiteColor];
+    title.backgroundColor = [UIColor clearColor];
     [self.view addSubview:title];
     
     self.progress = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleBar];

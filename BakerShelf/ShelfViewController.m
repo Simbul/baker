@@ -126,6 +126,8 @@
 
 		cell = [[[AQGridViewCell alloc] initWithFrame:CGRectMake(0, 0, ivc.view.frame.size.width, ivc.view.frame.size.height) reuseIdentifier:cellIdentifier] autorelease];
 		cell.selectionStyle = AQGridViewCellSelectionStyleNone;
+        cell.contentView.backgroundColor = [UIColor clearColor];
+        cell.backgroundColor = [UIColor clearColor];
         [cell.contentView addSubview:ivc.view];
 	}
 
