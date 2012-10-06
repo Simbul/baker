@@ -60,6 +60,7 @@
     self.view.backgroundColor = [UIColor clearColor];
     
     UIActivityIndicatorView *spinner = [[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray] autorelease];
+    spinner.color = [UIColor whiteColor];
     spinner.backgroundColor = [UIColor clearColor];
     spinner.center = CGPointMake(71, 96);
     [self.view addSubview:spinner];
