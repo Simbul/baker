@@ -32,7 +32,7 @@
 #import <UIKit/UIKit.h>
 #import "AQGridViewController.h"
 
-@interface ShelfViewController : AQGridViewController <NSURLConnectionDownloadDelegate>
+@interface ShelfViewController : AQGridViewController
 
 @property (copy, nonatomic) NSArray *issues;
 

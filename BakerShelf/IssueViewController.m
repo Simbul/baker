@@ -31,6 +31,8 @@
 
 #import "IssueViewController.h"
 
+#import "SSZipArchive.h"
+
 @interface IssueViewController ()
 
 @end
@@ -38,6 +40,8 @@
 @implementation IssueViewController
 
 @synthesize issue;
+@synthesize button;
+@synthesize progress;
 
 - (id)initWithBakerIssue:(BakerIssue *)bakerIssue {
     self = [super init];
@@ -64,17 +68,23 @@
     title.text = self.issue.title;
     [self.view addSubview:title];
     
-    UIButton *button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    button.frame = CGRectMake(142, 50, 221, 30);
+    self.progress = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleBar];
+    self.progress.frame = CGRectMake(142, 50, 221, 30);
+    self.progress.hidden = YES;
+    [self.view addSubview:self.progress];
+    
+    self.button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    self.button.frame = CGRectMake(142, 85, 221, 30);
     NSString *status = [self.issue getStatus];
     if (status == @"remote") {
-        [button setTitle:@"Download" forState:UIControlStateNormal];
+        [self.button setTitle:@"Download" forState:UIControlStateNormal];
     } else if (status == @"downloaded" || status == @"bundled") {
-        [button setTitle:@"View" forState:UIControlStateNormal];
+        [self.button setTitle:@"View" forState:UIControlStateNormal];
     } else if (status == @"downloading") {
-        [button setTitle:@"Downloading" forState:UIControlStateNormal];
+        [self.button setTitle:@"Downloading" forState:UIControlStateNormal];
     }
-    [self.view addSubview:button];
+    [self.button addTarget:self action:@selector(buttonPressed:) forControlEvents:UIControlEventTouchDown];
+    [self.view addSubview:self.button];
     
     [self.issue getCover:^(UIImage *img) {
         UIImageView *thumb = [[[UIImageView alloc] initWithImage:img] autorelease];
@@ -88,6 +98,57 @@
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
 }
+
+- (void)buttonPressed:(UIButton *)sender {
+    NSString *status = [self.issue getStatus];
+    if (status == @"remote") {
+        [self.issue downloadWithDelegate:self];
+    } else if (status == @"downloaded" || status == @"bundled") {
+        // TODO
+    } else if (status == @"downloading") {
+        // TODO
+    }
+}
+
+#ifdef BAKER_NEWSSTAND
+#pragma mark - Newsstand download
+
+- (void)connection:(NSURLConnection *)connection didWriteData:(long long)bytesWritten totalBytesWritten:(long long)totalBytesWritten expectedTotalBytes:(long long)expectedTotalBytes {    
+    NSString *downloadingText = @"Downloading...";
+    if (self.button.currentTitle != downloadingText) {
+        self.progress.hidden = NO;
+        [self.button setTitle:downloadingText forState:UIControlStateNormal];
+    }
+    
+    [self.progress setProgress:((float)totalBytesWritten/(float)expectedTotalBytes) animated:YES];
+}
+- (void)connectionDidFinishDownloading:(NSURLConnection *)connection destinationURL:(NSURL *)destinationURL {
+    NSLog(@"CONNECTION DID FINISH DOWNLOADING %@", destinationURL);
+    
+    NKAssetDownload *dnl = connection.newsstandAssetDownload;
+    NKIssue *nkIssue = dnl.issue;
+    NSString *destinationPath = [[nkIssue contentURL] path];
+    
+    NSLog(@"File is being unzipped to %@", destinationPath);
+    [SSZipArchive unzipFileAtPath:[destinationURL path] toDestination:destinationPath];
+    
+    self.progress.hidden = YES;
+    [self.button setTitle:@"View" forState:UIControlStateNormal];
+    
+    // TODO: update Newsstand icon and add badge
+}
+- (void)connectionDidResumeDownloading:(NSURLConnection *)connection totalBytesWritten:(long long)totalBytesWritten expectedTotalBytes:(long long)expectedTotalBytes {
+    NSLog(@"CONNECTION DID RESUME DOWNLOADING %lld %lld", totalBytesWritten, expectedTotalBytes);
+    
+    NSString *downloadingText = @"Downloading...";
+    if (self.button.currentTitle != downloadingText) {
+        self.progress.hidden = NO;
+        [self.button setTitle:downloadingText forState:UIControlStateNormal];
+    }
+    
+    [self.progress setProgress:((float)totalBytesWritten/(float)expectedTotalBytes) animated:YES];
+}
+#endif
 
 - (void)didReceiveMemoryWarning
 {

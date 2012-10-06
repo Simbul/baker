@@ -32,9 +32,11 @@
 #import <UIKit/UIKit.h>
 #import "BakerIssue.h"
 
-@interface IssueViewController : UIViewController
+@interface IssueViewController : UIViewController <NSURLConnectionDownloadDelegate>
 
 @property (retain, nonatomic) BakerIssue *issue;
+@property (retain, nonatomic) UIButton *button;
+@property (retain, nonatomic) UIProgressView *progress;
 
 -(id)initWithBakerIssue:(BakerIssue *)bakerIssue;
 
