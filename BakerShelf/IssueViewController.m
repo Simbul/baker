@@ -33,7 +33,11 @@
 
 #import "SSZipArchive.h"
 
+#define REMOTE_TEXT @"Download"
 #define DOWNLOADING_TEXT @"Downloading..."
+#define DOWNLOADED_TEXT @"View"
+#define OPENING_TEXT @"Loading..."
+#define ARCHIVE_TEXT @"Archive"
 
 @interface IssueViewController ()
 
@@ -93,7 +97,7 @@
     
     self.archiveButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
     self.archiveButton.frame = CGRectMake(142, 120, 221, 30);
-    [self.archiveButton setTitle:@"Archive" forState:UIControlStateNormal];
+    [self.archiveButton setTitle:ARCHIVE_TEXT forState:UIControlStateNormal];
     [self.archiveButton addTarget:self action:@selector(archiveButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.archiveButton];
     
@@ -110,7 +114,7 @@
 - (void)refresh:(NSString *)status {
     NSLog(@"refreshing %@ with status %@", self.issue.ID, status);
     if (status == @"remote") {
-        [self.button setTitle:@"Download" forState:UIControlStateNormal];
+        [self.button setTitle:REMOTE_TEXT forState:UIControlStateNormal];
         self.progress.hidden = YES;
         self.button.enabled = YES;
         self.archiveButton.hidden = YES;
@@ -122,20 +126,20 @@
         self.button.enabled = NO;
         self.archiveButton.hidden = YES;
     } else if (status == @"downloaded") {
-        [self.button setTitle:@"View" forState:UIControlStateNormal];
+        [self.button setTitle:DOWNLOADED_TEXT forState:UIControlStateNormal];
         self.progress.hidden = YES;
         self.button.enabled = YES;
         self.archiveButton.hidden = NO;
         self.archiveButton.enabled = YES;
         [self.spinner stopAnimating];
     } else if (status == @"bundled") {
-        [self.button setTitle:@"View" forState:UIControlStateNormal];
+        [self.button setTitle:DOWNLOADED_TEXT forState:UIControlStateNormal];
         self.progress.hidden = YES;
         self.button.enabled = YES;
         self.archiveButton.hidden = YES;
         [self.spinner stopAnimating];
     } else if (status == @"opening") {
-        [self.button setTitle:@"Loading..." forState:UIControlStateNormal];
+        [self.button setTitle:OPENING_TEXT forState:UIControlStateNormal];
         self.button.enabled = NO;
         self.archiveButton.enabled = NO;
         [self.spinner startAnimating];
