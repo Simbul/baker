@@ -93,6 +93,10 @@
     [super viewWillAppear:animated];
 
     [self.navigationController.navigationBar setTranslucent:NO];
+    
+    for (IssueViewController *controller in self.issueViewControllers) {
+        [controller refresh];
+    }
 }
 - (NSInteger)supportedInterfaceOrientations
 {

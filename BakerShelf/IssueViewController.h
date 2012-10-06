@@ -38,6 +38,7 @@
 @property (retain, nonatomic) UIButton *button;
 @property (retain, nonatomic) UIButton *archiveButton;
 @property (retain, nonatomic) UIProgressView *progress;
+@property (retain, nonatomic) UIActivityIndicatorView *spinner;
 
 -(id)initWithBakerIssue:(BakerIssue *)bakerIssue;
 -(void)download;

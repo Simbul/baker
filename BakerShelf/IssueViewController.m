@@ -45,6 +45,7 @@
 @synthesize button;
 @synthesize archiveButton;
 @synthesize progress;
+@synthesize spinner;
 
 - (id)initWithBakerIssue:(BakerIssue *)bakerIssue {
     self = [super init];
@@ -62,12 +63,12 @@
     self.view = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, 384, 192)] autorelease];
     self.view.backgroundColor = [UIColor clearColor];
     
-    UIActivityIndicatorView *spinner = [[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray] autorelease];
-    spinner.color = [UIColor whiteColor];
-    spinner.backgroundColor = [UIColor clearColor];
-    spinner.center = CGPointMake(71, 96);
-    [self.view addSubview:spinner];
-    [spinner startAnimating];
+    UIActivityIndicatorView *coverLoadingSpinner = [[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray] autorelease];
+    coverLoadingSpinner.color = [UIColor whiteColor];
+    coverLoadingSpinner.backgroundColor = [UIColor clearColor];
+    coverLoadingSpinner.center = CGPointMake(71, 96);
+    [self.view addSubview:coverLoadingSpinner];
+    [coverLoadingSpinner startAnimating];
     
     UILabel *title = [[[UILabel alloc]initWithFrame:CGRectMake(142, 21, 221, 25)] autorelease];
     title.text = self.issue.title;
@@ -78,18 +79,22 @@
     
     self.progress = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleBar];
     self.progress.frame = CGRectMake(142, 50, 221, 30);
-    self.progress.hidden = YES;
     [self.view addSubview:self.progress];
+    
+    self.spinner = [[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite] autorelease];
+    self.spinner.center = self.progress.center;
+    self.spinner.hidesWhenStopped = YES;
+    [self.view addSubview:self.spinner];
     
     self.button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
     self.button.frame = CGRectMake(142, 85, 221, 30);
-    [self.button addTarget:self action:@selector(buttonPressed:) forControlEvents:UIControlEventTouchDown];
+    [self.button addTarget:self action:@selector(buttonPressed:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.button];
     
     self.archiveButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
     self.archiveButton.frame = CGRectMake(142, 120, 221, 30);
     [self.archiveButton setTitle:@"Archive" forState:UIControlStateNormal];
-    [self.archiveButton addTarget:self action:@selector(archiveButtonPressed:) forControlEvents:UIControlEventTouchDown];
+    [self.archiveButton addTarget:self action:@selector(archiveButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.archiveButton];
     
     [self.issue getCover:^(UIImage *img) {
@@ -97,8 +102,6 @@
         thumb.frame = CGRectMake(21, 21, 100, 150);
         [self.view addSubview:thumb];
     }];
-    
-    [self refresh];
 }
 
 - (void)refresh {
@@ -111,6 +114,7 @@
         self.progress.hidden = YES;
         self.button.enabled = YES;
         self.archiveButton.hidden = YES;
+        [self.spinner stopAnimating];
     } else if (status == @"downloading") {
         [self.progress setProgress:0.0 animated:NO];
         [self.button setTitle:DOWNLOADING_TEXT forState:UIControlStateNormal];
@@ -122,6 +126,19 @@
         self.progress.hidden = YES;
         self.button.enabled = YES;
         self.archiveButton.hidden = NO;
+        self.archiveButton.enabled = YES;
+        [self.spinner stopAnimating];
+    } else if (status == @"bundled") {
+        [self.button setTitle:@"View" forState:UIControlStateNormal];
+        self.progress.hidden = YES;
+        self.button.enabled = YES;
+        self.archiveButton.hidden = YES;
+        [self.spinner stopAnimating];
+    } else if (status == @"opening") {
+        [self.button setTitle:@"Loading..." forState:UIControlStateNormal];
+        self.button.enabled = NO;
+        self.archiveButton.enabled = NO;
+        [self.spinner startAnimating];
     }
 }
 
@@ -136,16 +153,17 @@
     if (status == @"remote") {
         [self download];
     } else if (status == @"downloaded" || status == @"bundled") {
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"read_issue_request" object:self];
+        [self refresh:@"opening"];
+        dispatch_async(dispatch_get_main_queue(),^{
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"read_issue_request" object:self];
+        });
     } else if (status == @"downloading") {
-        // TODO
+        // TODO: assuming it is supported by NewsstandKit, implement a "Cancel" operation
     }
 }
 
 #ifdef BAKER_NEWSSTAND
 - (void)archiveButtonPressed:(UIButton *)sender {
-    NSLog(@"Removing content from %@", self.issue.path);
-    
     NKLibrary *nkLib = [NKLibrary sharedLibrary];
     NKIssue *nkIssue = [nkLib issueWithName:self.issue.ID];
     NSString *name = nkIssue.name;
