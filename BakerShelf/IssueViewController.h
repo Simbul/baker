@@ -36,6 +36,7 @@
 
 @property (retain, nonatomic) BakerIssue *issue;
 @property (retain, nonatomic) UIButton *button;
+@property (retain, nonatomic) UIButton *archiveButton;
 @property (retain, nonatomic) UIProgressView *progress;
 
 -(id)initWithBakerIssue:(BakerIssue *)bakerIssue;

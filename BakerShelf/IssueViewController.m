@@ -43,6 +43,7 @@
 
 @synthesize issue;
 @synthesize button;
+@synthesize archiveButton;
 @synthesize progress;
 
 - (id)initWithBakerIssue:(BakerIssue *)bakerIssue {
@@ -93,6 +94,12 @@
     [self.button addTarget:self action:@selector(buttonPressed:) forControlEvents:UIControlEventTouchDown];
     [self.view addSubview:self.button];
     
+    self.archiveButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    self.archiveButton.frame = CGRectMake(142, 120, 221, 30);
+    [self.archiveButton setTitle:@"Archive" forState:UIControlStateNormal];
+    [self.archiveButton addTarget:self action:@selector(archiveButtonPressed:) forControlEvents:UIControlEventTouchDown];
+    [self.view addSubview:self.archiveButton];
+    
     [self.issue getCover:^(UIImage *img) {
         UIImageView *thumb = [[[UIImageView alloc] initWithImage:img] autorelease];
         thumb.frame = CGRectMake(21, 21, 100, 150);
@@ -116,6 +123,20 @@
         // TODO
     }
 }
+
+#ifdef BAKER_NEWSSTAND
+- (void)archiveButtonPressed:(UIButton *)sender {
+    NSLog(@"Removing content from %@", self.issue.path);
+    
+    NKLibrary *nkLib = [NKLibrary sharedLibrary];
+    NKIssue *nkIssue = [nkLib issueWithName:self.issue.ID];
+    NSString *name = nkIssue.name;
+    NSDate *date = nkIssue.date;
+    
+    [nkLib removeIssue:nkIssue];
+    [nkLib addIssueWithName:name date:date];
+}
+#endif
 
 - (void)download {
     self.progress.hidden = NO;
