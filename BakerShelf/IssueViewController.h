@@ -39,5 +39,6 @@
 @property (retain, nonatomic) UIProgressView *progress;
 
 -(id)initWithBakerIssue:(BakerIssue *)bakerIssue;
+-(void)download;
 
 @end

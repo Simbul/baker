@@ -35,6 +35,7 @@
 @interface ShelfViewController : AQGridViewController
 
 @property (copy, nonatomic) NSArray *issues;
+@property (retain, nonatomic) NSArray *issueViewControllers;
 
 #pragma mark - Init
 - (id)initWithBooks:(NSArray *)currentBooks;

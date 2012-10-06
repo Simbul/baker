@@ -106,12 +106,16 @@
 - (void)buttonPressed:(UIButton *)sender {
     NSString *status = [self.issue getStatus];
     if (status == @"remote") {
-        [self.issue downloadWithDelegate:self];
+        [self download];
     } else if (status == @"downloaded" || status == @"bundled") {
         // TODO
     } else if (status == @"downloading") {
         // TODO
     }
+}
+
+- (void)download {
+    [self.issue downloadWithDelegate:self];
 }
 
 #ifdef BAKER_NEWSSTAND

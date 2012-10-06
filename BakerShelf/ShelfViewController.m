@@ -39,6 +39,7 @@
 @implementation ShelfViewController
 
 @synthesize issues;
+@synthesize issueViewControllers;
 
 #pragma mark - Init
 
@@ -53,6 +54,12 @@
     self = [super init];
     if (self) {
         self.issues = currentBooks;
+        NSMutableArray *controllers = [NSMutableArray array];
+        for (BakerIssue *issue in self.issues) {
+            IssueViewController *ivc = [[[IssueViewController alloc] initWithBakerIssue:issue] autorelease];
+            [controllers addObject:ivc];
+        }
+        self.issueViewControllers = [NSArray arrayWithArray:controllers];
     }
     return self;
 }
@@ -121,8 +128,7 @@
     AQGridViewCell *cell = (AQGridViewCell *)[self.gridView dequeueReusableCellWithIdentifier:cellIdentifier];
 	if (cell == nil)
 	{
-        BakerIssue *issue = [self.issues objectAtIndex:index];
-        IssueViewController *ivc = [[IssueViewController alloc] initWithBakerIssue:issue];
+        IssueViewController *ivc = [self.issueViewControllers objectAtIndex:index];
 
 		cell = [[[AQGridViewCell alloc] initWithFrame:CGRectMake(0, 0, ivc.view.frame.size.width, ivc.view.frame.size.height) reuseIdentifier:cellIdentifier] autorelease];
 		cell.selectionStyle = AQGridViewCellSelectionStyleNone;
@@ -154,7 +160,8 @@
         book = [[[BakerBook alloc] initWithBookPath:issue.path bundled:NO] autorelease];
         [self pushViewControllerWithBook:book];
     } else if ([issue getStatus] == @"remote") {
-        // TODO: delegate download to IssueViewController
+        IssueViewController *ivc = [self.issueViewControllers objectAtIndex:index];
+        [ivc download];
     }
 #else
     if ([issue getStatus] == @"bundled") {
