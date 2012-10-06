@@ -83,14 +83,6 @@
     
     self.button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
     self.button.frame = CGRectMake(142, 85, 221, 30);
-    NSString *status = [self.issue getStatus];
-    if (status == @"remote") {
-        [self.button setTitle:@"Download" forState:UIControlStateNormal];
-    } else if (status == @"downloaded" || status == @"bundled") {
-        [self.button setTitle:@"View" forState:UIControlStateNormal];
-    } else if (status == @"downloading") {
-        [self.button setTitle:@"Downloading" forState:UIControlStateNormal];
-    }
     [self.button addTarget:self action:@selector(buttonPressed:) forControlEvents:UIControlEventTouchDown];
     [self.view addSubview:self.button];
     
@@ -105,6 +97,32 @@
         thumb.frame = CGRectMake(21, 21, 100, 150);
         [self.view addSubview:thumb];
     }];
+    
+    [self refresh];
+}
+
+- (void)refresh {
+    [self refresh:[self.issue getStatus]];
+}
+- (void)refresh:(NSString *)status {
+    NSLog(@"refreshing %@ with status %@", self.issue.ID, status);
+    if (status == @"remote") {
+        [self.button setTitle:@"Download" forState:UIControlStateNormal];
+        self.progress.hidden = YES;
+        self.button.enabled = YES;
+        self.archiveButton.hidden = YES;
+    } else if (status == @"downloading") {
+        [self.progress setProgress:0.0 animated:NO];
+        [self.button setTitle:DOWNLOADING_TEXT forState:UIControlStateNormal];
+        self.progress.hidden = NO;
+        self.button.enabled = NO;
+        self.archiveButton.hidden = YES;
+    } else if (status == @"downloaded") {
+        [self.button setTitle:@"View" forState:UIControlStateNormal];
+        self.progress.hidden = YES;
+        self.button.enabled = YES;
+        self.archiveButton.hidden = NO;
+    }
 }
 
 - (void)viewDidLoad
@@ -134,14 +152,15 @@
     NSDate *date = nkIssue.date;
     
     [nkLib removeIssue:nkIssue];
-    [nkLib addIssueWithName:name date:date];
+    nkIssue = [nkLib addIssueWithName:name date:date];
+    self.issue.path = [[nkIssue contentURL] path];
+    
+    [self refresh];
 }
 #endif
 
 - (void)download {
-    self.progress.hidden = NO;
-    self.button.enabled = NO;
-    [self.button setTitle:DOWNLOADING_TEXT forState:UIControlStateNormal];
+    [self refresh:@"downloading"];
     [self.issue downloadWithDelegate:self];
 }
 
@@ -162,9 +181,7 @@
     NSLog(@"File is being unzipped to %@", destinationPath);
     [SSZipArchive unzipFileAtPath:[destinationURL path] toDestination:destinationPath];
     
-    self.progress.hidden = YES;
-    [self.button setTitle:@"View" forState:UIControlStateNormal];
-    self.button.enabled = YES;
+    [self refresh];
     
     // TODO: update Newsstand icon and add badge
 }

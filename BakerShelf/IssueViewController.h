@@ -41,5 +41,7 @@
 
 -(id)initWithBakerIssue:(BakerIssue *)bakerIssue;
 -(void)download;
+-(void)refresh;
+-(void)refresh:(NSString *)status;
 
 @end
