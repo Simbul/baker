@@ -66,7 +66,7 @@
     #ifdef BAKER_NEWSSTAND
     
     NSLog(@"====== Newsstand is enabled ======");
-    IssuesManager *issuesManager = [[IssuesManager alloc] initWithURL:NEWSSTAND_MANIFEST_URL];
+    IssuesManager *issuesManager = [[[IssuesManager alloc] initWithURL:NEWSSTAND_MANIFEST_URL] autorelease];
     [issuesManager refresh];
     NSArray *books = issuesManager.issues;
     self.rootViewController = [[[ShelfViewController alloc] initWithBooks:books] autorelease];

@@ -157,10 +157,7 @@
     if (status == @"remote") {
         [self download];
     } else if (status == @"downloaded" || status == @"bundled") {
-        [self refresh:@"opening"];
-        dispatch_async(dispatch_get_main_queue(),^{
-            [[NSNotificationCenter defaultCenter] postNotificationName:@"read_issue_request" object:self];
-        });
+        [self read];
     } else if (status == @"downloading") {
         // TODO: assuming it is supported by NewsstandKit, implement a "Cancel" operation
     }
@@ -184,6 +181,12 @@
 - (void)download {
     [self refresh:@"downloading"];
     [self.issue downloadWithDelegate:self];
+}
+- (void)read {
+    [self refresh:@"opening"];
+    dispatch_async(dispatch_get_main_queue(),^{
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"read_issue_request" object:self];
+    });
 }
 
 #ifdef BAKER_NEWSSTAND
@@ -222,6 +225,10 @@
 
 - (void)dealloc {
     [issue release];
+    [button release];
+    [archiveButton release];
+    [progress release];
+    [spinner release];
     
     [super dealloc];
 }
