@@ -122,6 +122,17 @@ BUGS AND FEEDBACK
 CHANGELOG
 ---------
 
+* **3.2.2** (10/10/2012)
+  * iOS 6 and iPhone 5 display support
+  * Improved modal web view offline handling
+  * Fixed orientation bug and javascript property
+  * Fixed modal web view crash when interrupted and other minor fixes
+  * For developers: now Baker view is a separate class
+  * User agent and status bar tweaks (thanks to @jcampbell05)
+
+* **3.2.1** (20/08/2012)
+  * Internal release
+
 * **3.2** (20/03/2012)
   * iOS 5.1 and Retina display support
   * External links now open in internal browser, see referrer=Baker (thanks to @steiny2k)
