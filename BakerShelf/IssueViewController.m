@@ -29,175 +29,258 @@
 //  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-#import "IssueViewController.h"
+#import <QuartzCore/QuartzCore.h>
 
+#import "IssueViewController.h"
 #import "SSZipArchive.h"
 
-#define REMOTE_TEXT @"Download"
-#define DOWNLOADING_TEXT @"Downloading..."
-#define DOWNLOADED_TEXT @"View"
+#import "UIColor+Extensions.h"
+
+#define ACTION_REMOTE_TEXT @"DOWNLOAD"
+#define ACTION_DOWNLOADED_TEXT @"READ"
+#define ARCHIVE_TEXT @"ARCHIVE"
+
+#define DOWNLOADING_TEXT @"DOWNLOADING ..."
 #define OPENING_TEXT @"Loading..."
-#define ARCHIVE_TEXT @"Archive"
-
-@interface IssueViewController ()
-
-@end
 
 @implementation IssueViewController
 
-@synthesize issue;
-@synthesize button;
-@synthesize archiveButton;
-@synthesize progress;
-@synthesize spinner;
+#pragma mark - Synthesis
 
-- (id)initWithBakerIssue:(BakerIssue *)bakerIssue {
+@synthesize issue;
+@synthesize actionButton;
+@synthesize archiveButton;
+@synthesize progressBar;
+@synthesize spinner;
+@synthesize loadingLabel;
+
+#pragma mark - Init
+
+- (id)initWithBakerIssue:(BakerIssue *)bakerIssue
+{
     self = [super init];
-    
     if (self) {
         self.issue = bakerIssue;
     }
-    
     return self;
 }
 
-- (void)loadView {
+#pragma mark - View Lifecycle
+
+- (void)loadView
+{
     [super loadView];
     
-    self.view = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, 384, 192)] autorelease];
-    self.view.backgroundColor = [UIColor clearColor];
+    self.view = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, 384, 240)] autorelease];
     
-    UIActivityIndicatorView *coverLoadingSpinner = [[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray] autorelease];
-    coverLoadingSpinner.color = [UIColor whiteColor];
-    coverLoadingSpinner.backgroundColor = [UIColor clearColor];
-    coverLoadingSpinner.center = CGPointMake(71, 96);
-    [self.view addSubview:coverLoadingSpinner];
-    [coverLoadingSpinner startAnimating];
-    
-    UILabel *title = [[[UILabel alloc]initWithFrame:CGRectMake(142, 21, 221, 25)] autorelease];
-    title.text = self.issue.title;
-    [title setFont:[UIFont fontWithName:@"Arial-BoldMT" size:16]];
-    title.textColor = [UIColor whiteColor];
-    title.backgroundColor = [UIColor clearColor];
-    [self.view addSubview:title];
-    
-    self.progress = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleBar];
-    self.progress.frame = CGRectMake(142, 50, 221, 30);
-    [self.view addSubview:self.progress];
-    
-    self.spinner = [[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite] autorelease];
-    self.spinner.center = self.progress.center;
-    self.spinner.hidesWhenStopped = YES;
-    [self.view addSubview:self.spinner];
-    
-    self.button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    self.button.frame = CGRectMake(142, 85, 221, 30);
-    [self.button addTarget:self action:@selector(buttonPressed:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:self.button];
-    
-    self.archiveButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    self.archiveButton.frame = CGRectMake(142, 120, 221, 30);
-    [self.archiveButton setTitle:ARCHIVE_TEXT forState:UIControlStateNormal];
-    [self.archiveButton addTarget:self action:@selector(archiveButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:self.archiveButton];
-    
-    [self.issue getCover:^(UIImage *img) {
-        UIImageView *thumb = [[[UIImageView alloc] initWithImage:img] autorelease];
-        thumb.frame = CGRectMake(21, 21, 100, 150);
-        [self.view addSubview:thumb];
+    // SETUP COVER IMAGE
+    [self.issue getCover:^(UIImage *image) {
+        UIImageView *issueCover = [[[UIImageView alloc] initWithImage:image] autorelease];
+        
+        issueCover.frame = CGRectMake(30, 30, 135, 180);
+        issueCover.layer.shadowOpacity = 0.5;
+        issueCover.layer.shadowOffset = CGSizeMake(0, 2);
+        issueCover.layer.shouldRasterize = YES;
+        
+        [self.view addSubview:issueCover];
     }];
-}
+    
+    
+    int heightOffset = 30;
 
-- (void)refresh {
+    
+    // SETUP USED FONTS
+    UIFont *textFont = [UIFont fontWithName:@"Helvetica" size:15];
+    uint textLineheight = [@"The brown fox jumps over the lazy dog" sizeWithFont:textFont constrainedToSize:CGSizeMake(MAXFLOAT, MAXFLOAT)].height;
+    
+    UIFont *actionFont = [UIFont fontWithName:@"Helvetica-Bold" size:11];
+        
+    
+    // SETUP TITLE LABEL
+    CGSize titleSize = [self.issue.title sizeWithFont:textFont constrainedToSize:CGSizeMake(170, MAXFLOAT) lineBreakMode:UILineBreakModeWordWrap];
+    uint titleLines = MIN(4, titleSize.height / textLineheight);
+    
+    UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(184, heightOffset, 170, textLineheight * titleLines)];
+    titleLabel.textColor = [UIColor blackColor];
+    titleLabel.lineBreakMode = UILineBreakModeTailTruncation;
+    titleLabel.textAlignment = UITextAlignmentLeft;
+    titleLabel.numberOfLines = titleLines;
+    titleLabel.text = self.issue.title;
+    titleLabel.font = textFont;
+    
+    [self.view addSubview:titleLabel];
+    [titleLabel release];
+    
+    heightOffset = heightOffset + titleLabel.frame.size.height + 5;
+
+    
+    // SETUP INFO LABEL
+    CGSize infoSize = [@"Some info, including author name" sizeWithFont:textFont constrainedToSize:CGSizeMake(170, MAXFLOAT) lineBreakMode:UILineBreakModeWordWrap];
+    uint infoLines = MIN(4, infoSize.height / textLineheight);
+    
+    UILabel *infoLabel = [[UILabel alloc] initWithFrame:CGRectMake(184, heightOffset, 170, textLineheight * infoLines)];
+    infoLabel.textColor = [UIColor colorWithHexString:@"#929292"];
+    infoLabel.lineBreakMode = UILineBreakModeTailTruncation;
+    infoLabel.textAlignment = UITextAlignmentLeft;
+    infoLabel.numberOfLines = infoLines;
+    infoLabel.text = @"Some info, including author name";
+    infoLabel.font = textFont;
+    
+    [self.view addSubview:infoLabel];
+    [infoLabel release];
+
+    heightOffset = heightOffset + infoLabel.frame.size.height + 10;
+    
+    
+    // SETUP ACTION BUTTON
+    self.actionButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    actionButton.frame = CGRectMake(184, heightOffset, 80, 30);
+    actionButton.backgroundColor = [UIColor colorWithHexString:@"#b72529"];
+    actionButton.titleLabel.font = actionFont;
+    
+    [actionButton setTitle:ACTION_DOWNLOADED_TEXT forState:UIControlStateNormal];
+    [actionButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [actionButton addTarget:self action:@selector(actionButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    
+    [self.view addSubview:actionButton];
+    
+        
+    // SETUP ARCHIVE BUTTON
+    self.archiveButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    archiveButton.frame = CGRectMake(274, heightOffset, 80, 30);
+    archiveButton.backgroundColor = [UIColor clearColor];
+    archiveButton.titleLabel.font = actionFont;
+    
+    [archiveButton setTitle:ARCHIVE_TEXT forState:UIControlStateNormal];
+    [archiveButton setTitleColor:[UIColor colorWithHexString:@"#b72529"] forState:UIControlStateNormal];
+    [archiveButton addTarget:self action:@selector(archiveButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+
+    #ifdef BAKER_NEWSSTAND
+    [self.view addSubview:archiveButton];
+    #endif
+    
+    
+    // SETUP DOWN/LOADING SPINNER AND LABEL
+    self.spinner = [[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray] autorelease];
+    spinner.frame = CGRectMake(180, heightOffset, 30, 30);
+    spinner.hidesWhenStopped = YES;
+    
+    self.loadingLabel = [[UILabel alloc] initWithFrame:CGRectMake(215, heightOffset, 135, 30)];
+    loadingLabel.textColor = [UIColor colorWithHexString:@"#b72529"];
+    loadingLabel.textAlignment = UITextAlignmentLeft;
+    loadingLabel.text = DOWNLOADING_TEXT;
+    loadingLabel.font = actionFont;
+    
+    [self.view addSubview:spinner];
+    [self.view addSubview:loadingLabel];
+    
+    heightOffset = heightOffset + self.loadingLabel.frame.size.height + 5;
+    
+    
+    // SETUP PROGRESS BAR
+    self.progressBar = [[[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleBar] autorelease];
+    self.progressBar.frame = CGRectMake(184, heightOffset, 170, 30);
+    
+    [self.view addSubview:progressBar];
+}
+- (void)refresh
+{
     [self refresh:[self.issue getStatus]];
 }
-- (void)refresh:(NSString *)status {
-    NSLog(@"refreshing %@ with status %@", self.issue.ID, status);
-    if (status == @"remote") {
-        [self.button setTitle:REMOTE_TEXT forState:UIControlStateNormal];
-        self.progress.hidden = YES;
-        self.button.enabled = YES;
-        self.archiveButton.hidden = YES;
+- (void)refresh:(NSString *)status
+{
+    NSLog(@"Refreshing %@ view with status %@", self.issue.ID, status);
+    if ([status isEqualToString:@"remote"]) {
+        [self.actionButton setTitle:ACTION_REMOTE_TEXT forState:UIControlStateNormal];
         [self.spinner stopAnimating];
-    } else if (status == @"downloading") {
-        [self.progress setProgress:0.0 animated:NO];
-        [self.button setTitle:DOWNLOADING_TEXT forState:UIControlStateNormal];
-        self.progress.hidden = NO;
-        self.button.enabled = NO;
+        self.actionButton.frame = CGRectMake(184, self.actionButton.frame.origin.y, 110, 30);
+        self.actionButton.hidden = NO;
         self.archiveButton.hidden = YES;
-    } else if (status == @"downloaded") {
-        [self.button setTitle:DOWNLOADED_TEXT forState:UIControlStateNormal];
-        self.progress.hidden = YES;
-        self.button.enabled = YES;
-        self.archiveButton.hidden = NO;
-        self.archiveButton.enabled = YES;
-        [self.spinner stopAnimating];
-    } else if (status == @"bundled") {
-        [self.button setTitle:DOWNLOADED_TEXT forState:UIControlStateNormal];
-        self.progress.hidden = YES;
-        self.button.enabled = YES;
-        self.archiveButton.hidden = YES;
-        [self.spinner stopAnimating];
-    } else if (status == @"opening") {
-        [self.button setTitle:OPENING_TEXT forState:UIControlStateNormal];
-        self.button.enabled = NO;
-        self.archiveButton.enabled = NO;
+        self.progressBar.hidden = YES;
+        self.loadingLabel.hidden = YES;
+    } else if ([status isEqualToString:@"downloading"]) {
         [self.spinner startAnimating];
+        self.progressBar.hidden = NO;
+        self.actionButton.hidden = YES;
+        self.archiveButton.hidden = YES;
+        self.progressBar.progress = 0;
+        self.loadingLabel.text = DOWNLOADING_TEXT;
+        self.loadingLabel.hidden = NO;
+        self.progressBar.hidden = NO;
+    } else if ([status isEqualToString:@"downloaded"]) {
+        [self.actionButton setTitle:ACTION_DOWNLOADED_TEXT forState:UIControlStateNormal];
+        [self.spinner stopAnimating];
+        self.actionButton.frame = CGRectMake(184, self.actionButton.frame.origin.y, 80, 30);
+        self.actionButton.hidden = NO;
+        self.archiveButton.hidden = NO;
+        self.progressBar.hidden = YES;
+        self.loadingLabel.hidden = YES;
+    } else if ([status isEqualToString:@"bundled"]) {
+        [self.actionButton setTitle:ACTION_DOWNLOADED_TEXT forState:UIControlStateNormal];
+        [self.spinner stopAnimating];
+        self.actionButton.frame = CGRectMake(184, self.actionButton.frame.origin.y, 80, 30);
+        self.actionButton.hidden = NO;
+        self.archiveButton.hidden = YES;
+        self.loadingLabel.hidden = YES;
+        self.progressBar.hidden = YES;
+    } else if ([status isEqualToString:@"opening"]) {
+        [self.spinner startAnimating];
+        self.actionButton.hidden = NO;
+        self.archiveButton.hidden = NO;
+        self.loadingLabel.text = OPENING_TEXT;
+        self.loadingLabel.hidden = NO;
+        self.progressBar.hidden = YES;
     }
 }
 
-- (void)viewDidLoad
+#pragma mark - Memory management
+
+- (void)dealloc
 {
-    [super viewDidLoad];
-	// Do any additional setup after loading the view.
+    [issue release];
+    [actionButton release];
+    [archiveButton release];
+    [progressBar release];
+    [spinner release];
+    
+    [super dealloc];
 }
 
-- (void)buttonPressed:(UIButton *)sender {
+#pragma mark - Issue management
+
+- (void)actionButtonPressed:(UIButton *)sender
+{    
     NSString *status = [self.issue getStatus];
-    if (status == @"remote") {
+    if ([status isEqualToString:@"remote"]) {
         [self download];
-    } else if (status == @"downloaded" || status == @"bundled") {
+    } else if ([status isEqualToString:@"downloaded"] || [status isEqualToString:@"bundled"]) {
         [self read];
-    } else if (status == @"downloading") {
+    } else if ([status isEqualToString:@"downloading"]) {
         // TODO: assuming it is supported by NewsstandKit, implement a "Cancel" operation
     }
 }
-
-#ifdef BAKER_NEWSSTAND
-- (void)archiveButtonPressed:(UIButton *)sender {
-    NKLibrary *nkLib = [NKLibrary sharedLibrary];
-    NKIssue *nkIssue = [nkLib issueWithName:self.issue.ID];
-    NSString *name = nkIssue.name;
-    NSDate *date = nkIssue.date;
-    
-    [nkLib removeIssue:nkIssue];
-    nkIssue = [nkLib addIssueWithName:name date:date];
-    self.issue.path = [[nkIssue contentURL] path];
-    
-    [self refresh];
-}
-#endif
-
-- (void)download {
+- (void)download
+{
     [self refresh:@"downloading"];
     [self.issue downloadWithDelegate:self];
 }
-- (void)read {
+- (void)read
+{
     [self refresh:@"opening"];
-    dispatch_async(dispatch_get_main_queue(),^{
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"read_issue_request" object:self];
-    });
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"read_issue_request" object:self];
 }
 
 #ifdef BAKER_NEWSSTAND
-#pragma mark - Newsstand download
 
-- (void)connection:(NSURLConnection *)connection didWriteData:(long long)bytesWritten totalBytesWritten:(long long)totalBytesWritten expectedTotalBytes:(long long)expectedTotalBytes {
-    
-    [self.progress setProgress:((float)totalBytesWritten/(float)expectedTotalBytes) animated:YES];
+#pragma mark - Newsstand download management
+
+- (void)connection:(NSURLConnection *)connection didWriteData:(long long)bytesWritten totalBytesWritten:(long long)totalBytesWritten expectedTotalBytes:(long long)expectedTotalBytes
+{    
+    [self.progressBar setProgress:((float)totalBytesWritten/(float)expectedTotalBytes) animated:YES];
 }
-- (void)connectionDidFinishDownloading:(NSURLConnection *)connection destinationURL:(NSURL *)destinationURL {
-    NSLog(@"CONNECTION DID FINISH DOWNLOADING %@", destinationURL);
+- (void)connectionDidFinishDownloading:(NSURLConnection *)connection destinationURL:(NSURL *)destinationURL
+{
+    NSLog(@"Connection did finish downloading %@", destinationURL);
     
     NKAssetDownload *dnl = connection.newsstandAssetDownload;
     NKIssue *nkIssue = dnl.issue;
@@ -210,27 +293,30 @@
     
     // TODO: update Newsstand icon and add badge
 }
-- (void)connectionDidResumeDownloading:(NSURLConnection *)connection totalBytesWritten:(long long)totalBytesWritten expectedTotalBytes:(long long)expectedTotalBytes {
-    NSLog(@"CONNECTION DID RESUME DOWNLOADING %lld %lld", totalBytesWritten, expectedTotalBytes);
-    
-    [self.progress setProgress:((float)totalBytesWritten/(float)expectedTotalBytes) animated:YES];
-}
-#endif
-
-- (void)didReceiveMemoryWarning
+- (void)connectionDidResumeDownloading:(NSURLConnection *)connection totalBytesWritten:(long long)totalBytesWritten expectedTotalBytes:(long long)expectedTotalBytes
 {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+    NSLog(@"Connection did resume downloading %lld %lld", totalBytesWritten, expectedTotalBytes);
+    
+    [self.progressBar setProgress:((float)totalBytesWritten/(float)expectedTotalBytes) animated:YES];
 }
 
-- (void)dealloc {
-    [issue release];
-    [button release];
-    [archiveButton release];
-    [progress release];
-    [spinner release];
+#pragma mark - Newsstand archive management
+
+- (void)archiveButtonPressed:(UIButton *)sender
+{
+    NKLibrary *nkLib = [NKLibrary sharedLibrary];
+    NKIssue *nkIssue = [nkLib issueWithName:self.issue.ID];
+    NSString *name = nkIssue.name;
+    NSDate *date = nkIssue.date;
     
-    [super dealloc];
+    [nkLib removeIssue:nkIssue];
+    
+    nkIssue = [nkLib addIssueWithName:name date:date];
+    self.issue.path = [[nkIssue contentURL] path];
+    
+    [self refresh];
 }
+
+#endif
 
 @end

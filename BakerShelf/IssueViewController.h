@@ -32,17 +32,32 @@
 #import <UIKit/UIKit.h>
 #import "BakerIssue.h"
 
-@interface IssueViewController : UIViewController <NSURLConnectionDownloadDelegate>
+@interface IssueViewController : UIViewController <NSURLConnectionDownloadDelegate> {
+    NSString *currentAction;
+}
 
 @property (retain, nonatomic) BakerIssue *issue;
-@property (retain, nonatomic) UIButton *button;
+@property (retain, nonatomic) UIButton *actionButton;
 @property (retain, nonatomic) UIButton *archiveButton;
-@property (retain, nonatomic) UIProgressView *progress;
+@property (retain, nonatomic) UIProgressView *progressBar;
 @property (retain, nonatomic) UIActivityIndicatorView *spinner;
+@property (retain, nonatomic) UILabel *loadingLabel;
 
--(id)initWithBakerIssue:(BakerIssue *)bakerIssue;
--(void)download;
--(void)refresh;
--(void)refresh:(NSString *)status;
+#pragma mark - Init
+- (id)initWithBakerIssue:(BakerIssue *)bakerIssue;
+
+#pragma mark - View Lifecycle
+- (void)refresh;
+- (void)refresh:(NSString *)status;
+
+#pragma mark - Issue management
+- (void)actionButtonPressed:(UIButton *)sender;
+- (void)download;
+- (void)read;
+
+#ifdef BAKER_NEWSSTAND
+#pragma mark - Newsstand archive management
+- (void)archiveButtonPressed:(UIButton *)sender;
+#endif
 
 @end

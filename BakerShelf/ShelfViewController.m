@@ -43,22 +43,24 @@
 
 #pragma mark - Init
 
-- (id)init {
+- (id)init
+{
     self = [super init];
     if (self) {
         self.issues = [ShelfManager localBooksList];
     }
     return self;
 }
-- (id)initWithBooks:(NSArray *)currentBooks {
+- (id)initWithBooks:(NSArray *)currentBooks
+{
     self = [super init];
     if (self) {
         self.issues = currentBooks;
         NSMutableArray *controllers = [NSMutableArray array];
         for (BakerIssue *issue in self.issues) {
-            IssueViewController *ivc = [[[IssueViewController alloc] initWithBakerIssue:issue] autorelease];
-            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleReadIssue:) name:@"read_issue_request" object:ivc];
-            [controllers addObject:ivc];
+            IssueViewController *controller = [[[IssueViewController alloc] initWithBakerIssue:issue] autorelease];
+            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleReadIssue:) name:@"read_issue_request" object:controller];
+            [controllers addObject:controller];
         }
         self.issueViewControllers = [NSArray arrayWithArray:controllers];
     }
@@ -69,8 +71,9 @@
 
 - (void)dealloc
 {
+    [issueViewControllers release];
     [issues release];
-
+    
     [super dealloc];
 }
 
@@ -81,10 +84,7 @@
     [super viewDidLoad];
 
     self.navigationItem.title = @"Baker Shelf";
-
-    self.gridView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
-	self.gridView.autoresizesSubviews = YES;
-
+    
     [self willRotateToInterfaceOrientation:self.interfaceOrientation duration:0];
     [self.gridView reloadData];
 }
@@ -111,11 +111,11 @@
     return YES;
 }
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
-{
+{    
     if (UIInterfaceOrientationIsPortrait(toInterfaceOrientation)) {
-        self.gridView.backgroundColor  = [UIColor colorWithPatternImage:[UIImage imageNamed:@"shelf-bg-portrait.png"]];
+        //self.gridView.backgroundColor  = [UIColor colorWithPatternImage:[UIImage imageNamed:@"shelf-bg-portrait.png"]];
     } else if (UIInterfaceOrientationIsLandscape(toInterfaceOrientation)) {
-        self.gridView.backgroundColor  = [UIColor colorWithPatternImage:[UIImage imageNamed:@"shelf-bg-landscape.png"]];
+        //self.gridView.backgroundColor  = [UIColor colorWithPatternImage:[UIImage imageNamed:@"shelf-bg-landscape.png"]];
     }
 }
 
@@ -125,7 +125,6 @@
 {
     return [issues count];
 }
-
 - (AQGridViewCell *)gridView:(AQGridView *)aGridView cellForItemAtIndex:(NSUInteger)index
 {
     static NSString *cellIdentifier = @"cellIdentifier";
@@ -133,21 +132,17 @@
     AQGridViewCell *cell = (AQGridViewCell *)[self.gridView dequeueReusableCellWithIdentifier:cellIdentifier];
 	if (cell == nil)
 	{
-        IssueViewController *ivc = [self.issueViewControllers objectAtIndex:index];
-
-		cell = [[[AQGridViewCell alloc] initWithFrame:CGRectMake(0, 0, ivc.view.frame.size.width, ivc.view.frame.size.height) reuseIdentifier:cellIdentifier] autorelease];
+		cell = [[[AQGridViewCell alloc] initWithFrame:CGRectMake(0, 0, 384, 240) reuseIdentifier:cellIdentifier] autorelease];
 		cell.selectionStyle = AQGridViewCellSelectionStyleNone;
-        cell.contentView.backgroundColor = [UIColor clearColor];
-        cell.backgroundColor = [UIColor clearColor];
-        [cell.contentView addSubview:ivc.view];
+                
+        IssueViewController *controller = [self.issueViewControllers objectAtIndex:index];
+        [cell.contentView addSubview:controller.view];
 	}
-
     return cell;
 }
-
 - (CGSize)portraitGridCellSizeForGridView:(AQGridView *)aGridView
 {
-    return CGSizeMake(384, 192);
+    return CGSizeMake(384, 240);
 }
 
 #pragma mark - Navigation management
@@ -155,41 +150,31 @@
 - (void)gridView:(AQGridView *)gridView didSelectItemAtIndex:(NSUInteger)index
 {
     [gridView deselectItemAtIndex:index animated:NO];
-    
-    BakerIssue *issue = [self.issues objectAtIndex:index];
-    NSLog(@"clicked on issue %@ with status %@", issue.ID, [issue getStatus]);
-
-    NSString *status = [issue getStatus];
-    if (status == @"downloaded" || status == @"bundled") {
-        [self readIssue:issue];
-    } else if (status == @"remote") {
-        IssueViewController *ivc = [self.issueViewControllers objectAtIndex:index];
-        [ivc download];
-    }
 }
-
-- (void)readIssue:(BakerIssue *)issue {
+- (void)readIssue:(BakerIssue *)issue
+{
     BakerBook *book = nil;
     NSString *status = [issue getStatus];
-#ifdef BAKER_NEWSSTAND
+
+    #ifdef BAKER_NEWSSTAND
     if (status == @"downloaded") {
         book = [[[BakerBook alloc] initWithBookPath:issue.path bundled:NO] autorelease];
         [self pushViewControllerWithBook:book];
     }
-#else
+    #else
     if (status == @"bundled") {
         book = [issue bakerBook];
         [self pushViewControllerWithBook:book];
     }
-#endif
+    #endif
 }
-
-- (void)handleReadIssue:(NSNotification *)notification {
-    IssueViewController *ivc = notification.object;
-    [self readIssue:ivc.issue];
+- (void)handleReadIssue:(NSNotification *)notification
+{
+    IssueViewController *controller = notification.object;
+    [self readIssue:controller.issue];
 }
-
--(void)pushViewControllerWithBook:(BakerBook *)book {
+-(void)pushViewControllerWithBook:(BakerBook *)book
+{
     BakerViewController *bakerViewController = [[BakerViewController alloc] initWithBook:book];
     [self.navigationController pushViewController:bakerViewController animated:YES];
     [bakerViewController release];
