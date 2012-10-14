@@ -15,6 +15,7 @@
 		9F58D86615D682EA0027902C /* shelf-bg-portrait.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F58D86415D682EA0027902C /* shelf-bg-portrait.png */; };
 		9F5EB3BD15FCA3A100E13796 /* NSString+Extensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F5EB3BC15FCA3A100E13796 /* NSString+Extensions.m */; };
 		9F8FC1C415C55E8C0065F0A3 /* BakerBook.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F8FC1C315C55E8C0065F0A3 /* BakerBook.m */; };
+		9FAB40DA162B13CF0088E9C1 /* UIColor+Extensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FAB40D9162B13CF0088E9C1 /* UIColor+Extensions.m */; };
 		9FF7959915B4C4F600899E51 /* AQGridView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF7958315B4C4F600899E51 /* AQGridView.m */; };
 		9FF7959A15B4C4F600899E51 /* AQGridViewAnimatorItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF7958515B4C4F600899E51 /* AQGridViewAnimatorItem.m */; };
 		9FF7959B15B4C4F600899E51 /* AQGridViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF7958815B4C4F600899E51 /* AQGridViewCell.m */; };
@@ -79,6 +80,8 @@
 		9F5EB3BC15FCA3A100E13796 /* NSString+Extensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Extensions.m"; sourceTree = "<group>"; };
 		9F8FC1C215C55E8C0065F0A3 /* BakerBook.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BakerBook.h; sourceTree = "<group>"; };
 		9F8FC1C315C55E8C0065F0A3 /* BakerBook.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BakerBook.m; sourceTree = "<group>"; };
+		9FAB40D8162B13CF0088E9C1 /* UIColor+Extensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+Extensions.h"; sourceTree = "<group>"; };
+		9FAB40D9162B13CF0088E9C1 /* UIColor+Extensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+Extensions.m"; sourceTree = "<group>"; };
 		9FF7958015B4C4F600899E51 /* AQGridView+CellLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "AQGridView+CellLayout.h"; sourceTree = "<group>"; };
 		9FF7958115B4C4F600899E51 /* AQGridView+CellLocationDelegation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "AQGridView+CellLocationDelegation.h"; sourceTree = "<group>"; };
 		9FF7958215B4C4F600899E51 /* AQGridView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AQGridView.h; sourceTree = "<group>"; };
@@ -202,6 +205,8 @@
 				9FF7957F15B4C4F600899E51 /* AQGridView */,
 				9F5EB3BB15FCA3A100E13796 /* NSString+Extensions.h */,
 				9F5EB3BC15FCA3A100E13796 /* NSString+Extensions.m */,
+				9FAB40D8162B13CF0088E9C1 /* UIColor+Extensions.h */,
+				9FAB40D9162B13CF0088E9C1 /* UIColor+Extensions.m */,
 			);
 			path = lib;
 			sourceTree = "<group>";
@@ -242,18 +247,18 @@
 				AB40042E15B4B83000D87E2A /* img */,
 				AB40043715B4B83000D87E2A /* lib */,
 				AB40045015B4B83000D87E2A /* ui */,
+				AB40043515B4B83000D87E2A /* InterceptorWindow.h */,
+				AB40043615B4B83000D87E2A /* InterceptorWindow.m */,
 				9F8FC1C215C55E8C0065F0A3 /* BakerBook.h */,
 				9F8FC1C315C55E8C0065F0A3 /* BakerBook.m */,
+				AB26004F16011D9D00E9AA66 /* BakerBookStatus.h */,
+				AB26005016011D9D00E9AA66 /* BakerBookStatus.m */,
 				AB40042A15B4B83000D87E2A /* BakerViewController.h */,
 				AB40042B15B4B83000D87E2A /* BakerViewController.m */,
 				AB40043315B4B83000D87E2A /* IndexViewController.h */,
 				AB40043415B4B83000D87E2A /* IndexViewController.m */,
-				AB40043515B4B83000D87E2A /* InterceptorWindow.h */,
-				AB40043615B4B83000D87E2A /* InterceptorWindow.m */,
 				AB40044C15B4B83000D87E2A /* ModalViewController.h */,
 				AB40044D15B4B83000D87E2A /* ModalViewController.m */,
-				AB26004F16011D9D00E9AA66 /* BakerBookStatus.h */,
-				AB26005016011D9D00E9AA66 /* BakerBookStatus.m */,
 			);
 			path = BakerView;
 			sourceTree = "<group>";
@@ -324,21 +329,21 @@
 			children = (
 				9F58D85E15D6743C0027902C /* img */,
 				9FF7957E15B4C4F600899E51 /* lib */,
-				AB40047C15B4B8B800D87E2A /* ShelfManager.h */,
-				AB40047D15B4B8B800D87E2A /* ShelfManager.m */,
-				9FF795A515B4C57D00899E51 /* ShelfViewController.h */,
-				9FF795A615B4C57E00899E51 /* ShelfViewController.m */,
-				9F58D84D15D66E870027902C /* UICustomNavigationBar.h */,
-				9F58D84E15D66E870027902C /* UICustomNavigationBar.m */,
 				9F58D84F15D66E870027902C /* UICustomNavigationController.h */,
 				9F58D85015D66E870027902C /* UICustomNavigationController.m */,
+				9F58D84D15D66E870027902C /* UICustomNavigationBar.h */,
+				9F58D84E15D66E870027902C /* UICustomNavigationBar.m */,
 				ABD7D45D1616FC5B008B13B5 /* BakerIssue.h */,
 				ABD7D45E1616FC5B008B13B5 /* BakerIssue.m */,
 				ABC270CF1616F3CB00AD97E9 /* IssuesManager.h */,
 				ABC270D01616F3CB00AD97E9 /* IssuesManager.m */,
-				AB379313161759A900B4C1A3 /* Constants.h */,
+				AB40047C15B4B8B800D87E2A /* ShelfManager.h */,
+				AB40047D15B4B8B800D87E2A /* ShelfManager.m */,
+				9FF795A515B4C57D00899E51 /* ShelfViewController.h */,
+				9FF795A615B4C57E00899E51 /* ShelfViewController.m */,
 				ABD24C1C1620309B0042E49C /* IssueViewController.h */,
 				ABD24C1D1620309B0042E49C /* IssueViewController.m */,
+				AB379313161759A900B4C1A3 /* Constants.h */,
 			);
 			path = BakerShelf;
 			sourceTree = "<group>";
@@ -521,6 +526,7 @@
 				ABD7D45F1616FC5B008B13B5 /* BakerIssue.m in Sources */,
 				ABC270D11616F3CB00AD97E9 /* IssuesManager.m in Sources */,
 				ABD24C1E1620309B0042E49C /* IssueViewController.m in Sources */,
+				9FAB40DA162B13CF0088E9C1 /* UIColor+Extensions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
