@@ -65,7 +65,15 @@
         BakerIssue *issue = [[[BakerIssue alloc] initWithIssueData:obj] autorelease];
         [tmpIssues addObject:issue];
     }];
-    self.issues = [[NSArray alloc] initWithArray:tmpIssues];
+
+    // Issues are sorted from the most recent to the least recent
+    NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
+    [dateFormat setDateFormat:@"YYYY-MM-DD HH:MM:SS"];
+    self.issues = [tmpIssues sortedArrayUsingComparator:^NSComparisonResult(id a, id b) {
+        NSDate *first = [dateFormat dateFromString:[(BakerIssue*)a date]];
+        NSDate *second = [dateFormat dateFromString:[(BakerIssue*)b date]];
+        return [second compare:first];
+    }];
 }
 -(void)updateNewsstandIssuesList:(NSArray *)issuesList {
     NKLibrary *nkLib = [NKLibrary sharedLibrary];
