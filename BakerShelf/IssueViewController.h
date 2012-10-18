@@ -36,12 +36,12 @@
     NSString *currentAction;
 }
 
-@property (retain, nonatomic) BakerIssue *issue;
-@property (retain, nonatomic) UIButton *actionButton;
-@property (retain, nonatomic) UIButton *archiveButton;
-@property (retain, nonatomic) UIProgressView *progressBar;
-@property (retain, nonatomic) UIActivityIndicatorView *spinner;
-@property (retain, nonatomic) UILabel *loadingLabel;
+@property (strong, nonatomic) BakerIssue *issue;
+@property (strong, nonatomic) UIButton *actionButton;
+@property (strong, nonatomic) UIButton *archiveButton;
+@property (strong, nonatomic) UIProgressView *progressBar;
+@property (strong, nonatomic) UIActivityIndicatorView *spinner;
+@property (strong, nonatomic) UILabel *loadingLabel;
 
 #pragma mark - Init
 - (id)initWithBakerIssue:(BakerIssue *)bakerIssue;
