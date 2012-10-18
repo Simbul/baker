@@ -242,6 +242,7 @@
     [archiveButton release];
     [progressBar release];
     [spinner release];
+    [loadingLabel release];
     
     [super dealloc];
 }
