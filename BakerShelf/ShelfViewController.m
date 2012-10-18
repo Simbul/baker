@@ -40,6 +40,7 @@
 
 @synthesize issues;
 @synthesize issueViewControllers;
+@synthesize gridView;
 
 #pragma mark - Init
 
@@ -71,6 +72,7 @@
 
 - (void)dealloc
 {
+    [gridView release];
     [issueViewControllers release];
     [issues release];
     
@@ -84,16 +86,26 @@
     [super viewDidLoad];
 
     self.navigationItem.title = @"Baker Shelf";
-    
+
+    self.background = [[UIImageView alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    self.background.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+
+    self.gridView = [[AQGridView alloc] init];
+    self.gridView.dataSource = self;
+    self.gridView.delegate = self;
+    self.gridView.backgroundColor = [UIColor clearColor];
+
+    [self.view addSubview:self.background];
+    [self.view addSubview:self.gridView];
+
     [self willRotateToInterfaceOrientation:self.interfaceOrientation duration:0];
     [self.gridView reloadData];
 }
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-
     [self.navigationController.navigationBar setTranslucent:NO];
-    
+
     for (IssueViewController *controller in self.issueViewControllers) {
         [controller refresh];
     }
@@ -111,12 +123,25 @@
     return YES;
 }
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
-{    
+{
+    float width  = 0;
+    float height = 0;
+
+    NSString *image = @"";
+    CGSize size = [UIScreen mainScreen].bounds.size;
+
     if (UIInterfaceOrientationIsPortrait(toInterfaceOrientation)) {
-        //self.gridView.backgroundColor  = [UIColor colorWithPatternImage:[UIImage imageNamed:@"shelf-bg-portrait.png"]];
+        width  = size.width;
+        height = size.height;
+        image  = @"shelf-bg-portrait.png";
     } else if (UIInterfaceOrientationIsLandscape(toInterfaceOrientation)) {
-        //self.gridView.backgroundColor  = [UIColor colorWithPatternImage:[UIImage imageNamed:@"shelf-bg-landscape.png"]];
+        width  = size.height;
+        height = size.width;
+        image  = @"shelf-bg-landscape.png";
     }
+
+    self.background.image = [UIImage imageNamed:image];
+    self.gridView.frame = CGRectMake(0, 240, width, height - 240);
 }
 
 #pragma mark - Shelf data source
@@ -134,7 +159,10 @@
 	{
 		cell = [[[AQGridViewCell alloc] initWithFrame:CGRectMake(0, 0, 384, 240) reuseIdentifier:cellIdentifier] autorelease];
 		cell.selectionStyle = AQGridViewCellSelectionStyleNone;
-                
+
+        cell.contentView.backgroundColor = [UIColor clearColor];
+        cell.backgroundColor = [UIColor clearColor];
+
         IssueViewController *controller = [self.issueViewControllers objectAtIndex:index];
         [cell.contentView addSubview:controller.view];
 	}
@@ -147,9 +175,9 @@
 
 #pragma mark - Navigation management
 
-- (void)gridView:(AQGridView *)gridView didSelectItemAtIndex:(NSUInteger)index
+- (void)gridView:(AQGridView *)myGridView didSelectItemAtIndex:(NSUInteger)index
 {
-    [gridView deselectItemAtIndex:index animated:NO];
+    [myGridView deselectItemAtIndex:index animated:NO];
 }
 - (void)readIssue:(BakerIssue *)issue
 {

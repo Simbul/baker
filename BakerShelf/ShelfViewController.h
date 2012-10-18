@@ -30,13 +30,17 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "AQGridViewController.h"
+
+#import "AQGridView.h"
 #import "BakerIssue.h"
 
-@interface ShelfViewController : AQGridViewController
+@interface ShelfViewController : UIViewController <AQGridViewDataSource, AQGridViewDelegate>
 
 @property (copy, nonatomic) NSArray *issues;
 @property (copy, nonatomic) NSArray *issueViewControllers;
+
+@property (strong, nonatomic) AQGridView *gridView;
+@property (strong, nonatomic) UIImageView *background;
 
 #pragma mark - Init
 - (id)initWithBooks:(NSArray *)currentBooks;
