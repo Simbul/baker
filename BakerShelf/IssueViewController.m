@@ -67,17 +67,20 @@
 
 #pragma mark - View Lifecycle
 
-- (void)loadView
+- (void)viewDidLoad
 {
-    [super loadView];
+    [super viewDidLoad];
     
-    self.view = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, 384, 240)] autorelease];
+    self.view.frame = CGRectMake(0, 0, 384, 240);
+    self.view.backgroundColor = [UIColor clearColor];
     
     // SETUP COVER IMAGE
     [self.issue getCover:^(UIImage *image) {
         UIImageView *issueCover = [[[UIImageView alloc] initWithImage:image] autorelease];
         
         issueCover.frame = CGRectMake(30, 30, 135, 180);
+        issueCover.backgroundColor = [UIColor clearColor];
+
         issueCover.layer.shadowOpacity = 0.5;
         issueCover.layer.shadowOffset = CGSizeMake(0, 2);
         issueCover.layer.shouldRasterize = YES;
@@ -102,6 +105,7 @@
     
     UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(184, heightOffset, 170, textLineheight * titleLines)];
     titleLabel.textColor = [UIColor blackColor];
+    titleLabel.backgroundColor = [UIColor clearColor];
     titleLabel.lineBreakMode = UILineBreakModeTailTruncation;
     titleLabel.textAlignment = UITextAlignmentLeft;
     titleLabel.numberOfLines = titleLines;
@@ -120,6 +124,7 @@
     
     UILabel *infoLabel = [[UILabel alloc] initWithFrame:CGRectMake(184, heightOffset, 170, textLineheight * infoLines)];
     infoLabel.textColor = [UIColor colorWithHexString:@"#929292"];
+    infoLabel.backgroundColor = [UIColor clearColor];
     infoLabel.lineBreakMode = UILineBreakModeTailTruncation;
     infoLabel.textAlignment = UITextAlignmentLeft;
     infoLabel.numberOfLines = infoLines;
@@ -163,10 +168,12 @@
     // SETUP DOWN/LOADING SPINNER AND LABEL
     self.spinner = [[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray] autorelease];
     spinner.frame = CGRectMake(180, heightOffset, 30, 30);
+    spinner.backgroundColor = [UIColor clearColor];
     spinner.hidesWhenStopped = YES;
     
     self.loadingLabel = [[UILabel alloc] initWithFrame:CGRectMake(215, heightOffset, 135, 30)];
     loadingLabel.textColor = [UIColor colorWithHexString:@"#b72529"];
+    loadingLabel.backgroundColor = [UIColor clearColor];
     loadingLabel.textAlignment = UITextAlignmentLeft;
     loadingLabel.text = DOWNLOADING_TEXT;
     loadingLabel.font = actionFont;
@@ -182,6 +189,11 @@
     self.progressBar.frame = CGRectMake(184, heightOffset, 170, 30);
     
     [self.view addSubview:progressBar];
+}
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    [self refresh];
 }
 - (void)refresh
 {
