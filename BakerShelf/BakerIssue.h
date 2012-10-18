@@ -42,6 +42,7 @@
 
 @property (copy, nonatomic) NSString *ID;
 @property (copy, nonatomic) NSString *title;
+@property (copy, nonatomic) NSString *info;
 @property (copy, nonatomic) NSString *date;
 @property (copy, nonatomic) NSURL *url;
 @property (copy, nonatomic) NSString *path;

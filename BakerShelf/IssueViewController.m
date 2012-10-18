@@ -115,7 +115,7 @@
 
     
     // SETUP INFO LABEL
-    CGSize infoSize = [@"Some info, including author name" sizeWithFont:textFont constrainedToSize:CGSizeMake(170, MAXFLOAT) lineBreakMode:UILineBreakModeWordWrap];
+    CGSize infoSize = [self.issue.info sizeWithFont:textFont constrainedToSize:CGSizeMake(170, MAXFLOAT) lineBreakMode:UILineBreakModeWordWrap];
     uint infoLines = MIN(4, infoSize.height / textLineheight);
     
     UILabel *infoLabel = [[UILabel alloc] initWithFrame:CGRectMake(184, heightOffset, 170, textLineheight * infoLines)];
@@ -123,7 +123,7 @@
     infoLabel.lineBreakMode = UILineBreakModeTailTruncation;
     infoLabel.textAlignment = UITextAlignmentLeft;
     infoLabel.numberOfLines = infoLines;
-    infoLabel.text = @"Some info, including author name";
+    infoLabel.text = self.issue.info;
     infoLabel.font = textFont;
     
     [self.view addSubview:infoLabel];

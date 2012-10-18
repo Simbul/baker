@@ -35,6 +35,7 @@
 
 @synthesize ID;
 @synthesize title;
+@synthesize info;
 @synthesize date;
 @synthesize url;
 @synthesize path;
@@ -47,6 +48,7 @@
     if (self) {
         self.ID = book.ID;
         self.title = book.title;
+        self.info = @"";
         self.date = book.date;
         self.url = [NSURL URLWithString:book.url];
         self.path = book.path;
@@ -70,6 +72,7 @@
     if (self) {
         self.ID = [issueData objectForKey:@"name"];
         self.title = [issueData objectForKey:@"title"];
+        self.info = [issueData objectForKey:@"info"];
         self.date = [issueData objectForKey:@"date"];
         self.coverURL = [NSURL URLWithString:[issueData objectForKey:@"cover"]];
         self.url = [NSURL URLWithString:[issueData objectForKey:@"url"]];
@@ -141,6 +144,7 @@
 -(void)dealloc {
     [ID release];
     [title release];
+    [info release];
     [date release];
     [url release];
     [path release];
