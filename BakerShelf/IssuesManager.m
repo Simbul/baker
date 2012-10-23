@@ -68,7 +68,7 @@
         
         // Issues are sorted from the most recent to the least recent
         NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
-        [dateFormat setDateFormat:@"YYYY-MM-DD HH:MM:SS"];
+        [dateFormat setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
         self.issues = [tmpIssues sortedArrayUsingComparator:^NSComparisonResult(id a, id b) {
             NSDate *first = [dateFormat dateFromString:[(BakerIssue*)a date]];
             NSDate *second = [dateFormat dateFromString:[(BakerIssue*)b date]];
@@ -81,7 +81,7 @@
     
     for (NSDictionary *issue in issuesList) {
         NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
-        [dateFormat setDateFormat:@"YYYY-MM-DD HH:MM:SS"];
+        [dateFormat setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
         NSDate *date = [dateFormat dateFromString:[issue objectForKey:@"date"]];
         NSString *name = [issue objectForKey:@"name"];
         
