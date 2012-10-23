@@ -115,6 +115,7 @@
     [super viewWillAppear:animated];
     [self.navigationController.navigationBar setTranslucent:NO];
 
+    [self handleRefresh:nil];
     for (IssueViewController *controller in self.issueViewControllers) {
         [controller refresh];
     }
