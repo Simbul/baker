@@ -237,8 +237,8 @@
         self.progressBar.hidden = YES;
     } else if ([status isEqualToString:@"opening"]) {
         [self.spinner startAnimating];
-        self.actionButton.hidden = NO;
-        self.archiveButton.hidden = NO;
+        self.actionButton.hidden = YES;
+        self.archiveButton.hidden = YES;
         self.loadingLabel.text = OPENING_TEXT;
         self.loadingLabel.hidden = NO;
         self.progressBar.hidden = YES;
