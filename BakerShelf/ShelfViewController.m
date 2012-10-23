@@ -41,6 +41,7 @@
 @synthesize issues;
 @synthesize issueViewControllers;
 @synthesize gridView;
+@synthesize issuesManager;
 
 #pragma mark - Init
 
@@ -59,11 +60,10 @@
         self.issues = currentBooks;
         NSMutableArray *controllers = [NSMutableArray array];
         for (BakerIssue *issue in self.issues) {
-            IssueViewController *controller = [[[IssueViewController alloc] initWithBakerIssue:issue] autorelease];
-            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleReadIssue:) name:@"read_issue_request" object:controller];
+            IssueViewController *controller = [self createIssueViewControllerWithIssue:issue];
             [controllers addObject:controller];
         }
-        self.issueViewControllers = [NSArray arrayWithArray:controllers];
+        self.issueViewControllers = [NSMutableArray arrayWithArray:controllers];
     }
     return self;
 }
@@ -100,6 +100,15 @@
 
     [self willRotateToInterfaceOrientation:self.interfaceOrientation duration:0];
     [self.gridView reloadData];
+
+#ifdef BAKER_NEWSSTAND
+    UIBarButtonItem *button = [[UIBarButtonItem alloc]
+                               initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh
+                               target:self
+                               action:@selector(handleRefresh:)];
+    self.navigationItem.leftBarButtonItem = button;
+    [button release];
+#endif
 }
 - (void)viewWillAppear:(BOOL)animated
 {
@@ -143,6 +152,11 @@
     self.background.image = [UIImage imageNamed:image];
     self.gridView.frame = CGRectMake(0, 240, width, height - 240);
 }
+- (IssueViewController *)createIssueViewControllerWithIssue:(BakerIssue *)issue {
+    IssueViewController *controller = [[[IssueViewController alloc] initWithBakerIssue:issue] autorelease];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleReadIssue:) name:@"read_issue_request" object:controller];
+    return controller;
+}
 
 #pragma mark - Shelf data source
 
@@ -163,14 +177,34 @@
         cell.contentView.backgroundColor = [UIColor clearColor];
         cell.backgroundColor = [UIColor clearColor];
 
-        IssueViewController *controller = [self.issueViewControllers objectAtIndex:index];
-        [cell.contentView addSubview:controller.view];
 	}
+    
+    IssueViewController *controller = [self.issueViewControllers objectAtIndex:index];
+    [cell.contentView addSubview:controller.view];
+    
     return cell;
 }
 - (CGSize)portraitGridCellSizeForGridView:(AQGridView *)aGridView
 {
     return CGSizeMake(384, 240);
+}
+
+- (void)handleRefresh:(NSNotification *)notification {
+    if (!self.issuesManager) {
+        self.issuesManager = [[[IssuesManager alloc] initWithURL:NEWSSTAND_MANIFEST_URL] autorelease];
+    }
+    [self.issuesManager refresh];
+    self.issues = issuesManager.issues;
+    
+    [self.issues enumerateObjectsUsingBlock:^(id object, NSUInteger idx, BOOL *stop) {
+        IssueViewController *existingIvc = [self.issueViewControllers objectAtIndex:idx];
+        BakerIssue *issue = (BakerIssue*)object;
+        if (![[existingIvc issue].ID isEqualToString:issue.ID]) {
+            IssueViewController *ivc = [self createIssueViewControllerWithIssue:issue];
+            [self.issueViewControllers insertObject:ivc atIndex:idx];
+            [self.gridView insertItemsAtIndices:[NSIndexSet indexSetWithIndex:idx] withAnimation:AQGridViewItemAnimationNone];
+        }
+    }];
 }
 
 #pragma mark - Navigation management

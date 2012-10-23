@@ -33,11 +33,13 @@
 
 #import "AQGridView.h"
 #import "BakerIssue.h"
+#import "IssuesManager.h"
 
 @interface ShelfViewController : UIViewController <AQGridViewDataSource, AQGridViewDelegate>
 
 @property (copy, nonatomic) NSArray *issues;
-@property (copy, nonatomic) NSArray *issueViewControllers;
+@property (retain, nonatomic) NSMutableArray *issueViewControllers;
+@property (retain, nonatomic) IssuesManager *issuesManager;
 
 @property (strong, nonatomic) AQGridView *gridView;
 @property (strong, nonatomic) UIImageView *background;

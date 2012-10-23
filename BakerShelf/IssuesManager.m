@@ -55,11 +55,7 @@
     NSArray *jsonArr = [json objectFromJSONString];
 
     [self updateNewsstandIssuesList:jsonArr];
-    
-    if (self.issues) {
-        [self.issues release];
-    }
-    
+        
     NSMutableArray *tmpIssues = [NSMutableArray array];
     [jsonArr enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         BakerIssue *issue = [[[BakerIssue alloc] initWithIssueData:obj] autorelease];
