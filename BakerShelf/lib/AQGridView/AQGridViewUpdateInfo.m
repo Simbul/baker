@@ -70,6 +70,8 @@
 		free( _oldToNewIndexMap );
 	if ( _newToOldIndexMap != NULL )
 		free( _newToOldIndexMap );
+	
+	[super dealloc];
 }
 
 - (NSMutableArray *) updateItemArrayForAction: (AQGridViewUpdateAction) action
