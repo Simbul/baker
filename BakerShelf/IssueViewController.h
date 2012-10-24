@@ -60,4 +60,8 @@
 - (void)archiveButtonPressed:(UIButton *)sender;
 #endif
 
+#pragma mark - Helper methods
+
++ (CGSize) issueCellSize;
+
 @end

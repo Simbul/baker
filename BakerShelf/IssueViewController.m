@@ -71,7 +71,9 @@
 {
     [super viewDidLoad];
     
-    self.view.frame = CGRectMake(0, 0, 384, 240);
+	CGRect cellFrame;
+	cellFrame.size = [[self class] issueCellSize];
+    self.view.frame = cellFrame;
     self.view.backgroundColor = [UIColor clearColor];
     
     // SETUP COVER IMAGE
@@ -331,5 +333,17 @@
 }
 
 #endif
+
+#pragma mark - Helper methods 
+
++ (CGSize) issueCellSize {
+	if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+		return CGSizeMake(384.0f, 240.0f);
+	}
+	else
+	{
+		return CGSizeMake(318.0f, 240.0f);
+	}
+}
 
 @end

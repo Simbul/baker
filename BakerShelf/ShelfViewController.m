@@ -151,7 +151,8 @@
     }
 
     self.background.image = [UIImage imageNamed:image];
-    self.gridView.frame = CGRectMake(0, 240, width, height - 240);
+	CGFloat headerHeight = [[self class] headerHeight];
+    self.gridView.frame = CGRectMake(0, headerHeight, width, height - headerHeight);
 }
 - (IssueViewController *)createIssueViewControllerWithIssue:(BakerIssue *)issue {
     IssueViewController *controller = [[[IssueViewController alloc] initWithBakerIssue:issue] autorelease];
@@ -172,7 +173,9 @@
     AQGridViewCell *cell = (AQGridViewCell *)[self.gridView dequeueReusableCellWithIdentifier:cellIdentifier];
 	if (cell == nil)
 	{
-		cell = [[[AQGridViewCell alloc] initWithFrame:CGRectMake(0, 0, 384, 240) reuseIdentifier:cellIdentifier] autorelease];
+		CGRect cellFrame;
+		cellFrame.size = [IssueViewController issueCellSize];
+		cell = [[[AQGridViewCell alloc] initWithFrame:cellFrame reuseIdentifier:cellIdentifier] autorelease]; 
 		cell.selectionStyle = AQGridViewCellSelectionStyleNone;
 
         cell.contentView.backgroundColor = [UIColor clearColor];
@@ -187,7 +190,7 @@
 }
 - (CGSize)portraitGridCellSizeForGridView:(AQGridView *)aGridView
 {
-    return CGSizeMake(384, 240);
+    return [IssueViewController issueCellSize];
 }
 
 - (void)handleRefresh:(NSNotification *)notification {
@@ -241,6 +244,17 @@
     BakerViewController *bakerViewController = [[BakerViewController alloc] initWithBook:book];
     [self.navigationController pushViewController:bakerViewController animated:YES];
     [bakerViewController release];
+}
+
+
++ (float) headerHeight {
+	if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+		return 240.0f;
+	}
+	else
+	{
+		return 110.0f;
+	}	
 }
 
 @end
