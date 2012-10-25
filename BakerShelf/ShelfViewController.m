@@ -115,7 +115,9 @@
     [super viewWillAppear:animated];
     [self.navigationController.navigationBar setTranslucent:NO];
 
+#ifdef BAKER_NEWSSTAND
     [self handleRefresh:nil];
+#endif
     for (IssueViewController *controller in self.issueViewControllers) {
         [controller refresh];
     }
