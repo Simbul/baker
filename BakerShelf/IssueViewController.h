@@ -52,7 +52,11 @@
 
 #pragma mark - Issue management
 - (void)actionButtonPressed:(UIButton *)sender;
+
+#ifdef NEWSSTAND
 - (void)download;
+#endif
+
 - (void)read;
 
 #ifdef BAKER_NEWSSTAND

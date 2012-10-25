@@ -267,25 +267,27 @@
 {    
     NSString *status = [self.issue getStatus];
     if ([status isEqualToString:@"remote"]) {
+#ifdef BAKER_NEWSSTAND
         [self download];
+#endif
     } else if ([status isEqualToString:@"downloaded"] || [status isEqualToString:@"bundled"]) {
         [self read];
     } else if ([status isEqualToString:@"downloading"]) {
         // TODO: assuming it is supported by NewsstandKit, implement a "Cancel" operation
     }
 }
+#ifdef BAKER_NEWSSTAND
 - (void)download
 {
     [self refresh:@"downloading"];
     [self.issue downloadWithDelegate:self];
 }
+#endif
 - (void)read
 {
     [self refresh:@"opening"];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"read_issue_request" object:self];
 }
-
-#ifdef BAKER_NEWSSTAND
 
 #pragma mark - Newsstand download management
 
@@ -295,6 +297,7 @@
 }
 - (void)connectionDidFinishDownloading:(NSURLConnection *)connection destinationURL:(NSURL *)destinationURL
 {
+#ifdef BAKER_NEWSSTAND
     NSLog(@"Connection did finish downloading %@", destinationURL);
     
     NKAssetDownload *dnl = connection.newsstandAssetDownload;
@@ -307,6 +310,7 @@
     [self refresh];
     
     // TODO: update Newsstand icon and add badge
+#endif
 }
 - (void)connectionDidResumeDownloading:(NSURLConnection *)connection totalBytesWritten:(long long)totalBytesWritten expectedTotalBytes:(long long)expectedTotalBytes
 {
@@ -317,6 +321,7 @@
 
 #pragma mark - Newsstand archive management
 
+#ifdef BAKER_NEWSSTAND
 - (void)archiveButtonPressed:(UIButton *)sender
 {
     NKLibrary *nkLib = [NKLibrary sharedLibrary];

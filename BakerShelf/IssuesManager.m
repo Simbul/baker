@@ -50,6 +50,7 @@
     return self;
 }
 
+#ifdef BAKER_NEWSSTAND
 -(void)refresh {
     NSError *error = nil;
     NSString *json = [NSString stringWithContentsOfURL:self.url encoding:NSUTF8StringEncoding error:&error];
@@ -98,6 +99,7 @@
         [dateFormat release];
     }
 }
+#endif
 
 -(void)dealloc {
     [issues release];

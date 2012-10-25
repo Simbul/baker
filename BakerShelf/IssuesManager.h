@@ -37,7 +37,9 @@
 @property (copy, nonatomic) NSURL *url;
 @property (copy, nonatomic) NSArray *issues;
 
+#ifdef BAKER_NEWSSTAND
 -(id)initWithURL:(NSString *)urlString;
 -(void)refresh;
+#endif
 
 @end

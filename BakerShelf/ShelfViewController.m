@@ -195,6 +195,7 @@
     return [IssueViewController issueCellSize];
 }
 
+#ifdef BAKER_NEWSSTAND
 - (void)handleRefresh:(NSNotification *)notification {
     if (!self.issuesManager) {
         self.issuesManager = [[[IssuesManager alloc] initWithURL:NEWSSTAND_MANIFEST_URL] autorelease];
@@ -212,6 +213,7 @@
         }
     }];
 }
+#endif
 
 #pragma mark - Navigation management
 
