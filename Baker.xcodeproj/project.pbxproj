@@ -20,6 +20,7 @@
 		BF43CBFE1517F9CE008B2C8B /* ios-icon-ipad@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BF43CBFA1517F9CE008B2C8B /* ios-icon-ipad@2x.png */; };
 		BF43CBFF1517F9CE008B2C8B /* ios-icon-iphone.png in Resources */ = {isa = PBXBuildFile; fileRef = BF43CBFB1517F9CE008B2C8B /* ios-icon-iphone.png */; };
 		BF43CC001517F9CE008B2C8B /* ios-icon-iphone@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BF43CBFC1517F9CE008B2C8B /* ios-icon-iphone@2x.png */; };
+		C6648471163935A000F63314 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6648470163935A000F63314 /* AVFoundation.framework */; };
 		D20915C413CB9FDC00D3B55B /* PropertiesTest.m in Sources */ = {isa = PBXBuildFile; fileRef = D20915C313CB9FDC00D3B55B /* PropertiesTest.m */; };
 		D21A0B86135CF1F2005D6E8A /* libOCMock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D21A0B85135CF1F2005D6E8A /* libOCMock.a */; };
 		D268D29B15A253A000108A0E /* BakerAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D268D29A15A253A000108A0E /* BakerAppDelegate.m */; };
@@ -82,6 +83,7 @@
 		BF43CBFA1517F9CE008B2C8B /* ios-icon-ipad@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ios-icon-ipad@2x.png"; sourceTree = "<group>"; };
 		BF43CBFB1517F9CE008B2C8B /* ios-icon-iphone.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ios-icon-iphone.png"; sourceTree = "<group>"; };
 		BF43CBFC1517F9CE008B2C8B /* ios-icon-iphone@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ios-icon-iphone@2x.png"; sourceTree = "<group>"; };
+		C6648470163935A000F63314 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		D20915C213CB9FDC00D3B55B /* PropertiesTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PropertiesTest.h; sourceTree = "<group>"; };
 		D20915C313CB9FDC00D3B55B /* PropertiesTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PropertiesTest.m; sourceTree = "<group>"; };
 		D21A0B85135CF1F2005D6E8A /* libOCMock.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libOCMock.a; sourceTree = "<group>"; };
@@ -135,6 +137,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C6648471163935A000F63314 /* AVFoundation.framework in Frameworks */,
 				578A4F2114B1AF570054CD50 /* MessageUI.framework in Frameworks */,
 				1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */,
 				1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */,
@@ -182,6 +185,7 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				C6648470163935A000F63314 /* AVFoundation.framework */,
 				ABA54B3A1614F679008E7771 /* Default-568h@2x.png */,
 				D268D29C15A2549E00108A0E /* Baker */,
 				BF2F993F1269379900E356EF /* book */,
