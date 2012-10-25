@@ -102,12 +102,20 @@
     [self.gridView reloadData];
 
 #ifdef BAKER_NEWSSTAND
-    UIBarButtonItem *button = [[UIBarButtonItem alloc]
-                               initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh
-                               target:self
-                               action:@selector(handleRefresh:)];
-    self.navigationItem.leftBarButtonItem = button;
-    [button release];
+    UIBarButtonItem *refreshButton = [[[UIBarButtonItem alloc]
+                                       initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh
+                                       target:self
+                                       action:@selector(handleRefresh:)]
+                                      autorelease];
+
+    UIBarButtonItem *subscribeButton = [[[UIBarButtonItem alloc]
+                                         initWithTitle:@"Subscribe"
+                                         style:UIBarButtonItemStylePlain
+                                         target:self
+                                         action:nil]
+                                        autorelease];
+    
+    self.navigationItem.leftBarButtonItems = [NSArray arrayWithObjects:refreshButton, subscribeButton, nil];
 #endif
 }
 - (void)viewWillAppear:(BOOL)animated
