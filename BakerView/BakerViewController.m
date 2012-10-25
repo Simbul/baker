@@ -30,6 +30,8 @@
 //
 
 #import <QuartzCore/QuartzCore.h>
+#import <sys/xattr.h>
+#import <AVFoundation/AVFoundation.h>
 
 #import "BakerViewController.h"
 #import "SSZipArchive.h"
@@ -87,6 +89,16 @@
         NSLog(@"STATUS: page: %@", bookStatus.page);
         NSLog(@"STATUS: scrollIndex: %@", bookStatus.scrollIndex);
         
+        
+        // ****** Initialize audio session for html5 audio
+        AVAudioSession *audioSession = [AVAudioSession sharedInstance];
+        BOOL ok;
+        NSError *setCategoryError = nil;
+        ok = [audioSession setCategory:AVAudioSessionCategoryPlayback
+                                 error:&setCategoryError];
+        if (!ok) {
+            NSLog(@"%s setCategoryError=%@", __PRETTY_FUNCTION__, setCategoryError);
+        }
         
         // ****** BOOK ENVIRONMENT
         pages  = [[NSMutableArray array] retain];
