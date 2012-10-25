@@ -1659,7 +1659,7 @@
             
             if ([[properties get:@"-baker-page-turn-tap", nil] boolValue]) [self changePage:page];
         }
-        else if ((touch.tapCount % 2) == 0) {
+        else if (touch.tapCount == 2) {
             NSLog(@"    Multi Tap TOGGLE STATUS BAR");
             [self toggleStatusBar];
         }
