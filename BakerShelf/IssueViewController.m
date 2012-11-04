@@ -309,7 +309,13 @@
     
     [self refresh];
     
-    // TODO: update Newsstand icon and add badge
+    // TODO: notify of new content with setApplicationIconBadgeNumber
+    
+    BakerBook *book = [[BakerBook alloc]initWithBookPath:destinationPath bundled:NO];
+    UIImage *coverImage = [UIImage imageWithContentsOfFile:[destinationPath stringByAppendingPathComponent:book.cover]];
+    if (coverImage) {
+        [[UIApplication sharedApplication] setNewsstandIconImage:coverImage];
+    }
 #endif
 }
 - (void)connectionDidResumeDownloading:(NSURLConnection *)connection totalBytesWritten:(long long)totalBytesWritten expectedTotalBytes:(long long)expectedTotalBytes
