@@ -86,7 +86,7 @@
     // ****** Title
     
     //Remove and Release Exsisting Title Label if it exsists already
-    if (_titleLabel != nil){
+    if (_titleLabel){
         [_titleLabel removeFromSuperview];
         [_titleLabel release];
         _titleLabel = nil;
@@ -101,7 +101,7 @@
     // ****** Webview
     
     //Remove and Release Exsisting Web View if it exsists already
-    if (_webView != nil){
+    if (_webView){
         [_webView removeFromSuperview];
         [_webView release];
         _webView = nil;

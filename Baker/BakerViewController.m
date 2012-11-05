@@ -1916,17 +1916,18 @@
 - (void)didReceiveMemoryWarning {
     // Releases the view if it doesn't have a superview.
     [super didReceiveMemoryWarning];
-    // Release any cached data, images, etc that aren't in use.
-}
-- (void)viewDidUnload {
     
-    [super viewDidUnload];
+    //Jettison Next and Previous Pages
+    if (prevPage){
+        [prevPage release];
+    }
     
-    // Set web views delegates to nil, mandatory before releasing UIWebview instances
-   // currPage.delegate = nil;
-    //nextPage.delegate = nil;
-   // prevPage.delegate = nil;
+    if (nextPage){
+        [nextPage release];
+    }
+    
 }
+
 - (void)dealloc {
     
     [cachedScreenshotsPath release];
