@@ -42,7 +42,6 @@
 #import "ModalViewController.h"
 #import "Properties.h"
 
-
 @class Downloader;
 
 @interface BakerViewController : UIViewController<BakerWrapperDataSource, BakerWrapperDelegate>  {
@@ -70,12 +69,6 @@
     PageViewController *prevPage;
     PageViewController *currPage;
     PageViewController *nextPage;
-    
-    int lastPageNumber;
-    
-    int pageWidth;
-    int pageHeight;
-    int currentPageHeight;
     
     NSString *URLDownload;
     Downloader *downloader;
