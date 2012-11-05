@@ -18,7 +18,12 @@
 {
     self = [super init];
     if (self) {
-        // Initialization code
+        
+        //Create a Page View Controller
+        _pageViewController = [[[UIPageViewController alloc] initWithTransitionStyle:UIPageViewControllerTransitionStylePageCurl navigationOrientation:UIPageViewControllerNavigationOrientationHorizontal options:nil] retain];
+        
+        //Set Page View Controller's View to be Wrapper's View
+        self.view = _pageViewController.view;
     }
     return self;
 }

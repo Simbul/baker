@@ -34,7 +34,7 @@
 #import <AVFoundation/AVFoundation.h>
 #import <MessageUI/MessageUI.h>
 
-
+#import "BakerWrapper.h"
 #import "IndexViewController.h"
 #import "ModalViewController.h"
 #import "Properties.h"
@@ -113,7 +113,7 @@
 }
 
 #pragma mark - PROPERTIES
-@property (nonatomic, retain) UIPageViewController *pageView;
+@property (nonatomic, retain) BakerWrapper *wrapperViewController;
 @property (nonatomic, retain) UIScrollView *scrollView;
 @property (nonatomic, retain) UIWebView *currPage;
 @property int currentPageNumber;

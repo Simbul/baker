@@ -34,6 +34,7 @@
 #import <AVFoundation/AVFoundation.h>
 
 #import "BakerViewController.h"
+#import "BakerScrollWrapper.h"
 #import "Downloader.h"
 #import "SSZipArchive.h"
 #import "PageTitleLabel.h"
@@ -73,13 +74,9 @@
 #define MAX_SCREENSHOT_AFTER_CP  10
 #define MAX_SCREENSHOT_BEFORE_CP 10
 
-//USE PAGEVIEW
-#define USEPAGEVIEW YES
-
 @implementation BakerViewController
 
 #pragma mark - SYNTHESIS
-@synthesize pageView;
 @synthesize scrollView;
 @synthesize currPage;
 @synthesize currentPageNumber;
@@ -155,29 +152,27 @@
         pageNameFromURL = nil;
         anchorFromURL = nil;
         
+        /// ****** WRAPPER VIEW INIT
+        _wrapperViewController = [[BakerScrollWrapper alloc] initWithFrame:CGRectMake(0, 0, pageWidth, pageHeight)];
+        
+        [self addChildViewController:_wrapperViewController];
+        [self.view addSubview:_wrapperViewController.view];
+        
         if (!USEPAGEVIEW){
             
             // ****** SCROLLVIEW INIT
-            self.scrollView = [[[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, pageWidth, pageHeight)] autorelease];
             scrollView.showsHorizontalScrollIndicator = YES;
             scrollView.showsVerticalScrollIndicator = NO;
             scrollView.delaysContentTouches = NO;
             scrollView.pagingEnabled = YES;
             scrollView.delegate = self;
         
-            [self.view addSubview:scrollView];
-            
         } else {
         
-            // ****** PAGEVIEW INIT
-            self.pageView = [[[UIPageViewController alloc] initWithTransitionStyle:UIPageViewControllerTransitionStylePageCurl navigationOrientation:UIPageViewControllerNavigationOrientationHorizontal options:nil] autorelease];
+ 
             pageView.dataSource = self;
             pageView.delegate = self;
-            [[pageView view] setFrame:[[self view] bounds]];
-            
-            [self addChildViewController:pageView];
-            [self.view addSubview:pageView.view];
-            [pageView didMoveToParentViewController:self];
+
             self.view.gestureRecognizers = self.pageView.gestureRecognizers;
         }
         

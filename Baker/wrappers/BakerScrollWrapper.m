@@ -14,7 +14,12 @@
 {
     self = [super init];
     if (self) {
-        // Initialization code
+        
+        //Create a Scroll View
+        _scrollView = [[[UIScrollView alloc] initWithFrame:frame] retain];
+        
+        //Set Scroll View to be Wrapper's View
+        self.view = _scrollView;
     }
     return self;
 }

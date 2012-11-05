@@ -8,6 +8,12 @@
 
 #import <UIKit/UIKit.h>
 
-@interface PageViewControllerWrapper : UIPageViewController
+#import "BakerWrapper.h"
+#import "BakerWrapperDataSource.h"
+#import "BakerWrapperDelegate.h"
+
+@interface PageViewControllerWrapper : BakerWrapper{
+    UIPageViewController *_pageViewController;
+}
 
 @end
