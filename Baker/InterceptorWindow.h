@@ -34,6 +34,6 @@
 @interface InterceptorWindow : UIWindow
 
 #pragma mark - Events management
-- (void)interceptEvent:(UIEvent *)event;
+//- (void)interceptEvent:(UIEvent *)event;
 
 @end

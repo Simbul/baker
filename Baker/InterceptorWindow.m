@@ -35,6 +35,7 @@
 
 #pragma mark - Events management
 
+
 - (void)sendEvent:(UIEvent *)event {
     
     [super sendEvent:event];

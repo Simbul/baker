@@ -31,18 +31,19 @@
 
 
 #import <UIKit/UIKit.h>
+#import <AVFoundation/AVFoundation.h>
 #import <MessageUI/MessageUI.h>
+
+#import "BakerWrapperDatasource.h"
 #import "IndexViewController.h"
 #import "ModalViewController.h"
 #import "Properties.h"
 
-
 @class Downloader;
 
-@interface BakerViewController : UIViewController <UIWebViewDelegate, UIScrollViewDelegate, MFMailComposeViewControllerDelegate, modalWebViewDelegate> {
+@interface BakerViewControllerNew : UIViewController <BakerWrapperDatasource, UIWebViewDelegate, UIScrollViewDelegate, MFMailComposeViewControllerDelegate, modalWebViewDelegate, UIPageViewControllerDataSource, UIPageViewControllerDelegate>{
     
     CGRect screenBounds;
-    
     
     NSString *currentBookPath;
     NSString *bundleBookPath;
@@ -50,147 +51,12 @@
     NSString *defaultScreeshotsPath;
     NSString *cachedScreenshotsPath;
     
-    NSString *availableOrientation;
-    NSString *renderingType;
-    
-    NSMutableArray *pages;
-    NSMutableArray *toLoad;
-    
-    NSMutableArray *pageDetails;
-    NSMutableDictionary *attachedScreenshotPortrait;
-    NSMutableDictionary *attachedScreenshotLandscape;
-    
-    UIImage *backgroundImageLandscape;
-    UIImage *backgroundImagePortrait;
-    
-    NSString *pageNameFromURL;
-    NSString *anchorFromURL;
-    
-    int tapNumber;
-    int stackedScrollingAnimations;
-    
-    BOOL currentPageFirstLoading;
-    BOOL currentPageIsDelayingLoading;
-    BOOL currentPageHasChanged;
-    BOOL currentPageIsLocked;
-    BOOL userIsScrolling;
-    BOOL shouldPropagateInterceptedTouch;
-    
-    UIScrollView *scrollView;
-    UIWebView *prevPage;
-    UIWebView *currPage;
-    UIWebView *nextPage;
-    
-    UIColor *webViewBackground;
-    
-    CGRect upTapArea;
-    CGRect downTapArea;
-    CGRect leftTapArea;
-    CGRect rightTapArea;
-    
-    int totalPages;
-    int lastPageNumber;
-    int currentPageNumber;
-    
-    int pageWidth;
-    int pageHeight;
-    int currentPageHeight;
-    
-    NSString *URLDownload;
-    Downloader *downloader;
-    UIAlertView *feedbackAlert;
-    
-    IndexViewController *indexViewController;
-    ModalViewController *myModalViewController;
-    
     Properties *properties;
 }
 
-#pragma mark - PROPERTIES
-@property (nonatomic, retain) UIScrollView *scrollView;
-@property (nonatomic, retain) UIWebView *currPage;
-@property int currentPageNumber;
+@property (strong, nonatomic)UIViewController *pageViewWrapper;
 
 #pragma mark - INIT
 - (id)initWithBookPath:(NSString *)bookPath;
-- (BOOL)loadBookWithBookPath:(NSString *)bookPath;
-- (void)cleanupBookEnvironment;
-- (void)resetPageSlots;
-- (void)resetPageDetails;
-- (void)loadBookProperties;
-- (void)buildPageArray;
-- (void)startReadingFromPage:(int)pageNumber anchor:(NSString *)anchor;
-- (void)startReading;
-- (void)buildPageDetails;
-- (void)setImageFor:(UIImageView *)view;
-- (void)updateBookLayout;
-- (void)setPageSize:(NSString *)orientation;
-- (void)setTappableAreaSize;
-- (void)showPageDetails;
-- (void)setFrame:(CGRect)frame forPage:(UIWebView *)page;
-
-- (void)setupWebView:(UIWebView *)webView;
-- (void)addSkipBackupAttributeToItemAtPath:(NSString *)path;
-
-#pragma mark - LOADING
-- (BOOL)changePage:(int)page;
-- (void)gotoPageDelayer;
-- (void)gotoPage;
-- (void)lockPage:(NSNumber *)lock;
-- (void)addPageLoading:(int)slot;
-- (void)handlePageLoading;
-- (void)loadSlot:(int)slot withPage:(int)page;
-- (BOOL)loadWebView:(UIWebView *)webview withPage:(int)page;
-- (NSDictionary *)bookCurrentStatus;
-
-#pragma mark - MODAL WEBVIEW
-- (void)loadModalWebView:(NSURL *)url;
-- (void)closeModalWebView;
-
-#pragma mark - SCROLLVIEW
-- (CGRect)frameForPage:(int)page;
-- (void)updateBookLayout;
-
-#pragma mark - WEBVIEW
-- (void)webView:(UIWebView *)webView hidden:(BOOL)status animating:(BOOL)animating;
-- (void)webViewDidAppear:(UIWebView *)webView animating:(BOOL)animating;
-- (void)webView:(UIWebView *)webView dispatchHTMLEvent:(NSString *)event;
-- (void)webView:(UIWebView *)webView setCorrectOrientation:(UIInterfaceOrientation)interfaceOrientation;
-
-#pragma mark - SCREENSHOTS
-- (void)removeScreenshots;
-- (void)updateScreenshots;
-- (BOOL)checkScreeshotForPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation;
-- (void)takeScreenshotFromView:(UIWebView *)webView forPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation;
-- (void)placeScreenshotForView:(UIWebView *)webView andPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation;
-
-#pragma mark - GESTURES
-- (void)handleInterceptedTouch:(NSNotification *)notification;
-- (void)userDidTap:(UITouch *)touch;
-- (void)userDidScroll:(UITouch *)touch;
-
-#pragma mark - PAGE SCROLLING
-- (void)setCurrentPageHeight;
-- (int)getCurrentPageOffset;
-- (void)scrollUpCurrentPage:(int)offset animating:(BOOL)animating;
-- (void)scrollDownCurrentPage:(int)offset animating:(BOOL)animating;
-- (void)scrollPage:(UIWebView *)webView to:(NSString *)offset animating:(BOOL)animating;
-- (void)handleAnchor:(BOOL)animating;
-
-#pragma mark - STATUS BAR
-- (void)toggleStatusBar;
-- (void)hideStatusBar;
-
-#pragma mark - DOWNLOAD NEW BOOKS
-- (void)downloadBook:(NSNotification *)notification;
-- (void)startDownloadRequest;
-- (void)handleDownloadResult:(NSNotification *)notification;
-- (void)manageDownloadData:(NSData *)data;
-
-#pragma mark - ORIENTATION
-- (NSString *)getCurrentInterfaceOrientation;
-
-#pragma mark - INDEX VIEW
-- (BOOL)isIndexView:(UIWebView *)webView;
 
 @end

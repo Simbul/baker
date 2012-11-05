@@ -150,7 +150,7 @@
 - (void)postNotification {
     
     [UIApplication sharedApplication].idleTimerDisabled = NO;
-    [[NSNotificationCenter defaultCenter] postNotificationName:notificationName object:requestSummary];
+    //[[NSNotificationCenter defaultCenter] postNotificationName:notificationName object:requestSummary];
 }
 - (void)cancelConnection {
     

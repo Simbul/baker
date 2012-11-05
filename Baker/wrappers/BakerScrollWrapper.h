@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface BakerScrollWrapper : UIScrollView
+@interface BakerScrollWrapper : UIViewController
 
 @end

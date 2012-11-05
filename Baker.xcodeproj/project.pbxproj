@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1A700899164747F600EE6D45 /* BakerViewController.h in Resources */ = {isa = PBXBuildFile; fileRef = 1A700898164747F600EE6D45 /* BakerViewController.h */; };
+		1A70089B1647480400EE6D45 /* BakerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A70089A1647480400EE6D45 /* BakerViewController.m */; };
+		1AC287AE16472F0E00EDF0E9 /* BakerScrollWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AC287AD16472F0E00EDF0E9 /* BakerScrollWrapper.m */; };
+		1AC287B116472F3500EDF0E9 /* PageViewControllerWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AC287B016472F3500EDF0E9 /* PageViewControllerWrapper.m */; };
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
@@ -24,7 +28,7 @@
 		D20915C413CB9FDC00D3B55B /* PropertiesTest.m in Sources */ = {isa = PBXBuildFile; fileRef = D20915C313CB9FDC00D3B55B /* PropertiesTest.m */; };
 		D21A0B86135CF1F2005D6E8A /* libOCMock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D21A0B85135CF1F2005D6E8A /* libOCMock.a */; };
 		D268D29B15A253A000108A0E /* BakerAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D268D29A15A253A000108A0E /* BakerAppDelegate.m */; };
-		D268D2C615A2549E00108A0E /* BakerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D268D29E15A2549E00108A0E /* BakerViewController.m */; };
+		D268D2C615A2549E00108A0E /* BakerViewControllerNew.m in Sources */ = {isa = PBXBuildFile; fileRef = D268D29E15A2549E00108A0E /* BakerViewControllerNew.m */; };
 		D268D2C715A2549E00108A0E /* Downloader.m in Sources */ = {isa = PBXBuildFile; fileRef = D268D2A015A2549E00108A0E /* Downloader.m */; };
 		D268D2C815A2549E00108A0E /* back.png in Resources */ = {isa = PBXBuildFile; fileRef = D268D2A215A2549E00108A0E /* back.png */; };
 		D268D2C915A2549E00108A0E /* back@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D268D2A315A2549E00108A0E /* back@2x.png */; };
@@ -67,6 +71,14 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		1A700896164746A900EE6D45 /* BakerWrapperDatasource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BakerWrapperDatasource.h; sourceTree = "<group>"; };
+		1A700898164747F600EE6D45 /* BakerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BakerViewController.h; sourceTree = "<group>"; };
+		1A70089A1647480400EE6D45 /* BakerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BakerViewController.m; sourceTree = "<group>"; };
+		1AC287AC16472F0E00EDF0E9 /* BakerScrollWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BakerScrollWrapper.h; path = wrappers/BakerScrollWrapper.h; sourceTree = "<group>"; };
+		1AC287AD16472F0E00EDF0E9 /* BakerScrollWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BakerScrollWrapper.m; path = wrappers/BakerScrollWrapper.m; sourceTree = "<group>"; };
+		1AC287AF16472F3500EDF0E9 /* PageViewControllerWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PageViewControllerWrapper.h; path = wrappers/PageViewControllerWrapper.h; sourceTree = "<group>"; };
+		1AC287B016472F3500EDF0E9 /* PageViewControllerWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PageViewControllerWrapper.m; path = wrappers/PageViewControllerWrapper.m; sourceTree = "<group>"; };
+		1AC287B216472FA000EDF0E9 /* BakerWrapperProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BakerWrapperProtocol.h; sourceTree = "<group>"; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1D6058910D05DD3D006BFB54 /* Baker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Baker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -89,8 +101,8 @@
 		D21A0B85135CF1F2005D6E8A /* libOCMock.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libOCMock.a; sourceTree = "<group>"; };
 		D268D29915A253A000108A0E /* BakerAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BakerAppDelegate.h; sourceTree = SOURCE_ROOT; };
 		D268D29A15A253A000108A0E /* BakerAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BakerAppDelegate.m; sourceTree = SOURCE_ROOT; };
-		D268D29D15A2549E00108A0E /* BakerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BakerViewController.h; sourceTree = "<group>"; };
-		D268D29E15A2549E00108A0E /* BakerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BakerViewController.m; sourceTree = "<group>"; };
+		D268D29D15A2549E00108A0E /* BakerViewControllerNew.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BakerViewControllerNew.h; sourceTree = "<group>"; };
+		D268D29E15A2549E00108A0E /* BakerViewControllerNew.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BakerViewControllerNew.m; sourceTree = "<group>"; };
 		D268D29F15A2549E00108A0E /* Downloader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Downloader.h; sourceTree = "<group>"; };
 		D268D2A015A2549E00108A0E /* Downloader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Downloader.m; sourceTree = "<group>"; };
 		D268D2A215A2549E00108A0E /* back.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = back.png; sourceTree = "<group>"; };
@@ -168,6 +180,7 @@
 			children = (
 				D268D29915A253A000108A0E /* BakerAppDelegate.h */,
 				D268D29A15A253A000108A0E /* BakerAppDelegate.m */,
+				D281CE9B13545C0E009F1B11 /* Tests */,
 			);
 			name = Classes;
 			path = Baker/Classes;
@@ -182,6 +195,17 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		1AC287AB16472EE000EDF0E9 /* wrappers */ = {
+			isa = PBXGroup;
+			children = (
+				1AC287AC16472F0E00EDF0E9 /* BakerScrollWrapper.h */,
+				1AC287AD16472F0E00EDF0E9 /* BakerScrollWrapper.m */,
+				1AC287AF16472F3500EDF0E9 /* PageViewControllerWrapper.h */,
+				1AC287B016472F3500EDF0E9 /* PageViewControllerWrapper.m */,
+			);
+			name = wrappers;
+			sourceTree = "<group>";
+		};
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
@@ -190,7 +214,6 @@
 				D268D29C15A2549E00108A0E /* Baker */,
 				BF2F993F1269379900E356EF /* book */,
 				080E96DDFE201D6D7F000001 /* Classes */,
-				D281CE9B13545C0E009F1B11 /* Tests */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
@@ -245,8 +268,11 @@
 		D268D29C15A2549E00108A0E /* Baker */ = {
 			isa = PBXGroup;
 			children = (
-				D268D29D15A2549E00108A0E /* BakerViewController.h */,
-				D268D29E15A2549E00108A0E /* BakerViewController.m */,
+				1AC287AB16472EE000EDF0E9 /* wrappers */,
+				D268D29D15A2549E00108A0E /* BakerViewControllerNew.h */,
+				1A700898164747F600EE6D45 /* BakerViewController.h */,
+				D268D29E15A2549E00108A0E /* BakerViewControllerNew.m */,
+				1A70089A1647480400EE6D45 /* BakerViewController.m */,
 				D268D29F15A2549E00108A0E /* Downloader.h */,
 				D268D2A015A2549E00108A0E /* Downloader.m */,
 				D268D2A115A2549E00108A0E /* img */,
@@ -260,6 +286,8 @@
 				D268D2C115A2549E00108A0E /* Properties.h */,
 				D268D2C215A2549E00108A0E /* Properties.m */,
 				D268D2C315A2549E00108A0E /* ui */,
+				1AC287B216472FA000EDF0E9 /* BakerWrapperProtocol.h */,
+				1A700896164746A900EE6D45 /* BakerWrapperDatasource.h */,
 			);
 			path = Baker;
 			sourceTree = "<group>";
@@ -344,6 +372,7 @@
 				D20915C313CB9FDC00D3B55B /* PropertiesTest.m */,
 			);
 			name = Tests;
+			path = ../..;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -429,6 +458,7 @@
 				D268D2CA15A2549E00108A0E /* forward.png in Resources */,
 				D268D2CB15A2549E00108A0E /* forward@2x.png in Resources */,
 				ABA54B3B1614F679008E7771 /* Default-568h@2x.png in Resources */,
+				1A700899164747F600EE6D45 /* BakerViewController.h in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -464,7 +494,7 @@
 			files = (
 				1D60589B0D05DD56006BFB54 /* main.m in Sources */,
 				D268D29B15A253A000108A0E /* BakerAppDelegate.m in Sources */,
-				D268D2C615A2549E00108A0E /* BakerViewController.m in Sources */,
+				D268D2C615A2549E00108A0E /* BakerViewControllerNew.m in Sources */,
 				D268D2C715A2549E00108A0E /* Downloader.m in Sources */,
 				D268D2CC15A2549E00108A0E /* IndexViewController.m in Sources */,
 				D268D2CD15A2549E00108A0E /* InterceptorWindow.m in Sources */,
@@ -479,6 +509,9 @@
 				D268D2D615A2549E00108A0E /* ModalViewController.m in Sources */,
 				D268D2D715A2549E00108A0E /* Properties.m in Sources */,
 				D268D2D815A2549E00108A0E /* PageTitleLabel.m in Sources */,
+				1AC287AE16472F0E00EDF0E9 /* BakerScrollWrapper.m in Sources */,
+				1AC287B116472F3500EDF0E9 /* PageViewControllerWrapper.m in Sources */,
+				1A70089B1647480400EE6D45 /* BakerViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
