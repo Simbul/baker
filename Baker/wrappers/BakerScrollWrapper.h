@@ -9,11 +9,12 @@
 #import <UIKit/UIKit.h>
 
 #import "BakerWrapper.h"
+#import "Properties.h"
 
 @interface BakerScrollWrapper : BakerWrapper{
     UIScrollView *_scrollView;
+    
+    Properties *_properties;
 }
-
-
 
 @end

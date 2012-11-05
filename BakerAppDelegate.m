@@ -31,8 +31,10 @@
 
 
 #import "BakerAppDelegate.h"
-#import "Baker/BakerViewController.h"
-#import "Baker/InterceptorWindow.h"
+#import "BakerViewController.h"
+#import "InterceptorWindow.h"
+#import "Properties.h"
+#import "Utils.h"
 
 @implementation BakerAppDelegate
 
@@ -66,7 +68,10 @@
     
     // Create the application window
     self.window = [[[InterceptorWindow alloc] initWithFrame:[[UIScreen mainScreen]bounds]] autorelease];
-    window.backgroundColor = [UIColor whiteColor];
+    
+    Properties *_properties = [Properties properties];
+    
+    window.backgroundColor = [Utils colorWithHexString:[_properties get:@"-baker-background", nil]];
     
     // Add the root view to the application window
     self.window.rootViewController = self.rootViewController;

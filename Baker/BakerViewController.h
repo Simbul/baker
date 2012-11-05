@@ -61,7 +61,6 @@
     NSMutableArray *pages;
     NSMutableArray *toLoad;
     
-    NSMutableArray *pageDetails;
     NSMutableDictionary *attachedScreenshotPortrait;
     NSMutableDictionary *attachedScreenshotLandscape;
     
@@ -123,17 +122,14 @@
 - (BOOL)loadBookWithBookPath:(NSString *)bookPath;
 - (void)cleanupBookEnvironment;
 - (void)resetPageSlots;
-- (void)resetPageDetails;
 - (void)loadBookProperties;
 - (void)buildPageArray;
 - (void)startReadingFromPage:(int)pageNumber anchor:(NSString *)anchor;
 - (void)startReading;
-- (void)buildPageDetails;
 - (void)setImageFor:(UIImageView *)view;
 - (void)updateBookLayout;
 - (void)setPageSize:(NSString *)orientation;
 - (void)setTappableAreaSize;
-- (void)showPageDetails;
 - (void)setFrame:(CGRect)frame forPage:(UIWebView *)page;
 
 - (void)setupWebView:(UIWebView *)webView;

@@ -19,10 +19,17 @@
         
         _scrollView = [[[UIScrollView alloc] initWithFrame:frame] retain];
         
+        _scrollView.backgroundColor = [UIColor clearColor];
         _scrollView.showsHorizontalScrollIndicator = YES;
         _scrollView.showsVerticalScrollIndicator = NO;
         _scrollView.delaysContentTouches = NO;
         _scrollView.pagingEnabled = YES;
+        
+        // ****** INIT PROPERTIES
+        _properties = [Properties properties];
+        
+        // ****** BAKER SWIPES
+        _scrollView.scrollEnabled = [[_properties get:@"-baker-page-turn-swipe", nil] boolValue];
         
         //Set Scroll View to be Wrapper's View
         self.view = _scrollView;
