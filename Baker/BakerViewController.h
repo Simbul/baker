@@ -64,43 +64,18 @@
     NSMutableDictionary *attachedScreenshotPortrait;
     NSMutableDictionary *attachedScreenshotLandscape;
     
-    UIImage *backgroundImageLandscape;
-    UIImage *backgroundImagePortrait;
-    
     NSString *pageNameFromURL;
     NSString *anchorFromURL;
-    
-    int tapNumber;
-    int stackedScrollingAnimations;
-    
-    BOOL currentPageFirstLoading;
-    BOOL currentPageIsDelayingLoading;
-    BOOL currentPageHasChanged;
-    BOOL currentPageIsLocked;
-    BOOL userIsScrolling;
-    BOOL shouldPropagateInterceptedTouch;
     
     PageViewController *prevPage;
     PageViewController *currPage;
     PageViewController *nextPage;
     
-    UIColor *webViewBackground;
-    
-    CGRect upTapArea;
-    CGRect downTapArea;
-    CGRect leftTapArea;
-    CGRect rightTapArea;
-    
-    int totalPages;
     int lastPageNumber;
-    int currentPageNumber;
     
     int pageWidth;
     int pageHeight;
     int currentPageHeight;
-    
-    UIViewController *newPageViewController;
-    UIViewController *currentPageViewController;
     
     NSString *URLDownload;
     Downloader *downloader;
@@ -149,10 +124,6 @@
 #pragma mark - MODAL WEBVIEW
 - (void)loadModalWebView:(NSURL *)url;
 - (void)closeModalWebView;
-
-#pragma mark - SCROLLVIEW
-- (CGRect)frameForPage:(int)page;
-- (void)updateBookLayout;
 
 #pragma mark - WEBVIEW
 - (void)webView:(UIWebView *)webView hidden:(BOOL)status animating:(BOOL)animating;

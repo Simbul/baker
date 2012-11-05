@@ -129,17 +129,6 @@
         attachedScreenshotPortrait  = [[NSMutableDictionary dictionary] retain];
         attachedScreenshotLandscape = [[NSMutableDictionary dictionary] retain];
         
-        tapNumber = 0;
-        
-        currentPageFirstLoading = YES;
-        currentPageIsDelayingLoading = YES;
-        currentPageHasChanged = NO;
-        currentPageIsLocked = NO;
-        userIsScrolling = NO;
-        shouldPropagateInterceptedTouch = YES;
-        
-        webViewBackground = nil;
-        
         pageNameFromURL = nil;
         anchorFromURL = nil;
         
@@ -235,7 +224,6 @@
 - (void)cleanupBookEnvironment {
     
     [self resetPageSlots];    
-    [self resetPageDetails];
     
     [pages removeAllObjects];
     [toLoad removeAllObjects];
@@ -244,18 +232,15 @@
     NSLog(@"• Reset leftover page slot");
     
     if (currPage) {
-        [currPage setDelegate:nil];
-        [currPage removeFromSuperview];
+        [currPage.view removeFromSuperview];
         [currPage release];
     }
     if (nextPage) {
-        [nextPage setDelegate:nil];
-        [nextPage removeFromSuperview];
+        [nextPage.view removeFromSuperview];
         [nextPage release];
     }
     if (prevPage) {
-        [prevPage setDelegate:nil];
-        [prevPage removeFromSuperview];
+        [prevPage.view removeFromSuperview];
         [prevPage release];
     }
     

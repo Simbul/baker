@@ -14,6 +14,8 @@
 
 @interface PageViewControllerWrapper : BakerWrapper{
     UIPageViewController *_pageViewController;
+    
+    UIColor *webViewBackground;
 }
 
 @end

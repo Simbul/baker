@@ -16,9 +16,12 @@
     NSNumber *_pageNumberAlpha;
     UIColor *_pageNumberColor;
     
-    Properties *_properties;
+    UIImage *backgroundImageLandscape;
+    UIImage *backgroundImagePortrait;
     
     NSString *_pageURL;
+    
+    Properties *_properties;
 }
 
 @property (strong, retain)UIImageView *backgroundImageView;
