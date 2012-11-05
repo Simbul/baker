@@ -15,8 +15,14 @@
     self = [super init];
     if (self) {
         
-        //Create a Scroll View
+        // ****** SCROLLVIEW INIT
+        
         _scrollView = [[[UIScrollView alloc] initWithFrame:frame] retain];
+        
+        _scrollView.showsHorizontalScrollIndicator = YES;
+        _scrollView.showsVerticalScrollIndicator = NO;
+        _scrollView.delaysContentTouches = NO;
+        _scrollView.pagingEnabled = YES;
         
         //Set Scroll View to be Wrapper's View
         self.view = _scrollView;

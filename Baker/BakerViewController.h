@@ -38,6 +38,7 @@
 #import "BakerWrapperDataSource.h"
 #import "BakerWrapperDelegate.h"
 #import "IndexViewController.h"
+#import "PageViewController.h"
 #import "ModalViewController.h"
 #import "Properties.h"
 
@@ -80,11 +81,9 @@
     BOOL userIsScrolling;
     BOOL shouldPropagateInterceptedTouch;
     
-    UIScrollView *scrollView;
-    UIPageViewController *pageView;
-    UIWebView *prevPage;
-    UIWebView *currPage;
-    UIWebView *nextPage;
+    PageViewController *prevPage;
+    PageViewController *currPage;
+    PageViewController *nextPage;
     
     UIColor *webViewBackground;
     
@@ -116,7 +115,7 @@
 
 #pragma mark - PROPERTIES
 @property (nonatomic, retain) BakerWrapper *wrapperViewController;
-@property (nonatomic, retain) UIWebView *currPage;
+@property (nonatomic, retain) PageViewController *currPage;
 @property int currentPageNumber;
 
 #pragma mark - INIT

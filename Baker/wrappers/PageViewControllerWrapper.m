@@ -19,11 +19,15 @@
     self = [super init];
     if (self) {
         
-        //Create a Page View Controller
+        // ***** PAGEVIEWCONTROLLER INIT
+        
         _pageViewController = [[[UIPageViewController alloc] initWithTransitionStyle:UIPageViewControllerTransitionStylePageCurl navigationOrientation:UIPageViewControllerNavigationOrientationHorizontal options:nil] retain];
         
         //Set Page View Controller's View to be Wrapper's View
         self.view = _pageViewController.view;
+        
+        //Attach Gestures to View to enable page turning
+        self.view.gestureRecognizers = _pageViewController.gestureRecognizers;
     }
     return self;
 }

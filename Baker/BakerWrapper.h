@@ -20,4 +20,7 @@ enum {
 @property(nonatomic, assign) id<BakerWrapperDataSource> dataSource;
 @property(nonatomic, assign) id<BakerWrapperDelegate> delegate;
 
+- (id)initWithFrame:(CGRect)frame;
+- (void)setViewControllers:(NSArray *)viewControllers direction:(BakerWrapperNavigationDirection)direction animated:(BOOL)animated completion:(void (^)(BOOL finished))completion;
+
 @end

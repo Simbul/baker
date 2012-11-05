@@ -33,6 +33,7 @@
 #import <sys/xattr.h>
 #import <AVFoundation/AVFoundation.h>
 
+#import "BakerDefines.h"
 #import "BakerViewController.h"
 #import "BakerScrollWrapper.h"
 #import "Downloader.h"
@@ -63,12 +64,7 @@
 #define URL_OPEN_MODALLY        @"referrer=Baker"
 #define URL_OPEN_EXTERNAL       @"referrer=Safari"
 
-// IOS VERSION COMPARISON MACROS
-#define SYSTEM_VERSION_EQUAL_TO(version)                  ([[[UIDevice currentDevice] systemVersion] compare:version options:NSNumericSearch] == NSOrderedSame)
-#define SYSTEM_VERSION_GREATER_THAN(version)              ([[[UIDevice currentDevice] systemVersion] compare:version options:NSNumericSearch] == NSOrderedDescending)
-#define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(version)  ([[[UIDevice currentDevice] systemVersion] compare:version options:NSNumericSearch] != NSOrderedAscending)
-#define SYSTEM_VERSION_LESS_THAN(version)                 ([[[UIDevice currentDevice] systemVersion] compare:version options:NSNumericSearch] == NSOrderedAscending)
-#define SYSTEM_VERSION_LESS_THAN_OR_EQUAL_TO(version)     ([[[UIDevice currentDevice] systemVersion] compare:version options:NSNumericSearch] != NSOrderedDescending)
+
 
 // SCREENSHOT
 #define MAX_SCREENSHOT_AFTER_CP  10
@@ -157,21 +153,6 @@
         _wrapperViewController.delegate = self;
         [self addChildViewController:_wrapperViewController];
         [self.view addSubview:_wrapperViewController.view];
-        
-       /* if (!USEPAGEVIEW){
-            
-            // ****** SCROLLVIEW INIT
-            scrollView.showsHorizontalScrollIndicator = YES;
-            scrollView.showsVerticalScrollIndicator = NO;
-            scrollView.delaysContentTouches = NO;
-            scrollView.pagingEnabled = YES;
-
-        
-        } else {
-
-            self.view.gestureRecognizers = self.pageView.gestureRecognizers;
-        }*/
-        
         
         // ****** LISTENER FOR INTERCEPTOR WINDOW NOTIFICATION
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleInterceptedTouch:) name:@"notification_touch_intercepted" object:nil];
@@ -434,75 +415,21 @@
 }
 - (void)buildPageDetails {
     NSLog(@"• Init page details for the book pages");
-    
-    for (int i = 0; i < totalPages; i++) {
-        
-        //int x = (USEPAGEVIEW)?0:1;
-        int x =0;
-        UIColor *foregroundColor = [Utils colorWithHexString:[properties get:@"-baker-page-numbers-color", nil]];
-        id foregroundAlpha = [properties get:@"-baker-page-numbers-alpha", nil];
-        
-        
-        // ****** Background
-        UIImageView *backgroundView = [[[UIImageView alloc] initWithFrame:CGRectMake((pageWidth * (x*i)), 0, pageWidth, pageHeight)] autorelease];
+
+
         [self setImageFor:backgroundView];
         
         /*if(!USEPAGEVIEW){
             [scrollView addSubview:backgroundView];
         }*/
-        
-        
-        // ****** Spinners
-        UIActivityIndicatorView *spinner = [[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray] autorelease];
-        spinner.backgroundColor = [UIColor clearColor];
-        if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"5.0")) {
-            spinner.color = foregroundColor;
-            spinner.alpha = [(NSNumber *)foregroundAlpha floatValue];
-        };
-        
-        CGRect frame = spinner.frame;
-        frame.origin.x = (pageWidth * (x*i)) + (pageWidth - frame.size.width) / 2;
-        frame.origin.y = (pageHeight - frame.size.height) / 2;
-        spinner.frame = frame;
-        
-        /*if(!USEPAGEVIEW){
-           [scrollView addSubview:spinner];
-        }*/
-        
-        
-        [spinner startAnimating];
-        
-        
-        // ****** Numbers
-        UILabel *number = [[[UILabel alloc] initWithFrame:CGRectMake((pageWidth * (x*i)) + (pageWidth - 115) / 2, pageHeight / 2 - 55, 115, 30)] autorelease];
-        number.backgroundColor = [UIColor clearColor];
-        number.font = [UIFont fontWithName:@"Helvetica" size:40.0];
-        number.textColor = foregroundColor;
-        number.textAlignment = UITextAlignmentCenter;
-        number.alpha = [(NSNumber *)foregroundAlpha floatValue];
+
+
         
         number.text = [NSString stringWithFormat:@"%d", i + 1];
         if ([[properties get:@"-baker-start-at-page", nil] intValue] < 0) {
             number.text = [NSString stringWithFormat:@"%d", totalPages - i];
         }
-        
-        if(!USEPAGEVIEW){
-            [scrollView addSubview:number];
-        }
-        
-        
-        // ****** Title
-        PageTitleLabel *title = [[[PageTitleLabel alloc]initWithFile:[pages objectAtIndex: i]] autorelease];
-        [title setX:((pageWidth * (x*i)) + ((pageWidth - title.frame.size.width) / 2)) Y:(pageHeight / 2 + 20)];
-
-        if(!USEPAGEVIEW){
-            [scrollView addSubview:title];
-        }
-        
-        // ****** Store instances for later use
-        NSMutableDictionary *details = [NSMutableDictionary dictionaryWithObjectsAndKeys:spinner, @"spinner", number, @"number", title, @"title", backgroundView, @"background", nil];
-        [pageDetails insertObject:details atIndex:i];
-    }
+   
 }
 - (void)setImageFor:(UIImageView *)view {
     if (pageWidth > pageHeight && backgroundImageLandscape != NULL) {
