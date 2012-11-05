@@ -35,6 +35,8 @@
 #import <MessageUI/MessageUI.h>
 
 #import "BakerWrapper.h"
+#import "BakerWrapperDataSource.h"
+#import "BakerWrapperDelegate.h"
 #import "IndexViewController.h"
 #import "ModalViewController.h"
 #import "Properties.h"
@@ -42,7 +44,7 @@
 
 @class Downloader;
 
-@interface BakerViewController : UIViewController  {
+@interface BakerViewController : UIViewController<BakerWrapperDataSource, BakerWrapperDelegate>  {
     
     CGRect screenBounds;
     
@@ -114,7 +116,6 @@
 
 #pragma mark - PROPERTIES
 @property (nonatomic, retain) BakerWrapper *wrapperViewController;
-@property (nonatomic, retain) UIScrollView *scrollView;
 @property (nonatomic, retain) UIWebView *currPage;
 @property int currentPageNumber;
 

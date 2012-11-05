@@ -77,7 +77,6 @@
 @implementation BakerViewController
 
 #pragma mark - SYNTHESIS
-@synthesize scrollView;
 @synthesize currPage;
 @synthesize currentPageNumber;
 
@@ -154,27 +153,24 @@
         
         /// ****** WRAPPER VIEW INIT
         _wrapperViewController = [[BakerScrollWrapper alloc] initWithFrame:CGRectMake(0, 0, pageWidth, pageHeight)];
-        
+        _wrapperViewController.dataSource = self;
+        _wrapperViewController.delegate = self;
         [self addChildViewController:_wrapperViewController];
         [self.view addSubview:_wrapperViewController.view];
         
-        if (!USEPAGEVIEW){
+       /* if (!USEPAGEVIEW){
             
             // ****** SCROLLVIEW INIT
             scrollView.showsHorizontalScrollIndicator = YES;
             scrollView.showsVerticalScrollIndicator = NO;
             scrollView.delaysContentTouches = NO;
             scrollView.pagingEnabled = YES;
-            scrollView.delegate = self;
+
         
         } else {
-        
- 
-            pageView.dataSource = self;
-            pageView.delegate = self;
 
             self.view.gestureRecognizers = self.pageView.gestureRecognizers;
-        }
+        }*/
         
         
         // ****** LISTENER FOR INTERCEPTOR WINDOW NOTIFICATION
@@ -326,7 +322,7 @@
     NSLog(@"rendering type: %@", renderingType);
     
     
-    if (!USEPAGEVIEW){
+    /*if (!USEPAGEVIEW){
         // ****** BAKER SWIPES
         scrollView.scrollEnabled = [[properties get:@"-baker-page-turn-swipe", nil] boolValue];
         
@@ -334,7 +330,7 @@
         // ****** BAKER BACKGROUND
         scrollView.backgroundColor = [Utils colorWithHexString:[properties get:@"-baker-background", nil]];
         
-    }
+    }*/
     
     // ****** BAKER BACKGROUND
     backgroundImageLandscape   = nil;
@@ -441,8 +437,8 @@
     
     for (int i = 0; i < totalPages; i++) {
         
-        int x = (USEPAGEVIEW)?0:1;
-        
+        //int x = (USEPAGEVIEW)?0:1;
+        int x =0;
         UIColor *foregroundColor = [Utils colorWithHexString:[properties get:@"-baker-page-numbers-color", nil]];
         id foregroundAlpha = [properties get:@"-baker-page-numbers-alpha", nil];
         
@@ -451,9 +447,9 @@
         UIImageView *backgroundView = [[[UIImageView alloc] initWithFrame:CGRectMake((pageWidth * (x*i)), 0, pageWidth, pageHeight)] autorelease];
         [self setImageFor:backgroundView];
         
-        if(!USEPAGEVIEW){
+        /*if(!USEPAGEVIEW){
             [scrollView addSubview:backgroundView];
-        }
+        }*/
         
         
         // ****** Spinners
@@ -469,9 +465,9 @@
         frame.origin.y = (pageHeight - frame.size.height) / 2;
         spinner.frame = frame;
         
-        if(!USEPAGEVIEW){
+        /*if(!USEPAGEVIEW){
            [scrollView addSubview:spinner];
-        }
+        }*/
         
         
         [spinner startAnimating];
@@ -593,9 +589,10 @@
     
     [self setTappableAreaSize];
     
-    if (!USEPAGEVIEW){
+    
+   /* if (!USEPAGEVIEW){
         scrollView.contentSize = CGSizeMake(pageWidth * totalPages, pageHeight);
-    }
+    }*/
 }
 - (void)setTappableAreaSize {
     NSLog(@"• Set tappable area size");

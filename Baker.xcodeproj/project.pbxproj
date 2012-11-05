@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		1A2B69C116486261009A0AC8 /* BakerWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A2B69C016486261009A0AC8 /* BakerWrapper.m */; };
+		1A2B69C4164866B6009A0AC8 /* PageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A2B69C3164866B5009A0AC8 /* PageViewController.m */; };
 		1A700899164747F600EE6D45 /* BakerViewController.h in Resources */ = {isa = PBXBuildFile; fileRef = 1A700898164747F600EE6D45 /* BakerViewController.h */; };
 		1A70089B1647480400EE6D45 /* BakerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A70089A1647480400EE6D45 /* BakerViewController.m */; };
 		1AC287AE16472F0E00EDF0E9 /* BakerScrollWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AC287AD16472F0E00EDF0E9 /* BakerScrollWrapper.m */; };
@@ -73,6 +74,8 @@
 /* Begin PBXFileReference section */
 		1A2B69BF16486260009A0AC8 /* BakerWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BakerWrapper.h; sourceTree = "<group>"; };
 		1A2B69C016486261009A0AC8 /* BakerWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BakerWrapper.m; sourceTree = "<group>"; };
+		1A2B69C2164866B5009A0AC8 /* PageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageViewController.h; sourceTree = "<group>"; };
+		1A2B69C3164866B5009A0AC8 /* PageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PageViewController.m; sourceTree = "<group>"; };
 		1A700898164747F600EE6D45 /* BakerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BakerViewController.h; sourceTree = "<group>"; };
 		1A70089A1647480400EE6D45 /* BakerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BakerViewController.m; sourceTree = "<group>"; };
 		1A7008CA1648465100EE6D45 /* BakerWrapperDataSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BakerWrapperDataSource.h; sourceTree = "<group>"; };
@@ -288,6 +291,8 @@
 				D268D2C215A2549E00108A0E /* Properties.m */,
 				D268D2C315A2549E00108A0E /* ui */,
 				1AC287AB16472EE000EDF0E9 /* wrappers */,
+				1A2B69C2164866B5009A0AC8 /* PageViewController.h */,
+				1A2B69C3164866B5009A0AC8 /* PageViewController.m */,
 			);
 			path = Baker;
 			sourceTree = "<group>";
@@ -512,6 +517,7 @@
 				1AC287B116472F3500EDF0E9 /* PageViewControllerWrapper.m in Sources */,
 				1A70089B1647480400EE6D45 /* BakerViewController.m in Sources */,
 				1A2B69C116486261009A0AC8 /* BakerWrapper.m in Sources */,
+				1A2B69C4164866B6009A0AC8 /* PageViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
