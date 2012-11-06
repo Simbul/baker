@@ -21,11 +21,11 @@
     Properties *_properties;
 }
 
-@property (strong, retain)UIImageView *backgroundImageView;
-@property (strong, retain)UIActivityIndicatorView *activityIndicatorView;
-@property (strong, retain)UILabel *numberLabel;
-@property (strong, retain)PageTitleLabel *titleLabel;
-@property (strong, retain)UIWebView *webView;
+@property (strong, retain, atomic)UIImageView *backgroundImageView;
+@property (strong, retain, atomic)UIActivityIndicatorView *activityIndicatorView;
+@property (strong, retain, atomic)UILabel *numberLabel;
+@property (strong, retain, atomic)PageTitleLabel *titleLabel;
+@property (strong, retain, atomic)UIWebView *webView;
 @property (readwrite, atomic)int tag;
 @property (nonatomic, assign)id<UIWebViewDelegate> *delegate;
 

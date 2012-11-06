@@ -7,7 +7,7 @@
 //
 
 #import "BakerWrapper.h"
-
+#import "PageViewController.h"
 @interface BakerWrapper ()
 
 @end
@@ -22,6 +22,12 @@
     
     _direction = direction;
     _viewControllers = viewControllers;
+    
+    PageViewController *pageViewController = [viewControllers objectAtIndex:0];
+   
+    NSLog(@"%@",  NSStringFromCGRect(pageViewController.view.frame));
+    [pageViewController.webView setHidden:NO];
+    [self.view addSubview:pageViewController.view];
     
     return;
 }

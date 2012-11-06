@@ -35,7 +35,22 @@
         self.view = _scrollView;
     }
     return self;
-}/*
+}
+- (void)setViewControllers:(NSArray *)viewControllers direction:(BakerWrapperNavigationDirection)direction animated:(BOOL)animated completion:(void (^)(BOOL finished))completion{
+    
+  
+    
+    PageViewController *pageViewController = [[viewControllers objectAtIndex:0] retain];
+     NSLog(@"Image View %@",  pageViewController.backgroundImageView.image);
+    [pageViewController.numberLabel setBackgroundColor:[UIColor yellowColor]];
+    [self.view addSubview:pageViewController.view];
+
+    [self addChildViewController:pageViewController];
+    
+    return;
+}
+
+/*
 
 #pragma mark - GESTURES
 

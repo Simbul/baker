@@ -307,8 +307,6 @@
     }
     
     [self initWrapperWithPage:startWithPage];
-    
-
 }
 
 - (void)updateBookLayout {
@@ -642,11 +640,11 @@
 
 - (void)initWrapperWithPage:(int)page{
     
-    PageViewController *newPageViewController = [self newPageViewForPage:page];
+    PageViewController *newPageViewController = [[self newPageViewForPage:page] retain];
     
     [self pageViewHasBecomeCurrentPage:newPageViewController];
     
-    NSArray *pageViews = @[newPageViewController];
+    NSArray *pageViews = [@[newPageViewController] retain];
     
     [_wrapperViewController setViewControllers:pageViews direction:BakerWrapperNavigationDirectionHorizontal animated:NO completion:^(BOOL finished) {
         NSLog(@"First Page Loaded");
@@ -687,18 +685,18 @@
         [currPage release];
     }
     
-    currPage = newPageViewController;
+    currPage = [newPageViewController retain];
 }
 
 - (PageViewController *)newPageViewForPage:(int)page{
     if (page > 0 && page < pages.count){
         
-        PageViewController *newPage = [[[PageViewController alloc] initWithFrame:self.view.frame] autorelease];
+        PageViewController *newPage = [[[PageViewController alloc] initWithFrame:self.view.frame] retain];
         
-        if ([[self getCurrentInterfaceOrientation] isEqualToString:@"portrait"] && backgroundImagePortrait != NULL){
-            newPage.backgroundImageView.image = backgroundImagePortrait;
-        } else if (backgroundImageLandscape != NULL){
-            newPage.backgroundImageView.image = backgroundImageLandscape;
+        if ([[self getCurrentInterfaceOrientation] isEqualToString:@"portrait"] && backgroundImagePortrait){
+            [newPage.backgroundImageView setImage:[backgroundImagePortrait retain]];
+        } else if (backgroundImageLandscape){
+            [newPage.backgroundImageView setImage:[backgroundImageLandscape retain]];
         } else {
             newPage.backgroundImageView.image = nil;
         }
