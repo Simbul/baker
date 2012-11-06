@@ -108,6 +108,7 @@
     }
     
     _webView = [[[UIWebView alloc] initWithFrame:self.view.frame] autorelease];
+    _webView.delegate
     _webView.hidden = YES;
 }
 
@@ -118,7 +119,6 @@
 - (int)tag{
     return self.view.tag;
 }
-
 
 #pragma mark - WEBVIEW
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
