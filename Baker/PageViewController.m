@@ -108,7 +108,7 @@
     }
     
     _webView = [[[UIWebView alloc] initWithFrame:self.view.frame] autorelease];
-    _webView.delegate
+    _webView.delegate = self;
     _webView.hidden = YES;
 }
 
@@ -119,7 +119,7 @@
 - (int)tag{
     return self.view.tag;
 }
-
+/*
 #pragma mark - WEBVIEW
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
     
@@ -415,7 +415,7 @@
      }
      
      [self webViewDidAppear:webView animating:animating];
-     }*/
+     }*
 }
 - (void)webViewDidAppear:(UIWebView *)webView animating:(BOOL)animating {
     
@@ -694,11 +694,11 @@
             //[scrollView addSubview:screenshotView];
             /*[UIView animateWithDuration:0.5
              animations:^{ screenshotView.alpha = 1.0; }
-             completion:^(BOOL finished) { if (!currentPageHasChanged) { [self webView:webView hidden:NO animating:NO]; }}];*/
+             completion:^(BOOL finished) { if (!currentPageHasChanged) { [self webView:webView hidden:NO animating:NO]; }}];*
         }
     }
     
     [screenshotView release];
 }
-
+*/
 @end

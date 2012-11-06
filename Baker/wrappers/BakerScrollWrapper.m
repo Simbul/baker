@@ -35,7 +35,7 @@
         self.view = _scrollView;
     }
     return self;
-}
+}/*
 
 #pragma mark - GESTURES
 
@@ -63,7 +63,7 @@
     /****************************************************************************************************
      * This function handles all the possible user navigation taps:
      * up, down, left, right and double-tap.
-     */
+     
     
     
     CGPoint tapPoint = [touch locationInView:self.view];
@@ -113,7 +113,7 @@
      NSLog(@"• Setting current page height from %d to %f", currentPageHeight, size.height);
      currentPageHeight = size.height;
      }
-     }*/
+     }
 }
 - (int)getCurrentPageOffset {
     
@@ -295,33 +295,24 @@
       completion:nil];
       }
       NSLog(@"    Unlock page changing");
-      [self lockPage:[NSNumber numberWithBool:NO]];*/
+      [self lockPage:[NSNumber numberWithBool:NO]];
 }
 - (void)setPageSize:(NSString *)orientation {
-    NSLog(@"• Set size for orientation: %@", orientation);
-    
-    pageWidth  = screenBounds.size.width;
-    pageHeight = screenBounds.size.height;
-    
-    if ([orientation isEqualToString:@"landscape"]) {
-        pageWidth  = screenBounds.size.height;
-        pageHeight = screenBounds.size.width;
-    }
     
     [self setTappableAreaSize];
     
     
     /* if (!USEPAGEVIEW){
      scrollView.contentSize = CGSizeMake(pageWidth * totalPages, pageHeight);
-     }*/
+     }
 }
 
 - (void)setFrame:(CGRect)frame forPage:(UIWebView *)page {
     /* if (page && [page.superview isEqual:scrollView]) {
      page.frame = frame;
      [scrollView bringSubviewToFront:page];
-     }*/
+     }
 }
-
+*/
 
 @end
