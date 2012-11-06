@@ -512,4 +512,168 @@
     [webView stringByEvaluatingJavaScriptFromString:jsOrientationGetter];
 }
 
+
+#pragma mark - SCREENSHOTS
+- (void)removeScreenshots {
+    
+    
+    for (NSNumber *key in attachedScreenshotLandscape) {
+        UIView *value = [attachedScreenshotLandscape objectForKey:key];
+        [value removeFromSuperview];
+    }
+    
+    for (NSNumber *key in attachedScreenshotPortrait) {
+        UIView *value = [attachedScreenshotPortrait objectForKey:key];
+        [value removeFromSuperview];
+    }
+    
+    [attachedScreenshotLandscape removeAllObjects];
+    [attachedScreenshotPortrait removeAllObjects];
+}
+- (void)updateScreenshots {
+    
+    NSMutableSet *completeSet = [NSMutableSet new];
+    NSMutableSet *supportSet  = [NSMutableSet new];
+    
+    NSString *interfaceOrientation = nil;
+    NSMutableDictionary *attachedScreenshot = nil;
+    
+    if (UIInterfaceOrientationIsPortrait(self.interfaceOrientation))
+    {
+        interfaceOrientation = @"portrait";
+        attachedScreenshot = attachedScreenshotPortrait;
+    }
+    else if (UIInterfaceOrientationIsLandscape(self.interfaceOrientation))
+    {
+        interfaceOrientation = @"landscape";
+        attachedScreenshot = attachedScreenshotLandscape;
+    }
+    
+    for (NSNumber *num in attachedScreenshot) [completeSet addObject:num];
+    
+    for (int i = MAX(1, currPage.tag - MAX_SCREENSHOT_BEFORE_CP); i <= MIN(pages.count, currPage.tag + MAX_SCREENSHOT_AFTER_CP); i++)
+    {
+        NSNumber *num = [NSNumber numberWithInt:i];
+        [supportSet addObject:num];
+        
+        if ([self checkScreeshotForPage:i andOrientation:interfaceOrientation] && ![attachedScreenshot objectForKey:num]) {
+            [self placeScreenshotForView:nil andPage:i andOrientation:interfaceOrientation];
+            [completeSet addObject:num];
+        }
+    }
+    
+    [completeSet minusSet:supportSet];
+    
+    for (NSNumber *num in completeSet) {
+        [[attachedScreenshot objectForKey:num] removeFromSuperview];
+        [attachedScreenshot removeObjectForKey:num];
+    }
+    
+    [completeSet release];
+    [supportSet release];
+}
+- (BOOL)checkScreeshotForPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation {
+    
+    if (![[NSFileManager defaultManager] fileExistsAtPath:cachedScreenshotsPath]) {
+        [[NSFileManager defaultManager] createDirectoryAtPath:cachedScreenshotsPath withIntermediateDirectories:YES attributes:nil error:nil];
+        [self addSkipBackupAttributeToItemAtPath:cachedScreenshotsPath];
+    }
+    
+    NSString *screenshotFile = [cachedScreenshotsPath stringByAppendingPathComponent:[NSString stringWithFormat:@"screenshot-%@-%i.jpg", interfaceOrientation, pageNumber]];
+    return [[NSFileManager defaultManager] fileExistsAtPath:screenshotFile];
+}
+- (void)takeScreenshotFromView:(UIWebView *)webView forPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation {
+    
+    BOOL shouldRevealWebView = YES;
+    BOOL animating = YES;
+    
+    if (![self checkScreeshotForPage:pageNumber andOrientation:interfaceOrientation])
+    {
+        NSLog(@"• Taking screenshot of page %d", pageNumber);
+        
+        NSString *screenshotFile = [cachedScreenshotsPath stringByAppendingPathComponent:[NSString stringWithFormat:@"screenshot-%@-%i.jpg", interfaceOrientation, pageNumber]];
+        UIImage *screenshot = nil;
+        
+        if ([interfaceOrientation isEqualToString:[self getCurrentInterfaceOrientation]]) {
+            
+            UIGraphicsBeginImageContextWithOptions(webView.frame.size, NO, [[UIScreen mainScreen] scale]);
+            [webView.layer renderInContext:UIGraphicsGetCurrentContext()];
+            screenshot = UIGraphicsGetImageFromCurrentImageContext();
+            UIGraphicsEndImageContext();
+            
+            if (screenshot) {
+                BOOL saved = [UIImageJPEGRepresentation(screenshot, 0.6) writeToFile:screenshotFile options:NSDataWritingAtomic error:nil];
+                if (saved) {
+                    NSLog(@"    Screenshot succesfully saved to file %@", screenshotFile);
+                    [self placeScreenshotForView:webView andPage:pageNumber andOrientation:interfaceOrientation];
+                    shouldRevealWebView = NO;
+                }
+            }
+        }
+        
+        [self performSelector:@selector(lockPage:) withObject:[NSNumber numberWithBool:NO] afterDelay:0.1];
+    }
+    
+    if (shouldRevealWebView) {
+        [self webView:webView hidden:NO animating:animating];
+    }
+}
+- (void)placeScreenshotForView:(UIWebView *)webView andPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation {
+    
+    int i = pageNumber - 1;
+    NSNumber *num = [NSNumber numberWithInt:pageNumber];
+    
+    NSString    *screenshotFile = [cachedScreenshotsPath stringByAppendingPathComponent:[NSString stringWithFormat:@"screenshot-%@-%i.jpg", interfaceOrientation, pageNumber]];
+    UIImageView *screenshotView = [[UIImageView alloc] initWithImage:[UIImage imageWithContentsOfFile:screenshotFile]];
+    
+    NSMutableDictionary *attachedScreenshot = attachedScreenshotPortrait;
+    CGSize pageSize = CGSizeMake(screenBounds.size.width, screenBounds.size.height);
+    
+    if ([interfaceOrientation isEqualToString:@"landscape"]) {
+        attachedScreenshot = attachedScreenshotLandscape;
+        pageSize = CGSizeMake(screenBounds.size.height, screenBounds.size.width);
+    }
+    
+    screenshotView.frame = CGRectMake(pageSize.width * i, 0, pageSize.width, pageSize.height);
+    
+    BOOL alreadyPlaced = NO;
+    UIImageView *oldScreenshot = [attachedScreenshot objectForKey:num];
+    
+    if (oldScreenshot) {
+        // [scrollView addSubview:screenshotView];
+        [attachedScreenshot removeObjectForKey:num];
+        [oldScreenshot removeFromSuperview];
+        
+        alreadyPlaced = YES;
+    }
+    
+    [attachedScreenshot setObject:screenshotView forKey:num];
+    
+    if (webView == nil)
+    {
+        screenshotView.alpha = 0.0;
+        
+        // [scrollView addSubview:screenshotView];
+        [UIView animateWithDuration:0.5 animations:^{ screenshotView.alpha = 1.0; }];
+    }
+    else if (webView != nil)
+    {
+        if (alreadyPlaced)
+        {
+            [self webView:webView hidden:NO animating:NO];
+        }
+        else if ([interfaceOrientation isEqualToString:[self getCurrentInterfaceOrientation]])
+        {
+            screenshotView.alpha = 0.0;
+            
+            //[scrollView addSubview:screenshotView];
+            /*[UIView animateWithDuration:0.5
+             animations:^{ screenshotView.alpha = 1.0; }
+             completion:^(BOOL finished) { if (!currentPageHasChanged) { [self webView:webView hidden:NO animating:NO]; }}];*/
+        }
+    }
+    
+    [screenshotView release];
+}
+
 @end

@@ -49,7 +49,7 @@ enum {
 } typedef BakerRenderingType;
 
 @class Downloader;
-@interface BakerViewController : UIViewController<BakerWrapperDataSource, BakerWrapperDelegate>  {
+@interface BakerViewController : UIViewController<BakerWrapperDataSource, BakerWrapperDelegate, modalWebViewDelegate>  {
     
     CGRect screenBounds;
     
@@ -119,13 +119,6 @@ enum {
 - (void)pageViewHasBecomeCurrentPage:(PageViewController *)newPageViewController;
 - (PageViewController *)pageViewForPage:(int)page;
 - (PageViewController *)gotoPage:(int)page;
-
-#pragma mark - SCREENSHOTS
-- (void)removeScreenshots;
-- (void)updateScreenshots;
-- (BOOL)checkScreeshotForPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation;
-- (void)takeScreenshotFromView:(UIWebView *)webView forPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation;
-- (void)placeScreenshotForView:(UIWebView *)webView andPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation;
 
 #pragma mark - STATUS BAR
 - (void)toggleStatusBar;
