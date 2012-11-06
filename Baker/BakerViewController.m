@@ -366,6 +366,233 @@
     return [NSDictionary dictionaryWithObjectsAndKeys:lastPageViewed, @"lastPageViewed", lastScrollIndex, @"lastScrollIndex", nil];
 }
 
+#pragma mark - WEBVIEW
+- (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
+    
+    // Sent before a web view begins loading content, useful to trigger actions before the WebView.
+    NSLog(@"• Should webView load the page ?");
+    NSURL *url = [request URL];
+    
+    if ([webView isEqual:prevPage])
+    {
+        NSLog(@"    Page is prev page --> load page");
+        return YES;
+    }
+    else if ([webView isEqual:nextPage])
+    {
+        NSLog(@"    Page is next page --> load page");
+        return YES;
+    }
+    else
+    {
+        // ****** Handle URI schemes
+        if (url)
+        {
+            // Existing, checking if index...
+            if([[url relativePath] isEqualToString:[indexViewController indexPath]])
+            {
+                NSLog(@"    Page is index --> load index");
+                return YES;
+            }
+            else
+            {
+                NSLog(@"    Page is current page and current page IS NOT delaying loading --> handle clicked link: %@", [url absoluteString]);
+                
+                // Not index, checking scheme...
+                if ([[url scheme] isEqualToString:@"file"])
+                {
+                    // ****** Handle: file://
+                    NSLog(@"    Page is a link with scheme file:// --> load internal link");
+                    
+                    anchorFromURL  = [[url fragment] retain];
+                    NSString *file = [[url relativePath] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+                    
+                    int page = [pages indexOfObject:file];
+                    if (page == NSNotFound)
+                    {
+                        // ****** Internal link, but not one of the book pages --> load page anyway
+                        return YES;
+                    }
+                    
+                    page = page + 1;
+                    if (![webView isEqual:indexViewController.view])
+                    {
+                        if (anchorFromURL == nil) {
+                            return YES;
+                        }
+                        
+                        //[self handleAnchor:YES];
+                    }
+                }
+                else if ([[url scheme] isEqualToString:@"book"])
+                {
+                    // ****** Handle: book://
+                    NSLog(@"    Page is a link with scheme book:// --> download new book");
+                    
+                    if ([[url host] isEqualToString:@"local"] && [[NSFileManager defaultManager] fileExistsAtPath:bundleBookPath]) {
+                        // *** Back to bundled book
+                        feedbackAlert = [[UIAlertView alloc] initWithTitle:@""
+                                                                   message:[NSString stringWithFormat:CLOSE_BOOK_MESSAGE]
+                                                                  delegate:self
+                                                         cancelButtonTitle:ALERT_FEEDBACK_CANCEL
+                                                         otherButtonTitles:CLOSE_BOOK_CONFIRM, nil];
+                        [feedbackAlert show];
+                        [feedbackAlert release];
+                        
+                    } else {
+                        
+                        if ([[url pathExtension] isEqualToString:@"html"]) {
+                            anchorFromURL = [[url fragment] retain];
+                            pageNameFromURL = [[[url lastPathComponent] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding] retain];
+                            NSString *tmpUrl = [[url URLByDeletingLastPathComponent] absoluteString];
+                            url = [NSURL URLWithString:[tmpUrl stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"/"]]];
+                        }
+                        
+                        // ****** Download book
+                        URLDownload = [[@"http:" stringByAppendingString:[url resourceSpecifier]] retain];
+                        
+                        if ([[[NSURL URLWithString:URLDownload] pathExtension] isEqualToString:@""]) {
+                            URLDownload = [[URLDownload stringByAppendingString:@".hpub"] retain];
+                        }
+                        
+                        [self downloadBook:nil];
+                    }
+                }
+                else if ([[url scheme] isEqualToString:@"mailto"])
+                {
+                    // Handle mailto links using MessageUI framework
+                    NSLog(@"    Page is a link with scheme mailto: handle mail link");
+                    
+                    // Build temp array and dictionary
+                    NSArray *tempArray = [[url absoluteString] componentsSeparatedByString:@"?"];
+                    NSMutableDictionary *queryDictionary = [[NSMutableDictionary alloc] init];
+                    
+                    // Check array count to see if we have parameters to query
+                    if ([tempArray count] == 2)
+                    {
+                        NSArray *keyValuePairs = [[tempArray objectAtIndex:1] componentsSeparatedByString:@"&"];
+                        
+                        for (NSString *queryString in keyValuePairs) {
+                            NSArray *keyValuePair = [queryString componentsSeparatedByString:@"="];
+                            if (keyValuePair.count == 2) {
+                                [queryDictionary setObject:[keyValuePair objectAtIndex:1] forKey:[keyValuePair objectAtIndex:0]];
+                            }
+                        }
+                    }
+                    
+                    NSString *email = ([tempArray objectAtIndex:0]) ? [tempArray objectAtIndex:0] : [url resourceSpecifier];
+                    NSString *subject = [queryDictionary objectForKey:@"subject"];
+                    NSString *body = [queryDictionary objectForKey:@"body"];
+                    
+                    [queryDictionary release];
+                    
+                    if ([MFMailComposeViewController canSendMail])
+                    {
+                        MFMailComposeViewController *mailer = [[MFMailComposeViewController alloc] init];
+                        
+                        mailer.mailComposeDelegate = self;
+                        mailer.modalPresentationStyle = UIModalPresentationPageSheet;
+                        
+                        [mailer setToRecipients:[NSArray arrayWithObject:[email stringByReplacingOccurrencesOfString:@"mailto:" withString:@""]]];
+                        [mailer setSubject:[subject stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+                        [mailer setMessageBody:[body stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding] isHTML:NO];
+                        
+                        // Show the view
+                        [self presentModalViewController:mailer animated:YES];
+                        [mailer release];
+                    }
+                    else
+                    {
+                        // Check if the system can handle a mailto link
+                        if ([[UIApplication sharedApplication] canOpenURL:url])
+                        {
+                            // Go for it and open the URL within the respective app
+                            [[UIApplication sharedApplication] openURL: url];
+                        }
+                        else
+                        {
+                            // Display error message
+                            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Failure"
+                                                                            message:@"Your device doesn't support the sending of emails!"
+                                                                           delegate:nil
+                                                                  cancelButtonTitle:@"OK"
+                                                                  otherButtonTitles:nil];
+                            
+                            [alert show];
+                            [alert release];
+                        }
+                    }
+                    
+                    return NO;
+                }
+                else if (![[url scheme] isEqualToString:@""] && ![[url scheme] isEqualToString:@"http"] && ![[url scheme] isEqualToString:@"https"])
+                {
+                    [[UIApplication sharedApplication] openURL:url];
+                    return NO;
+                }
+                else
+                {
+                    // **************************************************************************************************** OPEN OUTSIDE BAKER
+                    // * This is required since the inclusion of external libraries (like Google Maps) requires
+                    // * direct opening of external pages within Baker. So we have to handle when you want to actually
+                    // * open a page outside of Baker.
+                    
+                    NSString *params = [url query];
+                    NSLog(@"    Opening absolute URL: %@", [url absoluteString]);
+                    
+                    if (params != nil)
+                    {
+                        NSRegularExpression *referrerExternalRegex = [NSRegularExpression regularExpressionWithPattern:URL_OPEN_EXTERNAL options:NSRegularExpressionCaseInsensitive error:NULL];
+                        NSUInteger matches = [referrerExternalRegex numberOfMatchesInString:params options:0 range:NSMakeRange(0, [params length])];
+                        
+                        NSRegularExpression *referrerModalRegex = [NSRegularExpression regularExpressionWithPattern:URL_OPEN_MODALLY options:NSRegularExpressionCaseInsensitive error:NULL];
+                        NSUInteger matchesModal = [referrerModalRegex numberOfMatchesInString:params options:0 range:NSMakeRange(0, [params length])];
+                        
+                        if (matches > 0)
+                        {
+                            NSLog(@"    Link contain param \"%@\" --> open link in Safari", URL_OPEN_EXTERNAL);
+                            
+                            // Generate new URL without
+                            // We are regexp-ing three things: the string alone, the string first with other content, the string with other content in any other position
+                            NSRegularExpression *replacerRegexp = [NSRegularExpression regularExpressionWithPattern:[[NSString alloc] initWithFormat:@"\\?%@$|(?<=\\?)%@&?|()&?%@", URL_OPEN_EXTERNAL, URL_OPEN_EXTERNAL, URL_OPEN_EXTERNAL] options:NSRegularExpressionCaseInsensitive error:NULL];
+                            NSString *oldURL = [url absoluteString];
+                            NSLog(@"    replacement pattern: %@", [replacerRegexp pattern]);
+                            NSString *newURL = [replacerRegexp stringByReplacingMatchesInString:oldURL options:0 range:NSMakeRange(0, [oldURL length]) withTemplate:@""];
+                            
+                            NSLog(@"    Opening with updated URL: %@", newURL);
+                            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:newURL]];
+                            
+                            return NO;
+                        }
+                        else if (matchesModal)
+                        {
+                            NSLog(@"    Link contain param \"%@\" --> open link modally", URL_OPEN_MODALLY);
+                            
+                            // Generate new URL without
+                            // We are regexp-ing three things: the string alone, the string first with other content, the string with other content in any other position
+                            NSRegularExpression *replacerRegexp = [NSRegularExpression regularExpressionWithPattern:[[NSString alloc] initWithFormat:@"\\?%@$|(?<=\\?)%@&?|()&?%@", URL_OPEN_MODALLY, URL_OPEN_MODALLY, URL_OPEN_MODALLY] options:NSRegularExpressionCaseInsensitive error:NULL];
+                            NSString *oldURL = [url absoluteString];
+                            NSLog(@"    replacement pattern: %@", [replacerRegexp pattern]);
+                            NSString *newURL = [replacerRegexp stringByReplacingMatchesInString:oldURL options:0 range:NSMakeRange(0, [oldURL length]) withTemplate:@""];
+                            
+                            NSLog(@"    Opening with updated URL: %@", newURL);
+                            [self loadModalWebView:url];
+                            
+                            return NO;
+                        }
+                    }
+                    
+                    NSLog(@"    Link doesn't contain param \"%@\" --> open link in page", URL_OPEN_EXTERNAL);
+                    
+                    return YES;
+                }
+            }
+        }
+        
+        return NO;
+    }
+}
+
 #pragma mark - MODAL VIEW
 - (void)loadModalWebView:(NSURL *)url {
     /****************************************************************************************************
@@ -478,6 +705,8 @@
         } else {
             newPage.backgroundImageView.image = nil;
         }
+        
+        newPage.delegate = self;
         
         [newPage setTag:page];
         [newPage loadPage:[pages objectAtIndex:page - 1]];

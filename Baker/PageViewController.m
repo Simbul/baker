@@ -512,6 +512,31 @@
     [webView stringByEvaluatingJavaScriptFromString:jsOrientationGetter];
 }
 
+- (void)handleAnchor:(BOOL)animating {
+    if (anchorFromURL != nil) {
+        NSString *jsAnchorHandler = [NSString stringWithFormat:@"(function() {\
+                                     var target = '%@';\
+                                     var elem = document.getElementById(target);\
+                                     if (!elem) elem = document.getElementsByName(target)[0];\
+                                     return elem.offsetTop;\
+                                     })();", anchorFromURL];
+        
+        NSString *offsetString = [currPage stringByEvaluatingJavaScriptFromString:jsAnchorHandler];
+        if (![offsetString isEqualToString:@""])
+        {
+            int offset = [offsetString intValue];
+            int currentPageOffset = [self getCurrentPageOffset];
+            
+            if (offset > currentPageOffset) {
+                [self scrollDownCurrentPage:offset animating:animating];
+            } else if (offset < currentPageOffset) {
+                [self scrollUpCurrentPage:offset animating:animating];
+            }
+        }
+        
+        anchorFromURL = nil;
+    }
+}
 
 #pragma mark - SCREENSHOTS
 - (void)removeScreenshots {

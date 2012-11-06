@@ -49,7 +49,7 @@ enum {
 } typedef BakerRenderingType;
 
 @class Downloader;
-@interface BakerViewController : UIViewController<BakerWrapperDataSource, BakerWrapperDelegate, modalWebViewDelegate, UIWebViewDelegate>  {
+@interface BakerViewController : UIViewController<BakerWrapperDataSource, BakerWrapperDelegate, modalWebViewDelegate, UIWebViewDelegate, MFMailComposeViewControllerDelegate>  {
     
     CGRect screenBounds;
     
