@@ -107,9 +107,6 @@
         [self addChildViewController:_wrapperViewController];
         [self.view addSubview:_wrapperViewController.view];
         
-        // ****** LISTENER FOR INTERCEPTOR WINDOW NOTIFICATION
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleInterceptedTouch:) name:@"notification_touch_intercepted" object:nil];
-        
         // ****** LISTENER FOR DOWNLOAD NOTIFICATION - TODO: MOVE TO VIEWWILLAPPEAR
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(downloadBook:) name:@"downloadNotification" object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleDownloadResult:) name:@"handleDownloadResult" object:nil];

@@ -36,7 +36,6 @@
 		D268D2CA15A2549E00108A0E /* forward.png in Resources */ = {isa = PBXBuildFile; fileRef = D268D2A415A2549E00108A0E /* forward.png */; };
 		D268D2CB15A2549E00108A0E /* forward@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D268D2A515A2549E00108A0E /* forward@2x.png */; };
 		D268D2CC15A2549E00108A0E /* IndexViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D268D2A715A2549E00108A0E /* IndexViewController.m */; };
-		D268D2CD15A2549E00108A0E /* InterceptorWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = D268D2A915A2549E00108A0E /* InterceptorWindow.m */; };
 		D268D2CE15A2549E00108A0E /* GTMNSString+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = D268D2AD15A2549E00108A0E /* GTMNSString+HTML.m */; };
 		D268D2CF15A2549E00108A0E /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = D268D2B015A2549E00108A0E /* JSONKit.m */; };
 		D268D2D015A2549E00108A0E /* ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = D268D2B315A2549E00108A0E /* ioapi.c */; };
@@ -115,8 +114,6 @@
 		D268D2A515A2549E00108A0E /* forward@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "forward@2x.png"; sourceTree = "<group>"; };
 		D268D2A615A2549E00108A0E /* IndexViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndexViewController.h; sourceTree = "<group>"; };
 		D268D2A715A2549E00108A0E /* IndexViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IndexViewController.m; sourceTree = "<group>"; };
-		D268D2A815A2549E00108A0E /* InterceptorWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InterceptorWindow.h; sourceTree = "<group>"; };
-		D268D2A915A2549E00108A0E /* InterceptorWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InterceptorWindow.m; sourceTree = "<group>"; };
 		D268D2AB15A2549E00108A0E /* GTMDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTMDefines.h; sourceTree = "<group>"; };
 		D268D2AC15A2549E00108A0E /* GTMNSString+HTML.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "GTMNSString+HTML.h"; sourceTree = "<group>"; };
 		D268D2AD15A2549E00108A0E /* GTMNSString+HTML.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "GTMNSString+HTML.m"; sourceTree = "<group>"; };
@@ -284,8 +281,6 @@
 				D268D2A115A2549E00108A0E /* img */,
 				D268D2A615A2549E00108A0E /* IndexViewController.h */,
 				D268D2A715A2549E00108A0E /* IndexViewController.m */,
-				D268D2A815A2549E00108A0E /* InterceptorWindow.h */,
-				D268D2A915A2549E00108A0E /* InterceptorWindow.m */,
 				D268D2AA15A2549E00108A0E /* lib */,
 				D268D2BF15A2549E00108A0E /* ModalViewController.h */,
 				D268D2C015A2549E00108A0E /* ModalViewController.m */,
@@ -503,7 +498,6 @@
 				D268D29B15A253A000108A0E /* BakerAppDelegate.m in Sources */,
 				D268D2C715A2549E00108A0E /* Downloader.m in Sources */,
 				D268D2CC15A2549E00108A0E /* IndexViewController.m in Sources */,
-				D268D2CD15A2549E00108A0E /* InterceptorWindow.m in Sources */,
 				D268D2CE15A2549E00108A0E /* GTMNSString+HTML.m in Sources */,
 				D268D2CF15A2549E00108A0E /* JSONKit.m in Sources */,
 				D268D2D015A2549E00108A0E /* ioapi.c in Sources */,

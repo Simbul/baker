@@ -32,7 +32,6 @@
 
 #import "BakerAppDelegate.h"
 #import "BakerViewController.h"
-#import "InterceptorWindow.h"
 #import "Properties.h"
 #import "Utils.h"
 
@@ -67,7 +66,7 @@
     self.rootViewController = [[[BakerViewController alloc] initWithBookPath:[[NSBundle mainBundle] pathForResource:@"book" ofType:nil]] autorelease];
     
     // Create the application window
-    self.window = [[[InterceptorWindow alloc] initWithFrame:[[UIScreen mainScreen]bounds]] autorelease];
+    self.window = [[[UIWindow alloc] initWithFrame:[[UIScreen mainScreen]bounds]] autorelease];
     
     Properties *_properties = [Properties properties];
     
