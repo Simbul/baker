@@ -14,11 +14,15 @@
 
 @implementation BakerWrapper
 
-
 - (id)initWithFrame:(CGRect)frame{
     return [super init];
 }
+
 - (void)setViewControllers:(NSArray *)viewControllers direction:(BakerWrapperNavigationDirection)direction animated:(BOOL)animated completion:(void (^)(BOOL finished))completion{
+    
+    _direction = direction;
+    _viewControllers = viewControllers;
+    
     return;
 }
 
