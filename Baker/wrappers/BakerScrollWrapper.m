@@ -136,6 +136,19 @@
         [self scrollPage:currPage to:[NSString stringWithFormat:@"%d", targetOffset] animating:animating];
     }
 }
+- (void)setTappableAreaSize {
+    NSLog(@"• Set tappable area size");
+    
+    int tappableAreaSize = screenBounds.size.width/16;
+    if (screenBounds.size.width < 768) {
+        tappableAreaSize = screenBounds.size.width/8;
+    }
+    
+    upTapArea    = CGRectMake(tappableAreaSize, 0, pageWidth - (tappableAreaSize * 2), tappableAreaSize);
+    downTapArea  = CGRectMake(tappableAreaSize, pageHeight - tappableAreaSize, pageWidth - (tappableAreaSize * 2), tappableAreaSize);
+    leftTapArea  = CGRectMake(0, tappableAreaSize, tappableAreaSize, pageHeight - (tappableAreaSize * 2));
+    rightTapArea = CGRectMake(pageWidth - tappableAreaSize, tappableAreaSize, tappableAreaSize, pageHeight - (tappableAreaSize * 2));
+}
 - (void)scrollDownCurrentPage:(int)targetOffset animating:(BOOL)animating {
     
     int currentPageMaxScroll = currentPageHeight - pageHeight;
@@ -184,5 +197,131 @@
         anchorFromURL = nil;
     }
 }
+
+- (CGRect)frameForPage:(int)page {
+    return CGRectZero;// CGRectMake((USEPAGEVIEW)?0:(pageWidth * (page - 1)), 0, pageWidth, pageHeight);
+}
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scroll {
+    NSLog(@"• Scrollview will begin dragging");
+    [self hideStatusBar];
+}
+- (void)scrollViewDidEndDragging:(UIScrollView *)scroll willDecelerate:(BOOL)decelerate {
+    NSLog(@"• Scrollview did end dragging");
+}
+- (void)scrollViewWillBeginDecelerating:(UIScrollView *)scroll {
+    NSLog(@"• Scrollview will begin decelerating");
+}
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scroll {
+    
+    int page = (int)(scroll.contentOffset.x / pageWidth) + 1;
+    NSLog(@"• Swiping to page: %d", page);
+    
+    if (currentPageNumber != page) {
+        
+        lastPageNumber = currentPageNumber;
+        currentPageNumber = page;
+        
+        tapNumber = tapNumber + (lastPageNumber - currentPageNumber);
+        
+        currentPageIsDelayingLoading = YES;
+        [self gotoPage];
+    }
+}
+- (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scroll {
+    NSLog(@"• Scrollview did end scrolling animation");
+    
+    stackedScrollingAnimations--;
+    if (stackedScrollingAnimations == 0) {
+        NSLog(@"    Scroll enabled");
+        scroll.scrollEnabled = [[properties get:@"-baker-page-turn-swipe", nil] boolValue]; // YES by default, NO if specified
+    }
+}
+
+- (void)updateBookLayout {
+    NSLog(@"    Prevent page from changing until layout is updated");
+    [self lockPage:[NSNumber numberWithBool:YES]];
+    
+    [self setPageSize:[self getCurrentInterfaceOrientation]];
+    
+    if ([renderingType isEqualToString:@"screenshots"]) {
+        // TODO: BE SURE TO KNOW THE CORRECT CURRENT PAGE!
+        [self removeScreenshots];
+        [self updateScreenshots];
+    }
+    
+    
+    // HACK TO HANDLE STATUS BAR ON ROTATION, TODO: MOVE IT IN ITS OWN METHOD
+    int scrollViewY = 0;
+    if (![UIApplication sharedApplication].statusBarHidden) {
+        scrollViewY = -20;
+    }/*
+      
+      [UIView animateWithDuration:0.2
+      animations:^{
+      if (!USEPAGEVIEW){
+      scrollView.frame = CGRectMake(0, scrollViewY, pageWidth, pageHeight);
+      } else {
+      pageView.view.frame = CGRectMake(0, scrollViewY, pageWidth, pageHeight);
+      }
+      }];
+      
+      
+      [self setFrame:[self frameForPage:currentPageNumber] forPage:currPage];
+      [self setFrame:[self frameForPage:currentPageNumber + 1] forPage:nextPage];
+      [self setFrame:[self frameForPage:currentPageNumber - 1] forPage:prevPage];
+      
+      if (!USEPAGEVIEW){
+      [scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:NO];
+      } else {
+      
+      currentPageViewController  = [[[UIViewController alloc] init] retain];
+      currentPageViewController.view = [[UIView alloc] init];
+      currentPageViewController.view.bounds = self.pageView.view.bounds;
+      currentPageViewController.view.backgroundColor = [Utils colorWithHexString:[properties get:@"-baker-background", nil]];
+      
+      NSDictionary *details = [pageDetails objectAtIndex:0];
+      
+      [currentPageViewController.view addSubview:[details objectForKey:@"background"]];
+      [currentPageViewController.view addSubview:[details objectForKey:@"spinner"]];
+      [currentPageViewController.view addSubview:[details objectForKey:@"number"]];
+      [currentPageViewController.view addSubview:[details objectForKey:@"title"]];
+      
+      
+      NSArray *viewControllers = @[currentPageViewController];
+      
+      [pageView setViewControllers:viewControllers
+      direction:UIPageViewControllerNavigationDirectionForward
+      animated:NO
+      completion:nil];
+      }
+      NSLog(@"    Unlock page changing");
+      [self lockPage:[NSNumber numberWithBool:NO]];*/
+}
+- (void)setPageSize:(NSString *)orientation {
+    NSLog(@"• Set size for orientation: %@", orientation);
+    
+    pageWidth  = screenBounds.size.width;
+    pageHeight = screenBounds.size.height;
+    
+    if ([orientation isEqualToString:@"landscape"]) {
+        pageWidth  = screenBounds.size.height;
+        pageHeight = screenBounds.size.width;
+    }
+    
+    [self setTappableAreaSize];
+    
+    
+    /* if (!USEPAGEVIEW){
+     scrollView.contentSize = CGSizeMake(pageWidth * totalPages, pageHeight);
+     }*/
+}
+
+- (void)setFrame:(CGRect)frame forPage:(UIWebView *)page {
+    /* if (page && [page.superview isEqual:scrollView]) {
+     page.frame = frame;
+     [scrollView bringSubviewToFront:page];
+     }*/
+}
+
 
 @end

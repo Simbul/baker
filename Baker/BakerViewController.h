@@ -106,19 +106,8 @@ enum {
 - (void)setPageSize:(NSString *)orientation;
 - (void)setTappableAreaSize;
 - (void)setFrame:(CGRect)frame forPage:(UIWebView *)page;
-
 - (void)setupWebView:(UIWebView *)webView;
 - (void)addSkipBackupAttributeToItemAtPath:(NSString *)path;
-
-#pragma mark - LOADING
-- (BOOL)changePage:(int)page;
-- (void)gotoPageDelayer;
-- (void)gotoPage;
-- (void)lockPage:(NSNumber *)lock;
-- (void)addPageLoading:(int)slot;
-- (void)handlePageLoading;
-- (void)loadSlot:(int)slot withPage:(int)page;
-- (BOOL)loadWebView:(UIWebView *)webview withPage:(int)page;
 - (NSDictionary *)bookCurrentStatus;
 
 #pragma mark - MODAL WEBVIEW
@@ -126,14 +115,10 @@ enum {
 - (void)closeModalWebView;
 
 #pragma mark - PAGE MANAGEMENT
+- (PageViewController *)initWrapperWithPage:(int)page;
+- (void)pageViewHasBecomeCurrentPage:(PageViewController *)newPageViewController;
 - (PageViewController *)pageViewForPage:(int)page;
 - (PageViewController *)gotoPage:(int)page;
-
-#pragma mark - WEBVIEW
-- (void)webView:(UIWebView *)webView hidden:(BOOL)status animating:(BOOL)animating;
-- (void)webViewDidAppear:(UIWebView *)webView animating:(BOOL)animating;
-- (void)webView:(UIWebView *)webView dispatchHTMLEvent:(NSString *)event;
-- (void)webView:(UIWebView *)webView setCorrectOrientation:(UIInterfaceOrientation)interfaceOrientation;
 
 #pragma mark - SCREENSHOTS
 - (void)removeScreenshots;
@@ -141,19 +126,6 @@ enum {
 - (BOOL)checkScreeshotForPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation;
 - (void)takeScreenshotFromView:(UIWebView *)webView forPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation;
 - (void)placeScreenshotForView:(UIWebView *)webView andPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation;
-
-#pragma mark - GESTURES
-- (void)handleInterceptedTouch:(NSNotification *)notification;
-- (void)userDidTap:(UITouch *)touch;
-- (void)userDidScroll:(UITouch *)touch;
-
-#pragma mark - PAGE SCROLLING
-- (void)setCurrentPageHeight;
-- (int)getCurrentPageOffset;
-- (void)scrollUpCurrentPage:(int)offset animating:(BOOL)animating;
-- (void)scrollDownCurrentPage:(int)offset animating:(BOOL)animating;
-- (void)scrollPage:(UIWebView *)webView to:(NSString *)offset animating:(BOOL)animating;
-- (void)handleAnchor:(BOOL)animating;
 
 #pragma mark - STATUS BAR
 - (void)toggleStatusBar;

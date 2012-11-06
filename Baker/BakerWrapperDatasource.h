@@ -7,14 +7,15 @@
 //
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import "PageViewController.h"
 
 @class BakerWrapper;
 @protocol BakerWrapperDataSource <NSObject>
 
 @required
 
-- (UIViewController *)wrapperViewController:(BakerWrapper *)wrapperViewController viewControllerBeforeViewController:(UIViewController *)viewController;
-- (UIViewController *)wrapperViewController:(BakerWrapper *)wrapperViewController viewControllerAfterViewController:(UIViewController *)viewController;
+- (PageViewController *)wrapperViewController:(BakerWrapper *)wrapperViewController viewControllerBeforeViewController:(PageViewController *)viewController;
+- (PageViewController *)wrapperViewController:(BakerWrapper *)wrapperViewController viewControllerAfterViewController:(PageViewController *)viewController;
 - (NSInteger)presentationCountForWrapperViewController:(BakerWrapper *)wrapperViewController;
 - (NSInteger)presentationIndexForWrapperViewController:(BakerWrapper *)wrapperViewController;
 
