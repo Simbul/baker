@@ -101,12 +101,7 @@ enum {
 - (void)buildPageArray;
 - (void)startReadingFromPage:(int)pageNumber anchor:(NSString *)anchor;
 - (void)startReading;
-- (void)setImageFor:(UIImageView *)view;
 - (void)updateBookLayout;
-- (void)setPageSize:(NSString *)orientation;
-- (void)setTappableAreaSize;
-- (void)setFrame:(CGRect)frame forPage:(UIWebView *)page;
-- (void)setupWebView:(UIWebView *)webView;
 - (void)addSkipBackupAttributeToItemAtPath:(NSString *)path;
 - (NSDictionary *)bookCurrentStatus;
 
@@ -115,10 +110,10 @@ enum {
 - (void)closeModalWebView;
 
 #pragma mark - PAGE MANAGEMENT
-- (PageViewController *)initWrapperWithPage:(int)page;
+- (void)initWrapperWithPage:(int)page;
 - (void)pageViewHasBecomeCurrentPage:(PageViewController *)newPageViewController;
-- (PageViewController *)pageViewForPage:(int)page;
-- (PageViewController *)gotoPage:(int)page;
+- (PageViewController *)newPageViewForPage:(int)page;
+- (PageViewController *)getPageViewForPage:(int)page;
 
 #pragma mark - STATUS BAR
 - (void)toggleStatusBar;

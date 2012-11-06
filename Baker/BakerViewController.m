@@ -315,13 +315,6 @@
 }
 
 - (void)updateBookLayout {
-
-    if (renderingType == BakerRenderingTypeScreenshots) {
-        // TODO: BE SURE TO KNOW THE CORRECT CURRENT PAGE!
-        [self removeScreenshots];
-        [self updateScreenshots];
-    }
-    
     
     // HACK TO HANDLE STATUS BAR ON ROTATION, TODO: MOVE IT IN ITS OWN METHOD
     int scrollViewY = 0;
@@ -418,22 +411,20 @@
     // webview and stuff to the current orientation
     [indexViewController rotateFromOrientation:self.interfaceOrientation toOrientation:self.interfaceOrientation];
     
-    [self setPageSize:[self getCurrentInterfaceOrientation]];
-    [self setCurrentPageHeight];
     [self updateBookLayout];
 }
 
 #pragma mark - PAGE MANAGEMENT
 
-- (PageViewController *)initWrapperWithPage:(int)page{
+- (void)initWrapperWithPage:(int)page{
     
     PageViewController *newPageViewController = [self newPageViewForPage:page];
     
     [self pageViewHasBecomeCurrentPage:newPageViewController];
     
-    NSArray *pages = @[newPageViewController];
+    NSArray *pageViews = @[newPageViewController];
     
-    [_wrapperViewController setViewControllers:pages direction:BakerWrapperNavigationDirectionHorizontal animated:NO completion:^(BOOL finished) {
+    [_wrapperViewController setViewControllers:pageViews direction:BakerWrapperNavigationDirectionHorizontal animated:NO completion:^(BOOL finished) {
         NSLog(@"First Page Loaded");
     }];
 }
@@ -532,6 +523,14 @@
 
 - (NSInteger)presentationIndexForWrapperViewController:(BakerWrapper *)wrapperViewController{
     return currPage.tag;
+}
+
+- (void)wrapperViewController:(BakerWrapper *)wrapperViewController willTransitionToViewControllers:(NSArray *)pendingViewControllers{
+    
+}
+
+- (void)wrapperViewController:(BakerWrapper *)wrapperViewController didFinishAnimating:(BOOL)finished previousViewControllers:(NSArray *)previousViewControllers transitionCompleted:(BOOL)completed{
+    
 }
 
 #pragma mark - STATUS BAR
@@ -703,17 +702,15 @@
     // Notify the index view
     [indexViewController willRotate];
     
-    // Notify the current loaded views
-    [self webView:currPage setCorrectOrientation:toInterfaceOrientation];
-    if (nextPage) [self webView:nextPage setCorrectOrientation:toInterfaceOrientation];
-    if (prevPage) [self webView:prevPage setCorrectOrientation:toInterfaceOrientation];
-    
 }
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
     [indexViewController rotateFromOrientation:fromInterfaceOrientation toOrientation:self.interfaceOrientation];
     
-    [self setCurrentPageHeight];
     [self updateBookLayout];
+}
+
+- (void)webView:(UIWebView *)webView setCorrectOrientation:(UIInterfaceOrientation)interfaceOrientation{
+    
 }
 
 #pragma mark - MEMORY
