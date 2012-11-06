@@ -709,9 +709,30 @@
     [self updateBookLayout];
 }
 
-- (void)webView:(UIWebView *)webView setCorrectOrientation:(UIInterfaceOrientation)interfaceOrientation{
+- (void)webView:(UIWebView *)webView setCorrectOrientation:(UIInterfaceOrientation)interfaceOrientation {
     
+    // Since the UIWebView doesn't handle orientationchange events correctly we have to set the correct value for window.orientation property ourselves
+    NSString *jsOrientationGetter;
+    switch (interfaceOrientation) {
+        case UIInterfaceOrientationPortrait:
+            jsOrientationGetter = @"window.__defineGetter__('orientation', function() { return 0; });";
+            break;
+        case UIInterfaceOrientationLandscapeLeft:
+            jsOrientationGetter = @"window.__defineGetter__('orientation', function() { return 90; });";
+            break;
+        case UIInterfaceOrientationPortraitUpsideDown:
+            jsOrientationGetter = @"window.__defineGetter__('orientation', function() { return 180; });";
+            break;
+        case UIInterfaceOrientationLandscapeRight:
+            jsOrientationGetter = @"window.__defineGetter__('orientation', function() { return -90; });";
+            break;
+        default:
+            break;
+    }
+    
+    [webView stringByEvaluatingJavaScriptFromString:jsOrientationGetter];
 }
+
 
 #pragma mark - MEMORY
 - (void)didReceiveMemoryWarning {
