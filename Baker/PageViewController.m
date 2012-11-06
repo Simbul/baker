@@ -15,12 +15,12 @@
 
 @implementation PageViewController
 
-- (id)initWithPageSize:(CGSize)size
+- (id)initWithFrame:(CGRect)frame
 {
     self = [super init];
     if (self) {
         //Setup View for Page
-        self.view = [[UIView alloc] initWithFrame:CGRectMake(0,0,size.width, size.height)];
+        self.view = [[UIView alloc] initWithFrame:frame];
         
         // ****** INIT PROPERTIES
         _properties = [Properties properties];

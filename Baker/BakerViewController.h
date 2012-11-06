@@ -42,8 +42,13 @@
 #import "ModalViewController.h"
 #import "Properties.h"
 
-@class Downloader;
+// Page Rendering Type Definitions
+enum {
+    BakerRenderingTypeScreenshots,
+    BakerRenderingTypeThreeCards
+} typedef BakerRenderingType;
 
+@class Downloader;
 @interface BakerViewController : UIViewController<BakerWrapperDataSource, BakerWrapperDelegate>  {
     
     CGRect screenBounds;
@@ -55,7 +60,6 @@
     NSString *cachedScreenshotsPath;
     
     NSString *availableOrientation;
-    NSString *renderingType;
     
     NSMutableArray *pages;
     NSMutableArray *toLoad;
@@ -65,6 +69,9 @@
     
     NSString *pageNameFromURL;
     NSString *anchorFromURL;
+    
+    UIImage *backgroundImageLandscape;
+    UIImage *backgroundImagePortrait;
     
     PageViewController *prevPage;
     PageViewController *currPage;
@@ -77,13 +84,13 @@
     IndexViewController *indexViewController;
     ModalViewController *myModalViewController;
     
+    BakerRenderingType renderingType;
+    
     Properties *properties;
 }
 
 #pragma mark - PROPERTIES
 @property (nonatomic, retain) BakerWrapper *wrapperViewController;
-@property (nonatomic, retain) PageViewController *currPage;
-@property int currentPageNumber;
 
 #pragma mark - INIT
 - (id)initWithBookPath:(NSString *)bookPath;
@@ -117,6 +124,10 @@
 #pragma mark - MODAL WEBVIEW
 - (void)loadModalWebView:(NSURL *)url;
 - (void)closeModalWebView;
+
+#pragma mark - PAGE MANAGEMENT
+- (PageViewController *)pageViewForPage:(int)page;
+- (PageViewController *)gotoPage:(int)page;
 
 #pragma mark - WEBVIEW
 - (void)webView:(UIWebView *)webView hidden:(BOOL)status animating:(BOOL)animating;

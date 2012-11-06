@@ -16,9 +16,6 @@
     NSNumber *_pageNumberAlpha;
     UIColor *_pageNumberColor;
     
-    UIImage *backgroundImageLandscape;
-    UIImage *backgroundImagePortrait;
-    
     NSString *_pageURL;
     
     Properties *_properties;
@@ -31,6 +28,7 @@
 @property (strong, retain)UIWebView *webView;
 @property (readwrite, atomic)int tag;
 
+- (id)initWithFrame:(CGRect)frame;
 - (void)loadPage:(NSString*)pageURL;
 - (void)updatePageInfomation;
 

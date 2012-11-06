@@ -71,7 +71,6 @@
 @implementation BakerViewController
 
 #pragma mark - SYNTHESIS
-@synthesize currPage;
 @synthesize currentPageNumber;
 
 #pragma mark - INIT
@@ -94,7 +93,6 @@
     // ****** BUNDLED BOOK DIRECTORY
     bundleBookPath = [[[NSBundle mainBundle] pathForResource:@"book" ofType:nil] retain];
     
-    
     // ****** DOWNLOADED BOOKS DIRECTORY
     NSString *privateDocsPath = [[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:@"Private Documents"];
     if (![[NSFileManager defaultManager] fileExistsAtPath:privateDocsPath]) {
@@ -102,14 +100,14 @@
     }
     documentsBookPath = [[privateDocsPath stringByAppendingPathComponent:@"book"] retain];
     
-    
     // ****** SCREENSHOTS DIRECTORY //TODO: set in load book only if is necessary
+        
     NSString *cachePath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0];
     if (![[NSFileManager defaultManager] fileExistsAtPath:cachePath]) {
         [[NSFileManager defaultManager] createDirectoryAtPath:cachePath withIntermediateDirectories:YES attributes:nil error:nil];
     }
     defaultScreeshotsPath = [[cachePath stringByAppendingPathComponent:@"baker-screenshots"] retain];
-    // [self addSkipBackupAttributeToItemAtPath:defaultScreeshotsPath];
+    [self addSkipBackupAttributeToItemAtPath:defaultScreeshotsPath];
     
     // ****** Initialize audio session for html5 audio
     AVAudioSession *audioSession = [AVAudioSession sharedInstance];
@@ -133,7 +131,7 @@
         anchorFromURL = nil;
         
         /// ****** WRAPPER VIEW INIT
-        _wrapperViewController = [[BakerScrollWrapper alloc] initWithFrame:CGRectMake(0, 0, pageWidth, pageHeight)];
+        _wrapperViewController = [[BakerScrollWrapper alloc] initWithFrame:self.view.frame];
         _wrapperViewController.dataSource = self;
         _wrapperViewController.delegate = self;
         [self addChildViewController:_wrapperViewController];
@@ -141,7 +139,6 @@
         
         // ****** LISTENER FOR INTERCEPTOR WINDOW NOTIFICATION
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleInterceptedTouch:) name:@"notification_touch_intercepted" object:nil];
-        
         
         // ****** LISTENER FOR DOWNLOAD NOTIFICATION - TODO: MOVE TO VIEWWILLAPPEAR
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(downloadBook:) name:@"downloadNotification" object:nil];
@@ -156,36 +153,19 @@
 
 
 - (BOOL)loadBookWithBookPath:(NSString *)bookPath {
-    NSLog(@"• LOAD BOOK WITH PATH: %@", bookPath);
     
+    NSLog(@"• LOAD BOOK WITH PATH: %@", bookPath);
     
     // ****** STORING BOOK PATH
     currentBookPath = [bookPath retain];
     
-    
     // ****** CLEANUP PREVIOUS BOOK
     [self cleanupBookEnvironment];
-    
     
     // ****** LOAD BOOK PROPERTIES FROM BOOK.JSON
     [self loadBookProperties];
     
-    
-    if (totalPages > 0) {
-        
-        // ****** SET STARTING PAGE
-        int lastPageViewed   = [[[NSUserDefaults standardUserDefaults] objectForKey:@"lastPageViewed"] intValue];
-        int bakerStartAtPage = [[properties get:@"-baker-start-at-page", nil] intValue];
-        currentPageNumber = 1;
-        
-        if (currentPageFirstLoading && lastPageViewed != 0) {
-            currentPageNumber = lastPageViewed;
-        } else if (bakerStartAtPage < 0) {
-            currentPageNumber = MAX(1, totalPages + bakerStartAtPage + 1);
-        } else if (bakerStartAtPage > 0) {
-            currentPageNumber = MIN(totalPages, bakerStartAtPage);
-        }
-        
+    if (pages.count > 0) {
         
         // ****** SET SCREENSHOTS FOLDER
         NSString *screenshotFolder = [properties get:@"-baker-page-screenshots", nil];
@@ -253,28 +233,21 @@
     /****************************************************************************************************
      * Initializes the 'properties' object from book.json and inits also some static properties.
      */
-    
     NSString *filePath = [currentBookPath stringByAppendingPathComponent:@"book.json"];
     [properties loadManifest:filePath];
-    
     
     // ****** ORIENTATION
     availableOrientation = [[[properties get:@"orientation", nil] retain] autorelease];
     NSLog(@"available orientation: %@", availableOrientation);
     
-    
     // ****** CONTENTS
     [self buildPageArray];
     
-    
     // ****** BAKER RENDERING
-    renderingType = [[[properties get:@"-baker-rendering", nil] retain] autorelease];
-    NSLog(@"rendering type: %@", renderingType);
+    NSString *renderingTypeString = [[[properties get:@"-baker-rendering", nil] retain] autorelease];
+    renderingType = ([renderingTypeString isEqualToString:@"three-cards"])?BakerRenderingTypeThreeCards:BakerRenderingTypeScreenshots;
     
-    // ****** BAKER BACKGROUND
-    backgroundImageLandscape   = nil;
-    backgroundImagePortrait    = nil;
-   
+    NSLog(@"rendering type: %@", renderingTypeString);
     
     NSString *backgroundPathLandscape = [properties get:@"-baker-background-image-landscape", nil];
     if (backgroundPathLandscape != nil) {
@@ -304,10 +277,10 @@
             NSLog(@"Page %@ does not exist in %@", page, currentBookPath);
         }
     }
-    
-    totalPages = [pages count];
-    NSLog(@"    Pages in this book: %d", totalPages);
+
+    NSLog(@"    Pages in this book: %d", [pages count]);
 }
+
 - (void)startReadingFromPage:(int)pageNumber anchor:(NSString *)anchor {
     
     // set current page number
@@ -330,11 +303,10 @@
             }
         }
     }*/
-    
 }
+
 - (void)startReading {
     
-    [self buildPageDetails];
     [self updateBookLayout];
     
     // TODO: MOVE INTO ANOTHER METHOD
@@ -350,27 +322,31 @@
     indexViewController = [[IndexViewController alloc] initWithBookPath:currentBookPath fileName:INDEX_FILE_NAME webViewDelegate:self];
     [self.view addSubview:indexViewController.view];
     
-    
     [indexViewController loadContent];
     
+    // ****** SET STARTING PAGE
+    int totalPages = pages.count;
     
-    currentPageIsDelayingLoading = YES;
+    int lastPageViewed   = [[[NSUserDefaults standardUserDefaults] objectForKey:@"lastPageViewed"] intValue];
+    int bakerStartAtPage = [[properties get:@"-baker-start-at-page", nil] intValue];
+    int startWithPage = 1;
     
-    [self addPageLoading:0];
-    
-    if ([renderingType isEqualToString:@"three-cards"]) {
-        if (currentPageNumber != totalPages) {
-            [self addPageLoading:+1];
-        }
-        
-        if (currentPageNumber != 1) {
-            [self addPageLoading:-1];
-        }
+    if (lastPageViewed != 0) {
+        startWithPage = lastPageViewed;
+    } else if (bakerStartAtPage < 0) {
+        startWithPage = totalPages - ((-bakerStartAtPage % totalPages) * -1);
+    } else if (bakerStartAtPage > 0) {
+        startWithPage = bakerStartAtPage % (totalPages + 1);
     }
     
-    [self handlePageLoading];
+    NSArray *pages = @[[self gotoPage:startWithPage]];
     
+    [_wrapperViewController setViewControllers:pages direction:BakerWrapperNavigationDirectionHorizontal animated:NO completion:^(BOOL finished) {
+        NSLog(@"First Page Loaded");
+    }];
 }
+
+
 - (void)setImageFor:(UIImageView *)view {
     if (pageWidth > pageHeight && backgroundImageLandscape != NULL) {
         // Landscape
@@ -923,20 +899,39 @@
     [self updateBookLayout];
 }
 
-#pragma mark - PAGEVIEW
+#pragma mark - PAGE MANAGEMENT
 
-- (UIPageViewControllerSpineLocation)pageViewController:(UIPageViewController *)pageViewController
-                   spineLocationForInterfaceOrientation:(UIInterfaceOrientation)orientation
-{
-
-    //Important- Set the doubleSided property to NO.
-  //  self.pageView.doubleSided = NO;
+- (PageViewController *)newPageViewForPage:(int)page{
+    if (page > 0 && page < pages.count){
+        PageViewController *newPage = [[[PageViewController alloc] initWithFrame:self.view.frame] autorelease];
     
-    //Return the spine location*
-    return UIPageViewControllerSpineLocationMin;
-    
+        [newPage setTag:page];
+        [newPage loadPage:[pages objectAtIndex:page - 1]];
+    } else {
+        return newPage;
+    }
 }
 
+- (PageViewController *)getPageViewForPage:(int)page{
+    
+    if (renderingType == BakerRenderingTypeThreeCards) {
+        
+        if (prevPage && prevPage.tag == page){
+            return prevPage;
+        }
+        
+        if (currPage && currPage.tag == page){
+            return currPage;
+        }
+
+        if (nextPage && nextPage.tag == page){
+            return nextPage;
+        }
+    }
+    
+    return [self newPageViewForPage:page];
+
+}
 
 - (UIViewController *)pageViewController:
 (UIPageViewController *)pageViewController viewControllerBeforeViewController:
@@ -1567,154 +1562,6 @@
     [screenshotView release];
 }
 
-#pragma mark - GESTURES
-
-- (void)handleInterceptedTouch:(NSNotification *)notification {
-    
-    NSDictionary *userInfo = notification.userInfo;
-    UITouch *touch = [userInfo objectForKey:@"touch"];
-    
-    if (touch.phase == UITouchPhaseBegan) {
-        userIsScrolling = NO;
-        //shouldPropagateInterceptedTouch = ([touch.view isDescendantOfView:scrollView]);
-    } else if (touch.phase == UITouchPhaseMoved) {
-        userIsScrolling = YES;
-    }
-    
-    if (shouldPropagateInterceptedTouch) {
-        if (userIsScrolling) {
-            [self userDidScroll:touch];
-        } else if (touch.phase == UITouchPhaseEnded) {
-            [self userDidTap:touch];
-        }
-    }
-}
-- (void)userDidTap:(UITouch *)touch {
-    /****************************************************************************************************
-     * This function handles all the possible user navigation taps:
-     * up, down, left, right and double-tap.
-     */
-     
-    
-    CGPoint tapPoint = [touch locationInView:self.view];
-    NSLog(@"• User tap at [%f, %f]", tapPoint.x, tapPoint.y);
-    
-    // Swipe or scroll the page.
-    if (!currentPageIsLocked)
-    {
-        if (CGRectContainsPoint(upTapArea, tapPoint)) {
-            NSLog(@"    Tap UP /\\!");
-            [self scrollUpCurrentPage:([self getCurrentPageOffset] - pageHeight + 50) animating:YES];
-        } else if (CGRectContainsPoint(downTapArea, tapPoint)) {
-            NSLog(@"    Tap DOWN \\/");
-            [self scrollDownCurrentPage:([self getCurrentPageOffset] + pageHeight - 50) animating:YES];
-        } else if (CGRectContainsPoint(leftTapArea, tapPoint) || CGRectContainsPoint(rightTapArea, tapPoint)) {
-            int page = 0;
-            if (CGRectContainsPoint(leftTapArea, tapPoint)) {
-                NSLog(@"    Tap LEFT >>>");
-                page = currentPageNumber - 1;
-            } else if (CGRectContainsPoint(rightTapArea, tapPoint)) {
-                NSLog(@"    Tap RIGHT <<<");
-                page = currentPageNumber + 1;
-            }
-            
-            if ([[properties get:@"-baker-page-turn-tap", nil] boolValue]) [self changePage:page];
-        }
-        else if (touch.tapCount == 2) {
-            NSLog(@"    Multi Tap TOGGLE STATUS BAR");
-            [self toggleStatusBar];
-        }
-    }
-}
-- (void)userDidScroll:(UITouch *)touch {
-    NSLog(@"• User scroll");
-    [self hideStatusBar];
-    
-  //  currPage.backgroundColor = webViewBackground;
-   // currPage.opaque = YES;
-}
-
-#pragma mark - PAGE SCROLLING
-- (void)setCurrentPageHeight {
-    
-  /*  for (UIView *subview in currPage.subviews) {
-        if ([subview isKindOfClass:[UIScrollView class]]) {
-            CGSize size = ((UIScrollView *)subview).contentSize;
-            NSLog(@"• Setting current page height from %d to %f", currentPageHeight, size.height);
-            currentPageHeight = size.height;
-        }
-    }*/
-}
-- (int)getCurrentPageOffset {
-    
-    int currentPageOffset = [[currPage stringByEvaluatingJavaScriptFromString:@"window.scrollY;"] intValue];
-    if (currentPageOffset < 0) return 0;
-    
-    int currentPageMaxScroll = currentPageHeight - pageHeight;
-    if (currentPageOffset > currentPageMaxScroll) return currentPageMaxScroll;
-    
-    return currentPageOffset;
-    return 0;
-}
-- (void)scrollUpCurrentPage:(int)targetOffset animating:(BOOL)animating {
-    
-    if ([self getCurrentPageOffset] > 0)
-    {
-        if (targetOffset < 0) targetOffset = 0;
-        
-        NSLog(@"• Scrolling page up to %d", targetOffset);
-        [self scrollPage:currPage to:[NSString stringWithFormat:@"%d", targetOffset] animating:animating];
-    }
-}
-- (void)scrollDownCurrentPage:(int)targetOffset animating:(BOOL)animating {
-    
-    int currentPageMaxScroll = currentPageHeight - pageHeight;
-    if ([self getCurrentPageOffset] < currentPageMaxScroll)
-    {
-        if (targetOffset > currentPageMaxScroll) targetOffset = currentPageMaxScroll;
-        
-        NSLog(@"• Scrolling page down to %d", targetOffset);
-        [self scrollPage:currPage to:[NSString stringWithFormat:@"%d", targetOffset] animating:animating];
-    }
-    
-}
-- (void)scrollPage:(UIWebView *)webView to:(NSString *)offset animating:(BOOL)animating {
-    [self hideStatusBar];
-    
-    NSString *jsCommand = [NSString stringWithFormat:@"window.scrollTo(0,%@);", offset];
-    if (animating) {
-        [UIView animateWithDuration:0.35 animations:^{ [webView stringByEvaluatingJavaScriptFromString:jsCommand]; }];
-    } else {
-        [webView stringByEvaluatingJavaScriptFromString:jsCommand];
-    }
-}
-- (void)handleAnchor:(BOOL)animating {
-    
-    if (anchorFromURL != nil) {
-        NSString *jsAnchorHandler = [NSString stringWithFormat:@"(function() {\
-                                     var target = '%@';\
-                                     var elem = document.getElementById(target);\
-                                     if (!elem) elem = document.getElementsByName(target)[0];\
-                                     return elem.offsetTop;\
-                                     })();", anchorFromURL];
-        
-        NSString *offsetString = [currPage stringByEvaluatingJavaScriptFromString:jsAnchorHandler];
-        if (![offsetString isEqualToString:@""])
-        {
-            int offset = [offsetString intValue];
-            int currentPageOffset = [self getCurrentPageOffset];
-            
-            if (offset > currentPageOffset) {
-                [self scrollDownCurrentPage:offset animating:animating];
-            } else if (offset < currentPageOffset) {
-                [self scrollUpCurrentPage:offset animating:animating];
-            }
-        }
-        
-        anchorFromURL = nil;
-    }
-}
-
 #pragma mark - STATUS BAR
 - (void)toggleStatusBar {
     
@@ -1936,6 +1783,7 @@
 }
 
 #pragma mark - MFMailComposeController
+
 - (void)mailComposeController:(MFMailComposeViewController*)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error {
     
     // Log the result for debugging purpose
@@ -1961,6 +1809,7 @@
             NSLog(@"    Mail not sent.");
             break;
     }
+   
     
     // Remove the mail view
     [self dismissModalViewControllerAnimated:YES];
