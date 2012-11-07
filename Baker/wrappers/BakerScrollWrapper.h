@@ -15,9 +15,13 @@
     
     UIScrollView *_scrollView;
     
+    CGPoint _lastOffset;
+    PageViewController *_currentPage;
+    
     Properties *_properties;
 }
 
 - (CGRect)frameForPage:(int)page;
+- (int)currentPageInView;
 
 @end

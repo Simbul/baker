@@ -16,7 +16,6 @@
     "-baker-background-image-landscape": "gfx/background-landscape.png",
     "-baker-page-numbers-color": "#000000",
 
-
     "contents": [
         "Book Cover.html",
         "Book Index.html",

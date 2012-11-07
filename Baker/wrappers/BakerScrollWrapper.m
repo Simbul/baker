@@ -10,6 +10,8 @@
 
 @implementation BakerScrollWrapper
 
+@synthesize viewControllers = _viewControllers;
+
 - (id)initWithFrame:(CGRect)frame
 {
     self = [super init];
@@ -44,19 +46,21 @@
 
 - (void)viewDidLoad{
     _scrollView.contentSize = CGSizeMake((self.view.frame.size.width * [self.dataSource presentationCountForWrapperViewController:self]), self.view.frame.size.height);
+    
+    _lastOffset = _scrollView.contentOffset;
 }
 
 - (void)setViewControllers:(NSArray *)viewControllers direction:(BakerWrapperNavigationDirection)direction animated:(BOOL)animated completion:(void (^)(BOOL finished))completion{
     
     [super setViewControllers:viewControllers direction:direction animated:animated completion:completion];
     
-    PageViewController *pageViewController = [[viewControllers objectAtIndex:0] retain];
+    _currentPage = [[viewControllers objectAtIndex:0] retain];
   
-    pageViewController.view.frame = [self frameForPage:pageViewController.tag];
+    _currentPage.view.frame = [self frameForPage:_currentPage.tag];
     
-    [_scrollView addSubview:pageViewController.view];
+    [_scrollView addSubview:_currentPage.view];
 
-    [self addChildViewController:pageViewController];
+    [self addChildViewController:_currentPage];
     
     return;
 }
@@ -88,6 +92,49 @@
     }
 }
 
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView{
+    _lastOffset = _scrollView.contentOffset;
+}
+
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView{
+    NSArray *oldViewControllers = [self.viewControllers copy];
+    
+    int xDirection = _scrollView.contentOffset.x - _lastOffset.x;
+    
+    [_currentPage removeFromParentViewController];
+    [_currentPage.view removeFromSuperview];
+    [_currentPage release];
+    _currentPage = nil;
+    
+    //Scrolled to the right
+    if (xDirection >= 1){
+        _viewControllers = [@[[_pageViewInAfterTransition retain]] retain];
+    } else {
+        _viewControllers = [@[[_pageViewInBeforeTransition retain]] retain];
+    }
+    
+    _currentPage = [[_viewControllers objectAtIndex:0] retain];
+    
+    _currentPage.view.frame = [self frameForPage:_currentPage.tag];
+    
+    [_scrollView addSubview:_currentPage.view];
+    
+    [self addChildViewController:_currentPage];
+    
+    [self.delegate wrapperViewController:self didFinishAnimating:YES previousViewControllers:[oldViewControllers autorelease] transitionCompleted:YES];
+    
+    if (_pageViewInBeforeTransition){
+        [_pageViewInBeforeTransition release];
+        _pageViewInBeforeTransition = nil;
+    }
+    
+    if (_pageViewInAfterTransition){
+        [_pageViewInAfterTransition release];
+        _pageViewInAfterTransition = nil;
+    }
+    
+}
+
 -(BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     return YES;
@@ -96,6 +143,8 @@
 - (CGRect)frameForPage:(int)page {
     return CGRectMake(self.view.frame.size.width * (page - 1), 0, self.view.frame.size.width, self.view.frame.size.height);
 }
+
+
 
 /*
 
