@@ -77,8 +77,6 @@
     _numberLabel.alpha = [_pageNumberAlpha floatValue];
     _numberLabel.autoresizingMask = (UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleBottomMargin);
     [self.view addSubview:_numberLabel];
-    
-    //[self updateLayout];
 }
 
 - (void)viewWillAppear:(BOOL)animated{
@@ -109,6 +107,7 @@
 
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
 {
+    [self setWebViewCorrectOrientation:toInterfaceOrientation];
     [self updateBackgroundImageToOrientation:toInterfaceOrientation];
 }
 
@@ -147,12 +146,25 @@
         _webView = nil;
     }
     
+     NSLog(@"• Setup webView");
+    
     _webView = [[[UIWebView alloc] initWithFrame:self.view.bounds] retain];
     _webView.backgroundColor = [UIColor clearColor];
     _webView.opaque = NO;
     _webView.delegate = self;
     _webView.alpha = 0.0f;
     _webView.autoresizingMask = (UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight);
+        
+    _webView.mediaPlaybackRequiresUserAction = ![[_properties get:@"-baker-media-autoplay", nil] boolValue];
+    _webView.scalesPageToFit = [[_properties get:@"zoomable", nil] boolValue];
+    
+    BOOL verticalBounce = [[_properties get:@"-baker-vertical-bounce", nil] boolValue];
+        
+        for (UIView *subview in _webView.subviews) {
+            if ([subview isKindOfClass:[UIScrollView class]]) {
+                ((UIScrollView *)subview).bounces = verticalBounce;
+            }
+        }
     
     [self.view addSubview:_webView];
     
@@ -204,9 +216,30 @@
         
     }
 }
+
+- (void)setWebViewCorrectOrientation:(UIInterfaceOrientation)interfaceOrientation {
     
-
-
+    // Since the UIWebView doesn't handle orientationchange events correctly we have to set the correct value for window.orientation property ourselves
+    NSString *jsOrientationGetter;
+    switch (interfaceOrientation) {
+        case UIInterfaceOrientationPortrait:
+            jsOrientationGetter = @"window.__defineGetter__('orientation', function() { return 0; });";
+            break;
+        case UIInterfaceOrientationLandscapeLeft:
+            jsOrientationGetter = @"window.__defineGetter__('orientation', function() { return 90; });";
+            break;
+        case UIInterfaceOrientationPortraitUpsideDown:
+            jsOrientationGetter = @"window.__defineGetter__('orientation', function() { return 180; });";
+            break;
+        case UIInterfaceOrientationLandscapeRight:
+            jsOrientationGetter = @"window.__defineGetter__('orientation', function() { return -90; });";
+            break;
+        default:
+            break;
+    }
+    
+    [_webView stringByEvaluatingJavaScriptFromString:jsOrientationGetter];
+}
 
 /*
 #pragma mark - WEBVIEW
@@ -475,67 +508,6 @@
                                  window.dispatchEvent(bakerDispatchedEvent);", event];
     
     [webView stringByEvaluatingJavaScriptFromString:jsDispatchEvent];
-}
-- (void)setupWebView:(UIWebView *)webView {
-    NSLog(@"• Setup webView");
-    
-    if (webViewBackground == nil)
-    {
-        webViewBackground = webView.backgroundColor;
-        [webViewBackground retain];
-    }
-    
-    
-    
-    webView.delegate = self;
-    webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    
-    webView.mediaPlaybackRequiresUserAction = ![[properties get:@"-baker-media-autoplay", nil] boolValue];
-    webView.scalesPageToFit = [[properties get:@"zoomable", nil] boolValue];
-    BOOL verticalBounce = [[properties get:@"-baker-vertical-bounce", nil] boolValue];
-    
-    for (UIView *subview in webView.subviews) {
-        if ([subview isKindOfClass:[UIScrollView class]]) {
-            ((UIScrollView *)subview).bounces = verticalBounce;
-        }
-    }
-}
-
-- (BOOL)loadWebView:(UIWebView*)webView withPage:(int)page {
-    
-    NSString *path = [NSString stringWithString:[pages objectAtIndex:page - 1]];
-    
-    if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
-        NSLog(@"• Loading: book/%@", [[NSFileManager defaultManager] displayNameAtPath:path]);
-        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL fileURLWithPath:path]]];
-        return YES;
-    }
-    return NO;
-}
-
-
-- (void)webView:(UIWebView *)webView setCorrectOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    
-    // Since the UIWebView doesn't handle orientationchange events correctly we have to set the correct value for window.orientation property ourselves
-    NSString *jsOrientationGetter;
-    switch (interfaceOrientation) {
-        case UIInterfaceOrientationPortrait:
-            jsOrientationGetter = @"window.__defineGetter__('orientation', function() { return 0; });";
-            break;
-        case UIInterfaceOrientationLandscapeLeft:
-            jsOrientationGetter = @"window.__defineGetter__('orientation', function() { return 90; });";
-            break;
-        case UIInterfaceOrientationPortraitUpsideDown:
-            jsOrientationGetter = @"window.__defineGetter__('orientation', function() { return 180; });";
-            break;
-        case UIInterfaceOrientationLandscapeRight:
-            jsOrientationGetter = @"window.__defineGetter__('orientation', function() { return -90; });";
-            break;
-        default:
-            break;
-    }
-    
-    [webView stringByEvaluatingJavaScriptFromString:jsOrientationGetter];
 }
 
 - (void)handleAnchor:(BOOL)animating {

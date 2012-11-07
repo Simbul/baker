@@ -36,6 +36,7 @@
 - (id)initWithFrame:(CGRect)frame andPageURL:(NSString*)pageURL;
 - (void)loadPage:(NSString*)pageURL;
 - (void)setLoadingUIHidden:(bool)hidden;
+- (void)setWebViewCorrectOrientation:(UIInterfaceOrientation)interfaceOrientation;
 - (void)updateLayout;
 - (void)updateBackgroundImageToOrientation:(UIInterfaceOrientation)orientation;
 - (void)updatePageInfomation;

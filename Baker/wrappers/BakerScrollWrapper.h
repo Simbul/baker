@@ -29,6 +29,7 @@
     CGRect rightTapArea;
     
     UIScrollView *_scrollView;
+    UIView *_placeholderView;
     
     Properties *_properties;
 }
