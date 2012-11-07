@@ -241,6 +241,26 @@
     [_webView stringByEvaluatingJavaScriptFromString:jsOrientationGetter];
 }
 
+- (void)dealloc {
+    if(_backgroundImageLandscape){
+       [_backgroundImageLandscape release]; 
+    }
+    
+    if(_backgroundImagePortrait){
+        [_backgroundImagePortrait release];
+    }
+    
+    [_pageNumberAlpha release];
+    [_pageNumberColor release];
+    [_backgroundImageView release];
+    [_numberLabel release];
+    [_activityIndicatorView release];
+    [_titleLabel release];
+    [_webView release];
+    
+    [super dealloc];
+}
+
 /*
 #pragma mark - WEBVIEW
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {

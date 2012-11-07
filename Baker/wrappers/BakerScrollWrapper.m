@@ -312,37 +312,6 @@
     NSLog(@"• Scrollview will begin dragging");
     [self hideStatusBar];
 }
-- (void)scrollViewDidEndDragging:(UIScrollView *)scroll willDecelerate:(BOOL)decelerate {
-    NSLog(@"• Scrollview did end dragging");
-}
-- (void)scrollViewWillBeginDecelerating:(UIScrollView *)scroll {
-    NSLog(@"• Scrollview will begin decelerating");
-}
-- (void)scrollViewDidEndDecelerating:(UIScrollView *)scroll {
-    
-    int page = (int)(scroll.contentOffset.x / pageWidth) + 1;
-    NSLog(@"• Swiping to page: %d", page);
-    
-    if (currentPageNumber != page) {
-        
-        lastPageNumber = currentPageNumber;
-        currentPageNumber = page;
-        
-        tapNumber = tapNumber + (lastPageNumber - currentPageNumber);
-        
-        currentPageIsDelayingLoading = YES;
-        [self gotoPage];
-    }
-}
-- (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scroll {
-    NSLog(@"• Scrollview did end scrolling animation");
-    
-    stackedScrollingAnimations--;
-    if (stackedScrollingAnimations == 0) {
-        NSLog(@"    Scroll enabled");
-        scroll.scrollEnabled = [[properties get:@"-baker-page-turn-swipe", nil] boolValue]; // YES by default, NO if specified
-    }
-}
 
 - (void)updateBookLayout {
     NSLog(@"    Prevent page from changing until layout is updated");
