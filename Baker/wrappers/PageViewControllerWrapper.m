@@ -45,38 +45,43 @@
 
 - (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerBeforeViewController:(UIViewController *)viewController{
     
-    if (!_pageViewInTransition){
+    if (!_pageViewInBeforeTransition){
         id newPage = [self.dataSource wrapperViewController:self viewControllerBeforeViewController:(PageViewController*)viewController];
    
         if (newPage){
-            _pageViewInTransition = [newPage retain];
+            _pageViewInBeforeTransition = [newPage retain];
         }
     }
     
-    return _pageViewInTransition;
+    return _pageViewInBeforeTransition;
 }
 
 - (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerAfterViewController:(UIViewController *)viewController{
 
     
-    if (!_pageViewInTransition){
+    if (!_pageViewInAfterTransition){
         id newPage = [self.dataSource wrapperViewController:self viewControllerAfterViewController:(PageViewController*)viewController];
         
         if (newPage){
-            _pageViewInTransition = [newPage retain];
+            _pageViewInAfterTransition = [newPage retain];
         }
     }
     
-    return _pageViewInTransition;
+    return _pageViewInAfterTransition;
 }
 
 - (void)pageViewController:(UIPageViewController *)pageViewController didFinishAnimating:(BOOL)finished previousViewControllers:(NSArray *)previousViewControllers transitionCompleted:(BOOL)completed{
     
     [self.delegate wrapperViewController:self didFinishAnimating:finished previousViewControllers:previousViewControllers transitionCompleted:completed];
 
-    if (_pageViewInTransition){
-        [_pageViewInTransition release];
-        _pageViewInTransition = nil;
+    if (_pageViewInBeforeTransition){
+        [_pageViewInBeforeTransition release];
+        _pageViewInBeforeTransition = nil;
+    }
+    
+    if (_pageViewInAfterTransition){
+        [_pageViewInAfterTransition release];
+        _pageViewInAfterTransition = nil;
     }
     
 }

@@ -147,8 +147,17 @@
     
     _webView = [[[UIWebView alloc] initWithFrame:self.view.bounds] retain];
     _webView.delegate = self;
-    _webView.hidden = YES;
+    _webView.hidden = NO;
     _webView.autoresizingMask = (UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight);
+    
+    [self.view addSubview:_webView];
+    
+    NSString *path = [NSString stringWithString:pageURL];
+    
+    if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
+        NSLog(@"• Loading: book/%@", [[NSFileManager defaultManager] displayNameAtPath:path]);
+        [_webView loadRequest:[NSURLRequest requestWithURL:[NSURL fileURLWithPath:path]]];
+    }
 }
 
 - (void)setTag:(int)tag{
