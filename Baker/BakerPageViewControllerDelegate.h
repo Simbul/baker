@@ -8,6 +8,10 @@
 
 #import <Foundation/Foundation.h>
 
+@class PageViewController;
 @protocol BakerPageViewControllerDelegate <NSObject>
+
+- (bool)pageViewController:(PageViewController*)pageViewController handleURL:(NSString*)url;
+- (void)pageViewControllerDidLoadPage:(PageViewController*)pageViewController;
 
 @end
