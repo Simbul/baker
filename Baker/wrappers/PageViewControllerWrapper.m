@@ -38,6 +38,9 @@
 }
 
 - (void)setViewControllers:(NSArray *)viewControllers direction:(BakerWrapperNavigationDirection)direction animated:(BOOL)animated completion:(void (^)(BOOL))completion{
+    
+    self.direction = direction;
+    
     [_pageViewController setViewControllers:viewControllers direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:^(BOOL finished) {
         NSLog(@"Page View Controller Setup");
     }];

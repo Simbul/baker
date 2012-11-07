@@ -48,8 +48,12 @@
 
 - (void)setViewControllers:(NSArray *)viewControllers direction:(BakerWrapperNavigationDirection)direction animated:(BOOL)animated completion:(void (^)(BOOL finished))completion{
     
+    [super setViewControllers:viewControllers direction:direction animated:animated completion:completion];
+    
     PageViewController *pageViewController = [[viewControllers objectAtIndex:0] retain];
   
+    pageViewController.view.frame = [self frameForPage:pageViewController.tag];
+    
     [_scrollView addSubview:pageViewController.view];
 
     [self addChildViewController:pageViewController];
@@ -59,11 +63,38 @@
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView{
     
+    PageViewController *currentPageViewController = (PageViewController*)[self.viewControllers objectAtIndex:0];
+    
+    if (!_pageViewInBeforeTransition) {
+        
+        id newPage = [self.dataSource wrapperViewController:self viewControllerBeforeViewController:currentPageViewController];
+        
+        if (newPage){
+            _pageViewInBeforeTransition = [newPage retain];
+            _pageViewInBeforeTransition.view.frame = [self frameForPage:_pageViewInBeforeTransition.tag];
+            [_scrollView addSubview:_pageViewInBeforeTransition.view];
+        }
+    }
+    
+    if (!_pageViewInAfterTransition) {
+        
+        id newPage = [self.dataSource wrapperViewController:self viewControllerAfterViewController:currentPageViewController];
+        
+        if (newPage){
+            _pageViewInAfterTransition = [newPage retain];
+            _pageViewInAfterTransition.view.frame = [self frameForPage:_pageViewInAfterTransition.tag];
+            [_scrollView addSubview:_pageViewInAfterTransition.view];
+        }
+    }
 }
 
 -(BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     return YES;
+}
+
+- (CGRect)frameForPage:(int)page {
+    return CGRectMake(self.view.frame.size.width * (page - 1), 0, self.view.frame.size.width, self.view.frame.size.height);
 }
 
 /*
@@ -227,10 +258,6 @@
         
         anchorFromURL = nil;
     }
-}
-
-- (CGRect)frameForPage:(int)page {
-    return CGRectZero;// CGRectMake((USEPAGEVIEW)?0:(pageWidth * (page - 1)), 0, pageWidth, pageHeight);
 }
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scroll {
     NSLog(@"• Scrollview will begin dragging");

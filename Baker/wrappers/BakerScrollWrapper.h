@@ -13,28 +13,11 @@
 
 @interface BakerScrollWrapper : BakerWrapper<UIScrollViewDelegate>{
     
-    int tapNumber;
-    int stackedScrollingAnimations;
-    
-    BOOL currentPageFirstLoading;
-    BOOL currentPageIsDelayingLoading;
-    BOOL currentPageHasChanged;
-    BOOL currentPageIsLocked;
-    BOOL userIsScrolling;
-    BOOL shouldPropagateInterceptedTouch;
-    
-    CGRect upTapArea;
-    CGRect downTapArea;
-    CGRect leftTapArea;
-    CGRect rightTapArea;
-    
     UIScrollView *_scrollView;
     
     Properties *_properties;
 }
 
-#pragma mark - SCROLLVIEW
 - (CGRect)frameForPage:(int)page;
-- (void)updateBookLayout;
 
 @end

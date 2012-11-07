@@ -16,9 +16,8 @@
 //TODO: Fix Black Page Flicker on quick page turns
 
 @interface PageViewControllerWrapper : BakerWrapper<UIPageViewControllerDataSource, UIPageViewControllerDelegate>{
+    
     UIPageViewController *_pageViewController;
-    PageViewController *_pageViewInBeforeTransition;
-    PageViewController *_pageViewInAfterTransition;
     
     UIColor *webViewBackground;
 }

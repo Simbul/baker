@@ -20,8 +20,9 @@
 
 - (void)setViewControllers:(NSArray *)viewControllers direction:(BakerWrapperNavigationDirection)direction animated:(BOOL)animated completion:(void (^)(BOOL finished))completion{
     
+    _viewControllers = [viewControllers retain];
+    
     _direction = direction;
-    _viewControllers = viewControllers;
     
     return;
 }

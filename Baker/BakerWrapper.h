@@ -15,11 +15,14 @@ enum {
     BakerWrapperNavigationDirectionVertical
 } typedef  BakerWrapperNavigationDirection;
 
-@interface BakerWrapper : UIViewController
+@interface BakerWrapper : UIViewController{
+    PageViewController *_pageViewInBeforeTransition;
+    PageViewController *_pageViewInAfterTransition;
+}
 
 @property(nonatomic, assign) id<BakerWrapperDataSource> dataSource;
 @property(nonatomic, assign) id<BakerWrapperDelegate> delegate;
-@property(nonatomic, readonly) BakerWrapperNavigationDirection direction;
+@property(nonatomic, assign) BakerWrapperNavigationDirection direction;
 @property(retain, readonly) NSArray *viewControllers;
 
 - (id)initWithFrame:(CGRect)frame;
