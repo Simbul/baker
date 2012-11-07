@@ -15,7 +15,7 @@
 
 @interface PageViewControllerWrapper : BakerWrapper<UIPageViewControllerDataSource, UIPageViewControllerDelegate>{
     UIPageViewController *_pageViewController;
-    PageViewController *_PageViewInTransition;
+    PageViewController *_pageViewInTransition;
     
     UIColor *webViewBackground;
 }

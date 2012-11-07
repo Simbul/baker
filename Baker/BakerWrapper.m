@@ -21,13 +21,9 @@
 - (void)setViewControllers:(NSArray *)viewControllers direction:(BakerWrapperNavigationDirection)direction animated:(BOOL)animated completion:(void (^)(BOOL finished))completion{
     
     _direction = direction;
-    _viewControllers = [viewControllers mutableCopy];
+    _viewControllers = viewControllers;
     
     return;
-}
-
-- (NSArray*)viewControllers{
-    return [_viewControllers copy];
 }
 
 @end

@@ -767,6 +767,11 @@
 
 - (void)wrapperViewController:(BakerWrapper *)wrapperViewController didFinishAnimating:(BOOL)finished previousViewControllers:(NSArray *)previousViewControllers transitionCompleted:(BOOL)completed{
     
+    if (completed){
+        PageViewController *newPage = (PageViewController*)[wrapperViewController.viewControllers objectAtIndex:0];
+        [self pageViewHasBecomeCurrentPage:newPage];
+    }
+    
 }
 
 #pragma mark - STATUS BAR

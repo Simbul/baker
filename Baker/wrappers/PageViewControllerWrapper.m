@@ -45,28 +45,52 @@
 
 - (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerBeforeViewController:(UIViewController *)viewController{
     
-    if (!_PageViewInTransition){
-        _PageViewInTransition = [[self.dataSource wrapperViewController:self viewControllerBeforeViewController:(PageViewController*)viewController] retain];
+    if (!_pageViewInTransition){
+        id newPage = [self.dataSource wrapperViewController:self viewControllerBeforeViewController:(PageViewController*)viewController];
+   
+        if (newPage){
+            _pageViewInTransition = [newPage retain];
+        }
     }
     
-    return _PageViewInTransition;
+    return _pageViewInTransition;
 }
 
 - (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerAfterViewController:(UIViewController *)viewController{
 
     
-    if (!_PageViewInTransition){
-        _PageViewInTransition = [[self.dataSource wrapperViewController:self viewControllerAfterViewController:(PageViewController*)viewController] retain];
+    if (!_pageViewInTransition){
+        id newPage = [self.dataSource wrapperViewController:self viewControllerAfterViewController:(PageViewController*)viewController];
+        
+        if (newPage){
+            _pageViewInTransition = [newPage retain];
+        }
     }
     
-    return [self.dataSource wrapperViewController:self viewControllerAfterViewController:(PageViewController*)viewController];
+    return _pageViewInTransition;
 }
 
 - (void)pageViewController:(UIPageViewController *)pageViewController didFinishAnimating:(BOOL)finished previousViewControllers:(NSArray *)previousViewControllers transitionCompleted:(BOOL)completed{
     
-    if (completed){
-        [_PageViewInTransition release];
+    [self.delegate wrapperViewController:self didFinishAnimating:finished previousViewControllers:previousViewControllers transitionCompleted:completed];
+
+    if (_pageViewInTransition){
+        [_pageViewInTransition release];
+        _pageViewInTransition = nil;
     }
+    
+}
+
+- (NSInteger)presentationCountForPageViewController:(UIPageViewController *)pageViewController{
+    return [self.dataSource presentationCountForWrapperViewController:self];
+}
+
+- (NSInteger)presentationIndexForPageViewController:(UIPageViewController *)pageViewController{
+    return [self.dataSource presentationIndexForWrapperViewController:self];
+}
+
+- (NSArray *)viewControllers{
+    return _pageViewController.viewControllers;
 }
 
 @end
