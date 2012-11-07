@@ -65,13 +65,13 @@
     return;
 }
 
-- (void)scrollViewDidScroll:(UIScrollView *)scrollView{
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView{
     
-    PageViewController *currentPageViewController = (PageViewController*)[self.viewControllers objectAtIndex:0];
+    _lastOffset = _scrollView.contentOffset;
     
     if (!_pageViewInBeforeTransition) {
         
-        id newPage = [self.dataSource wrapperViewController:self viewControllerBeforeViewController:currentPageViewController];
+        id newPage = [self.dataSource wrapperViewController:self viewControllerBeforeViewController:_currentPage];
         
         if (newPage){
             _pageViewInBeforeTransition = [newPage retain];
@@ -82,18 +82,16 @@
     
     if (!_pageViewInAfterTransition) {
         
-        id newPage = [self.dataSource wrapperViewController:self viewControllerAfterViewController:currentPageViewController];
+        id newPage = [self.dataSource wrapperViewController:self viewControllerAfterViewController:_currentPage];
         
         if (newPage){
             _pageViewInAfterTransition = [newPage retain];
             _pageViewInAfterTransition.view.frame = [self frameForPage:_pageViewInAfterTransition.tag];
+            NSLog(@"Showing Page %i", _pageViewInAfterTransition.tag);
             [_scrollView addSubview:_pageViewInAfterTransition.view];
         }
     }
-}
 
-- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView{
-    _lastOffset = _scrollView.contentOffset;
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView{
@@ -101,22 +99,25 @@
     
     int xDirection = _scrollView.contentOffset.x - _lastOffset.x;
     
-    [_currentPage removeFromParentViewController];
-    [_currentPage.view removeFromSuperview];
-    [_currentPage release];
-    _currentPage = nil;
+    if(xDirection == 0) return;
+    
+    if (_currentPage){
+        [_currentPage removeFromParentViewController];
+        [_currentPage.view removeFromSuperview];
+        [_currentPage release];
+        _currentPage = nil;
+    }
     
     //Scrolled to the right
     if (xDirection >= 1){
         _viewControllers = [@[[_pageViewInAfterTransition retain]] retain];
+        _currentPage = [_pageViewInAfterTransition retain];
     } else {
         _viewControllers = [@[[_pageViewInBeforeTransition retain]] retain];
+        _currentPage = [_pageViewInBeforeTransition retain];
     }
     
-    _currentPage = [[_viewControllers objectAtIndex:0] retain];
-    
     _currentPage.view.frame = [self frameForPage:_currentPage.tag];
-    
     [_scrollView addSubview:_currentPage.view];
     
     [self addChildViewController:_currentPage];
@@ -132,7 +133,6 @@
         [_pageViewInAfterTransition release];
         _pageViewInAfterTransition = nil;
     }
-    
 }
 
 -(BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
