@@ -256,6 +256,8 @@
     [_numberLabel release];
     [_activityIndicatorView release];
     [_titleLabel release];
+    [_webView setDelegate:nil];
+    [_webView stopLoading];
     [_webView release];
     
     [super dealloc];
