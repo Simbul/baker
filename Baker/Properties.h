@@ -32,6 +32,8 @@
 #import <Foundation/Foundation.h>
 
 
+//TODO: Make Singleton
+
 @interface Properties : NSObject {
     NSDictionary *manifest;
     NSDictionary *defaults;

@@ -17,21 +17,16 @@
 
 @synthesize backgroundImageView = _backgroundImageView;
 
-- (id)initWithFrame:(CGRect)frame
+- (id)initWithFrame:(CGRect)frame andPageURL:(NSString*)pageURL;
 {
     self = [super init];
     if (self) {
         //Setup View Size for Page
         self.view.frame = frame;
+        self.view.autoresizingMask = (UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight);
         
-        // ****** INIT PROPERTIES
-        _properties = [Properties properties];
-        
-        //Get Page Number Alpha
-        _pageNumberAlpha = [[_properties get:@"-baker-page-numbers-alpha", nil] retain];
-        
-        //Get Page Number Color
-        _pageNumberColor = [[Utils colorWithHexString:[_properties get:@"-baker-page-numbers-color", nil]] retain];
+        //Load the Page
+        [self loadPage:pageURL];
     }
     return self;
 }
@@ -41,80 +36,120 @@
     
     [super viewDidLoad];
     
-    // ****** Background Image
-    self.backgroundImageView = [[[UIImageView alloc] initWithFrame:self.view.frame] retain];
-    [self.view addSubview:self.backgroundImageView];
+    // ****** INIT PROPERTIES
+    _properties = [[Properties properties] retain];
     
-   
+    //Get Page Number Alpha
+    _pageNumberAlpha = [[_properties get:@"-baker-page-numbers-alpha", nil] retain];
+    
+    //Get Page Number Color
+    _pageNumberColor = [[Utils colorWithHexString:[_properties get:@"-baker-page-numbers-color", nil]] retain];
+    
+    // ****** Background Image
+    self.backgroundImageView = [[[UIImageView alloc] initWithFrame:self.view.bounds] retain];
+    self.backgroundImageView.autoresizingMask = (UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight);
+    
+    [self.view addSubview:self.backgroundImageView];
     
     // ****** Activity Indicator
     self.activityIndicatorView = [[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray] retain];
     self.activityIndicatorView.backgroundColor = [UIColor clearColor];
+    self.activityIndicatorView.autoresizingMask = (UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleBottomMargin);
     
     [self.activityIndicatorView sizeToFit];
     
     if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"5.0")) {
             self.activityIndicatorView.color = _pageNumberColor;
-           //  self.activityIndicatorView.alpha = [_pageNumberAlpha floatValue];
+            self.activityIndicatorView.alpha = [_pageNumberAlpha floatValue];
     };
-     
-    
-    CGSize pageSize = self.view.frame.size;
-    CGRect frame = self.activityIndicatorView.frame;
-    
-    frame.origin.x = (pageSize.width - frame.size.width) / 2;
-    frame.origin.y = (pageSize.height - frame.size.height) / 2;
-    self.activityIndicatorView.frame = frame;
     
     [self.view addSubview:self.activityIndicatorView];
     
     [self.activityIndicatorView startAnimating];
     [self.activityIndicatorView setHidden:NO];
-            NSLog(@"spinner View %@",  self.activityIndicatorView);
-    // ****** Numbers
-    _numberLabel = [[[UILabel alloc] initWithFrame:CGRectMake((pageSize.width - 115) / 2, pageSize.height / 2 - 55, 115, 30)] retain];
-    _numberLabel.backgroundColor = [UIColor clearColor];
-    _numberLabel.font = [UIFont fontWithName:@"Helvetica" size:40.0];
-    _numberLabel.text = @"0";
-    _numberLabel.textColor = _pageNumberColor;
-    _numberLabel.textAlignment = UITextAlignmentCenter;
-    //_numberLabel.alpha = [_pageNumberAlpha floatValue];
     
+    // ****** Numbers
+    self.numberLabel = [[[UILabel alloc] init] retain];
+    self.numberLabel.backgroundColor = [UIColor clearColor];
+    self.numberLabel.font = [UIFont fontWithName:@"Helvetica" size:40.0];
+    self.numberLabel.text = @"0";
+    self.numberLabel.textColor = _pageNumberColor;
+    self.numberLabel.textAlignment = UITextAlignmentCenter;
+    self.numberLabel.alpha = [_pageNumberAlpha floatValue];
+    self.numberLabel.autoresizingMask = (UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleBottomMargin);
     [self.view addSubview:_numberLabel];
+    
+    //[self updateLayout];
 }
 
 - (void)viewWillAppear:(BOOL)animated{
     //Make Sure Number Label is updated to show relevant page number
-    _numberLabel.text = [NSString stringWithFormat:@"%d", self.tag];
+    self.numberLabel.text = [NSString stringWithFormat:@"%d", self.tag];
+    
+    [self updateLayout];
+    [self updateBackgroundImageToOrientation:[[UIApplication sharedApplication] statusBarOrientation]];
+}
+
+- (void)updateLayout{
+    // ****** Activity Indicator
+    CGSize pageSize = self.view.bounds.size;
+    CGRect frame = self.activityIndicatorView.frame;
+    
+    frame.origin.x = (pageSize.width - frame.size.width) / 2;
+    frame.origin.y = (pageSize.height - frame.size.height) / 2;
+    
+    self.activityIndicatorView.frame = frame;
+    
+    // ****** Numbers
+    _numberLabel.frame = CGRectMake((pageSize.width - 115) / 2, pageSize.height / 2 - 55, 115, 30);
+    
+    // ****** Title
+    [self.titleLabel setX:((pageSize.width - _titleLabel.frame.size.width) / 2) Y:(pageSize.height / 2 + 20)];
+
+}
+
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+{
+    [self updateBackgroundImageToOrientation:toInterfaceOrientation];
+}
+
+- (void)updateBackgroundImageToOrientation:(UIInterfaceOrientation)orientation{
+    if (orientation == UIInterfaceOrientationLandscapeLeft
+        || orientation == UIInterfaceOrientationLandscapeRight) {
+        NSLog(@"Page View Using Landscape Image");
+        self.backgroundImageView.image = self.backgroundImageLandscape;
+    } else {
+        NSLog(@"Page View Using Potrait Image");
+        self.backgroundImageView.image = self.backgroundImagePortrait;
+    }
 }
 
 - (void)loadPage:(NSString*)pageURL{
 
     //Remove and Release Exsisting Title Label if it exsists already
-    if (_titleLabel){
-        [_titleLabel removeFromSuperview];
-        [_titleLabel release];
-        _titleLabel = nil;
+    if (self.titleLabel){
+        [self.titleLabel removeFromSuperview];
+        [self.titleLabel release];
+        self.titleLabel = nil;
     }
     
-    CGSize pageSize = self.view.frame.size;
-    
-    _titleLabel = [[[PageTitleLabel alloc]initWithFile:pageURL] retain];
-    [_titleLabel setX:((pageSize.width - _titleLabel.frame.size.width) / 2) Y:(pageSize.height / 2 + 20)];
-    [self.view addSubview:_titleLabel];
+    self.titleLabel = [[[PageTitleLabel alloc]initWithFile:pageURL] retain];
+    self.titleLabel.autoresizingMask = (UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleBottomMargin);
+    [self.view addSubview:self.titleLabel];
     
     // ****** Webview
     
     //Remove and Release Exsisting Web View if it exsists already
-    if (_webView){
-        [_webView removeFromSuperview];
-        [_webView release];
-        _webView = nil;
+    if (self.webView){
+        [self.webView removeFromSuperview];
+        [self.webView release];
+        self.webView = nil;
     }
     
-    _webView = [[[UIWebView alloc] initWithFrame:self.view.frame] retain];
-    _webView.delegate = self;
-    _webView.hidden = YES;
+    self.webView = [[[UIWebView alloc] initWithFrame:self.view.bounds] retain];
+    self.webView.delegate = self;
+    self.webView.hidden = YES;
+    self.webView.autoresizingMask = (UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight);
 }
 
 - (void)setTag:(int)tag{
@@ -123,6 +158,11 @@
 
 - (int)tag{
     return self.view.tag;
+}
+
+-(BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
+    return YES;
 }
 /*
 #pragma mark - WEBVIEW

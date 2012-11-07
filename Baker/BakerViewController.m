@@ -36,6 +36,7 @@
 #import "BakerDefines.h"
 #import "BakerViewController.h"
 #import "BakerScrollWrapper.h"
+#import "PageViewControllerWrapper.h"
 #import "Downloader.h"
 #import "SSZipArchive.h"
 #import "PageTitleLabel.h"
@@ -100,22 +101,42 @@
         pageNameFromURL = nil;
         anchorFromURL = nil;
         
-        /// ****** WRAPPER VIEW INIT
-        _wrapperViewController = [[BakerScrollWrapper alloc] initWithFrame:self.view.frame];
-        _wrapperViewController.dataSource = self;
-        _wrapperViewController.delegate = self;
-        [self addChildViewController:_wrapperViewController];
-        [self.view addSubview:_wrapperViewController.view];
-        
         // ****** LISTENER FOR DOWNLOAD NOTIFICATION - TODO: MOVE TO VIEWWILLAPPEAR
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(downloadBook:) name:@"downloadNotification" object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleDownloadResult:) name:@"handleDownloadResult" object:nil];
         
         // TODO: LOAD BOOK METHOD IN VIEW DID LOAD
         [self loadBookWithBookPath:bookPath];
-        [self startReading];
     }
     return self;
+}
+
+- (void)viewDidLoad{
+    
+    //Set Up Resizing Mask
+    self.view.autoresizingMask = (UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight);
+    
+    /// ****** WRAPPER VIEW INIT
+    
+    NSString *transitionType = [[[properties get:@"-baker-page-turn-transition", nil] retain] autorelease];
+    
+    id wrapperClass;
+    
+    if ([transitionType isEqualToString:@"baker-scroll"]) {
+        wrapperClass = [BakerScrollWrapper alloc];
+    } else {
+        wrapperClass = [PageViewControllerWrapper alloc];
+    }
+    
+    self.wrapperViewController = [[wrapperClass initWithFrame:self.view.bounds] retain];
+    self.wrapperViewController.dataSource = self;
+    self.wrapperViewController.delegate = self;
+    [self addChildViewController:self.wrapperViewController];
+    [self.view addSubview:self.wrapperViewController.view];
+    
+    //Start Reading
+    [self startReading];
+    
 }
 
 
@@ -691,20 +712,12 @@
 - (PageViewController *)newPageViewForPage:(int)page{
     if (page > 0 && page < pages.count){
         
-        PageViewController *newPage = [[[PageViewController alloc] initWithFrame:self.view.frame] retain];
+        PageViewController *newPage = [[[PageViewController alloc] initWithFrame:self.view.bounds andPageURL:[pages objectAtIndex:page - 1]] retain];
         
-        if ([[self getCurrentInterfaceOrientation] isEqualToString:@"portrait"] && backgroundImagePortrait){
-            [newPage.backgroundImageView setImage:[backgroundImagePortrait retain]];
-        } else if (backgroundImageLandscape){
-            [newPage.backgroundImageView setImage:[backgroundImageLandscape retain]];
-        } else {
-            newPage.backgroundImageView.image = nil;
-        }
-        
-        newPage.delegate = self;
+        newPage.backgroundImagePortrait = [backgroundImagePortrait retain];
+        newPage.backgroundImageLandscape = [backgroundImageLandscape retain];
         
         [newPage setTag:page];
-        [newPage loadPage:[pages objectAtIndex:page - 1]];
         
         return newPage;
     } else {
@@ -888,28 +901,7 @@
 }
 
 #pragma mark - ORIENTATION
-- (NSString *)getCurrentInterfaceOrientation {
-    
-    if ([availableOrientation isEqualToString:@"portrait"] || [availableOrientation isEqualToString:@"landscape"]) {
-        return availableOrientation;
-    } else {
-        if (UIInterfaceOrientationIsLandscape(self.interfaceOrientation)) {
-            return @"landscape";
-        } else {
-            return @"portrait";
-        }
-    }
-     
-}
-- (NSInteger)supportedInterfaceOrientations {
-    if ([availableOrientation isEqualToString:@"portrait"]) {
-        return (UIInterfaceOrientationMaskPortrait | UIInterfaceOrientationPortraitUpsideDown);
-    } else if ([availableOrientation isEqualToString:@"landscape"]) {
-        return UIInterfaceOrientationMaskLandscape;
-    } else {
-        return UIInterfaceOrientationMaskAll;
-    }
-}
+
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
     if ([availableOrientation isEqualToString:@"portrait"]) {
         return UIInterfaceOrientationIsPortrait(interfaceOrientation);
@@ -922,16 +914,17 @@
 - (BOOL)shouldAutorotate {
     return YES;
 }
+/*
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
     // Notify the index view
     [indexViewController willRotate];
     
-}
+}/*
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
     [indexViewController rotateFromOrientation:fromInterfaceOrientation toOrientation:self.interfaceOrientation];
     
     [self updateBookLayout];
-}
+}*/
 
 - (void)webView:(UIWebView *)webView setCorrectOrientation:(UIInterfaceOrientation)interfaceOrientation {
     

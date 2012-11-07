@@ -134,7 +134,8 @@
     "\"-baker-vertical-pagination\": false,"
     "\"-baker-rendering\": \"screenshots\","
     "\"-baker-page-turn-swipe\": true,"
-    "\"-baker-page-turn-tap\": true"
+    "\"-baker-page-turn-tap\": true,"
+    "\"-baker-page-turn-transition\": \"baker-scroll\""
     "}";
     NSError *e;
     return [[json objectFromJSONStringWithParseOptions:JKParseOptionNone error:&e] retain];

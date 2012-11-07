@@ -75,6 +75,8 @@
     // Add the root view to the application window
     self.window.rootViewController = self.rootViewController;
     [window makeKeyAndVisible];
+    [window setAutoresizesSubviews:YES];
+    [window setAutoresizingMask:(UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight)];
     
     NSString *reqSysVer = @"3.2";
     NSString *currSysVer = [[UIDevice currentDevice] systemVersion];

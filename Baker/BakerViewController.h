@@ -42,7 +42,7 @@
 #import "ModalViewController.h"
 #import "Properties.h"
 
-// Page Rendering Type Definitions
+//Page Rendering Type Definitions
 enum {
     BakerRenderingTypeScreenshots,
     BakerRenderingTypeThreeCards

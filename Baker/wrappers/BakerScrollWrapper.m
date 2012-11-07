@@ -25,6 +25,8 @@
         _scrollView.delaysContentTouches = NO;
         _scrollView.pagingEnabled = YES;
         
+        [_scrollView setAutoresizingMask:UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight];
+        
         // ****** INIT PROPERTIES
         _properties = [Properties properties];
         
@@ -41,13 +43,18 @@
   
     
     PageViewController *pageViewController = [[viewControllers objectAtIndex:0] retain];
-     NSLog(@"Image View %@",  pageViewController.backgroundImageView.image);
-    [pageViewController.numberLabel setBackgroundColor:[UIColor yellowColor]];
+ 
+  
     [self.view addSubview:pageViewController.view];
 
     [self addChildViewController:pageViewController];
     
     return;
+}
+
+-(BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
+    return YES;
 }
 
 /*

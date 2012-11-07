@@ -28,9 +28,13 @@
 @property (strong, retain, atomic)UIWebView *webView;
 @property (readwrite, atomic)int tag;
 @property (nonatomic, assign)id<UIWebViewDelegate> *delegate;
+@property (strong, retain, atomic)UIImage *backgroundImagePortrait;
+@property (strong, retain, atomic)UIImage *backgroundImageLandscape;
 
-- (id)initWithFrame:(CGRect)frame;
+- (id)initWithFrame:(CGRect)frame andPageURL:(NSString*)pageURL;
 - (void)loadPage:(NSString*)pageURL;
+- (void)updateLayout;
+- (void)updateBackgroundImageToOrientation:(UIInterfaceOrientation)orientation;
 - (void)updatePageInfomation;
 
 @end
