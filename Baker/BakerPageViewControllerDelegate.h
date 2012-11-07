@@ -13,5 +13,6 @@
 
 - (bool)pageViewController:(PageViewController*)pageViewController handleURL:(NSString*)url;
 - (void)pageViewControllerDidLoadPage:(PageViewController*)pageViewController;
+- (void)pageViewControllerWillUnloadPage:(PageViewController*)pageViewController;
 
 @end

@@ -765,6 +765,18 @@
     
 }
 
+- (bool)pageViewController:(PageViewController*)pageViewController handleURL:(NSString*)url{
+    return YES;
+}
+
+- (void)pageViewControllerDidLoadPage:(PageViewController*)pageViewController{
+    
+}
+
+- (void)pageViewControllerWillUnloadPage:(PageViewController*)pageViewController{
+    
+}
+
 #pragma mark - STATUS BAR
 - (void)toggleStatusBar {
     

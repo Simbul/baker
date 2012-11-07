@@ -30,7 +30,7 @@
 
 
 @property (readwrite, atomic)int tag;
-@property (nonatomic, assign)id<BakerPageViewControllerDelegate> *delegate;
+@property (nonatomic, assign)id<BakerPageViewControllerDelegate> delegate;
 @property (strong, retain, atomic)UIImage *backgroundImagePortrait;
 @property (strong, retain, atomic)UIImage *backgroundImageLandscape;
 
@@ -40,6 +40,5 @@
 - (void)setWebViewCorrectOrientation:(UIInterfaceOrientation)interfaceOrientation;
 - (void)updateLayout;
 - (void)updateBackgroundImageToOrientation:(UIInterfaceOrientation)orientation;
-- (void)updatePageInfomation;
 
 @end

@@ -207,6 +207,8 @@
 
 - (void)webViewDidFinishLoad:(UIWebView *)webView {
 
+    [self.delegate pageViewControllerDidLoadPage:self];
+    
     _webView.userInteractionEnabled = YES;
     
     //Get Size Of Page
@@ -257,6 +259,9 @@
 }
 
 - (void)dealloc {
+    
+    [self.delegate pageViewControllerWillUnloadPage:self];
+    
     if(_backgroundImageLandscape){
        [_backgroundImageLandscape release]; 
     }
