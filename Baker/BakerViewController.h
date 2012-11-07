@@ -102,7 +102,6 @@ enum {
 - (void)buildPageArray;
 - (void)startReadingFromPage:(int)pageNumber anchor:(NSString *)anchor;
 - (void)startReading;
-- (void)updateBookLayout;
 - (void)addSkipBackupAttributeToItemAtPath:(NSString *)path;
 - (NSDictionary *)bookCurrentStatus;
 
