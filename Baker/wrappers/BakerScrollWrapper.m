@@ -64,6 +64,15 @@
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView{
+    [self updatePages];
+}
+
+-(BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
+    return YES;
+}
+
+- (void)updatePages{
     
     if (!_pageViewInBeforeTransition) {
         
@@ -127,14 +136,8 @@
             _pageViewInAfterTransition = nil;
         }
         
-         NSLog(@"Showing Page %i", _currentPage .tag);
+        NSLog(@"Showing Page %i", _currentPage .tag);
     }
-    
-}
-
--(BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-{
-    return YES;
 }
 
 - (CGRect)frameForPage:(int)page {
@@ -311,9 +314,7 @@
 }
 
 - (void)updateBookLayout {
-    NSLog(@"    Prevent page from changing until layout is updated");
-    [self lockPage:[NSNumber numberWithBool:YES]];
-    
+
     [self setPageSize:[self getCurrentInterfaceOrientation]];
     
     if ([renderingType isEqualToString:@"screenshots"]) {
@@ -328,20 +329,10 @@
     if (![UIApplication sharedApplication].statusBarHidden) {
         scrollViewY = -20;
     }/*
-      
-      [UIView animateWithDuration:0.2
-      animations:^{
-      if (!USEPAGEVIEW){
-      scrollView.frame = CGRectMake(0, scrollViewY, pageWidth, pageHeight);
-      } else {
-      pageView.view.frame = CGRectMake(0, scrollViewY, pageWidth, pageHeight);
-      }
-      }];
+
       
       
-      [self setFrame:[self frameForPage:currentPageNumber] forPage:currPage];
-      [self setFrame:[self frameForPage:currentPageNumber + 1] forPage:nextPage];
-      [self setFrame:[self frameForPage:currentPageNumber - 1] forPage:prevPage];
+
       
       if (!USEPAGEVIEW){
       [scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:NO];
@@ -351,24 +342,7 @@
       currentPageViewController.view = [[UIView alloc] init];
       currentPageViewController.view.bounds = self.pageView.view.bounds;
       currentPageViewController.view.backgroundColor = [Utils colorWithHexString:[properties get:@"-baker-background", nil]];
-      
-      NSDictionary *details = [pageDetails objectAtIndex:0];
-      
-      [currentPageViewController.view addSubview:[details objectForKey:@"background"]];
-      [currentPageViewController.view addSubview:[details objectForKey:@"spinner"]];
-      [currentPageViewController.view addSubview:[details objectForKey:@"number"]];
-      [currentPageViewController.view addSubview:[details objectForKey:@"title"]];
-      
-      
-      NSArray *viewControllers = @[currentPageViewController];
-      
-      [pageView setViewControllers:viewControllers
-      direction:UIPageViewControllerNavigationDirectionForward
-      animated:NO
-      completion:nil];
-      }
-      NSLog(@"    Unlock page changing");
-      [self lockPage:[NSNumber numberWithBool:NO]];
+
 }
 - (void)setPageSize:(NSString *)orientation {
     

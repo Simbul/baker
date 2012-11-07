@@ -21,6 +21,7 @@
 }
 
 - (CGRect)frameForPage:(int)page;
+- (void)updatePages;
 - (int)currentPageInView;
 
 @end
