@@ -84,6 +84,7 @@
 		1AC287AD16472F0E00EDF0E9 /* BakerScrollWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BakerScrollWrapper.m; path = wrappers/BakerScrollWrapper.m; sourceTree = "<group>"; };
 		1AC287AF16472F3500EDF0E9 /* PageViewControllerWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PageViewControllerWrapper.h; path = wrappers/PageViewControllerWrapper.h; sourceTree = "<group>"; };
 		1AC287B016472F3500EDF0E9 /* PageViewControllerWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PageViewControllerWrapper.m; path = wrappers/PageViewControllerWrapper.m; sourceTree = "<group>"; };
+		1AC51011164B09CD00F09753 /* BakerPageViewControllerDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BakerPageViewControllerDelegate.h; sourceTree = "<group>"; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1D6058910D05DD3D006BFB54 /* Baker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Baker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -290,6 +291,7 @@
 				1AC287AB16472EE000EDF0E9 /* wrappers */,
 				1A2B69C2164866B5009A0AC8 /* PageViewController.h */,
 				1A2B69C3164866B5009A0AC8 /* PageViewController.m */,
+				1AC51011164B09CD00F09753 /* BakerPageViewControllerDelegate.h */,
 			);
 			path = Baker;
 			sourceTree = "<group>";

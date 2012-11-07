@@ -154,7 +154,7 @@
     _webView.delegate = self;
     _webView.alpha = 0.0f;
     _webView.autoresizingMask = (UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight);
-        
+    
     _webView.mediaPlaybackRequiresUserAction = ![[_properties get:@"-baker-media-autoplay", nil] boolValue];
     _webView.scalesPageToFit = [[_properties get:@"zoomable", nil] boolValue];
     
@@ -166,14 +166,14 @@
             }
         }
     
-    [self.view addSubview:_webView];
-    
     NSString *path = [NSString stringWithString:pageURL];
     
     if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
         NSLog(@"• Loading: book/%@", [[NSFileManager defaultManager] displayNameAtPath:path]);
         [_webView loadRequest:[NSURLRequest requestWithURL:[NSURL fileURLWithPath:path]]];
     }
+    
+    [self.view addSubview:_webView];
 }
 
 - (void)setLoadingUIHidden:(bool)hidden{
@@ -206,6 +206,9 @@
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)webView {
+    
+    _webView.userInteractionEnabled = YES;
+    
     if (_webView.alpha == 0.0f)
     {
         [UIView animateWithDuration:0.5
