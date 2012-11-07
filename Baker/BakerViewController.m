@@ -376,7 +376,7 @@
     
     NSString *lastScrollIndex = nil;
     if (currPage != nil) {
-        lastScrollIndex = [currPage.webView stringByEvaluatingJavaScriptFromString:@"window.scrollY;"];
+       // lastScrollIndex = [currPage.webView stringByEvaluatingJavaScriptFromString:@"window.scrollY;"];
     }
     
     return [NSDictionary dictionaryWithObjectsAndKeys:lastPageViewed, @"lastPageViewed", lastScrollIndex, @"lastScrollIndex", nil];
@@ -712,14 +712,14 @@
 - (PageViewController *)newPageViewForPage:(int)page{
     if (page > 0 && page < pages.count){
         
-        PageViewController *newPage = [[[PageViewController alloc] initWithFrame:self.view.bounds andPageURL:[pages objectAtIndex:page - 1]] retain];
-        
+        PageViewController *newPage = [[PageViewController alloc] initWithFrame:self.view.bounds andPageURL:[pages objectAtIndex:page - 1]];
+
         newPage.backgroundImagePortrait = [backgroundImagePortrait retain];
         newPage.backgroundImageLandscape = [backgroundImageLandscape retain];
         
         [newPage setTag:page];
-        
-        return newPage;
+
+        return [newPage autorelease];
     } else {
         return nil;
     }
@@ -728,7 +728,7 @@
 - (PageViewController *)getPageViewForPage:(int)page{
     
     if (renderingType == BakerRenderingTypeThreeCards) {
-        
+
         if (prevPage && prevPage.tag == page){
             return prevPage;
         }
@@ -741,9 +741,8 @@
             return nextPage;
         }
     }
-    
-    return [self newPageViewForPage:page];
 
+    return [self newPageViewForPage:page];
 }
 
 - (PageViewController *)wrapperViewController:(BakerWrapper *)wrapperViewController viewControllerAfterViewController:(PageViewController *)viewController{

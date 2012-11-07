@@ -16,16 +16,18 @@
     NSNumber *_pageNumberAlpha;
     UIColor *_pageNumberColor;
     
+    UIImageView *_backgroundImageView;
+    UIActivityIndicatorView *_activityIndicatorView;
+    UILabel *_numberLabel;
+    PageTitleLabel *_titleLabel;
+    UIWebView *_webView;
+    
     NSString *_pageURL;
     
     Properties *_properties;
 }
 
-@property (strong, retain, atomic)UIImageView *backgroundImageView;
-@property (strong, retain, atomic)UIActivityIndicatorView *activityIndicatorView;
-@property (strong, retain, atomic)UILabel *numberLabel;
-@property (strong, retain, atomic)PageTitleLabel *titleLabel;
-@property (strong, retain, atomic)UIWebView *webView;
+
 @property (readwrite, atomic)int tag;
 @property (nonatomic, assign)id<UIWebViewDelegate> *delegate;
 @property (strong, retain, atomic)UIImage *backgroundImagePortrait;

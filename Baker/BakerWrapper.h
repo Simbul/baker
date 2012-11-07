@@ -15,11 +15,13 @@ enum {
     BakerWrapperNavigationDirectionVertical
 } typedef  BakerWrapperNavigationDirection;
 
-@interface BakerWrapper : UIViewController
+@interface BakerWrapper : UIViewController{
+    NSMutableArray *_viewControllers;
+}
 
 @property(nonatomic, assign) id<BakerWrapperDataSource> dataSource;
 @property(nonatomic, assign) id<BakerWrapperDelegate> delegate;
-@property(nonatomic, readonly)  BakerWrapperNavigationDirection direction;
+@property(nonatomic, readonly) BakerWrapperNavigationDirection direction;
 @property(nonatomic, readonly) NSArray *viewControllers;
 
 - (id)initWithFrame:(CGRect)frame;

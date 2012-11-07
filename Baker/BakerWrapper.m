@@ -21,15 +21,13 @@
 - (void)setViewControllers:(NSArray *)viewControllers direction:(BakerWrapperNavigationDirection)direction animated:(BOOL)animated completion:(void (^)(BOOL finished))completion{
     
     _direction = direction;
-    _viewControllers = viewControllers;
-    
-    PageViewController *pageViewController = [viewControllers objectAtIndex:0];
-   
-    NSLog(@"%@",  NSStringFromCGRect(pageViewController.view.frame));
-    [pageViewController.webView setHidden:NO];
-    [self.view addSubview:pageViewController.view];
+    _viewControllers = [viewControllers mutableCopy];
     
     return;
+}
+
+- (NSArray*)viewControllers{
+    return [_viewControllers copy];
 }
 
 @end

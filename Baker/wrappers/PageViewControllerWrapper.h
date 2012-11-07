@@ -11,9 +11,11 @@
 #import "BakerWrapper.h"
 #import "BakerWrapperDataSource.h"
 #import "BakerWrapperDelegate.h"
+#import "PageViewController.h"
 
-@interface PageViewControllerWrapper : BakerWrapper{
+@interface PageViewControllerWrapper : BakerWrapper<UIPageViewControllerDataSource, UIPageViewControllerDelegate>{
     UIPageViewController *_pageViewController;
+    PageViewController *_PageViewInTransition;
     
     UIColor *webViewBackground;
 }
