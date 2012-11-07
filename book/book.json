@@ -15,6 +15,7 @@
     "-baker-background-image-portrait": "gfx/background-portrait.png",
     "-baker-background-image-landscape": "gfx/background-landscape.png",
     "-baker-page-numbers-color": "#000000",
+    "-baker-page-turn-transition" : "pages",
 
     "contents": [
         "Book Cover.html",

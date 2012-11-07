@@ -123,9 +123,9 @@
     id wrapperClass;
     
     if ([transitionType isEqualToString:@"baker-scroll"]) {
-        wrapperClass = [BakerScrollWrapper alloc];
+        wrapperClass = [[BakerScrollWrapper alloc] retain];
     } else {
-        wrapperClass = [PageViewControllerWrapper alloc];
+        wrapperClass = [[PageViewControllerWrapper alloc] retain];
     }
     
     self.wrapperViewController = [[wrapperClass initWithFrame:self.view.bounds] retain];

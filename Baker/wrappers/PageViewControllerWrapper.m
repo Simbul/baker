@@ -7,6 +7,7 @@
 //
 
 #import "PageViewControllerWrapper.h"
+#import "BakerScrollWrapper.h"
 
 @interface PageViewControllerWrapper ()
 
@@ -16,25 +17,28 @@
 
 - (id)initWithFrame:(CGRect)frame
 {
-    self = [super init];
-    if (self) {
+    if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"5.0")){
+        self = [super init];
+        if (self) {
         
-        // ***** PAGEVIEWCONTROLLER INIT
+            // ***** PAGEVIEWCONTROLLER INIT
         
-        _pageViewController = [[[UIPageViewController alloc] initWithTransitionStyle:UIPageViewControllerTransitionStylePageCurl navigationOrientation:UIPageViewControllerNavigationOrientationHorizontal options:nil] retain];
-        _pageViewController.dataSource = self;
-        _pageViewController.delegate = self;
+            _pageViewController = [[[UIPageViewController alloc] initWithTransitionStyle:UIPageViewControllerTransitionStylePageCurl navigationOrientation:UIPageViewControllerNavigationOrientationHorizontal options:nil] retain];
+            _pageViewController.dataSource = self;
+            _pageViewController.delegate = self;
         
-        self.view.autoresizingMask = (UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight);
+            self.view.autoresizingMask = (UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight);
+        }
+        return self;
+    }  else {
+        return [[[BakerScrollWrapper alloc] initWithFrame:frame] autorelease];
     }
-    return self;
 }
 
 - (void)viewDidLoad{
     //Setup Page View Controller
     [self.view addSubview: _pageViewController.view];
     [self addChildViewController:_pageViewController];
-    [_pageViewController isMovingToParentViewController];
 }
 
 - (void)setViewControllers:(NSArray *)viewControllers direction:(BakerWrapperNavigationDirection)direction animated:(BOOL)animated completion:(void (^)(BOOL))completion{

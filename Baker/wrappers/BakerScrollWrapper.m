@@ -57,8 +57,10 @@
     _currentPage.view.frame = [self frameForPage:_currentPage.tag];
     
     [_scrollView addSubview:_currentPage.view];
-
-    [self addChildViewController:_currentPage];
+    
+     if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"5.0")){
+         [self addChildViewController:_currentPage];
+     }
     
     return;
 }
@@ -110,7 +112,9 @@
         NSArray *oldViewControllers = [self.viewControllers copy];
         
         if (_currentPage){
-            [_currentPage removeFromParentViewController];
+             if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"5.0")){
+                 [_currentPage removeFromParentViewController];
+             }
             [_currentPage.view removeFromSuperview];
             [_currentPage release];
             _currentPage = nil;

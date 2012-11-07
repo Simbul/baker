@@ -216,8 +216,11 @@
     int pageHeight = ([[UIApplication sharedApplication] statusBarOrientation] == UIInterfaceOrientationPortrait || [[UIApplication sharedApplication] statusBarOrientation] == UIInterfaceOrientationPortraitUpsideDown) ? fittingSize.height : fittingSize.width;
     
     _webView.frame = CGRectMake(0, 0, self.view.bounds.size.width, pageHeight);
-    _webView.scrollView.contentSize = CGSizeMake(self.view.bounds.size.width, pageHeight);
-
+    
+    if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"5.0")){
+        _webView.scrollView.contentSize = CGSizeMake(self.view.bounds.size.width, pageHeight);
+    }
+    
     if (_webView.alpha == 0.0f)
     {
         [UIView animateWithDuration:0.5
