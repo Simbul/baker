@@ -713,9 +713,16 @@
     if (page > 0 && page < pages.count){
         
         PageViewController *newPage = [[PageViewController alloc] initWithFrame:self.view.bounds andPageURL:[pages objectAtIndex:page - 1]];
-
-        newPage.backgroundImagePortrait = [backgroundImagePortrait retain];
-        newPage.backgroundImageLandscape = [backgroundImageLandscape retain];
+        
+        newPage.delegate = self;
+        
+        if (backgroundImagePortrait){
+            newPage.backgroundImagePortrait = [backgroundImagePortrait retain];
+        }
+        
+        if (backgroundImageLandscape){
+            newPage.backgroundImageLandscape = [backgroundImageLandscape retain];
+        }
         
         [newPage setTag:page];
 

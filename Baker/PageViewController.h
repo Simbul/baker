@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "BakerDefines.h"
+#import "BakerPageViewControllerDelegate.h"
 #import "PageTitleLabel.h"
 #import "Properties.h"
 #import "Utils.h"
@@ -29,7 +30,7 @@
 
 
 @property (readwrite, atomic)int tag;
-@property (nonatomic, assign)id<UIWebViewDelegate> *delegate;
+@property (nonatomic, assign)id<BakerPageViewControllerDelegate> *delegate;
 @property (strong, retain, atomic)UIImage *backgroundImagePortrait;
 @property (strong, retain, atomic)UIImage *backgroundImageLandscape;
 

@@ -37,6 +37,7 @@
 #import "BakerWrapper.h"
 #import "BakerWrapperDataSource.h"
 #import "BakerWrapperDelegate.h"
+#import "BakerPageViewControllerDelegate.h"
 #import "IndexViewController.h"
 #import "PageViewController.h"
 #import "ModalViewController.h"
@@ -49,7 +50,7 @@ enum {
 } typedef BakerRenderingType;
 
 @class Downloader;
-@interface BakerViewController : UIViewController<BakerWrapperDataSource, BakerWrapperDelegate, modalWebViewDelegate, UIWebViewDelegate, MFMailComposeViewControllerDelegate>  {
+@interface BakerViewController : UIViewController<BakerWrapperDataSource, BakerWrapperDelegate, modalWebViewDelegate, BakerPageViewControllerDelegate, MFMailComposeViewControllerDelegate>  {
     
     CGRect screenBounds;
     
