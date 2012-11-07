@@ -39,18 +39,17 @@
 - (void)loadView{
     //Set Scroll View to be Wrapper's View
     self.view = [_scrollView retain];
-    
-    _placeholderView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, (self.view.frame.size.width * [self.dataSource presentationCountForWrapperViewController:self]), self.view.frame.size.height)] retain];
-    _placeholderView.backgroundColor = [UIColor clearColor];
-                                        
-    [self.view addSubview: _placeholderView];
+}
+
+- (void)viewDidLoad{
+    _scrollView.contentSize = CGSizeMake((self.view.frame.size.width * [self.dataSource presentationCountForWrapperViewController:self]), self.view.frame.size.height);
 }
 
 - (void)setViewControllers:(NSArray *)viewControllers direction:(BakerWrapperNavigationDirection)direction animated:(BOOL)animated completion:(void (^)(BOOL finished))completion{
     
     PageViewController *pageViewController = [[viewControllers objectAtIndex:0] retain];
   
-    [_placeholderView addSubview:pageViewController.view];
+    [_scrollView addSubview:pageViewController.view];
 
     [self addChildViewController:pageViewController];
     
