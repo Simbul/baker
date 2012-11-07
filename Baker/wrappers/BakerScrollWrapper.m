@@ -45,7 +45,7 @@
 }
 
 - (void)viewDidLoad{
-    _scrollView.contentSize = CGSizeMake((self.view.frame.size.width * [self.dataSource presentationCountForWrapperViewController:self]), self.view.frame.size.height);
+    _scrollView.contentSize = CGSizeMake((self.view.frame.size.width * ([self.dataSource presentationCountForWrapperViewController:self] - 1)), self.view.frame.size.height);
     
     _lastOffset = _scrollView.contentOffset;
 }
@@ -87,7 +87,6 @@
         if (newPage){
             _pageViewInAfterTransition = [newPage retain];
             _pageViewInAfterTransition.view.frame = [self frameForPage:_pageViewInAfterTransition.tag];
-            NSLog(@"Showing Page %i", _pageViewInAfterTransition.tag);
             [_scrollView addSubview:_pageViewInAfterTransition.view];
         }
     }
@@ -133,6 +132,8 @@
         [_pageViewInAfterTransition release];
         _pageViewInAfterTransition = nil;
     }
+    
+    NSLog(@"Showing Page %i", _currentPage .tag);
 }
 
 -(BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
