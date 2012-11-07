@@ -68,8 +68,8 @@
     // Create the application window
     self.window = [[[UIWindow alloc] initWithFrame:[[UIScreen mainScreen]bounds]] autorelease];
     
+    //Set Background
     Properties *_properties = [Properties properties];
-    
     window.backgroundColor = [Utils colorWithHexString:[_properties get:@"-baker-background", nil]];
     
     // Add the root view to the application window

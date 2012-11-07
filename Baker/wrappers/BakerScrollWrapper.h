@@ -11,7 +11,7 @@
 #import "BakerWrapper.h"
 #import "Properties.h"
 
-@interface BakerScrollWrapper : BakerWrapper{
+@interface BakerScrollWrapper : BakerWrapper<UIScrollViewDelegate>{
     
     int tapNumber;
     int stackedScrollingAnimations;

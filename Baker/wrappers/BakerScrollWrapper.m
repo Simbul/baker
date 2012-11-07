@@ -20,6 +20,7 @@
         _scrollView = [[[UIScrollView alloc] initWithFrame:frame] retain];
         
         _scrollView.backgroundColor = [UIColor clearColor];
+        _scrollView.delegate = self;
         _scrollView.showsHorizontalScrollIndicator = YES;
         _scrollView.showsVerticalScrollIndicator = NO;
         _scrollView.delaysContentTouches = NO;
@@ -54,6 +55,10 @@
     [self addChildViewController:pageViewController];
     
     return;
+}
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView{
+    
 }
 
 -(BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
