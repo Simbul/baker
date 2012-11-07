@@ -125,6 +125,8 @@
 
 - (void)loadPage:(NSString*)pageURL{
 
+    [self setLoadingUIHidden:NO];
+    
     //Remove and Release Exsisting Title Label if it exsists already
     if (_titleLabel){
         [_titleLabel removeFromSuperview];
@@ -146,8 +148,10 @@
     }
     
     _webView = [[[UIWebView alloc] initWithFrame:self.view.bounds] retain];
+    _webView.backgroundColor = [UIColor clearColor];
+    _webView.opaque = NO;
     _webView.delegate = self;
-    _webView.hidden = NO;
+    _webView.alpha = 0.0f;
     _webView.autoresizingMask = (UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight);
     
     [self.view addSubview:_webView];
@@ -158,6 +162,13 @@
         NSLog(@"• Loading: book/%@", [[NSFileManager defaultManager] displayNameAtPath:path]);
         [_webView loadRequest:[NSURLRequest requestWithURL:[NSURL fileURLWithPath:path]]];
     }
+}
+
+- (void)setLoadingUIHidden:(bool)hidden{
+    _backgroundImageView.hidden = hidden;
+    _numberLabel.hidden = hidden;
+    _activityIndicatorView.hidden = hidden;
+    _titleLabel.hidden = hidden;
 }
 
 - (void)setTag:(int)tag{
@@ -172,6 +183,31 @@
 {
     return YES;
 }
+
+- (void)webViewDidStartLoad:(UIWebView *)webView {
+    NSLog(@"• Page did start load");
+}
+
+- (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
+    // Sent if a web view failed to load content.
+    NSLog(@"• Failed to load content for Page %i with error: %@", self.tag, error);
+}
+
+- (void)webViewDidFinishLoad:(UIWebView *)webView {
+    if (_webView.alpha == 0.0f)
+    {
+        [UIView animateWithDuration:0.5
+                         animations:^{ _webView.alpha = 1.0; }
+                         completion:^(BOOL finished) {
+                             [self setLoadingUIHidden:YES];
+        }];
+        
+    }
+}
+    
+
+
+
 /*
 #pragma mark - WEBVIEW
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
@@ -405,71 +441,9 @@
         return NO;
     }
 }
-- (void)webViewDidStartLoad:(UIWebView *)webView {
-    NSLog(@"• Page did start load");
-}
-- (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
-    // Sent if a web view failed to load content.
-    if ([webView isEqual:currPage]) {
-        NSLog(@"• CurrPage failed to load content with error: %@", error);
-    } else if ([webView isEqual:prevPage]) {
-        NSLog(@"• PrevPage failed to load content with error: %@", error);
-    } else if ([webView isEqual:nextPage]) {
-        NSLog(@"• NextPage failed to load content with error: %@", error);
-    }
-}
-- (void)webViewDidFinishLoad:(UIWebView *)webView {
-    NSLog(@"• Page did finish load");
-    [self webView:webView setCorrectOrientation:self.interfaceOrientation];
-    
-    if (webView.hidden == YES)
-    {
-        if ([webView isEqual:currPage]) {
-            currentPageHasChanged = NO;
-            [self setCurrentPageHeight];
-        }
-        
-        [webView removeFromSuperview];
-        webView.hidden = NO;
-        
-        if ([renderingType isEqualToString:@"three-cards"]) {
-            [self webView:webView hidden:NO animating:YES];
-        } else {
-            [self takeScreenshotFromView:webView forPage:currentPageNumber andOrientation:[self getCurrentInterfaceOrientation]];
-        }
-        
-        [self handlePageLoading];
-    }
-}
-- (void)webView:(UIWebView *)webView hidden:(BOOL)status animating:(BOOL)animating {
-    
-    NSLog(@"• webView hidden: %d animating: %d", status, animating);
-    
-    /* if (animating) {
-     
-     webView.hidden = NO;
-     webView.alpha = 0.0;
-     
-     if (!USEPAGEVIEW){
-     [scrollView addSubview:webView];
-     } else {
-     [currentPageViewController.view addSubview:webView];
-     }
-     
-     [UIView animateWithDuration:0.5
-     animations:^{ webView.alpha = 1.0; }
-     completion:^(BOOL finished) { [self webViewDidAppear:webView animating:animating]; }];
-     } else {
-     
-     if (!USEPAGEVIEW){
-     [scrollView addSubview:webView];
-     } else {
-     [currentPageViewController.view addSubview:webView];
-     }
-     
-     [self webViewDidAppear:webView animating:animating];
-     }*
-}
+
+
+
 - (void)webViewDidAppear:(UIWebView *)webView animating:(BOOL)animating {
     
     if ([webView isEqual:currPage])
@@ -511,8 +485,7 @@
         [webViewBackground retain];
     }
     
-    webView.backgroundColor = [UIColor clearColor];
-    webView.opaque = NO;
+    
     
     webView.delegate = self;
     webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
