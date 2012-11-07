@@ -206,9 +206,18 @@
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)webView {
-    
+
     _webView.userInteractionEnabled = YES;
     
+    //Get Size Of Page
+    CGSize fittingSize = [_webView sizeThatFits:CGSizeZero];
+    
+    //Get Real Page Height (We need to work out the orientation of the Device)
+    int pageHeight = ([[UIApplication sharedApplication] statusBarOrientation] == UIInterfaceOrientationPortrait || [[UIApplication sharedApplication] statusBarOrientation] == UIInterfaceOrientationPortraitUpsideDown) ? fittingSize.height : fittingSize.width;
+    
+    _webView.frame = CGRectMake(0, 0, self.view.bounds.size.width, pageHeight);
+    _webView.scrollView.contentSize = CGSizeMake(self.view.bounds.size.width, pageHeight);
+
     if (_webView.alpha == 0.0f)
     {
         [UIView animateWithDuration:0.5
