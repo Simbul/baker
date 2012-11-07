@@ -295,8 +295,6 @@
 
 - (void)startReading {
     
-    [self updateBookLayout];
-    
     // TODO: MOVE INTO ANOTHER METHOD
     // [indexViewController loadContentFromBundle:[currentBookPath isEqualToString:bundleBookPath]];
     // ****** INDEX WEBVIEW INIT
@@ -919,8 +917,6 @@
 }
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
     [indexViewController rotateFromOrientation:fromInterfaceOrientation toOrientation:self.interfaceOrientation];
-    
-    [self updateBookLayout];
 }
 
 - (void)webView:(UIWebView *)webView setCorrectOrientation:(UIInterfaceOrientation)interfaceOrientation {
