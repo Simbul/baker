@@ -15,7 +15,6 @@
     
     UIScrollView *_scrollView;
     
-    CGPoint _lastOffset;
     PageViewController *_currentPage;
     
     Properties *_properties;
