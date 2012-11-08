@@ -765,8 +765,8 @@
     
 }
 
-- (bool)pageViewController:(PageViewController*)pageViewController handleURL:(NSString*)url{
-    return YES;
+- (bool)pageViewController:(PageViewController*)pageViewController shouldStartPageLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType{
+    
 }
 
 - (void)pageViewControllerDidLoadPage:(PageViewController*)pageViewController{
@@ -1036,7 +1036,7 @@
 
 /*
  #pragma mark - WEBVIEW
- - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
+
  
  // Sent before a web view begins loading content, useful to trigger actions before the WebView.
  NSLog(@"• Should webView load the page ?");

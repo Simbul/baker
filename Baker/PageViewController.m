@@ -234,6 +234,10 @@
     }
 }
 
+- (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
+    return [self.delegate pageViewController:self shouldStartPageLoadWithRequest:request navigationType:navigationType];
+}
+
 - (void)setWebViewCorrectOrientation:(UIInterfaceOrientation)interfaceOrientation {
     
     // Since the UIWebView doesn't handle orientationchange events correctly we have to set the correct value for window.orientation property ourselves
@@ -261,6 +265,8 @@
 - (void)dealloc {
     
     [self.delegate pageViewControllerWillUnloadPage:self];
+    
+    self.delegate = nil;
     
     if(_backgroundImageLandscape){
        [_backgroundImageLandscape release]; 
