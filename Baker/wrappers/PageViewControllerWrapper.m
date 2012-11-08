@@ -45,9 +45,7 @@
     
     self.direction = direction;
     
-    [_pageViewController setViewControllers:viewControllers direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:^(BOOL finished) {
-        NSLog(@"Page View Controller Setup");
-    }];
+    [_pageViewController setViewControllers:viewControllers direction:(direction == BakerWrapperNavigationDirectionForward)?UIPageViewControllerNavigationDirectionForward:UIPageViewControllerNavigationDirectionReverse animated:animated completion:completion];
 }
 
 - (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerBeforeViewController:(UIViewController *)viewController{

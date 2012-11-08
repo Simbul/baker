@@ -808,7 +808,6 @@
 
 - (bool)pageViewController:(PageViewController*)pageViewController shouldStartPageLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType{
     
-    
     // Sent before a web view begins loading content, useful to trigger actions before the WebView.
     NSLog(@"• Should webView load the page ?");
     NSURL *url = [request URL];
@@ -847,16 +846,19 @@
                 PageViewController *newPageView = [self getPageViewForPage:page];
                 NSArray *viewControllers = @[[newPageView autorelease]];
                 
-                [_wrapperViewController setViewControllers:[viewControllers autorelease] direction:B animated:<#(BOOL)#> completion:<#^(BOOL finished)completion#>]
+                BakerWrapperNavigationDirection direction = (pageViewController.tag > newPageView.tag)? BakerWrapperNavigationDirectionBackward : BakerWrapperNavigationDirectionForward;
                 
-                if (![self changePage:page])
-                {
-                    if (anchorFromURL == nil) {
+                [_wrapperViewController setViewControllers:[viewControllers autorelease] direction:direction animated:YES completion:^(BOOL finished) {
+                    NSLog(@"Navigated to page %i", page);
+                    
+                    /*if (anchorFromURL == nil) {
                         return YES;
-                    }
+                    }*/
                     
                     //[self handleAnchor:YES];
-                }
+                }];
+                
+                return NO;
             }
             else if ([[url scheme] isEqualToString:@"book"])
             {
