@@ -13,8 +13,8 @@
 //TODO: Generic Method that sub classes can use to reuse views when they have only moved one page along, or perhaps this is redundant if we introduce a hybrid mode or just use three-cards (i.e threecards with screenshots)
 
 enum {
-    BakerWrapperNavigationDirectionHorizontal,
-    BakerWrapperNavigationDirectionVertical
+    BakerWrapperNavigationDirectionForward,
+    BakerWrapperNavigationDirectionBackward
 } typedef  BakerWrapperNavigationDirection;
 
 @interface BakerWrapper : UIViewController{
@@ -29,5 +29,6 @@ enum {
 
 - (id)initWithFrame:(CGRect)frame;
 - (void)setViewControllers:(NSArray *)viewControllers direction:(BakerWrapperNavigationDirection)direction animated:(BOOL)animated completion:(void (^)(BOOL finished))completion;
+
 
 @end
