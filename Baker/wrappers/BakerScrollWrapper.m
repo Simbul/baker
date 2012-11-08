@@ -52,15 +52,25 @@
     
     [super setViewControllers:viewControllers direction:direction animated:animated completion:completion];
     
-    _currentPage = [[viewControllers objectAtIndex:0] retain];
-  
-    _currentPage.view.frame = [self frameForPage:_currentPage.tag];
+    PageViewController *newPageViewController = [viewControllers objectAtIndex:0];
     
-    [_scrollView addSubview:_currentPage.view];
+    newPageViewController.view.frame = [self frameForPage:newPageViewController.tag];
     
-     if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"5.0")){
-         [self addChildViewController:_currentPage];
-     }
+    if (_currentPage){
+        
+        _currentPage = [newPageViewController retain];
+        
+        [_scrollView addSubview:_currentPage.view];
+        
+        if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"5.0")){
+            [self addChildViewController:_currentPage];
+        }
+        
+    } else {
+         [_scrollView scrollRectToVisible:newPageViewController.view.frame animated:animated];
+    }
+    
+    completion(YES);
     
     return;
 }
