@@ -538,10 +538,6 @@
     
 }
 
-- (void)pageViewControllerDidLoadPage:(PageViewController*)pageViewController{
-    
-}
-
 - (void)pageViewControllerWillUnloadPage:(PageViewController*)pageViewController{
     
 }
@@ -1054,40 +1050,6 @@
  NSLog(@"   Handle saved hash reference if necessary");
  [self handleAnchor:YES];
  }
- }
- }
- - (void)webView:(UIWebView *)webView dispatchHTMLEvent:(NSString *)event {
- 
- NSString *jsDispatchEvent = [NSString stringWithFormat:@"var bakerDispatchedEvent = document.createEvent('Events');\
- bakerDispatchedEvent.initEvent('%@', false, false);\
- window.dispatchEvent(bakerDispatchedEvent);", event];
- 
- [webView stringByEvaluatingJavaScriptFromString:jsDispatchEvent];
- }
- 
- - (void)handleAnchor:(BOOL)animating {
- if (anchorFromURL != nil) {
- NSString *jsAnchorHandler = [NSString stringWithFormat:@"(function() {\
- var target = '%@';\
- var elem = document.getElementById(target);\
- if (!elem) elem = document.getElementsByName(target)[0];\
- return elem.offsetTop;\
- })();", anchorFromURL];
- 
- NSString *offsetString = [currPage stringByEvaluatingJavaScriptFromString:jsAnchorHandler];
- if (![offsetString isEqualToString:@""])
- {
- int offset = [offsetString intValue];
- int currentPageOffset = [self getCurrentPageOffset];
- 
- if (offset > currentPageOffset) {
- [self scrollDownCurrentPage:offset animating:animating];
- } else if (offset < currentPageOffset) {
- [self scrollUpCurrentPage:offset animating:animating];
- }
- }
- 
- anchorFromURL = nil;
  }
  }
  
