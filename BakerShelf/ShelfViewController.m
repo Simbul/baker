@@ -42,6 +42,7 @@
 @synthesize issueViewControllers;
 @synthesize gridView;
 @synthesize issuesManager;
+@synthesize refreshButton;
 
 #pragma mark - Init
 
@@ -75,6 +76,7 @@
     [gridView release];
     [issueViewControllers release];
     [issues release];
+    [refreshButton release];
 
     [super dealloc];
 }
@@ -101,7 +103,7 @@
     [self.gridView reloadData];
 
     #ifdef BAKER_NEWSSTAND
-    UIBarButtonItem *refreshButton = [[[UIBarButtonItem alloc]
+    self.refreshButton = [[[UIBarButtonItem alloc]
                                        initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh
                                        target:self
                                        action:@selector(handleRefresh:)]
@@ -114,7 +116,10 @@
                                          action:nil]
                                         autorelease];
 
-    self.navigationItem.leftBarButtonItems = [NSArray arrayWithObjects:refreshButton, subscribeButton, nil];
+    self.navigationItem.leftBarButtonItems = [NSArray arrayWithObjects:
+                                              self.refreshButton,
+                                              subscribeButton,
+                                              nil];
     #endif
 }
 - (void)viewWillAppear:(BOOL)animated
@@ -219,8 +224,9 @@
 }
 
 #ifdef BAKER_NEWSSTAND
-- (void)handleRefresh:(NSNotification *)notification
-{
+- (void)handleRefresh:(NSNotification *)notification {
+    [self setrefreshButtonEnabled:NO];
+
     if (!self.issuesManager) {
         self.issuesManager = [[[IssuesManager alloc] initWithURL:NEWSSTAND_MANIFEST_URL] autorelease];
     }
@@ -235,6 +241,7 @@
             [self.issueViewControllers insertObject:ivc atIndex:idx];
             [self.gridView insertItemsAtIndices:[NSIndexSet indexSetWithIndex:idx] withAnimation:AQGridViewItemAnimationNone];
         }
+        [self setrefreshButtonEnabled:YES];
     }];
 }
 #endif
@@ -272,6 +279,12 @@
     BakerViewController *bakerViewController = [[BakerViewController alloc] initWithBook:book];
     [self.navigationController pushViewController:bakerViewController animated:YES];
     [bakerViewController release];
+}
+
+#pragma mark - Buttons management
+
+-(void) setrefreshButtonEnabled:(BOOL)enabled {
+    self.refreshButton.enabled = enabled;
 }
 
 @end

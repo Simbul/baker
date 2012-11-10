@@ -43,6 +43,7 @@
 
 @property (strong, nonatomic) AQGridView *gridView;
 @property (strong, nonatomic) UIImageView *background;
+@property (strong, nonatomic) UIBarButtonItem *refreshButton;
 
 #pragma mark - Init
 - (id)initWithBooks:(NSArray *)currentBooks;
