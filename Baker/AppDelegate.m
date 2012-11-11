@@ -62,7 +62,7 @@
     [window release];
     [rootViewController release];
     [rootNavigationController release];
-    
+
     [super dealloc];
 }
 
@@ -72,15 +72,15 @@
     self.window.backgroundColor = [UIColor whiteColor];
 
     #ifdef BAKER_NEWSSTAND
-    
+
     NSLog(@"====== Newsstand is enabled ======");
     IssuesManager *issuesManager = [[[IssuesManager alloc] initWithURL:NEWSSTAND_MANIFEST_URL] autorelease];
     [issuesManager refresh];
     NSArray *books = issuesManager.issues;
     self.rootViewController = [[[ShelfViewController alloc] initWithBooks:books] autorelease];
-    
+
     #else
-    
+
     NSLog(@"====== Newsstand is not enabled ======");
     NSArray *books = [ShelfManager localBooksList];
     if ([books count] == 1) {
@@ -88,7 +88,7 @@
     } else  {
         self.rootViewController = [[[ShelfViewController alloc] initWithBooks:books] autorelease];
     }
-    
+
     #endif
 
     self.rootNavigationController = [[UICustomNavigationController alloc] initWithRootViewController:self.rootViewController];
@@ -98,7 +98,7 @@
 
     self.window.rootViewController = self.rootNavigationController;
     [self.window makeKeyAndVisible];
-    
+
     return YES;
 }
 
@@ -111,7 +111,7 @@
 
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
-    // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later. 
+    // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
     // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
 }
 

@@ -75,7 +75,7 @@
     [gridView release];
     [issueViewControllers release];
     [issues release];
-    
+
     [super dealloc];
 }
 
@@ -113,7 +113,7 @@
                                          target:self
                                          action:nil]
                                         autorelease];
-    
+
     self.navigationItem.leftBarButtonItems = [NSArray arrayWithObjects:refreshButton, subscribeButton, nil];
     #endif
 }
@@ -125,7 +125,7 @@
     #ifdef BAKER_NEWSSTAND
     [self handleRefresh:nil];
     #endif
-    
+
     for (IssueViewController *controller in self.issueViewControllers) {
         [controller refresh];
     }
@@ -149,7 +149,7 @@
 
     NSString *image = @"";
     CGSize size = [UIScreen mainScreen].bounds.size;
-    
+
     if (UIInterfaceOrientationIsPortrait(toInterfaceOrientation)) {
         width  = size.width;
         height = size.height - 64;
@@ -162,13 +162,13 @@
         }
         image  = @"shelf-bg-landscape";
     }
-    
+
     if (size.height == 568) {
         image = [NSString stringWithFormat:@"%@-568h.png", image];
     } else {
         image = [NSString stringWithFormat:@"%@.png", image];
     }
-    
+
     int bannerOffset = [IssueViewController getIssueCellHeight];
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
         bannerOffset = bannerOffset / 2;
@@ -176,7 +176,7 @@
 
     self.background.frame = CGRectMake(0, 0, width, height);
     self.background.image = [UIImage imageNamed:image];
-    
+
     self.gridView.frame = CGRectMake(0, bannerOffset, width, height - bannerOffset);
 }
 - (IssueViewController *)createIssueViewControllerWithIssue:(BakerIssue *)issue
@@ -207,10 +207,10 @@
         cell.contentView.backgroundColor = [UIColor clearColor];
         cell.backgroundColor = [UIColor clearColor];
 	}
-    
+
     IssueViewController *controller = [self.issueViewControllers objectAtIndex:index];
     [cell.contentView addSubview:controller.view];
-    
+
     return cell;
 }
 - (CGSize)portraitGridCellSizeForGridView:(AQGridView *)aGridView
@@ -226,7 +226,7 @@
     }
     [self.issuesManager refresh];
     self.issues = issuesManager.issues;
-    
+
     [self.issues enumerateObjectsUsingBlock:^(id object, NSUInteger idx, BOOL *stop) {
         IssueViewController *existingIvc = [self.issueViewControllers objectAtIndex:idx];
         BakerIssue *issue = (BakerIssue*)object;

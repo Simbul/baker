@@ -3,31 +3,31 @@
 //  Baker
 //
 //  ==========================================================================================
-//  
+//
 //  Copyright (c) 2010-2012, Davide Casali, Marco Colombo, Alessandro Morandi
 //  All rights reserved.
-//  
-//  Redistribution and use in source and binary forms, with or without modification, are 
+//
+//  Redistribution and use in source and binary forms, with or without modification, are
 //  permitted provided that the following conditions are met:
-//  
-//  Redistributions of source code must retain the above copyright notice, this list of 
+//
+//  Redistributions of source code must retain the above copyright notice, this list of
 //  conditions and the following disclaimer.
-//  Redistributions in binary form must reproduce the above copyright notice, this list of 
-//  conditions and the following disclaimer in the documentation and/or other materials 
+//  Redistributions in binary form must reproduce the above copyright notice, this list of
+//  conditions and the following disclaimer in the documentation and/or other materials
 //  provided with the distribution.
-//  Neither the name of the Baker Framework nor the names of its contributors may be used to 
-//  endorse or promote products derived from this software without specific prior written 
+//  Neither the name of the Baker Framework nor the names of its contributors may be used to
+//  endorse or promote products derived from this software without specific prior written
 //  permission.
-//  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY 
-//  EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES 
-//  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT 
-//  SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, 
-//  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, 
-//  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
-//  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT 
-//  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE 
+//  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+//  EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+//  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+//  SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+//  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+//  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+//  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+//  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 //  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-//  
+//
 
 #import "IndexViewController.h"
 
@@ -38,16 +38,16 @@
 - (id)initWithBook:(BakerBook *)bakerBook fileName:(NSString *)name webViewDelegate:(UIViewController<UIWebViewDelegate> *)delegate {
     self = [super init];
     if (self) {
-        
+
         self.book = bakerBook;
-        
+
         fileName = name;
         webViewDelegate = delegate;
-        
+
         disabled = NO;
         indexWidth = 0;
         indexHeight = 0;
-        
+
         [self setPageSizeForOrientation:[self interfaceOrientation]];
     }
     return self;
@@ -56,7 +56,7 @@
 {
     [book release];
     [indexScrollView release];
-    
+
     [super dealloc];
 }
 
@@ -69,12 +69,12 @@
     UIWebView *webView = [[UIWebView alloc] initWithFrame:CGRectMake(0, 1024, 1, 1)];
     webView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
     webView.delegate = self;
-    
+
     webView.backgroundColor = [UIColor clearColor];
     [webView setOpaque:NO];
-    
-    
-    self.view = webView;    
+
+
+    self.view = webView;
     for (UIView *subView in webView.subviews) {
         if ([subView isKindOfClass:[UIScrollView class]]) {
             indexScrollView = [(UIScrollView *)subView retain];
@@ -82,7 +82,7 @@
         }
     }
     [webView release];
-    
+
     [self loadContent];
 }
 
@@ -92,7 +92,7 @@
 
 - (void)setPageSizeForOrientation:(UIInterfaceOrientation)orientation {
     CGRect screenBounds = [[UIScreen mainScreen] bounds];
-    
+
     if (orientation == UIInterfaceOrientationLandscapeLeft || orientation == UIInterfaceOrientationLandscapeRight) {
         pageWidth = screenBounds.size.height;
         pageHeight = screenBounds.size.width;
@@ -100,14 +100,14 @@
         pageWidth = screenBounds.size.width;
         pageHeight = screenBounds.size.height;
     }
-    
+
     UIApplication *sharedApplication = [UIApplication sharedApplication];
     if (sharedApplication.statusBarHidden) {
         pageY = 0;
     } else {
         pageY = -20;
     }
-    
+
     NSLog(@"Set IndexView size to %dx%d, with pageY set to %d", pageWidth, pageHeight, pageY);
 }
 
@@ -138,13 +138,13 @@
         } else {
             frame = CGRectMake(0, pageHeight + pageY - indexHeight, actualIndexWidth, actualIndexHeight);
         }
-        
+
     }
-    
+
     if (animation) {
         [UIView beginAnimations:@"slideIndexView" context:nil]; {
             [UIView setAnimationDuration:0.3];
-            
+
             [self setViewFrame:frame];
         }
         [UIView commitAnimations];
@@ -155,7 +155,7 @@
 
 - (void)setViewFrame:(CGRect)frame {
     self.view.frame = frame;
-    
+
     // Orientation changes tend to screw the content size detection performed by the scrollView embedded in the webView.
     // Let's show the scrollView who's boss.
     indexScrollView.contentSize = cachedContentSize;
@@ -164,7 +164,7 @@
 - (void)fadeOut {
     [UIView beginAnimations:@"fadeOutIndexView" context:nil]; {
         [UIView setAnimationDuration:0.0];
-        
+
         self.view.alpha = 0.0;
     }
     [UIView commitAnimations];
@@ -173,7 +173,7 @@
 - (void)fadeIn {
     [UIView beginAnimations:@"fadeInIndexView" context:nil]; {
         [UIView setAnimationDuration:0.2];
-        
+
         self.view.alpha = 1.0;
     }
     [UIView commitAnimations];
@@ -185,7 +185,7 @@
 
 - (void)rotateFromOrientation:(UIInterfaceOrientation)fromInterfaceOrientation toOrientation:(UIInterfaceOrientation)toInterfaceOrientation {
     BOOL hidden = [self isIndexViewHidden]; // cache hidden status before setting page size
-    
+
     [self setPageSizeForOrientation:toInterfaceOrientation];
     [self setActualSize];
     [self setIndexViewHidden:hidden withAnimation:NO];
@@ -194,11 +194,11 @@
 
 - (void)loadContent {
     NSString* path = [self indexPath];
-    
+
     UIWebView *webView = (UIWebView*) self.view;
     webView.mediaPlaybackRequiresUserAction = ![book.bakerMediaAutoplay boolValue];
     [self setBounceForWebView:webView bounces:[book.bakerIndexBounce boolValue]];
-    
+
     NSLog(@"Path to index view is %@", path);
     if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
         disabled = NO;
@@ -211,7 +211,7 @@
 -(void)webViewDidFinishLoad:(UIWebView *)webView {
     id width = book.bakerIndexWidth;
     id height = book.bakerIndexHeight;
-    
+
     if (width != nil) {
         indexWidth = (int)[width integerValue];
     } else {
@@ -222,19 +222,19 @@
     } else {
         indexHeight = [self sizeFromContentOf:webView].height;
     }
-    
+
     cachedContentSize = indexScrollView.contentSize;
     // get correct contentsize
     if (cachedContentSize.width < indexWidth) {
         cachedContentSize = CGSizeMake(indexWidth, indexHeight);
     }
     [self setActualSize];
-    
+
     NSLog(@"Set size for IndexView to %dx%d (constrained from %dx%d)", actualIndexWidth, actualIndexHeight, indexWidth, indexHeight);
-    
+
     // After the first load, point the delegate to the main view controller
     webView.delegate = webViewDelegate;
-    
+
     [self setIndexViewHidden:[self isIndexViewHidden] withAnimation:NO];
 }
 
@@ -243,14 +243,14 @@
 }
 
 - (CGSize)sizeFromContentOf:(UIView *)view {
-    // Setting the frame to 1x1 is required to get meaningful results from sizeThatFits when 
+    // Setting the frame to 1x1 is required to get meaningful results from sizeThatFits when
     // the orientation of the is anything but Portrait.
     // See: http://stackoverflow.com/questions/3936041/how-to-determine-the-content-size-of-a-uiwebview/3937599#3937599
     CGRect frame = view.frame;
     frame.size.width = 1;
     frame.size.height = 1;
     view.frame = frame;
-    
+
     return [view sizeThatFits:CGSizeZero];
 }
 

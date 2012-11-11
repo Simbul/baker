@@ -70,41 +70,41 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
+
     CGSize cellSize = [IssueViewController getIssueCellSize];
 
     self.view.frame = CGRectMake(0, 0, cellSize.width, cellSize.height);
     self.view.backgroundColor = [UIColor clearColor];
-    
+
     UI ui = [IssueViewController getIssueContentMeasures];
-    
+
     // SETUP COVER IMAGE
     [self.issue getCover:^(UIImage *image) {
         UIImageView *issueCover = [[[UIImageView alloc] initWithImage:image] autorelease];
-        
+
         issueCover.frame = CGRectMake(ui.cellPadding, ui.cellPadding, ui.thumbWidth, ui.thumbHeight);
         issueCover.backgroundColor = [UIColor clearColor];
 
         issueCover.layer.shadowOpacity = 0.5;
         issueCover.layer.shadowOffset = CGSizeMake(0, 2);
         issueCover.layer.shouldRasterize = YES;
-        
+
         [self.view addSubview:issueCover];
     }];
-    
+
     int heightOffset = ui.cellPadding;
-    
+
     // SETUP USED FONTS
     UIFont *textFont = [UIFont fontWithName:@"Helvetica" size:15];
     uint textLineheight = [@"The brown fox jumps over the lazy dog" sizeWithFont:textFont constrainedToSize:CGSizeMake(MAXFLOAT, MAXFLOAT)].height;
-    
+
     UIFont *actionFont = [UIFont fontWithName:@"Helvetica-Bold" size:11];
-        
-    
+
+
     // SETUP TITLE LABEL
     CGSize titleSize = [self.issue.title sizeWithFont:textFont constrainedToSize:CGSizeMake(170, MAXFLOAT) lineBreakMode:UILineBreakModeWordWrap];
     uint titleLines = MIN(4, titleSize.height / textLineheight);
-    
+
     UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(ui.contentOffset, heightOffset, 170, textLineheight * titleLines)];
     titleLabel.textColor = [UIColor blackColor];
     titleLabel.backgroundColor = [UIColor clearColor];
@@ -113,17 +113,17 @@
     titleLabel.numberOfLines = titleLines;
     titleLabel.text = self.issue.title;
     titleLabel.font = textFont;
-    
+
     [self.view addSubview:titleLabel];
     [titleLabel release];
-    
+
     heightOffset = heightOffset + titleLabel.frame.size.height + 5;
 
 
     // SETUP INFO LABEL
     CGSize infoSize = [self.issue.info sizeWithFont:textFont constrainedToSize:CGSizeMake(170, MAXFLOAT) lineBreakMode:UILineBreakModeWordWrap];
     uint infoLines = MIN(4, infoSize.height / textLineheight);
-    
+
     UILabel *infoLabel = [[UILabel alloc] initWithFrame:CGRectMake(ui.contentOffset, heightOffset, 170, textLineheight * infoLines)];
     infoLabel.textColor = [UIColor colorWithHexString:@"#929292"];
     infoLabel.backgroundColor = [UIColor clearColor];
@@ -132,32 +132,32 @@
     infoLabel.numberOfLines = infoLines;
     infoLabel.text = self.issue.info;
     infoLabel.font = textFont;
-    
+
     [self.view addSubview:infoLabel];
     [infoLabel release];
 
     heightOffset = heightOffset + infoLabel.frame.size.height + 10;
-    
+
 
     // SETUP ACTION BUTTON
     self.actionButton = [UIButton buttonWithType:UIButtonTypeCustom];
     actionButton.frame = CGRectMake(ui.contentOffset, heightOffset, 80, 30);
     actionButton.backgroundColor = [UIColor colorWithHexString:@"#b72529"];
     actionButton.titleLabel.font = actionFont;
-    
+
     [actionButton setTitle:ACTION_DOWNLOADED_TEXT forState:UIControlStateNormal];
     [actionButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [actionButton addTarget:self action:@selector(actionButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-    
+
     [self.view addSubview:actionButton];
-    
-        
+
+
     // SETUP ARCHIVE BUTTON
     self.archiveButton = [UIButton buttonWithType:UIButtonTypeCustom];
     archiveButton.frame = CGRectMake(ui.contentOffset + self.actionButton.frame.size.width + 10, heightOffset, 80, 30);
     archiveButton.backgroundColor = [UIColor clearColor];
     archiveButton.titleLabel.font = actionFont;
-    
+
     [archiveButton setTitle:ARCHIVE_TEXT forState:UIControlStateNormal];
     [archiveButton setTitleColor:[UIColor colorWithHexString:@"#b72529"] forState:UIControlStateNormal];
     [archiveButton addTarget:self action:@selector(archiveButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
@@ -165,31 +165,31 @@
     #ifdef BAKER_NEWSSTAND
     [self.view addSubview:archiveButton];
     #endif
-    
-    
+
+
     // SETUP DOWN/LOADING SPINNER AND LABEL
     self.spinner = [[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray] autorelease];
     spinner.frame = CGRectMake(ui.contentOffset, heightOffset, 30, 30);
     spinner.backgroundColor = [UIColor clearColor];
     spinner.hidesWhenStopped = YES;
-    
+
     self.loadingLabel = [[UILabel alloc] initWithFrame:CGRectMake(ui.contentOffset + self.spinner.frame.size.width + 10, heightOffset, 135, 30)];
     loadingLabel.textColor = [UIColor colorWithHexString:@"#b72529"];
     loadingLabel.backgroundColor = [UIColor clearColor];
     loadingLabel.textAlignment = UITextAlignmentLeft;
     loadingLabel.text = DOWNLOADING_TEXT;
     loadingLabel.font = actionFont;
-    
+
     [self.view addSubview:spinner];
     [self.view addSubview:loadingLabel];
-    
+
     heightOffset = heightOffset + self.loadingLabel.frame.size.height + 5;
-    
-    
+
+
     // SETUP PROGRESS BAR
     self.progressBar = [[[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleBar] autorelease];
     self.progressBar.frame = CGRectMake(ui.contentOffset, heightOffset, 170, 30);
-    
+
     [self.view addSubview:progressBar];
 }
 - (void)viewWillAppear:(BOOL)animated
@@ -204,13 +204,13 @@
 - (void)refresh:(NSString *)status
 {
     UI ui = [IssueViewController getIssueContentMeasures];
-    
+
     NSLog(@"Refreshing %@ view with status %@", self.issue.ID, status);
     if ([status isEqualToString:@"remote"])
     {
         [self.actionButton setTitle:ACTION_REMOTE_TEXT forState:UIControlStateNormal];
         [self.spinner stopAnimating];
-        
+
         self.actionButton.frame = CGRectMake(ui.contentOffset, self.actionButton.frame.origin.y, 110, 30);
         self.actionButton.hidden = NO;
         self.archiveButton.hidden = YES;
@@ -220,7 +220,7 @@
     else if ([status isEqualToString:@"downloading"])
     {
         [self.spinner startAnimating];
-        
+
         self.actionButton.hidden = YES;
         self.archiveButton.hidden = YES;
         self.progressBar.progress = 0;
@@ -232,7 +232,7 @@
     {
         [self.actionButton setTitle:ACTION_DOWNLOADED_TEXT forState:UIControlStateNormal];
         [self.spinner stopAnimating];
-        
+
         self.actionButton.frame = CGRectMake(ui.contentOffset, self.actionButton.frame.origin.y, 80, 30);
         self.actionButton.hidden = NO;
         self.archiveButton.hidden = NO;
@@ -243,7 +243,7 @@
     {
         [self.actionButton setTitle:ACTION_DOWNLOADED_TEXT forState:UIControlStateNormal];
         [self.spinner stopAnimating];
-        
+
         self.actionButton.frame = CGRectMake(ui.contentOffset, self.actionButton.frame.origin.y, 80, 30);
         self.actionButton.hidden = NO;
         self.archiveButton.hidden = YES;
@@ -253,7 +253,7 @@
     else if ([status isEqualToString:@"opening"])
      {
         [self.spinner startAnimating];
-        
+
         self.actionButton.hidden = YES;
         self.archiveButton.hidden = YES;
         self.loadingLabel.text = OPENING_TEXT;
@@ -272,14 +272,14 @@
     [progressBar release];
     [spinner release];
     [loadingLabel release];
-    
+
     [super dealloc];
 }
 
 #pragma mark - Issue management
 
 - (void)actionButtonPressed:(UIButton *)sender
-{    
+{
     NSString *status = [self.issue getStatus];
     if ([status isEqualToString:@"remote"]) {
     #ifdef BAKER_NEWSSTAND
@@ -307,25 +307,25 @@
 #pragma mark - Newsstand download management
 
 - (void)connection:(NSURLConnection *)connection didWriteData:(long long)bytesWritten totalBytesWritten:(long long)totalBytesWritten expectedTotalBytes:(long long)expectedTotalBytes
-{    
+{
     [self.progressBar setProgress:((float)totalBytesWritten/(float)expectedTotalBytes) animated:YES];
 }
 - (void)connectionDidFinishDownloading:(NSURLConnection *)connection destinationURL:(NSURL *)destinationURL
 {
     #ifdef BAKER_NEWSSTAND
     NSLog(@"Connection did finish downloading %@", destinationURL);
-    
+
     NKAssetDownload *dnl = connection.newsstandAssetDownload;
     NKIssue *nkIssue = dnl.issue;
     NSString *destinationPath = [[nkIssue contentURL] path];
-    
+
     NSLog(@"File is being unzipped to %@", destinationPath);
     [SSZipArchive unzipFileAtPath:[destinationURL path] toDestination:destinationPath];
-    
+
     [self refresh];
-    
+
     // TODO: notify of new content with setApplicationIconBadgeNumber
-    
+
     BakerBook *book = [[BakerBook alloc]initWithBookPath:destinationPath bundled:NO];
     UIImage *coverImage = [UIImage imageWithContentsOfFile:[destinationPath stringByAppendingPathComponent:book.cover]];
     if (coverImage) {
@@ -336,7 +336,7 @@
 - (void)connectionDidResumeDownloading:(NSURLConnection *)connection totalBytesWritten:(long long)totalBytesWritten expectedTotalBytes:(long long)expectedTotalBytes
 {
     NSLog(@"Connection did resume downloading %lld %lld", totalBytesWritten, expectedTotalBytes);
-    
+
     [self.progressBar setProgress:((float)totalBytesWritten/(float)expectedTotalBytes) animated:YES];
 }
 
@@ -349,17 +349,17 @@
     NKIssue *nkIssue = [nkLib issueWithName:self.issue.ID];
     NSString *name = nkIssue.name;
     NSDate *date = nkIssue.date;
-    
+
     [nkLib removeIssue:nkIssue];
-    
+
     nkIssue = [nkLib addIssueWithName:name date:date];
     self.issue.path = [[nkIssue contentURL] path];
-    
+
     [self refresh];
 }
 #endif
 
-#pragma mark - Helper methods 
+#pragma mark - Helper methods
 
 + (UI)getIssueContentMeasures
 {

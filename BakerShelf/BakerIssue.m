@@ -54,7 +54,7 @@
         self.path = book.path;
 
         self.bakerBook = book;
-        
+
         self.coverPath = @"";
         if (book.cover == nil) {
             // TODO: set path to a default cover (right now a blank box will be displayed)
@@ -76,10 +76,10 @@
         self.date = [issueData objectForKey:@"date"];
         self.coverURL = [NSURL URLWithString:[issueData objectForKey:@"cover"]];
         self.url = [NSURL URLWithString:[issueData objectForKey:@"url"]];
-        
+
         NSString *cachePath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0];
         self.coverPath = [cachePath stringByAppendingPathComponent:self.ID];
-        
+
         NKLibrary *nkLib = [NKLibrary sharedLibrary];
         NKIssue *nkIssue = [nkLib issueWithName:self.ID];
         if (nkIssue) {
@@ -87,7 +87,7 @@
         } else {
             self.path = nil;
         }
-        
+
         self.bakerBook = nil;
     }
     return self;
@@ -151,7 +151,7 @@
     [bakerBook release];
     [coverPath release];
     [coverURL release];
-    
+
     [super dealloc];
 }
 

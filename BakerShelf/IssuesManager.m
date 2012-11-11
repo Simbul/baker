@@ -41,12 +41,12 @@
 
 -(id)initWithURL:(NSString *)urlString {
     self = [super init];
-    
+
     if (self) {
         self.url = [NSURL URLWithString:urlString];
         self.issues = nil;
     }
-    
+
     return self;
 }
 
@@ -58,15 +58,15 @@
         NSLog(@"Error loading Newsstand manifest: %@", error);
     } else {
         NSArray *jsonArr = [json objectFromJSONString];
-        
+
         [self updateNewsstandIssuesList:jsonArr];
-        
+
         NSMutableArray *tmpIssues = [NSMutableArray array];
         [jsonArr enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
             BakerIssue *issue = [[[BakerIssue alloc] initWithIssueData:obj] autorelease];
             [tmpIssues addObject:issue];
         }];
-        
+
         // Issues are sorted from the most recent to the least recent
         NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
         [dateFormat setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
@@ -79,13 +79,13 @@
 }
 -(void)updateNewsstandIssuesList:(NSArray *)issuesList {
     NKLibrary *nkLib = [NKLibrary sharedLibrary];
-    
+
     for (NSDictionary *issue in issuesList) {
         NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
         [dateFormat setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
         NSDate *date = [dateFormat dateFromString:[issue objectForKey:@"date"]];
         NSString *name = [issue objectForKey:@"name"];
-        
+
         NKIssue *nkIssue = [nkLib issueWithName:name];
         if(!nkIssue) {
             @try {
@@ -94,7 +94,7 @@
             } @catch (NSException *exception) {
                 NSLog(@"EXCEPTION %@", exception);
             }
-            
+
         }
         [dateFormat release];
     }
@@ -104,7 +104,7 @@
 -(void)dealloc {
     [issues release];
     [url release];
-    
+
     [super dealloc];
 }
 

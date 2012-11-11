@@ -37,7 +37,7 @@
 {
     [backgroundImages release];
     [backgroundImageView release];
-    
+
     [super dealloc];
 }
 
@@ -72,12 +72,12 @@
     if ([self bounds].size.height > 40) {
         metrics = UIBarMetricsDefault;
     }
-    
+
     UIImage *image = [[self backgroundImages] objectForKey:[NSNumber numberWithInt:metrics]];
     if (!image && metrics != UIBarMetricsDefault) {
         image = [[self backgroundImages] objectForKey:[NSNumber numberWithInt:UIBarMetricsDefault]];
     }
-    
+
     if (image) {
         [[self backgroundImageView] setImage:image];
     }
@@ -86,7 +86,7 @@
 - (void)layoutSubviews
 {
     [super layoutSubviews];
-    
+
     if (backgroundImageView) {
         [self updateBackgroundImage];
         [self sendSubviewToBack:backgroundImageView];
