@@ -71,16 +71,18 @@
 {
     [super viewDidLoad];
     
-	CGRect cellFrame;
-	cellFrame.size = [[self class] issueCellSize];
-    self.view.frame = cellFrame;
+    CGSize cellSize = [IssueViewController getIssueCellSize];
+
+    self.view.frame = CGRectMake(0, 0, cellSize.width, cellSize.height);
     self.view.backgroundColor = [UIColor clearColor];
+    
+    UI ui = [IssueViewController getIssueContentMeasures];
     
     // SETUP COVER IMAGE
     [self.issue getCover:^(UIImage *image) {
         UIImageView *issueCover = [[[UIImageView alloc] initWithImage:image] autorelease];
         
-        issueCover.frame = CGRectMake(30, 30, 135, 180);
+        issueCover.frame = CGRectMake(ui.cellPadding, ui.cellPadding, ui.thumbWidth, ui.thumbHeight);
         issueCover.backgroundColor = [UIColor clearColor];
 
         issueCover.layer.shadowOpacity = 0.5;
@@ -90,9 +92,7 @@
         [self.view addSubview:issueCover];
     }];
     
-    
-    int heightOffset = 30;
-
+    int heightOffset = ui.cellPadding;
     
     // SETUP USED FONTS
     UIFont *textFont = [UIFont fontWithName:@"Helvetica" size:15];
@@ -105,7 +105,7 @@
     CGSize titleSize = [self.issue.title sizeWithFont:textFont constrainedToSize:CGSizeMake(170, MAXFLOAT) lineBreakMode:UILineBreakModeWordWrap];
     uint titleLines = MIN(4, titleSize.height / textLineheight);
     
-    UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(184, heightOffset, 170, textLineheight * titleLines)];
+    UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(ui.contentOffset, heightOffset, 170, textLineheight * titleLines)];
     titleLabel.textColor = [UIColor blackColor];
     titleLabel.backgroundColor = [UIColor clearColor];
     titleLabel.lineBreakMode = UILineBreakModeTailTruncation;
@@ -119,12 +119,12 @@
     
     heightOffset = heightOffset + titleLabel.frame.size.height + 5;
 
-    
+
     // SETUP INFO LABEL
     CGSize infoSize = [self.issue.info sizeWithFont:textFont constrainedToSize:CGSizeMake(170, MAXFLOAT) lineBreakMode:UILineBreakModeWordWrap];
     uint infoLines = MIN(4, infoSize.height / textLineheight);
     
-    UILabel *infoLabel = [[UILabel alloc] initWithFrame:CGRectMake(184, heightOffset, 170, textLineheight * infoLines)];
+    UILabel *infoLabel = [[UILabel alloc] initWithFrame:CGRectMake(ui.contentOffset, heightOffset, 170, textLineheight * infoLines)];
     infoLabel.textColor = [UIColor colorWithHexString:@"#929292"];
     infoLabel.backgroundColor = [UIColor clearColor];
     infoLabel.lineBreakMode = UILineBreakModeTailTruncation;
@@ -138,10 +138,10 @@
 
     heightOffset = heightOffset + infoLabel.frame.size.height + 10;
     
-    
+
     // SETUP ACTION BUTTON
     self.actionButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    actionButton.frame = CGRectMake(184, heightOffset, 80, 30);
+    actionButton.frame = CGRectMake(ui.contentOffset, heightOffset, 80, 30);
     actionButton.backgroundColor = [UIColor colorWithHexString:@"#b72529"];
     actionButton.titleLabel.font = actionFont;
     
@@ -154,7 +154,7 @@
         
     // SETUP ARCHIVE BUTTON
     self.archiveButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    archiveButton.frame = CGRectMake(274, heightOffset, 80, 30);
+    archiveButton.frame = CGRectMake(ui.contentOffset + self.actionButton.frame.size.width + 10, heightOffset, 80, 30);
     archiveButton.backgroundColor = [UIColor clearColor];
     archiveButton.titleLabel.font = actionFont;
     
@@ -169,11 +169,11 @@
     
     // SETUP DOWN/LOADING SPINNER AND LABEL
     self.spinner = [[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray] autorelease];
-    spinner.frame = CGRectMake(180, heightOffset, 30, 30);
+    spinner.frame = CGRectMake(ui.contentOffset, heightOffset, 30, 30);
     spinner.backgroundColor = [UIColor clearColor];
     spinner.hidesWhenStopped = YES;
     
-    self.loadingLabel = [[UILabel alloc] initWithFrame:CGRectMake(215, heightOffset, 135, 30)];
+    self.loadingLabel = [[UILabel alloc] initWithFrame:CGRectMake(ui.contentOffset + self.spinner.frame.size.width + 10, heightOffset, 135, 30)];
     loadingLabel.textColor = [UIColor colorWithHexString:@"#b72529"];
     loadingLabel.backgroundColor = [UIColor clearColor];
     loadingLabel.textAlignment = UITextAlignmentLeft;
@@ -188,7 +188,7 @@
     
     // SETUP PROGRESS BAR
     self.progressBar = [[[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleBar] autorelease];
-    self.progressBar.frame = CGRectMake(184, heightOffset, 170, 30);
+    self.progressBar.frame = CGRectMake(ui.contentOffset, heightOffset, 170, 30);
     
     [self.view addSubview:progressBar];
 }
@@ -203,42 +203,57 @@
 }
 - (void)refresh:(NSString *)status
 {
+    UI ui = [IssueViewController getIssueContentMeasures];
+    
     NSLog(@"Refreshing %@ view with status %@", self.issue.ID, status);
-    if ([status isEqualToString:@"remote"]) {
+    if ([status isEqualToString:@"remote"])
+    {
         [self.actionButton setTitle:ACTION_REMOTE_TEXT forState:UIControlStateNormal];
         [self.spinner stopAnimating];
-        self.actionButton.frame = CGRectMake(184, self.actionButton.frame.origin.y, 110, 30);
+        
+        self.actionButton.frame = CGRectMake(ui.contentOffset, self.actionButton.frame.origin.y, 110, 30);
         self.actionButton.hidden = NO;
         self.archiveButton.hidden = YES;
         self.progressBar.hidden = YES;
         self.loadingLabel.hidden = YES;
-    } else if ([status isEqualToString:@"downloading"]) {
+    }
+    else if ([status isEqualToString:@"downloading"])
+    {
         [self.spinner startAnimating];
-        self.progressBar.hidden = NO;
+        
         self.actionButton.hidden = YES;
         self.archiveButton.hidden = YES;
         self.progressBar.progress = 0;
         self.loadingLabel.text = DOWNLOADING_TEXT;
         self.loadingLabel.hidden = NO;
         self.progressBar.hidden = NO;
-    } else if ([status isEqualToString:@"downloaded"]) {
+    }
+    else if ([status isEqualToString:@"downloaded"])
+    {
         [self.actionButton setTitle:ACTION_DOWNLOADED_TEXT forState:UIControlStateNormal];
         [self.spinner stopAnimating];
-        self.actionButton.frame = CGRectMake(184, self.actionButton.frame.origin.y, 80, 30);
+        
+        self.actionButton.frame = CGRectMake(ui.contentOffset, self.actionButton.frame.origin.y, 80, 30);
         self.actionButton.hidden = NO;
         self.archiveButton.hidden = NO;
-        self.progressBar.hidden = YES;
         self.loadingLabel.hidden = YES;
-    } else if ([status isEqualToString:@"bundled"]) {
+        self.progressBar.hidden = YES;
+    }
+    else if ([status isEqualToString:@"bundled"])
+    {
         [self.actionButton setTitle:ACTION_DOWNLOADED_TEXT forState:UIControlStateNormal];
         [self.spinner stopAnimating];
-        self.actionButton.frame = CGRectMake(184, self.actionButton.frame.origin.y, 80, 30);
+        
+        self.actionButton.frame = CGRectMake(ui.contentOffset, self.actionButton.frame.origin.y, 80, 30);
         self.actionButton.hidden = NO;
         self.archiveButton.hidden = YES;
         self.loadingLabel.hidden = YES;
         self.progressBar.hidden = YES;
-    } else if ([status isEqualToString:@"opening"]) {
+    }
+    else if ([status isEqualToString:@"opening"])
+     {
         [self.spinner startAnimating];
+        
         self.actionButton.hidden = YES;
         self.archiveButton.hidden = YES;
         self.loadingLabel.text = OPENING_TEXT;
@@ -267,9 +282,9 @@
 {    
     NSString *status = [self.issue getStatus];
     if ([status isEqualToString:@"remote"]) {
-#ifdef BAKER_NEWSSTAND
+    #ifdef BAKER_NEWSSTAND
         [self download];
-#endif
+    #endif
     } else if ([status isEqualToString:@"downloaded"] || [status isEqualToString:@"bundled"]) {
         [self read];
     } else if ([status isEqualToString:@"downloading"]) {
@@ -297,7 +312,7 @@
 }
 - (void)connectionDidFinishDownloading:(NSURLConnection *)connection destinationURL:(NSURL *)destinationURL
 {
-#ifdef BAKER_NEWSSTAND
+    #ifdef BAKER_NEWSSTAND
     NSLog(@"Connection did finish downloading %@", destinationURL);
     
     NKAssetDownload *dnl = connection.newsstandAssetDownload;
@@ -316,7 +331,7 @@
     if (coverImage) {
         [[UIApplication sharedApplication] setNewsstandIconImage:coverImage];
     }
-#endif
+    #endif
 }
 - (void)connectionDidResumeDownloading:(NSURLConnection *)connection totalBytesWritten:(long long)totalBytesWritten expectedTotalBytes:(long long)expectedTotalBytes
 {
@@ -342,19 +357,47 @@
     
     [self refresh];
 }
-
 #endif
 
 #pragma mark - Helper methods 
 
-+ (CGSize) issueCellSize {
-	if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
-		return CGSizeMake(384.0f, 240.0f);
-	}
-	else
-	{
-		return CGSizeMake(318.0f, 240.0f);
-	}
++ (UI)getIssueContentMeasures
+{
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+        UI iPad = {
+            .cellPadding   = 30,
+            .thumbWidth    = 135,
+            .thumbHeight   = 180,
+            .contentOffset = 184
+        };
+        return iPad;
+    } else {
+        UI iPhone = {
+            .cellPadding   = 22,
+            .thumbWidth    = 87,
+            .thumbHeight   = 116,
+            .contentOffset = 128
+        };
+        return iPhone;
+    }
+}
+
++ (int)getIssueCellHeight
+{
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+        return 240;
+    } else {
+        return 208;
+    }
+}
++ (CGSize)getIssueCellSize
+{
+    CGRect screenRect = [[UIScreen mainScreen] bounds];
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+        return CGSizeMake((screenRect.size.width - 2) / 2, [IssueViewController getIssueCellHeight]);
+    } else {
+        return CGSizeMake(screenRect.size.width - 2, [IssueViewController getIssueCellHeight]);
+    }
 }
 
 @end

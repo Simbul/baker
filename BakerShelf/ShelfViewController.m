@@ -87,8 +87,7 @@
 
     self.navigationItem.title = @"Baker Shelf";
 
-    self.background = [[UIImageView alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    self.background.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    self.background = [[UIImageView alloc] init];
 
     self.gridView = [[AQGridView alloc] init];
     self.gridView.dataSource = self;
@@ -101,7 +100,7 @@
     [self willRotateToInterfaceOrientation:self.interfaceOrientation duration:0];
     [self.gridView reloadData];
 
-#ifdef BAKER_NEWSSTAND
+    #ifdef BAKER_NEWSSTAND
     UIBarButtonItem *refreshButton = [[[UIBarButtonItem alloc]
                                        initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh
                                        target:self
@@ -116,16 +115,17 @@
                                         autorelease];
     
     self.navigationItem.leftBarButtonItems = [NSArray arrayWithObjects:refreshButton, subscribeButton, nil];
-#endif
+    #endif
 }
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
     [self.navigationController.navigationBar setTranslucent:NO];
 
-#ifdef BAKER_NEWSSTAND
+    #ifdef BAKER_NEWSSTAND
     [self handleRefresh:nil];
-#endif
+    #endif
+    
     for (IssueViewController *controller in self.issueViewControllers) {
         [controller refresh];
     }
@@ -144,27 +144,43 @@
 }
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
 {
-    float width  = 0;
-    float height = 0;
+    int width        = 0;
+    int height       = 0;
 
     NSString *image = @"";
     CGSize size = [UIScreen mainScreen].bounds.size;
-
+    
     if (UIInterfaceOrientationIsPortrait(toInterfaceOrientation)) {
         width  = size.width;
-        height = size.height;
-        image  = @"shelf-bg-portrait.png";
+        height = size.height - 64;
+        image  = @"shelf-bg-portrait";
     } else if (UIInterfaceOrientationIsLandscape(toInterfaceOrientation)) {
         width  = size.height;
-        height = size.width;
-        image  = @"shelf-bg-landscape.png";
+        height = size.width - 64;
+        if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+            height = height + 12;
+        }
+        image  = @"shelf-bg-landscape";
+    }
+    
+    if (size.height == 568) {
+        image = [NSString stringWithFormat:@"%@-568h.png", image];
+    } else {
+        image = [NSString stringWithFormat:@"%@.png", image];
+    }
+    
+    int bannerOffset = [IssueViewController getIssueCellHeight];
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+        bannerOffset = bannerOffset / 2;
     }
 
+    self.background.frame = CGRectMake(0, 0, width, height);
     self.background.image = [UIImage imageNamed:image];
-	CGFloat headerHeight = [[self class] headerHeight];
-    self.gridView.frame = CGRectMake(0, headerHeight, width, height - headerHeight);
+    
+    self.gridView.frame = CGRectMake(0, bannerOffset, width, height - bannerOffset);
 }
-- (IssueViewController *)createIssueViewControllerWithIssue:(BakerIssue *)issue {
+- (IssueViewController *)createIssueViewControllerWithIssue:(BakerIssue *)issue
+{
     IssueViewController *controller = [[[IssueViewController alloc] initWithBakerIssue:issue] autorelease];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleReadIssue:) name:@"read_issue_request" object:controller];
     return controller;
@@ -178,19 +194,18 @@
 }
 - (AQGridViewCell *)gridView:(AQGridView *)aGridView cellForItemAtIndex:(NSUInteger)index
 {
-    static NSString *cellIdentifier = @"cellIdentifier";
+    CGSize cellSize = [IssueViewController getIssueCellSize];
+    CGRect cellFrame = CGRectMake(0, 0, cellSize.width, cellSize.height);
 
+    static NSString *cellIdentifier = @"cellIdentifier";
     AQGridViewCell *cell = (AQGridViewCell *)[self.gridView dequeueReusableCellWithIdentifier:cellIdentifier];
 	if (cell == nil)
 	{
-		CGRect cellFrame;
-		cellFrame.size = [IssueViewController issueCellSize];
-		cell = [[[AQGridViewCell alloc] initWithFrame:cellFrame reuseIdentifier:cellIdentifier] autorelease]; 
+		cell = [[[AQGridViewCell alloc] initWithFrame:cellFrame reuseIdentifier:cellIdentifier] autorelease];
 		cell.selectionStyle = AQGridViewCellSelectionStyleNone;
 
         cell.contentView.backgroundColor = [UIColor clearColor];
         cell.backgroundColor = [UIColor clearColor];
-
 	}
     
     IssueViewController *controller = [self.issueViewControllers objectAtIndex:index];
@@ -200,11 +215,12 @@
 }
 - (CGSize)portraitGridCellSizeForGridView:(AQGridView *)aGridView
 {
-    return [IssueViewController issueCellSize];
+    return [IssueViewController getIssueCellSize];
 }
 
 #ifdef BAKER_NEWSSTAND
-- (void)handleRefresh:(NSNotification *)notification {
+- (void)handleRefresh:(NSNotification *)notification
+{
     if (!self.issuesManager) {
         self.issuesManager = [[[IssuesManager alloc] initWithURL:NEWSSTAND_MANIFEST_URL] autorelease];
     }
@@ -256,17 +272,6 @@
     BakerViewController *bakerViewController = [[BakerViewController alloc] initWithBook:book];
     [self.navigationController pushViewController:bakerViewController animated:YES];
     [bakerViewController release];
-}
-
-
-+ (float) headerHeight {
-	if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
-		return 240.0f;
-	}
-	else
-	{
-		return 110.0f;
-	}	
 }
 
 @end

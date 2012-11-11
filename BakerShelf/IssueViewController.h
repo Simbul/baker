@@ -43,6 +43,14 @@
 @property (strong, nonatomic) UIActivityIndicatorView *spinner;
 @property (strong, nonatomic) UILabel *loadingLabel;
 
+#pragma mark - Structs
+typedef struct {
+    int cellPadding;
+    int thumbWidth;
+    int thumbHeight;
+    int contentOffset;
+} UI;
+
 #pragma mark - Init
 - (id)initWithBakerIssue:(BakerIssue *)bakerIssue;
 
@@ -52,20 +60,19 @@
 
 #pragma mark - Issue management
 - (void)actionButtonPressed:(UIButton *)sender;
-
 #ifdef NEWSSTAND
 - (void)download;
 #endif
-
 - (void)read;
 
-#ifdef BAKER_NEWSSTAND
 #pragma mark - Newsstand archive management
+#ifdef BAKER_NEWSSTAND
 - (void)archiveButtonPressed:(UIButton *)sender;
 #endif
 
 #pragma mark - Helper methods
-
-+ (CGSize) issueCellSize;
++ (UI)getIssueContentMeasures;
++ (int)getIssueCellHeight;
++ (CGSize)getIssueCellSize;
 
 @end
