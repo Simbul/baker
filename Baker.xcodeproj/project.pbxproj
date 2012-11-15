@@ -61,6 +61,7 @@
 		AB40048515B4BB8B00D87E2A /* books in Resources */ = {isa = PBXBuildFile; fileRef = AB40048415B4BB8B00D87E2A /* books */; };
 		AB5CEB5A161E4081008B4943 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = AB5CEB59161E4081008B4943 /* Default-568h@2x.png */; };
 		AB5D48D01609178900828D16 /* NewsstandKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB5D48CD1609176A00828D16 /* NewsstandKit.framework */; };
+		ABABF1A81646C06100A75E67 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABABF1A51646C04D00A75E67 /* StoreKit.framework */; };
 		ABAFB58C15AB9A2E002FA498 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABAFB58B15AB9A2E002FA498 /* UIKit.framework */; };
 		ABAFB58E15AB9A2E002FA498 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABAFB58D15AB9A2E002FA498 /* Foundation.framework */; };
 		ABAFB59015AB9A2E002FA498 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABAFB58F15AB9A2E002FA498 /* CoreGraphics.framework */; };
@@ -70,6 +71,7 @@
 		ABC270D11616F3CB00AD97E9 /* IssuesManager.m in Sources */ = {isa = PBXBuildFile; fileRef = ABC270D01616F3CB00AD97E9 /* IssuesManager.m */; };
 		ABD245531639E3650080F056 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABD245521639E3650080F056 /* AVFoundation.framework */; };
 		ABD24C1E1620309B0042E49C /* IssueViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = ABD24C1D1620309B0042E49C /* IssueViewController.m */; };
+		ABD6FC4016544EAD0032BC44 /* NSData+Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = ABD6FC3F16544EAD0032BC44 /* NSData+Base64.m */; };
 		ABD7D45F1616FC5B008B13B5 /* BakerIssue.m in Sources */ = {isa = PBXBuildFile; fileRef = ABD7D45E1616FC5B008B13B5 /* BakerIssue.m */; };
 		BF3CCCA215D080560087B9CA /* ios-icon-ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = BF3CCC9E15D080560087B9CA /* ios-icon-ipad.png */; };
 		BF3CCCA315D080560087B9CA /* ios-icon-ipad@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BF3CCC9F15D080560087B9CA /* ios-icon-ipad@2x.png */; };
@@ -168,6 +170,7 @@
 		AB40048415B4BB8B00D87E2A /* books */ = {isa = PBXFileReference; lastKnownFileType = folder; path = books; sourceTree = "<group>"; };
 		AB5CEB59161E4081008B4943 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		AB5D48CD1609176A00828D16 /* NewsstandKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NewsstandKit.framework; path = System/Library/Frameworks/NewsstandKit.framework; sourceTree = SDKROOT; };
+		ABABF1A51646C04D00A75E67 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		ABAFB58715AB9A2E002FA498 /* Baker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Baker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		ABAFB58B15AB9A2E002FA498 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		ABAFB58D15AB9A2E002FA498 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -183,6 +186,8 @@
 		ABD245521639E3650080F056 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		ABD24C1C1620309B0042E49C /* IssueViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IssueViewController.h; sourceTree = "<group>"; };
 		ABD24C1D1620309B0042E49C /* IssueViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IssueViewController.m; sourceTree = "<group>"; };
+		ABD6FC3E16544EAD0032BC44 /* NSData+Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+Base64.h"; sourceTree = "<group>"; };
+		ABD6FC3F16544EAD0032BC44 /* NSData+Base64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+Base64.m"; sourceTree = "<group>"; };
 		ABD7D45D1616FC5B008B13B5 /* BakerIssue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BakerIssue.h; sourceTree = "<group>"; };
 		ABD7D45E1616FC5B008B13B5 /* BakerIssue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BakerIssue.m; sourceTree = "<group>"; };
 		BF3CCC9E15D080560087B9CA /* ios-icon-ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ios-icon-ipad.png"; sourceTree = "<group>"; };
@@ -197,6 +202,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				ABD245531639E3650080F056 /* AVFoundation.framework in Frameworks */,
+				ABABF1A81646C06100A75E67 /* StoreKit.framework in Frameworks */,
 				AB5D48D01609178900828D16 /* NewsstandKit.framework in Frameworks */,
 				ABAFB58C15AB9A2E002FA498 /* UIKit.framework in Frameworks */,
 				ABAFB58E15AB9A2E002FA498 /* Foundation.framework in Frameworks */,
@@ -232,6 +238,8 @@
 		9FF7957E15B4C4F600899E51 /* lib */ = {
 			isa = PBXGroup;
 			children = (
+				ABD6FC3E16544EAD0032BC44 /* NSData+Base64.h */,
+				ABD6FC3F16544EAD0032BC44 /* NSData+Base64.m */,
 				9FF7957F15B4C4F600899E51 /* AQGridView */,
 				9F5EB3BB15FCA3A100E13796 /* NSString+Extensions.h */,
 				9F5EB3BC15FCA3A100E13796 /* NSString+Extensions.m */,
@@ -402,6 +410,7 @@
 		ABAFB58A15AB9A2E002FA498 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				ABABF1A51646C04D00A75E67 /* StoreKit.framework */,
 				ABD245521639E3650080F056 /* AVFoundation.framework */,
 				AB5D48CD1609176A00828D16 /* NewsstandKit.framework */,
 				ABAFB58B15AB9A2E002FA498 /* UIKit.framework */,
@@ -567,6 +576,7 @@
 				ABC270D11616F3CB00AD97E9 /* IssuesManager.m in Sources */,
 				ABD24C1E1620309B0042E49C /* IssueViewController.m in Sources */,
 				9FAB40DA162B13CF0088E9C1 /* UIColor+Extensions.m in Sources */,
+				ABD6FC4016544EAD0032BC44 /* NSData+Base64.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

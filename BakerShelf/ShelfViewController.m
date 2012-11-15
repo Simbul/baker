@@ -36,12 +36,22 @@
 #import "BakerViewController.h"
 #import "IssueViewController.h"
 
+#import "JSONKit.h"
+#import "UIColor+Extensions.h"
+#import "NSData+Base64.h"
+
+#define SUBSCRIBE_BUTTON_TEXT @"Subscribe"
+#define SUBSCRIBE_BUTTON_DISABLED_TEXT @"Subscribing..."
+#define SUBSCRIPTION_SUCCESSFUL_TITLE @"Subscribed successfully"
+#define SUBSCRIPTION_SUCCESSFUL_MESSAGE @"You have successfully subscribed"
+
 @implementation ShelfViewController
 
 @synthesize issues;
 @synthesize issueViewControllers;
 @synthesize gridView;
 @synthesize issuesManager;
+@synthesize subscribeButton;
 @synthesize refreshButton;
 
 #pragma mark - Init
@@ -76,6 +86,7 @@
     [gridView release];
     [issueViewControllers release];
     [issues release];
+    [subscribeButton release];
     [refreshButton release];
 
     [super dealloc];
@@ -109,16 +120,16 @@
                                        action:@selector(handleRefresh:)]
                                       autorelease];
 
-    UIBarButtonItem *subscribeButton = [[[UIBarButtonItem alloc]
-                                         initWithTitle:@"Subscribe"
-                                         style:UIBarButtonItemStylePlain
-                                         target:self
-                                         action:nil]
-                                        autorelease];
+    self.subscribeButton = [[[UIBarButtonItem alloc]
+                             initWithTitle:SUBSCRIBE_BUTTON_TEXT
+                             style:UIBarButtonItemStylePlain
+                             target:self
+                             action:@selector(handleFreeSubscription:)]
+                            autorelease];
 
     self.navigationItem.leftBarButtonItems = [NSArray arrayWithObjects:
                                               self.refreshButton,
-                                              subscribeButton,
+                                              self.subscribeButton,
                                               nil];
     #endif
 }
@@ -244,6 +255,108 @@
         [self setrefreshButtonEnabled:YES];
     }];
 }
+
+#pragma mark - Store Kit
+
+- (void)handleFreeSubscription:(NSNotification *)notification {
+    [self setSubscribeButtonEnabled:NO];
+
+    // Request "free subscription" product from App Store
+    SKProductsRequest *productsRequest = [[SKProductsRequest alloc] initWithProductIdentifiers:[NSSet setWithObject:PRODUCT_ID_FREE_SUBSCRIPTION]];
+    productsRequest.delegate = self;
+    [productsRequest start];
+}
+
+-(void)productsRequest:(SKProductsRequest *)request didReceiveResponse:(SKProductsResponse *)response {
+    // Create a "payment" for the specified product (i.e. our free subscription)
+    for(SKProduct *product in response.products) {
+        SKPayment *payment = [SKPayment paymentWithProduct:product];
+        [[SKPaymentQueue defaultQueue] addPayment:payment];
+    }
+    if ([response.invalidProductIdentifiers count] > 0) {
+        NSLog(@"Invalid product identifiers: %@", response.invalidProductIdentifiers);
+        [self setSubscribeButtonEnabled:YES];
+    }
+}
+
+-(void)paymentQueue:(SKPaymentQueue *)queue updatedTransactions:(NSArray *)transactions {
+    // Verify whether store transactions (i.e. free subscription) were successful
+    for(SKPaymentTransaction *transaction in transactions) {
+        switch (transaction.transactionState) {
+            case SKPaymentTransactionStateFailed:
+                [self setSubscribeButtonEnabled:YES];
+                [self failedTransaction:transaction];
+                break;
+            case SKPaymentTransactionStatePurchasing:
+                break;
+            case SKPaymentTransactionStatePurchased:
+            case SKPaymentTransactionStateRestored:
+                [self setSubscribeButtonEnabled:YES];
+                [self completeTransaction:transaction];
+                break;
+            default:
+                break;
+        }
+    }
+}
+
+-(void)completeTransaction:(SKPaymentTransaction *)transaction {
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:SUBSCRIPTION_SUCCESSFUL_TITLE
+                                                    message:SUBSCRIPTION_SUCCESSFUL_MESSAGE
+                                                   delegate:nil
+                                          cancelButtonTitle:@"Close"
+                                          otherButtonTitles:nil];
+    [alert show];
+    [alert release];
+
+    [self recordTransaction:transaction];
+
+    [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+}
+
+-(void)recordTransaction:(SKPaymentTransaction *)transaction {
+    [[NSUserDefaults standardUserDefaults] setObject:transaction.transactionIdentifier forKey:@"receipt"];
+
+    NSString *receiptData = [transaction.transactionReceipt base64EncodedString];
+    NSDictionary *jsonDict = [NSDictionary dictionaryWithObjectsAndKeys:
+                              receiptData, @"receipt-data",
+                              nil];
+    NSError *error = nil;
+    NSData *jsonData = [jsonDict JSONDataWithOptions:JKSerializeOptionNone error:&error];
+
+    if (error) {
+        NSLog(@"Error generating receipt JSON: %@", error);
+    } else {
+        NSURL *requestURL = [NSURL URLWithString:PURCHASE_CONFIRMATION_URL];
+        NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:requestURL];
+        [req setHTTPMethod:@"POST"];
+        [req setHTTPBody:jsonData];
+        NSURLConnection *conn = [[NSURLConnection alloc] initWithRequest:req delegate:nil];
+        if (conn) {
+            NSLog(@"Posting App Store transaction receipt to %@", PURCHASE_CONFIRMATION_URL);
+        } else {
+            NSLog(@"Cannot connect to %@", PURCHASE_CONFIRMATION_URL);
+        }
+    }
+}
+
+-(void)failedTransaction:(SKPaymentTransaction *)transaction {
+    NSLog(@"Payment transaction failure: %@", transaction.error);
+
+    // Show an error, unless it was the user who cancelled the transaction
+    if (transaction.error.code != SKErrorPaymentCancelled) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Subscription failure"
+                                                        message:[transaction.error localizedDescription]
+                                                       delegate:nil
+                                              cancelButtonTitle:@"Close"
+                                              otherButtonTitles:nil];
+        [alert show];
+        [alert release];
+    }
+
+    [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+}
+
 #endif
 
 #pragma mark - Navigation management
@@ -285,6 +398,15 @@
 
 -(void) setrefreshButtonEnabled:(BOOL)enabled {
     self.refreshButton.enabled = enabled;
+}
+
+-(void) setSubscribeButtonEnabled:(BOOL)enabled {
+    self.subscribeButton.enabled = enabled;
+    if (enabled) {
+        self.subscribeButton.title = SUBSCRIBE_BUTTON_TEXT;
+    } else {
+        self.subscribeButton.title = SUBSCRIBE_BUTTON_DISABLED_TEXT;
+    }
 }
 
 @end

@@ -34,6 +34,13 @@
 #define Baker_Constants_h
 
     #define BAKER_NEWSSTAND YES
-    #define NEWSSTAND_MANIFEST_URL @"http://bakerframework.com/newsstand-books/list.json"
+
+    #warning Remember to set the AppStore/Newsstand Baker constants
+    // E.g. @"http://example.com/books.json"
+    #define NEWSSTAND_MANIFEST_URL @""
+    // E.g. @"http://example.com/subscribe"
+    #define PURCHASE_CONFIRMATION_URL @""
+    // E.g. @"com.example.MyBook.subscription.free"
+    #define PRODUCT_ID_FREE_SUBSCRIPTION @""
 
 #endif

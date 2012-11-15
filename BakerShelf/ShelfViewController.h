@@ -30,12 +30,13 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <StoreKit/StoreKit.h>
 
 #import "AQGridView.h"
 #import "BakerIssue.h"
 #import "IssuesManager.h"
 
-@interface ShelfViewController : UIViewController <AQGridViewDataSource, AQGridViewDelegate>
+@interface ShelfViewController : UIViewController <AQGridViewDataSource, AQGridViewDelegate, SKPaymentTransactionObserver, SKRequestDelegate, SKProductsRequestDelegate>
 
 @property (copy, nonatomic) NSArray *issues;
 @property (retain, nonatomic) NSMutableArray *issueViewControllers;
@@ -44,10 +45,15 @@
 @property (strong, nonatomic) AQGridView *gridView;
 @property (strong, nonatomic) UIImageView *background;
 @property (strong, nonatomic) UIBarButtonItem *refreshButton;
+@property (strong, nonatomic) UIBarButtonItem *subscribeButton;
 
 #pragma mark - Init
 - (id)initWithBooks:(NSArray *)currentBooks;
 - (void)readIssue:(BakerIssue *)issue;
 - (void)handleReadIssue:(NSNotification *)notification;
+
+- (void)handleFreeSubscription:(NSNotification *)notification;
+- (void)completeTransaction:(SKPaymentTransaction *)transaction;
+- (void)failedTransaction:(SKPaymentTransaction *)transaction;
 
 @end
