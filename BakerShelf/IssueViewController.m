@@ -387,7 +387,7 @@
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
         return 240;
     } else {
-        return 208;
+        return 170;
     }
 }
 + (CGSize)getIssueCellSize
