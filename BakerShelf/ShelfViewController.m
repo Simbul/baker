@@ -37,7 +37,6 @@
 #import "IssueViewController.h"
 
 #import "JSONKit.h"
-#import "UIColor+Extensions.h"
 #import "NSData+Base64.h"
 
 #define SUBSCRIBE_BUTTON_TEXT @"Subscribe"
