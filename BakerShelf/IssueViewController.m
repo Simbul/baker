@@ -80,15 +80,20 @@
 
     // SETUP COVER IMAGE
     [self.issue getCover:^(UIImage *image) {
-        UIImageView *issueCover = [[[UIImageView alloc] initWithImage:image] autorelease];
-
+        UIButton *issueCover = [UIButton buttonWithType:UIButtonTypeCustom];
         issueCover.frame = CGRectMake(ui.cellPadding, ui.cellPadding, ui.thumbWidth, ui.thumbHeight);
+        
         issueCover.backgroundColor = [UIColor clearColor];
-
+        issueCover.adjustsImageWhenHighlighted = NO;
+        issueCover.adjustsImageWhenDisabled = NO;
+        
+        [issueCover setBackgroundImage:image forState:UIControlStateNormal];
+        
         issueCover.layer.shadowOpacity = 0.5;
         issueCover.layer.shadowOffset = CGSizeMake(0, 2);
         issueCover.layer.shouldRasterize = YES;
 
+        [issueCover addTarget:self action:@selector(actionButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
         [self.view addSubview:issueCover];
     }];
 
