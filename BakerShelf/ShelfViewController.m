@@ -159,8 +159,8 @@
 }
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
 {
-    int width        = 0;
-    int height       = 0;
+    int width  = 0;
+    int height = 0;
 
     NSString *image = @"";
     CGSize size = [UIScreen mainScreen].bounds.size;
@@ -184,15 +184,12 @@
         image = [NSString stringWithFormat:@"%@.png", image];
     }
 
-    int bannerOffset = [IssueViewController getIssueCellHeight];
-    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
-        bannerOffset = bannerOffset / 2;
-    }
+    int bannerHeight = [ShelfViewController getBannerHeight];
 
     self.background.frame = CGRectMake(0, 0, width, height);
     self.background.image = [UIImage imageNamed:image];
 
-    self.gridView.frame = CGRectMake(0, bannerOffset, width, height - bannerOffset);
+    self.gridView.frame = CGRectMake(0, bannerHeight, width, height - bannerHeight);
 }
 - (IssueViewController *)createIssueViewControllerWithIssue:(BakerIssue *)issue
 {
@@ -397,16 +394,27 @@
 
 #pragma mark - Buttons management
 
--(void) setrefreshButtonEnabled:(BOOL)enabled {
+-(void)setrefreshButtonEnabled:(BOOL)enabled {
     self.refreshButton.enabled = enabled;
 }
 
--(void) setSubscribeButtonEnabled:(BOOL)enabled {
+-(void)setSubscribeButtonEnabled:(BOOL)enabled {
     self.subscribeButton.enabled = enabled;
     if (enabled) {
         self.subscribeButton.title = SUBSCRIBE_BUTTON_TEXT;
     } else {
         self.subscribeButton.title = SUBSCRIBE_BUTTON_DISABLED_TEXT;
+    }
+}
+
+#pragma mark - Helper methods
+
++ (int)getBannerHeight
+{
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+        return 240;
+    } else {
+        return 104;
     }
 }
 

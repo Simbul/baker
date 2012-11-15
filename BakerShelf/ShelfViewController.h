@@ -49,11 +49,30 @@
 
 #pragma mark - Init
 - (id)initWithBooks:(NSArray *)currentBooks;
+
+#pragma mark - Shelf data source
+- (NSUInteger)numberOfItemsInGridView:(AQGridView *)aGridView;
+- (void)handleRefresh:(NSNotification *)notification;
+
+#pragma mark - Store Kit
+- (void)handleFreeSubscription:(NSNotification *)notification;
+-(void)productsRequest:(SKProductsRequest *)request didReceiveResponse:(SKProductsResponse *)response;
+-(void)paymentQueue:(SKPaymentQueue *)queue updatedTransactions:(NSArray *)transactions;
+-(void)completeTransaction:(SKPaymentTransaction *)transaction;
+-(void)recordTransaction:(SKPaymentTransaction *)transaction;
+-(void)failedTransaction:(SKPaymentTransaction *)transaction;
+
+#pragma mark - Navigation management
+- (void)gridView:(AQGridView *)myGridView didSelectItemAtIndex:(NSUInteger)index;
 - (void)readIssue:(BakerIssue *)issue;
 - (void)handleReadIssue:(NSNotification *)notification;
+-(void)pushViewControllerWithBook:(BakerBook *)book;
 
-- (void)handleFreeSubscription:(NSNotification *)notification;
-- (void)completeTransaction:(SKPaymentTransaction *)transaction;
-- (void)failedTransaction:(SKPaymentTransaction *)transaction;
+#pragma mark - Buttons management
+-(void)setrefreshButtonEnabled:(BOOL)enabled;
+-(void)setSubscribeButtonEnabled:(BOOL)enabled;
+
+#pragma mark - Helper methods
++ (int)getBannerHeight;
 
 @end
