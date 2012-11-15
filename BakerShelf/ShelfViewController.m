@@ -317,25 +317,27 @@
 -(void)recordTransaction:(SKPaymentTransaction *)transaction {
     [[NSUserDefaults standardUserDefaults] setObject:transaction.transactionIdentifier forKey:@"receipt"];
 
-    NSString *receiptData = [transaction.transactionReceipt base64EncodedString];
-    NSDictionary *jsonDict = [NSDictionary dictionaryWithObjectsAndKeys:
-                              receiptData, @"receipt-data",
-                              nil];
-    NSError *error = nil;
-    NSData *jsonData = [jsonDict JSONDataWithOptions:JKSerializeOptionNone error:&error];
+    if ([PURCHASE_CONFIRMATION_URL length] > 0) {
+        NSString *receiptData = [transaction.transactionReceipt base64EncodedString];
+        NSDictionary *jsonDict = [NSDictionary dictionaryWithObjectsAndKeys:
+                                  receiptData, @"receipt-data",
+                                  nil];
+        NSError *error = nil;
+        NSData *jsonData = [jsonDict JSONDataWithOptions:JKSerializeOptionNone error:&error];
 
-    if (error) {
-        NSLog(@"Error generating receipt JSON: %@", error);
-    } else {
-        NSURL *requestURL = [NSURL URLWithString:PURCHASE_CONFIRMATION_URL];
-        NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:requestURL];
-        [req setHTTPMethod:@"POST"];
-        [req setHTTPBody:jsonData];
-        NSURLConnection *conn = [[NSURLConnection alloc] initWithRequest:req delegate:nil];
-        if (conn) {
-            NSLog(@"Posting App Store transaction receipt to %@", PURCHASE_CONFIRMATION_URL);
+        if (error) {
+            NSLog(@"Error generating receipt JSON: %@", error);
         } else {
-            NSLog(@"Cannot connect to %@", PURCHASE_CONFIRMATION_URL);
+            NSURL *requestURL = [NSURL URLWithString:PURCHASE_CONFIRMATION_URL];
+            NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:requestURL];
+            [req setHTTPMethod:@"POST"];
+            [req setHTTPBody:jsonData];
+            NSURLConnection *conn = [[NSURLConnection alloc] initWithRequest:req delegate:nil];
+            if (conn) {
+                NSLog(@"Posting App Store transaction receipt to %@", PURCHASE_CONFIRMATION_URL);
+            } else {
+                NSLog(@"Cannot connect to %@", PURCHASE_CONFIRMATION_URL);
+            }
         }
     }
 }
