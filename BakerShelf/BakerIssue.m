@@ -118,16 +118,17 @@
     } else {
         NSLog(@"Cover not found for %@ at path '%@'", self.ID, self.coverPath);
         if (self.coverURL) {
-            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0),
-                           ^{
-                               NSLog(@"Downloading cover from %@ to %@", self.coverURL, self.coverPath);
-                               NSData *imageData = [NSData dataWithContentsOfURL:self.coverURL];
-                               UIImage *image = [UIImage imageWithData:imageData];
-                               if(image) {
-                                   [imageData writeToFile:self.coverPath atomically:YES];
-                                   completionBlock(image);
-                               }
-                           });
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void) {
+                NSLog(@"Downloading cover from %@ to %@", self.coverURL, self.coverPath);
+                NSData *imageData = [NSData dataWithContentsOfURL:self.coverURL];
+                UIImage *image = [UIImage imageWithData:imageData];
+                if (image) {
+                    [imageData writeToFile:self.coverPath atomically:YES];
+                    dispatch_async(dispatch_get_main_queue(), ^(void) {
+                        completionBlock(image);
+                    });
+                }
+            });
         }
     }
 }
