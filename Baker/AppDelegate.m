@@ -87,7 +87,7 @@
     NSLog(@"====== Newsstand is not enabled ======");
     NSArray *books = [ShelfManager localBooksList];
     if ([books count] == 1) {
-        self.rootViewController = [[[BakerViewController alloc] initWithBook:[books objectAtIndex:0]] autorelease];
+        self.rootViewController = [[[BakerViewController alloc] initWithBook:[[books objectAtIndex:0] bakerBook]] autorelease];
     } else  {
         self.rootViewController = [[[ShelfViewController alloc] initWithBooks:books] autorelease];
     }
