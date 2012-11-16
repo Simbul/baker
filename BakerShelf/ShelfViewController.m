@@ -136,6 +136,7 @@
 {
     [super viewWillAppear:animated];
     [self.navigationController.navigationBar setTranslucent:NO];
+    [self willRotateToInterfaceOrientation:self.interfaceOrientation duration:0];
 
     #ifdef BAKER_NEWSSTAND
     [self handleRefresh:nil];
