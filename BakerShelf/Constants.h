@@ -35,6 +35,7 @@
 
     #define BAKER_NEWSSTAND
 
+#   ifdef BAKER_NEWSSTAND
     #warning Remember to set the AppStore/Newsstand Baker constants
     // E.g. @"http://example.com/books.json"
     #define NEWSSTAND_MANIFEST_URL @""
@@ -42,5 +43,6 @@
     #define PURCHASE_CONFIRMATION_URL @""
     // E.g. @"com.example.MyBook.subscription.free"
     #define PRODUCT_ID_FREE_SUBSCRIPTION @""
+#   endif
 
 #endif

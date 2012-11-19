@@ -36,7 +36,11 @@
 #import "BakerIssue.h"
 #import "IssuesManager.h"
 
+#ifdef BAKER_NEWSSTAND
 @interface ShelfViewController : UIViewController <AQGridViewDataSource, AQGridViewDelegate, SKPaymentTransactionObserver, SKRequestDelegate, SKProductsRequestDelegate>
+#else
+@interface ShelfViewController : UIViewController <AQGridViewDataSource, AQGridViewDelegate>
+#endif
 
 @property (copy, nonatomic) NSArray *issues;
 @property (retain, nonatomic) NSMutableArray *issueViewControllers;
@@ -52,6 +56,7 @@
 
 #pragma mark - Shelf data source
 - (NSUInteger)numberOfItemsInGridView:(AQGridView *)aGridView;
+#ifdef BAKER_NEWSSTAND
 - (void)handleRefresh:(NSNotification *)notification;
 
 #pragma mark - Store Kit
@@ -61,6 +66,7 @@
 -(void)completeTransaction:(SKPaymentTransaction *)transaction;
 -(void)recordTransaction:(SKPaymentTransaction *)transaction;
 -(void)failedTransaction:(SKPaymentTransaction *)transaction;
+#endif
 
 #pragma mark - Navigation management
 - (void)gridView:(AQGridView *)myGridView didSelectItemAtIndex:(NSUInteger)index;
