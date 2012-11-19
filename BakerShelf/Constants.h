@@ -33,7 +33,7 @@
 #ifndef Baker_Constants_h
 #define Baker_Constants_h
 
-    #define BAKER_NEWSSTAND YES
+    #define BAKER_NEWSSTAND
 
     #warning Remember to set the AppStore/Newsstand Baker constants
     // E.g. @"http://example.com/books.json"
