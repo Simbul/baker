@@ -122,6 +122,11 @@ BUGS AND FEEDBACK
 CHANGELOG
 ---------
 
+* **3.2.3** (25/10/2012)
+  * Added more complete user-agent to work with JS that do user-agent detection for features
+  * Fix: HTML5 Video playback now uses the Audio session
+  * Fix: long touch doesn't trigger the index bar anymore
+
 * **3.2.2** (10/10/2012)
   * iOS 6 and iPhone 5 display support
   * Improved modal web view offline handling
