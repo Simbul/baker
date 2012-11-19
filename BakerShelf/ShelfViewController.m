@@ -256,12 +256,16 @@
 #pragma mark - Store Kit
 
 - (void)handleFreeSubscription:(NSNotification *)notification {
-    [self setSubscribeButtonEnabled:NO];
+    if ([PRODUCT_ID_FREE_SUBSCRIPTION length] > 0) {
+        [self setSubscribeButtonEnabled:NO];
 
-    // Request "free subscription" product from App Store
-    SKProductsRequest *productsRequest = [[SKProductsRequest alloc] initWithProductIdentifiers:[NSSet setWithObject:PRODUCT_ID_FREE_SUBSCRIPTION]];
-    productsRequest.delegate = self;
-    [productsRequest start];
+        // Request "free subscription" product from App Store
+        SKProductsRequest *productsRequest = [[SKProductsRequest alloc] initWithProductIdentifiers:[NSSet setWithObject:PRODUCT_ID_FREE_SUBSCRIPTION]];
+        productsRequest.delegate = self;
+        [productsRequest start];
+    } else {
+        NSLog(@"Cannot subscribe: constant PRODUCT_ID_FREE_SUBSCRIPTION not set");
+    }
 }
 
 -(void)productsRequest:(SKProductsRequest *)request didReceiveResponse:(SKProductsResponse *)response {
