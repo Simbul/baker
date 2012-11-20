@@ -33,16 +33,35 @@
 #ifndef Baker_Constants_h
 #define Baker_Constants_h
 
+    // ----------------------------------------------------------------------------------------------------
+    // NEWSSTAND SUPPORT
+    // The following line, together with other settings, enables Newsstand code.
+    // Remove this, remove the NewsstandKit.framework and the Newsstand entries in Baker-Info.plist to disable it.
+    // See: https://github.com/Simbul/baker/wiki/Newsstand-vs-Bundled-publications-support-in-Baker-4.0
     #define BAKER_NEWSSTAND
 
-#   ifdef BAKER_NEWSSTAND
-    #warning Remember to set the AppStore/Newsstand Baker constants
-    // E.g. @"http://example.com/books.json"
-    #define NEWSSTAND_MANIFEST_URL @""
-    // E.g. @"http://example.com/subscribe"
-    #define PURCHASE_CONFIRMATION_URL @""
-    // E.g. @"com.example.MyBook.subscription.free"
-    #define PRODUCT_ID_FREE_SUBSCRIPTION @""
-#   endif
+    #ifdef BAKER_NEWSSTAND
+
+        // Remove the following line once you complete the Newsstand setup below.
+        #warning Newsstand: Remember to set the AppStore/Newsstand constants and delete this line once you did it.
+
+        // ----------------------------------------------------------------------------------------------------
+        // Mandatory - This constant defines where the JSON file containing all the publications is located.
+        // For more information on this file, see: https://github.com/Simbul/baker/wiki/Newsstand-shelf-JSON
+        // E.g. @"http://example.com/books.json"
+        #define NEWSSTAND_MANIFEST_URL @""
+
+        // ----------------------------------------------------------------------------------------------------
+        // Mandatory - This constant identifies the subscription you set up in iTunesConnect.
+        // See: iTunes Connect -> Manage Your Application -> (Your application) -> Manage In App Purchases
+        // E.g. @"com.example.MyBook.subscription.free"
+        #define PRODUCT_ID_FREE_SUBSCRIPTION @""
+
+        // ----------------------------------------------------------------------------------------------------
+        // Optional - This constant specifies the URL to ping back when a user subscribes.
+        // E.g. @"http://example.com/subscribe"
+        #define PURCHASE_CONFIRMATION_URL @""
+
+    #endif
 
 #endif
