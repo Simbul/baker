@@ -92,6 +92,7 @@
         issueCover.layer.shadowOpacity = 0.5;
         issueCover.layer.shadowOffset = CGSizeMake(0, 2);
         issueCover.layer.shouldRasterize = YES;
+        issueCover.layer.rasterizationScale = [UIScreen mainScreen].scale;
 
         [issueCover addTarget:self action:@selector(actionButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
         [self.view addSubview:issueCover];
