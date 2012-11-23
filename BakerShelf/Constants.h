@@ -42,6 +42,19 @@
 
     #ifdef BAKER_NEWSSTAND
 
+        // Change the Shelf Navigation Title at the top of the main Issues List
+        #define SHELF_NAVIGATION_TITLE @"Baker Shelf"
+
+        // Change the colors of individual elements on the Issue display.
+        // You can change the Issue Title label color, Info Label Color, Button Colors, Loading Label Color and Spinner Color
+        #define ISSUES_TITLE_LABEL_COLOR @"#000000"
+        #define ISSUES_INFO_LABEL_COLOR @"#929292"
+        #define ISSUES_BUTTON_COLOR @"#b72529"
+        #define ISSUES_BUTTON_TEXT_COLOR @"#FFFFFF"
+        #define ISSUES_ARCHIVE_TEXT_COLOR @"#b72529"
+        #define ISSUES_LOADING_LABEL_COLOR @"#b72529"
+        #define ISSUES_LOADING_SPINNER_COLOR @"#929292"
+
         // Remove the following line once you complete the Newsstand setup below.
         #warning Newsstand: Remember to set the AppStore/Newsstand constants and delete this line once you did it.
 
