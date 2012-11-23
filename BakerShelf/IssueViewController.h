@@ -76,3 +76,8 @@ typedef struct {
 + (CGSize)getIssueCellSize;
 
 @end
+
+@interface alertView: UIAlertView <UIActionSheetDelegate> {
+    
+}
+@end

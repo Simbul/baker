@@ -351,17 +351,31 @@
 #ifdef BAKER_NEWSSTAND
 - (void)archiveButtonPressed:(UIButton *)sender
 {
-    NKLibrary *nkLib = [NKLibrary sharedLibrary];
-    NKIssue *nkIssue = [nkLib issueWithName:self.issue.ID];
-    NSString *name = nkIssue.name;
-    NSDate *date = nkIssue.date;
+    UIAlertView *updateAlert = [[UIAlertView alloc]
+                                initWithTitle: @"Are you sure you want to archive this item?"
+                                message: @"This item will be removed from your device. You may download it at anytime for free."
+                                delegate: self
+                                cancelButtonTitle: @"Cancel"
+                                otherButtonTitles:@"Archive",nil];
+    [updateAlert show];
+    [updateAlert release];
+}
 
-    [nkLib removeIssue:nkIssue];
-
-    nkIssue = [nkLib addIssueWithName:name date:date];
-    self.issue.path = [[nkIssue contentURL] path];
-
-    [self refresh];
+- (void) alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if(buttonIndex == 1){
+        NKLibrary *nkLib = [NKLibrary sharedLibrary];
+        NKIssue *nkIssue = [nkLib issueWithName:self.issue.ID];
+        NSString *name = nkIssue.name;
+        NSDate *date = nkIssue.date;
+        
+        [nkLib removeIssue:nkIssue];
+        
+        nkIssue = [nkLib addIssueWithName:name date:date];
+        self.issue.path = [[nkIssue contentURL] path];
+        
+        [self refresh];
+    }
 }
 #endif
 
