@@ -54,6 +54,8 @@
         #define ISSUES_ARCHIVE_TEXT_COLOR @"#b72529"
         #define ISSUES_LOADING_LABEL_COLOR @"#b72529"
         #define ISSUES_LOADING_SPINNER_COLOR @"#929292"
+        #define INFO_VIEW_BUTTON_COLOR @"#b72529"
+        #define INFO_VIEW_BUTTON_TEXT_COLOR @"#FFFFFF"
 
         // Remove the following line once you complete the Newsstand setup below.
         #warning Newsstand: Remember to set the AppStore/Newsstand constants and delete this line once you did it.
@@ -62,7 +64,7 @@
         // Mandatory - This constant defines where the JSON file containing all the publications is located.
         // For more information on this file, see: https://github.com/Simbul/baker/wiki/Newsstand-shelf-JSON
         // E.g. @"http://example.com/books.json"
-        #define NEWSSTAND_MANIFEST_URL @""
+        #define NEWSSTAND_MANIFEST_URL @"http://api.newsstandadmin.com/publication/issues/pubid/abe6d7fa-12e8-427e-b690-5b8e977dd8d1"
 
         // ----------------------------------------------------------------------------------------------------
         // Mandatory - This constant identifies the subscription you set up in iTunesConnect.

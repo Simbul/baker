@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9ECCCE5E166007F1007613E5 /* info-icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 9ECCCE5C166007F1007613E5 /* info-icon.png */; };
+		9ECCCE5F166007F1007613E5 /* info-icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9ECCCE5D166007F1007613E5 /* info-icon@2x.png */; };
+		9ECCCE6716601473007613E5 /* InfoViewControlleriPad.m in Sources */ = {isa = PBXBuildFile; fileRef = 9ECCCE6516601473007613E5 /* InfoViewControlleriPad.m */; };
+		9ECCCE6816601473007613E5 /* InfoViewControlleriPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9ECCCE6616601473007613E5 /* InfoViewControlleriPad.xib */; };
+		9ECCCE6C1660148E007613E5 /* InfoViewControlleriPhone.m in Sources */ = {isa = PBXBuildFile; fileRef = 9ECCCE6A1660148E007613E5 /* InfoViewControlleriPhone.m */; };
+		9ECCCE6D1660148E007613E5 /* InfoViewControlleriPhone.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9ECCCE6B1660148E007613E5 /* InfoViewControlleriPhone.xib */; };
 		9F1FC71316500A47002C8277 /* navigation-bar-bg.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F1FC71116500A47002C8277 /* navigation-bar-bg.png */; };
 		9F1FC71416500A47002C8277 /* navigation-bar-bg@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F1FC71216500A47002C8277 /* navigation-bar-bg@2x.png */; };
 		9F1FC7171650102C002C8277 /* shelf-bg-landscape-568h.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F1FC7151650102C002C8277 /* shelf-bg-landscape-568h.png */; };
@@ -79,6 +85,14 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		9ECCCE5C166007F1007613E5 /* info-icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "info-icon.png"; sourceTree = "<group>"; };
+		9ECCCE5D166007F1007613E5 /* info-icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "info-icon@2x.png"; sourceTree = "<group>"; };
+		9ECCCE6416601473007613E5 /* InfoViewControlleriPad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InfoViewControlleriPad.h; sourceTree = "<group>"; };
+		9ECCCE6516601473007613E5 /* InfoViewControlleriPad.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InfoViewControlleriPad.m; sourceTree = "<group>"; };
+		9ECCCE6616601473007613E5 /* InfoViewControlleriPad.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = InfoViewControlleriPad.xib; sourceTree = "<group>"; };
+		9ECCCE691660148E007613E5 /* InfoViewControlleriPhone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InfoViewControlleriPhone.h; sourceTree = "<group>"; };
+		9ECCCE6A1660148E007613E5 /* InfoViewControlleriPhone.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InfoViewControlleriPhone.m; sourceTree = "<group>"; };
+		9ECCCE6B1660148E007613E5 /* InfoViewControlleriPhone.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = InfoViewControlleriPhone.xib; sourceTree = "<group>"; };
 		9F1FC71116500A47002C8277 /* navigation-bar-bg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "navigation-bar-bg.png"; sourceTree = "<group>"; };
 		9F1FC71216500A47002C8277 /* navigation-bar-bg@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "navigation-bar-bg@2x.png"; sourceTree = "<group>"; };
 		9F1FC7151650102C002C8277 /* shelf-bg-landscape-568h.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "shelf-bg-landscape-568h.png"; sourceTree = "<group>"; };
@@ -215,9 +229,24 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		9ECCCE5616600344007613E5 /* InfoView */ = {
+			isa = PBXGroup;
+			children = (
+				9ECCCE6416601473007613E5 /* InfoViewControlleriPad.h */,
+				9ECCCE6516601473007613E5 /* InfoViewControlleriPad.m */,
+				9ECCCE6616601473007613E5 /* InfoViewControlleriPad.xib */,
+				9ECCCE691660148E007613E5 /* InfoViewControlleriPhone.h */,
+				9ECCCE6A1660148E007613E5 /* InfoViewControlleriPhone.m */,
+				9ECCCE6B1660148E007613E5 /* InfoViewControlleriPhone.xib */,
+			);
+			name = InfoView;
+			sourceTree = "<group>";
+		};
 		9F58D85E15D6743C0027902C /* img */ = {
 			isa = PBXGroup;
 			children = (
+				9ECCCE5C166007F1007613E5 /* info-icon.png */,
+				9ECCCE5D166007F1007613E5 /* info-icon@2x.png */,
 				9F1FC71116500A47002C8277 /* navigation-bar-bg.png */,
 				9F1FC71216500A47002C8277 /* navigation-bar-bg@2x.png */,
 				9FA57FC6164C84E2006DBD5E /* shelf-bg-portrait~ipad.png */,
@@ -364,6 +393,7 @@
 		AB40047B15B4B8B800D87E2A /* BakerShelf */ = {
 			isa = PBXGroup;
 			children = (
+				9ECCCE5616600344007613E5 /* InfoView */,
 				9F58D85E15D6743C0027902C /* img */,
 				9FF7957E15B4C4F600899E51 /* lib */,
 				9F58D84F15D66E870027902C /* UICustomNavigationController.h */,
@@ -528,6 +558,10 @@
 				9F1FC71416500A47002C8277 /* navigation-bar-bg@2x.png in Resources */,
 				9F1FC7171650102C002C8277 /* shelf-bg-landscape-568h.png in Resources */,
 				9F1FC7181650102C002C8277 /* shelf-bg-portrait-568h.png in Resources */,
+				9ECCCE5E166007F1007613E5 /* info-icon.png in Resources */,
+				9ECCCE5F166007F1007613E5 /* info-icon@2x.png in Resources */,
+				9ECCCE6816601473007613E5 /* InfoViewControlleriPad.xib in Resources */,
+				9ECCCE6D1660148E007613E5 /* InfoViewControlleriPhone.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -575,6 +609,8 @@
 				ABD24C1E1620309B0042E49C /* IssueViewController.m in Sources */,
 				9FAB40DA162B13CF0088E9C1 /* UIColor+Extensions.m in Sources */,
 				ABD6FC4016544EAD0032BC44 /* NSData+Base64.m in Sources */,
+				9ECCCE6716601473007613E5 /* InfoViewControlleriPad.m in Sources */,
+				9ECCCE6C1660148E007613E5 /* InfoViewControlleriPhone.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
