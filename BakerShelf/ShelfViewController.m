@@ -122,6 +122,11 @@
                              action:@selector(handleFreeSubscription:)]
                             autorelease];
 
+    if ([PRODUCT_ID_FREE_SUBSCRIPTION length] == 0) {
+        self.subscribeButton.enabled = NO;
+        NSLog(@"Subscription not enabled: constant PRODUCT_ID_FREE_SUBSCRIPTION not set");
+    }
+
     self.navigationItem.leftBarButtonItems = [NSArray arrayWithObjects:
                                               self.refreshButton,
                                               self.subscribeButton,
