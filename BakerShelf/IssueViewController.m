@@ -33,7 +33,7 @@
 
 #import "IssueViewController.h"
 #import "SSZipArchive.h"
-#import "Constants.h"
+#import "UIConstants.h"
 
 #import "UIColor+Extensions.h"
 
