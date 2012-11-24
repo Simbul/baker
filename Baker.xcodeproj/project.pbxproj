@@ -37,6 +37,7 @@
 		9FF795A215B4C4F600899E51 /* UIColor+AQGridView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF7959615B4C4F600899E51 /* UIColor+AQGridView.m */; };
 		9FF795A715B4C57E00899E51 /* ShelfViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF795A615B4C57E00899E51 /* ShelfViewController.m */; };
 		AB26005116011D9D00E9AA66 /* BakerBookStatus.m in Sources */ = {isa = PBXBuildFile; fileRef = AB26005016011D9D00E9AA66 /* BakerBookStatus.m */; };
+		AB3496C2166148A400AEB508 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = AB3496BF166148A400AEB508 /* Localizable.strings */; };
 		AB40045315B4B83000D87E2A /* BakerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40042B15B4B83000D87E2A /* BakerViewController.m */; };
 		AB40045715B4B83000D87E2A /* back.png in Resources */ = {isa = PBXBuildFile; fileRef = AB40042F15B4B83000D87E2A /* back.png */; };
 		AB40045915B4B83000D87E2A /* back@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = AB40043015B4B83000D87E2A /* back@2x.png */; };
@@ -64,7 +65,6 @@
 		ABAFB58C15AB9A2E002FA498 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABAFB58B15AB9A2E002FA498 /* UIKit.framework */; };
 		ABAFB58E15AB9A2E002FA498 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABAFB58D15AB9A2E002FA498 /* Foundation.framework */; };
 		ABAFB59015AB9A2E002FA498 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABAFB58F15AB9A2E002FA498 /* CoreGraphics.framework */; };
-		ABAFB59615AB9A2E002FA498 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = ABAFB59415AB9A2E002FA498 /* InfoPlist.strings */; };
 		ABAFB59815AB9A2E002FA498 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = ABAFB59715AB9A2E002FA498 /* main.m */; };
 		ABAFB59C15AB9A2E002FA498 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = ABAFB59B15AB9A2E002FA498 /* AppDelegate.m */; };
 		ABC270D11616F3CB00AD97E9 /* IssuesManager.m in Sources */ = {isa = PBXBuildFile; fileRef = ABC270D01616F3CB00AD97E9 /* IssuesManager.m */; };
@@ -130,6 +130,7 @@
 		AB26004F16011D9D00E9AA66 /* BakerBookStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BakerBookStatus.h; sourceTree = "<group>"; };
 		AB26005016011D9D00E9AA66 /* BakerBookStatus.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BakerBookStatus.m; sourceTree = "<group>"; };
 		AB3496BB1661472A00AEB508 /* UIConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UIConstants.h; sourceTree = "<group>"; };
+		AB3496C0166148A400AEB508 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = Localizable.strings; sourceTree = "<group>"; };
 		AB379313161759A900B4C1A3 /* Constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
 		AB40042A15B4B83000D87E2A /* BakerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BakerViewController.h; sourceTree = "<group>"; };
 		AB40042B15B4B83000D87E2A /* BakerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BakerViewController.m; sourceTree = "<group>"; };
@@ -277,6 +278,14 @@
 				9FF7959615B4C4F600899E51 /* UIColor+AQGridView.m */,
 			);
 			path = AQGridView;
+			sourceTree = "<group>";
+		};
+		AB3496BC166148A400AEB508 /* en.lproj */ = {
+			isa = PBXGroup;
+			children = (
+				AB3496BF166148A400AEB508 /* Localizable.strings */,
+			);
+			path = en.lproj;
 			sourceTree = "<group>";
 		};
 		AB40042915B4B83000D87E2A /* BakerView */ = {
@@ -437,6 +446,7 @@
 		ABAFB59215AB9A2E002FA498 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				AB3496BC166148A400AEB508 /* en.lproj */,
 				BF3CCC9D15D080560087B9CA /* icon */,
 				ABAFB59315AB9A2E002FA498 /* Baker-Info.plist */,
 				ABAFB59415AB9A2E002FA498 /* InfoPlist.strings */,
@@ -507,7 +517,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				ABAFB59615AB9A2E002FA498 /* InfoPlist.strings in Resources */,
 				AB40045715B4B83000D87E2A /* back.png in Resources */,
 				AB40045915B4B83000D87E2A /* back@2x.png in Resources */,
 				AB40045B15B4B83000D87E2A /* forward.png in Resources */,
@@ -530,6 +539,7 @@
 				9F1FC71416500A47002C8277 /* navigation-bar-bg@2x.png in Resources */,
 				9F1FC7171650102C002C8277 /* shelf-bg-landscape-568h.png in Resources */,
 				9F1FC7181650102C002C8277 /* shelf-bg-portrait-568h.png in Resources */,
+				AB3496C2166148A400AEB508 /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -583,6 +593,14 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
+		AB3496BF166148A400AEB508 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				AB3496C0166148A400AEB508 /* en */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
 		ABAFB59415AB9A2E002FA498 /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (

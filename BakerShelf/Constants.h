@@ -42,9 +42,6 @@
 
     #ifdef BAKER_NEWSSTAND
 
-        // Change the Shelf Navigation Title at the top of the main Issues List
-        #define SHELF_NAVIGATION_TITLE @"Baker Shelf"
-
         // Remove the following line once you complete the Newsstand setup below.
         #warning Newsstand: Remember to set the AppStore/Newsstand constants and delete this line once you did it.
 

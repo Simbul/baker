@@ -37,18 +37,6 @@
 
 #import "UIColor+Extensions.h"
 
-#define ACTION_REMOTE_TEXT @"DOWNLOAD"
-#define ACTION_DOWNLOADED_TEXT @"READ"
-#define ARCHIVE_TEXT @"ARCHIVE"
-
-#define DOWNLOADING_TEXT @"DOWNLOADING ..."
-#define OPENING_TEXT @"Loading..."
-
-#define ARCHIVE_ALERT_TITLE @"Are you sure you want to archive this item?"
-#define ARCHIVE_ALERT_MESSAGE @"This item will be removed from your device. You may download it at anytime for free."
-#define ARCHIVE_ALERT_BUTTON_CANCEL @"Cancel"
-#define ARCHIVE_ALERT_BUTTON_OK @"Archive"
-
 @implementation IssueViewController
 
 #pragma mark - Synthesis
@@ -157,7 +145,7 @@
     actionButton.backgroundColor = [UIColor colorWithHexString:ISSUES_BUTTON_COLOR];
     actionButton.titleLabel.font = actionFont;
 
-    [actionButton setTitle:ACTION_DOWNLOADED_TEXT forState:UIControlStateNormal];
+    [actionButton setTitle:NSLocalizedString(@"ACTION_DOWNLOADED_TEXT", nil) forState:UIControlStateNormal];
     [actionButton setTitleColor:[UIColor colorWithHexString:ISSUES_BUTTON_TEXT_COLOR] forState:UIControlStateNormal];
     [actionButton addTarget:self action:@selector(actionButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
 
@@ -170,7 +158,7 @@
     archiveButton.backgroundColor = [UIColor clearColor];
     archiveButton.titleLabel.font = actionFont;
 
-    [archiveButton setTitle:ARCHIVE_TEXT forState:UIControlStateNormal];
+    [archiveButton setTitle:NSLocalizedString(@"ARCHIVE_TEXT", nil) forState:UIControlStateNormal];
     [archiveButton setTitleColor:[UIColor colorWithHexString:ISSUES_ARCHIVE_TEXT_COLOR] forState:UIControlStateNormal];
     [archiveButton addTarget:self action:@selector(archiveButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
 
@@ -190,7 +178,7 @@
     loadingLabel.textColor = [UIColor colorWithHexString:ISSUES_LOADING_LABEL_COLOR];
     loadingLabel.backgroundColor = [UIColor clearColor];
     loadingLabel.textAlignment = UITextAlignmentLeft;
-    loadingLabel.text = DOWNLOADING_TEXT;
+    loadingLabel.text = NSLocalizedString(@"DOWNLOADING_TEXT", nil);
     loadingLabel.font = actionFont;
 
     [self.view addSubview:spinner];
@@ -221,7 +209,7 @@
     NSLog(@"Refreshing %@ view with status %@", self.issue.ID, status);
     if ([status isEqualToString:@"remote"])
     {
-        [self.actionButton setTitle:ACTION_REMOTE_TEXT forState:UIControlStateNormal];
+        [self.actionButton setTitle:NSLocalizedString(@"ACTION_REMOTE_TEXT", nil) forState:UIControlStateNormal];
         [self.spinner stopAnimating];
 
         self.actionButton.frame = CGRectMake(ui.contentOffset, self.actionButton.frame.origin.y, 110, 30);
@@ -237,13 +225,13 @@
         self.actionButton.hidden = YES;
         self.archiveButton.hidden = YES;
         self.progressBar.progress = 0;
-        self.loadingLabel.text = DOWNLOADING_TEXT;
+        self.loadingLabel.text = NSLocalizedString(@"DOWNLOADING_TEXT", nil);
         self.loadingLabel.hidden = NO;
         self.progressBar.hidden = NO;
     }
     else if ([status isEqualToString:@"downloaded"])
     {
-        [self.actionButton setTitle:ACTION_DOWNLOADED_TEXT forState:UIControlStateNormal];
+        [self.actionButton setTitle:NSLocalizedString(@"ACTION_DOWNLOADED_TEXT", nil) forState:UIControlStateNormal];
         [self.spinner stopAnimating];
 
         self.actionButton.frame = CGRectMake(ui.contentOffset, self.actionButton.frame.origin.y, 80, 30);
@@ -254,7 +242,7 @@
     }
     else if ([status isEqualToString:@"bundled"])
     {
-        [self.actionButton setTitle:ACTION_DOWNLOADED_TEXT forState:UIControlStateNormal];
+        [self.actionButton setTitle:NSLocalizedString(@"ACTION_DOWNLOADED_TEXT", nil) forState:UIControlStateNormal];
         [self.spinner stopAnimating];
 
         self.actionButton.frame = CGRectMake(ui.contentOffset, self.actionButton.frame.origin.y, 80, 30);
@@ -269,7 +257,7 @@
 
         self.actionButton.hidden = YES;
         self.archiveButton.hidden = YES;
-        self.loadingLabel.text = OPENING_TEXT;
+        self.loadingLabel.text = NSLocalizedString(@"OPENING_TEXT", nil);
         self.loadingLabel.hidden = NO;
         self.progressBar.hidden = YES;
     }
@@ -359,11 +347,11 @@
 - (void)archiveButtonPressed:(UIButton *)sender
 {
     UIAlertView *updateAlert = [[UIAlertView alloc]
-                                initWithTitle: ARCHIVE_ALERT_TITLE
-                                message: ARCHIVE_ALERT_MESSAGE
+                                initWithTitle: NSLocalizedString(@"ARCHIVE_ALERT_TITLE", nil)
+                                message: NSLocalizedString(@"ARCHIVE_ALERT_MESSAGE", nil)
                                 delegate: self
-                                cancelButtonTitle: ARCHIVE_ALERT_BUTTON_CANCEL
-                                otherButtonTitles: ARCHIVE_ALERT_BUTTON_OK, nil];
+                                cancelButtonTitle: NSLocalizedString(@"ARCHIVE_ALERT_BUTTON_CANCEL", nil)
+                                otherButtonTitles: NSLocalizedString(@"ARCHIVE_ALERT_BUTTON_OK", nil), nil];
     [updateAlert show];
     [updateAlert release];
 }

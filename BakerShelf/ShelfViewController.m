@@ -40,11 +40,6 @@
 #import "JSONKit.h"
 #import "NSData+Base64.h"
 
-#define SUBSCRIBE_BUTTON_TEXT @"Subscribe"
-#define SUBSCRIBE_BUTTON_DISABLED_TEXT @"Subscribing..."
-#define SUBSCRIPTION_SUCCESSFUL_TITLE @"Subscribed successfully"
-#define SUBSCRIPTION_SUCCESSFUL_MESSAGE @"You have successfully subscribed"
-
 @implementation ShelfViewController
 
 @synthesize issues;
@@ -98,7 +93,7 @@
 {
     [super viewDidLoad];
 
-    self.navigationItem.title = SHELF_NAVIGATION_TITLE;
+    self.navigationItem.title = NSLocalizedString(@"SHELF_NAVIGATION_TITLE", nil);
 
     self.background = [[UIImageView alloc] init];
 
@@ -121,7 +116,7 @@
                                       autorelease];
 
     self.subscribeButton = [[[UIBarButtonItem alloc]
-                             initWithTitle:SUBSCRIBE_BUTTON_TEXT
+                             initWithTitle: NSLocalizedString(@"SUBSCRIBE_BUTTON_TEXT", nil)
                              style:UIBarButtonItemStylePlain
                              target:self
                              action:@selector(handleFreeSubscription:)]
@@ -303,10 +298,10 @@
 }
 
 -(void)completeTransaction:(SKPaymentTransaction *)transaction {
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:SUBSCRIPTION_SUCCESSFUL_TITLE
-                                                    message:SUBSCRIPTION_SUCCESSFUL_MESSAGE
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"SUBSCRIPTION_SUCCESSFUL_TITLE", nil)
+                                                    message:NSLocalizedString(@"SUBSCRIPTION_SUCCESSFUL_MESSAGE", nil)
                                                    delegate:nil
-                                          cancelButtonTitle:@"Close"
+                                          cancelButtonTitle:NSLocalizedString(@"SUBSCRIPTION_SUCCESSFUL_CLOSE", nil)
                                           otherButtonTitles:nil];
     [alert show];
     [alert release];
@@ -349,10 +344,10 @@
 
     // Show an error, unless it was the user who cancelled the transaction
     if (transaction.error.code != SKErrorPaymentCancelled) {
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Subscription failure"
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"SUBSCRIPTION_FAILED_TITLE", nil)
                                                         message:[transaction.error localizedDescription]
                                                        delegate:nil
-                                              cancelButtonTitle:@"Close"
+                                              cancelButtonTitle:NSLocalizedString(@"SUBSCRIPTION_FAILED_CLOSE", nil)
                                               otherButtonTitles:nil];
         [alert show];
         [alert release];
@@ -407,9 +402,9 @@
 -(void)setSubscribeButtonEnabled:(BOOL)enabled {
     self.subscribeButton.enabled = enabled;
     if (enabled) {
-        self.subscribeButton.title = SUBSCRIBE_BUTTON_TEXT;
+        self.subscribeButton.title = NSLocalizedString(@"SUBSCRIBE_BUTTON_TEXT", nil);
     } else {
-        self.subscribeButton.title = SUBSCRIBE_BUTTON_DISABLED_TEXT;
+        self.subscribeButton.title = NSLocalizedString(@"SUBSCRIBE_BUTTON_DISABLED_TEXT", nil);
     }
 }
 
