@@ -43,6 +43,11 @@
 #define DOWNLOADING_TEXT @"DOWNLOADING ..."
 #define OPENING_TEXT @"Loading..."
 
+#define ARCHIVE_ALERT_TITLE @"Are you sure you want to archive this item?"
+#define ARCHIVE_ALERT_MESSAGE @"This item will be removed from your device. You may download it at anytime for free."
+#define ARCHIVE_ALERT_BUTTON_CANCEL @"Cancel"
+#define ARCHIVE_ALERT_BUTTON_OK @"Archive"
+
 @implementation IssueViewController
 
 #pragma mark - Synthesis
@@ -352,11 +357,11 @@
 - (void)archiveButtonPressed:(UIButton *)sender
 {
     UIAlertView *updateAlert = [[UIAlertView alloc]
-                                initWithTitle: @"Are you sure you want to archive this item?"
-                                message: @"This item will be removed from your device. You may download it at anytime for free."
+                                initWithTitle: ARCHIVE_ALERT_TITLE
+                                message: ARCHIVE_ALERT_MESSAGE
                                 delegate: self
-                                cancelButtonTitle: @"Cancel"
-                                otherButtonTitles:@"Archive",nil];
+                                cancelButtonTitle: ARCHIVE_ALERT_BUTTON_CANCEL
+                                otherButtonTitles: ARCHIVE_ALERT_BUTTON_OK, nil];
     [updateAlert show];
     [updateAlert release];
 }
