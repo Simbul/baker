@@ -201,7 +201,7 @@
         errorLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         errorLabel.textAlignment = UITextAlignmentCenter;
         errorLabel.textColor = [UIColor grayColor];
-        errorLabel.text = @"Unable to connect.";
+        errorLabel.text = NSLocalizedString(@"WEB_MODAL_FAILURE_MESSAGE", nil);
         errorLabel.numberOfLines = 1;
 
         CGRect screenBounds = [[UIScreen mainScreen] bounds];

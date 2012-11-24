@@ -25,3 +25,11 @@
 "ARCHIVE_ALERT_MESSAGE" = "This item will be removed from your device. You may download it at anytime for free.";
 "ARCHIVE_ALERT_BUTTON_CANCEL" = "Cancel";
 "ARCHIVE_ALERT_BUTTON_OK" = "Archive";
+
+// Mail alert
+"MAILTO_ALERT_TITLE" = "Failure";
+"MAILTO_ALERT_MESSAGE" = "Your device doesn't support the sending of emails!";
+"MAILTO_ALERT_CLOSE" = "OK";
+
+// Modal web view
+"WEB_MODAL_FAILURE_MESSAGE" = "Unable to connect.";

@@ -1108,10 +1108,10 @@
                         else
                         {
                             // Display error message
-                            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Failure"
-                                                                            message:@"Your device doesn't support the sending of emails!"
+                            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"MAILTO_ALERT_TITLE", nil)
+                                                                            message:NSLocalizedString(@"MAILTO_ALERT_MESSAGE", nil)
                                                                            delegate:nil
-                                                                  cancelButtonTitle:@"OK"
+                                                                  cancelButtonTitle:NSLocalizedString(@"MAILTO_ALERT_CLOSE", nil)
                                                                   otherButtonTitles:nil];
 
                             [alert show];
