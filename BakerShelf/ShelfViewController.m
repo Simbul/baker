@@ -32,6 +32,7 @@
 #import "ShelfViewController.h"
 #import "ShelfManager.h"
 #import "UICustomNavigationBar.h"
+#import "Constants.h"
 
 #import "BakerViewController.h"
 #import "IssueViewController.h"
@@ -97,7 +98,7 @@
 {
     [super viewDidLoad];
 
-    self.navigationItem.title = @"Baker Shelf";
+    self.navigationItem.title = SHELF_NAVIGATION_TITLE;
 
     self.background = [[UIImageView alloc] init];
 
