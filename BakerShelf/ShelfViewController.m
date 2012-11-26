@@ -223,6 +223,10 @@
 	}
 
     IssueViewController *controller = [self.issueViewControllers objectAtIndex:index];
+    UIView *removableIssueView = [cell.contentView viewWithTag:42];
+    if (removableIssueView) {
+        [removableIssueView removeFromSuperview];
+    }
     [cell.contentView addSubview:controller.view];
 
     return cell;

@@ -69,6 +69,7 @@
 
     self.view.frame = CGRectMake(0, 0, cellSize.width, cellSize.height);
     self.view.backgroundColor = [UIColor clearColor];
+    self.view.tag = 42;
 
     UI ui = [IssueViewController getIssueContentMeasures];
 
