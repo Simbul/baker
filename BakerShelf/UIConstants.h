@@ -44,4 +44,12 @@
     #define ISSUES_LOADING_SPINNER_COLOR @"#929292"
     #define ISSUES_PROGRESSBAR_TINT_COLOR @"b72529"
 
+    // Fonts for Issues
+    #define ISSUES_TITLE_FONT @"Helvetica"
+    #define ISSUES_TITLE_FONT_SIZE 15
+    #define ISSUES_INFO_FONT @"Helvetica"
+    #define ISSUES_INFO_FONT_SIZE 15
+    #define ISSUES_ACTION_FONT @"Helvetica-Bold"
+    #define ISSUES_ACTION_FONT_SIZE 11
+
 #endif
