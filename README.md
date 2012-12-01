@@ -55,19 +55,21 @@ BOOK.JSON
 
 This is an example of a minimal book.json file:
 
-    {
-      "title": "The Study in Scarlet",
-      "author": "Arthur Conan Doyle",
-      "url": "book://bakerframework.com/books/arthurconandoyle-thestudyinscarlet",
-      
-      "contents": [
-        "Article-Lorem.html",
-        "Article-Ipsum.html",
-        "Article-Gaium.html",
-        "Article-Sit.html",
-        "Article-Amet.html"
-      ]
-    }
+```json
+{
+  "title": "The Study in Scarlet",
+  "author": "Arthur Conan Doyle",
+  "url": "book://bakerframework.com/books/arthurconandoyle-thestudyinscarlet",
+
+  "contents": [
+    "Article-Lorem.html",
+    "Article-Ipsum.html",
+    "Article-Gaium.html",
+    "Article-Sit.html",
+    "Article-Amet.html"
+  ]
+}
+```
 
 For all the details and the advanced options, check the [Hpub specification on the wiki](https://github.com/Simbul/baker/wiki/hpub-specification).
 
