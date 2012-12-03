@@ -1094,7 +1094,14 @@
                         [mailer setMessageBody:[body stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding] isHTML:NO];
 
                         // Show the view
-                        [self presentModalViewController:mailer animated:YES];
+                        // Check if iOS5+ method is supported
+                        if ([self respondsToSelector:@selector(presentViewController:animated:completion:)]) {
+                            // iOS 5+
+                            [self presentViewController:mailer animated:YES completion:nil];
+                        } else {
+                            // iOS 4
+                            [self presentModalViewController:mailer animated:YES];
+                        }
                         [mailer release];
                     }
                     else
@@ -1790,12 +1797,11 @@
     [super dealloc];
 }
 
-#pragma mark - MFMailComposeController
+#pragma mark - MF MAIL COMPOSER
 - (void)mailComposeController:(MFMailComposeViewController*)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error {
 
     // Log the result for debugging purpose
-    switch (result)
-    {
+    switch (result) {
         case MFMailComposeResultCancelled:
             NSLog(@"    Mail cancelled.");
             break;
@@ -1818,7 +1824,14 @@
     }
 
     // Remove the mail view
-    [self dismissModalViewControllerAnimated:YES];
+    // Check if iOS5+ method is supported
+    if ([self respondsToSelector:@selector(dismissViewControllerAnimated:completion:)]) {
+        // iOS 5+
+        [self dismissViewControllerAnimated:YES completion:nil];
+    } else {
+        // iOS 4
+        [self dismissModalViewControllerAnimated:YES];
+    }
 }
 
 #pragma mark - INDEX VIEW
