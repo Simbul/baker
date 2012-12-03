@@ -96,14 +96,14 @@
     int heightOffset = ui.cellPadding;
 
     // SETUP USED FONTS
-    UIFont *textFont = [UIFont fontWithName:@"Helvetica" size:15];
-    uint textLineheight = [@"The brown fox jumps over the lazy dog" sizeWithFont:textFont constrainedToSize:CGSizeMake(MAXFLOAT, MAXFLOAT)].height;
-
-    UIFont *actionFont = [UIFont fontWithName:@"Helvetica-Bold" size:11];
+    UIFont *titleFont = [UIFont fontWithName:ISSUES_TITLE_FONT size:ISSUES_TITLE_FONT_SIZE];
+    UIFont *infoFont = [UIFont fontWithName:ISSUES_INFO_FONT size:ISSUES_INFO_FONT_SIZE];
+    uint textLineheight = [@"The brown fox jumps over the lazy dog" sizeWithFont:infoFont constrainedToSize:CGSizeMake(MAXFLOAT, MAXFLOAT)].height;
+    UIFont *actionFont = [UIFont fontWithName:ISSUES_ACTION_FONT size:ISSUES_ACTION_FONT_SIZE];
 
 
     // SETUP TITLE LABEL
-    CGSize titleSize = [self.issue.title sizeWithFont:textFont constrainedToSize:CGSizeMake(170, MAXFLOAT) lineBreakMode:UILineBreakModeWordWrap];
+    CGSize titleSize = [self.issue.title sizeWithFont:titleFont constrainedToSize:CGSizeMake(170, MAXFLOAT) lineBreakMode:UILineBreakModeWordWrap];
     uint titleLines = MIN(4, titleSize.height / textLineheight);
 
     UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(ui.contentOffset, heightOffset, 170, textLineheight * titleLines)];
@@ -113,7 +113,7 @@
     titleLabel.textAlignment = UITextAlignmentLeft;
     titleLabel.numberOfLines = titleLines;
     titleLabel.text = self.issue.title;
-    titleLabel.font = textFont;
+    titleLabel.font = titleFont;
 
     [self.view addSubview:titleLabel];
     [titleLabel release];
@@ -122,7 +122,7 @@
 
 
     // SETUP INFO LABEL
-    CGSize infoSize = [self.issue.info sizeWithFont:textFont constrainedToSize:CGSizeMake(170, MAXFLOAT) lineBreakMode:UILineBreakModeWordWrap];
+    CGSize infoSize = [self.issue.info sizeWithFont:infoFont constrainedToSize:CGSizeMake(170, MAXFLOAT) lineBreakMode:UILineBreakModeWordWrap];
     uint infoLines = MIN(4, infoSize.height / textLineheight);
 
     UILabel *infoLabel = [[UILabel alloc] initWithFrame:CGRectMake(ui.contentOffset, heightOffset, 170, textLineheight * infoLines)];
@@ -132,7 +132,7 @@
     infoLabel.textAlignment = UITextAlignmentLeft;
     infoLabel.numberOfLines = infoLines;
     infoLabel.text = self.issue.info;
-    infoLabel.font = textFont;
+    infoLabel.font = infoFont;
 
     [self.view addSubview:infoLabel];
     [infoLabel release];
