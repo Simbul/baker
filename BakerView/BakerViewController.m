@@ -116,6 +116,8 @@
         currentPageIsDelayingLoading = YES;
         currentPageHasChanged = NO;
         currentPageIsLocked = NO;
+        currentPageWillAppearUnderModal = NO;
+
         userIsScrolling = NO;
         shouldPropagateInterceptedTouch = YES;
 
@@ -165,20 +167,20 @@
     }
 }
 - (void)viewWillAppear:(BOOL)animated {
+    if (!currentPageWillAppearUnderModal) {
+        [super viewWillAppear:animated];
+        [self.navigationController.navigationBar setTranslucent:YES];
 
-    [super viewWillAppear:animated];
-    [self.navigationController.navigationBar setTranslucent:YES];
+        // ****** LISTENER FOR INTERCEPTOR WINDOW NOTIFICATION
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleInterceptedTouch:) name:@"notification_touch_intercepted" object:nil];
 
+        // ****** LISTENER FOR CLOSING APPLICATION
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleApplicationWillResignActive:) name:@"applicationWillResignActiveNotification" object:nil];
 
-    // ****** LISTENER FOR INTERCEPTOR WINDOW NOTIFICATION
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleInterceptedTouch:) name:@"notification_touch_intercepted" object:nil];
+        [self startReading];
+    }
 
-
-    // ****** LISTENER FOR CLOSING APPLICATION
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleApplicationWillResignActive:) name:@"applicationWillResignActiveNotification" object:nil];
-
-
-    [self startReading];
+    currentPageWillAppearUnderModal = NO;
 }
 - (void)handleApplicationWillResignActive:(NSNotification *)notification {
     NSLog(@"RESIGN, SAVING");
@@ -874,7 +876,7 @@
     return NO;
 }
 
-#pragma mark - MODAL VIEW
+#pragma mark - MODAL WEBVIEW
 - (void)loadModalWebView:(NSURL *)url {
     /****************************************************************************************************
      * Initializes the modal view and opens the requested url.
@@ -890,9 +892,9 @@
     // Hide the IndexView before opening modal web view
     [self hideBars:[NSNumber numberWithBool:YES]];
 
-    // Check if iOS4 or 5
+    // Check if iOS5+ method is supported
     if ([self respondsToSelector:@selector(presentViewController:animated:completion:)]) {
-        // iOS 5
+        // iOS 5+
         [self presentViewController:myModalViewController animated:YES completion:nil];
     } else {
         // iOS 4
@@ -906,9 +908,11 @@
      * This function is called from inside the modal view to close itself (delegate).
      */
 
-    // Check if iOS5 method is supported
+    currentPageWillAppearUnderModal = YES;
+
+    // Check if iOS5+ method is supported
     if ([self respondsToSelector:@selector(dismissViewControllerAnimated:completion:)]) {
-        // iOS 5
+        // iOS 5+
         [self dismissViewControllerAnimated:YES completion:nil];
     } else {
         // iOS 4
@@ -917,11 +921,7 @@
 
     // In case the orientation changed while being in modal view, restore the
     // webview and stuff to the current orientation
-    [indexViewController rotateFromOrientation:self.interfaceOrientation toOrientation:self.interfaceOrientation];
-
-    [self setPageSize:[self getCurrentInterfaceOrientation:self.interfaceOrientation]];
-    [self updateBookLayout];
-    [self setCurrentPageHeight];
+    [self willRotateToInterfaceOrientation:self.interfaceOrientation duration:0];
 }
 
 #pragma mark - SCROLLVIEW

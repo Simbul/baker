@@ -71,6 +71,8 @@
     BOOL currentPageIsDelayingLoading;
     BOOL currentPageHasChanged;
     BOOL currentPageIsLocked;
+    BOOL currentPageWillAppearUnderModal;
+
     BOOL userIsScrolling;
     BOOL shouldPropagateInterceptedTouch;
 
