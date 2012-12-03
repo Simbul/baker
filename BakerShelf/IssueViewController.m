@@ -99,7 +99,8 @@
     UIFont *titleFont = [UIFont fontWithName:ISSUES_TITLE_FONT size:ISSUES_TITLE_FONT_SIZE];
     UIFont *infoFont = [UIFont fontWithName:ISSUES_INFO_FONT size:ISSUES_INFO_FONT_SIZE];
     uint textLineheight = [@"The brown fox jumps over the lazy dog" sizeWithFont:infoFont constrainedToSize:CGSizeMake(MAXFLOAT, MAXFLOAT)].height;
-    UIFont *actionFont = [UIFont fontWithName:ISSUES_ACTION_FONT size:ISSUES_ACTION_FONT_SIZE];
+    UIFont *actionFont = [UIFont fontWithName:ISSUES_ACTION_BUTTON_FONT size:ISSUES_ACTION_BUTTON_FONT_SIZE];
+    UIFont *archiveFont = [UIFont fontWithName:ISSUES_ARCHIVE_BUTTON_FONT size:ISSUES_ARCHIVE_BUTTON_FONT_SIZE];
 
 
     // SETUP TITLE LABEL
@@ -107,7 +108,7 @@
     uint titleLines = MIN(4, titleSize.height / textLineheight);
 
     UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(ui.contentOffset, heightOffset, 170, textLineheight * titleLines)];
-    titleLabel.textColor = [UIColor colorWithHexString:ISSUES_TITLE_LABEL_COLOR];
+    titleLabel.textColor = [UIColor colorWithHexString:ISSUES_TITLE_COLOR];
     titleLabel.backgroundColor = [UIColor clearColor];
     titleLabel.lineBreakMode = UILineBreakModeTailTruncation;
     titleLabel.textAlignment = UITextAlignmentLeft;
@@ -126,7 +127,7 @@
     uint infoLines = MIN(4, infoSize.height / textLineheight);
 
     UILabel *infoLabel = [[UILabel alloc] initWithFrame:CGRectMake(ui.contentOffset, heightOffset, 170, textLineheight * infoLines)];
-    infoLabel.textColor = [UIColor colorWithHexString:ISSUES_INFO_LABEL_COLOR];
+    infoLabel.textColor = [UIColor colorWithHexString:ISSUES_INFO_COLOR];
     infoLabel.backgroundColor = [UIColor clearColor];
     infoLabel.lineBreakMode = UILineBreakModeTailTruncation;
     infoLabel.textAlignment = UITextAlignmentLeft;
@@ -143,11 +144,11 @@
     // SETUP ACTION BUTTON
     self.actionButton = [UIButton buttonWithType:UIButtonTypeCustom];
     actionButton.frame = CGRectMake(ui.contentOffset, heightOffset, 80, 30);
-    actionButton.backgroundColor = [UIColor colorWithHexString:ISSUES_BUTTON_COLOR];
+    actionButton.backgroundColor = [UIColor colorWithHexString:ISSUES_ACTION_BUTTON_BACKGROUND_COLOR];
     actionButton.titleLabel.font = actionFont;
 
     [actionButton setTitle:NSLocalizedString(@"ACTION_DOWNLOADED_TEXT", nil) forState:UIControlStateNormal];
-    [actionButton setTitleColor:[UIColor colorWithHexString:ISSUES_BUTTON_TEXT_COLOR] forState:UIControlStateNormal];
+    [actionButton setTitleColor:[UIColor colorWithHexString:ISSUES_ACTION_BUTTON_COLOR] forState:UIControlStateNormal];
     [actionButton addTarget:self action:@selector(actionButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
 
     [self.view addSubview:actionButton];
@@ -156,11 +157,11 @@
     // SETUP ARCHIVE BUTTON
     self.archiveButton = [UIButton buttonWithType:UIButtonTypeCustom];
     archiveButton.frame = CGRectMake(ui.contentOffset + self.actionButton.frame.size.width + 10, heightOffset, 80, 30);
-    archiveButton.backgroundColor = [UIColor clearColor];
-    archiveButton.titleLabel.font = actionFont;
+    archiveButton.backgroundColor = [UIColor colorWithHexString:ISSUES_ARCHIVE_BUTTON_BACKGROUND_COLOR];
+    archiveButton.titleLabel.font = archiveFont;
 
     [archiveButton setTitle:NSLocalizedString(@"ARCHIVE_TEXT", nil) forState:UIControlStateNormal];
-    [archiveButton setTitleColor:[UIColor colorWithHexString:ISSUES_ARCHIVE_TEXT_COLOR] forState:UIControlStateNormal];
+    [archiveButton setTitleColor:[UIColor colorWithHexString:ISSUES_ARCHIVE_BUTTON_COLOR] forState:UIControlStateNormal];
     [archiveButton addTarget:self action:@selector(archiveButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
 
     #ifdef BAKER_NEWSSTAND
