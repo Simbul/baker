@@ -51,11 +51,12 @@
 }
 
 #ifdef BAKER_NEWSSTAND
--(void)refresh {
+-(BOOL)refresh {
     NSError *error = nil;
     NSString *json = [NSString stringWithContentsOfURL:self.url encoding:NSUTF8StringEncoding error:&error];
     if (error) {
         NSLog(@"Error loading Newsstand manifest: %@", error);
+        return NO;
     } else {
         NSArray *jsonArr = [json objectFromJSONString];
 
@@ -75,6 +76,7 @@
             NSDate *second = [dateFormat dateFromString:[(BakerIssue*)b date]];
             return [second compare:first];
         }];
+        return YES;
     }
 }
 -(void)updateNewsstandIssuesList:(NSArray *)issuesList {

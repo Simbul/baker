@@ -39,7 +39,7 @@
 
 #ifdef BAKER_NEWSSTAND
 -(id)initWithURL:(NSString *)urlString;
--(void)refresh;
+-(BOOL)refresh;
 #endif
 
 @end
