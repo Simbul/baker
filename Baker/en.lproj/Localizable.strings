@@ -33,3 +33,4 @@
 
 // Modal web view
 "WEB_MODAL_FAILURE_MESSAGE" = "Unable to connect.";
+"WEB_MODAL_CLOSE_BUTTON_TEXT" = "Back";
