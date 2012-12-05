@@ -622,24 +622,23 @@
                     return YES;
                 } else if (page + 1 == pageViewController.tag) {
                     //If this is the same page then load it
+                    
+                     //TODO: Anchor Code
+                    
                     return YES;
                 }
                 
                 page = page + 1;
                 
                 PageViewController *newPageView = [self getPageViewForPage:page];
-                NSArray *viewControllers = @[[newPageView autorelease]];
+                NSArray *viewControllers = @[newPageView];
                 
                 BakerWrapperNavigationDirection direction = (pageViewController.tag > newPageView.tag)? BakerWrapperNavigationDirectionBackward : BakerWrapperNavigationDirectionForward;
                 
                 [_wrapperViewController setViewControllers:[viewControllers autorelease] direction:direction animated:YES completion:^(BOOL finished) {
                     NSLog(@"Navigated to page %i", page);
                     
-                    /*if (anchorFromURL == nil) {
-                     return YES;
-                     }*/
-                    
-                    //[self handleAnchor:YES];
+                    //TODO: Anchor Code
                 }];
                 
                 return NO;

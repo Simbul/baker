@@ -99,9 +99,75 @@
     [self dispatchHTMLEvent:@"blur"];
 }
 
--(void) scrollDownPage:(int)amount animating:(bool)animating {
+- (int)getCurrentPageOffset {
+    
+    int currentPageOffset = [[_webView stringByEvaluatingJavaScriptFromString:@"window.scrollY;"] intValue];
+    if (currentPageOffset < 0) return 0;
+    
+    int currentPageMaxScroll = _webView.frame.size.height;
+    if (currentPageOffset > currentPageMaxScroll) return currentPageMaxScroll;
+    
+    return currentPageOffset;
+}
+- (void)scrollUpPage:(int)targetOffset animating:(BOOL)animating {
+    
+    if ([self getCurrentPageOffset] > 0)
+    {
+        if (targetOffset < 0) targetOffset = 0;
+        
+        NSLog(@"• Scrolling page up to %d", targetOffset);
+        [self scrollPageTo:[NSString stringWithFormat:@"%d", targetOffset] animating:animating];
+    }
+}
+- (void)scrollDownPage:(int)targetOffset animating:(BOOL)animating {
+    
+    int currentPageMaxScroll = _webView.frame.size.height;
+    if ([self getCurrentPageOffset] < currentPageMaxScroll)
+    {
+        if (targetOffset > currentPageMaxScroll) targetOffset = currentPageMaxScroll;
+        
+        NSLog(@"• Scrolling page down to %d", targetOffset);
+        [self scrollPageTo:[NSString stringWithFormat:@"%d", targetOffset] animating:animating];
+    }
     
 }
+- (void)scrollPageTo:(NSString *)offset animating:(BOOL)animating {
+    
+    NSString *jsCommand = [NSString stringWithFormat:@"window.scrollTo(0,%@);", offset];
+    if (animating) {
+        [UIView animateWithDuration:0.35 animations:^{ [_webView stringByEvaluatingJavaScriptFromString:jsCommand]; }];
+    } else {
+        [_webView stringByEvaluatingJavaScriptFromString:jsCommand];
+    }
+}
+
+/*
+- (void)handleAnchor:(BOOL)animating {
+    if (anchorFromURL != nil) {
+        NSString *jsAnchorHandler = [NSString stringWithFormat:@"(function() {\
+                                     var target = '%@';\
+                                     var elem = document.getElementById(target);\
+                                     if (!elem) elem = document.getElementsByName(target)[0];\
+                                     return elem.offsetTop;\
+                                     })();", anchorFromURL];
+        
+        NSString *offsetString = [currPage stringByEvaluatingJavaScriptFromString:jsAnchorHandler];
+        if (![offsetString isEqualToString:@""])
+        {
+            int offset = [offsetString intValue];
+            int currentPageOffset = [self getCurrentPageOffset];
+            
+            if (offset > currentPageOffset) {
+                [self scrollDownCurrentPage:offset animating:animating];
+            } else if (offset < currentPageOffset) {
+                [self scrollUpCurrentPage:offset animating:animating];
+            }
+        }
+        
+        anchorFromURL = nil;
+    }
+} }
+}*/
 
 - (void)updateLayout{
     // ****** Activity Indicator
@@ -227,18 +293,6 @@
     [self.delegate pageViewControllerDidLoadPage:self];
     
     _webView.userInteractionEnabled = YES;
-    
-    //Get Size Of Page
-    CGSize fittingSize = [_webView sizeThatFits:CGSizeZero];
-    
-    //Get Real Page Height (We need to work out the orientation of the Device)
-    int pageHeight = ([[UIApplication sharedApplication] statusBarOrientation] == UIInterfaceOrientationPortrait || [[UIApplication sharedApplication] statusBarOrientation] == UIInterfaceOrientationPortraitUpsideDown) ? fittingSize.height : fittingSize.width;
-    
-    _webView.frame = CGRectMake(0, 0, self.view.bounds.size.width, pageHeight);
-    
-    if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"5.0")){
-        _webView.scrollView.contentSize = CGSizeMake(self.view.bounds.size.width, pageHeight);
-    }
     
     // ... check if there is a saved starting scroll index and set it
     NSLog(@"   Handle last scroll index if necessary");

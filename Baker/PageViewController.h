@@ -14,6 +14,7 @@
 #import "Utils.h"
 
 @interface PageViewController : UIViewController<UIWebViewDelegate>{
+
     NSNumber *_pageNumberAlpha;
     UIColor *_pageNumberColor;
     
