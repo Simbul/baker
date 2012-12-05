@@ -85,6 +85,22 @@
     
     [self updateLayout];
     [self updateBackgroundImageToOrientation:[[UIApplication sharedApplication] statusBarOrientation]];
+    [self dispatchHTMLEvent:@"focus"];
+    
+    // ... check if there is a saved starting scroll index and set it
+    NSLog(@"   Handle last scroll index if necessary");
+    NSString *currPageScrollIndex = [[NSUserDefaults standardUserDefaults] objectForKey:@"lastScrollIndex"];
+    if (currPageScrollIndex != nil) {
+        [self scrollDownPage:[currPageScrollIndex intValue] animating:YES];
+    }
+}
+
+- (void)viewDidDisappear:(BOOL)animated{
+    [self dispatchHTMLEvent:@"blur"];
+}
+
+-(void) scrollDownPage:(int)amount animating:(bool)animating {
+    
 }
 
 - (void)updateLayout{
@@ -224,12 +240,21 @@
         _webView.scrollView.contentSize = CGSizeMake(self.view.bounds.size.width, pageHeight);
     }
     
+    // ... check if there is a saved starting scroll index and set it
+    NSLog(@"   Handle last scroll index if necessary");
+    NSString *currPageScrollIndex = [[NSUserDefaults standardUserDefaults] objectForKey:@"lastScrollIndex"];
+    if (currPageScrollIndex != nil) {
+        [self scrollDownCurrentPage:[currPageScrollIndex intValue] animating:YES];
+    }
+    
     if (_webView.alpha == 0.0f)
     {
         [UIView animateWithDuration:0.5
                          animations:^{ _webView.alpha = 1.0; }
                          completion:^(BOOL finished) {
+                             [self.delegate pageViewController:self DidShowWebView:_webView];
                              [self setLoadingUIHidden:YES];
+                             [self dispatchHTMLEvent:@"focus"];
         }];
         
     }
@@ -263,32 +288,13 @@
     [_webView stringByEvaluatingJavaScriptFromString:jsOrientationGetter];
 }
 
-/*
- 
- - (void)webViewDidAppear:(UIWebView *)webView animating:(BOOL)animating {
- 
- if ([webView isEqual:currPage])
- {
- [self webView:webView dispatchHTMLEvent:@"focus"];
- 
- // If is the first time i load something in the currPage web view...
- if (currentPageFirstLoading)
- {
- // ... check if there is a saved starting scroll index and set it
- NSLog(@"   Handle last scroll index if necessary");
- NSString *currPageScrollIndex = [[NSUserDefaults standardUserDefaults] objectForKey:@"lastScrollIndex"];
- if (currPageScrollIndex != nil) {
- [self scrollDownCurrentPage:[currPageScrollIndex intValue] animating:YES];
- }
- currentPageFirstLoading = NO;
- }
- else
- {
- NSLog(@"   Handle saved hash reference if necessary");
- [self handleAnchor:YES];
- }
- }
- } */
+- (void)dispatchHTMLEvent:(NSString *)event {
+    NSString *jsDispatchEvent = [NSString stringWithFormat:@"var bakerDispatchedEvent = document.createEvent('Events');\
+                                 bakerDispatchedEvent.initEvent('%@', false, false);\
+                                 window.dispatchEvent(bakerDispatchedEvent);", event];
+    
+    [_webView stringByEvaluatingJavaScriptFromString:jsDispatchEvent];
+}
 
 - (void)dealloc {
     

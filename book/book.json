@@ -17,6 +17,7 @@
     "-baker-page-numbers-color": "#000000",
     "-baker-page-turn-transition" : "pages",
     "-baker-rendering" : "screenshots",
+    "-baker-page-screenshots" : "images/screenshots/",
 
     "contents": [
         "Book Cover.html",

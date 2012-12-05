@@ -7,12 +7,14 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 @class PageViewController;
 @protocol BakerPageViewControllerDelegate <NSObject>
 - (bool)pageViewController:(PageViewController*)pageViewController shouldStartPageLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType;
 - (void)pageViewControllerWillLoadPage:(PageViewController*)pageViewController;
 - (void)pageViewControllerDidLoadPage:(PageViewController*)pageViewController;
+- (void)pageViewController:(PageViewController*)pageViewController DidShowWebView:(UIWebView*) webView;
 - (void)pageViewControllerWillUnloadPage:(PageViewController*)pageViewController;
 
 @end

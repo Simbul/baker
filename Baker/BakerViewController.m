@@ -133,7 +133,6 @@
     self.wrapperViewController.delegate = self;
     [self addChildViewController:self.wrapperViewController];
     [self.view addSubview:self.wrapperViewController.view];
-    
 }
 
 
@@ -166,6 +165,8 @@
         }
         
         [cachedScreenshotsPath retain];
+        
+        [self startReading];
         
         return YES;
         
@@ -252,6 +253,11 @@
     if (backgroundPathPortrait != nil) {
         backgroundPathPortrait  = [currentBookPath stringByAppendingPathComponent:backgroundPathPortrait];
         backgroundImagePortrait = [[UIImage imageWithContentsOfFile:backgroundPathPortrait] retain];
+    }
+    
+    //If rendering type is Screenshots then update all the screenshots
+    if (renderingType == BakerRenderingTypeScreenshots){
+        [self updateScreenshots];
     }
 }
 - (void)buildPageArray {
@@ -470,11 +476,14 @@
 }
 
 - (PageViewController *)newPageViewForPage:(int)page{
+    
     if (page > 0 && page < pages.count){
         
-        PageViewController *newPage = [[PageViewController alloc] initWithFrame:self.view.bounds andPageURL:[pages objectAtIndex:page - 1]];
-        
+        PageViewController *newPage = [PageViewController alloc];
+        newPage.tag = page;
         newPage.delegate = self;
+        
+        [newPage initWithFrame:self.view.bounds andPageURL:[pages objectAtIndex:page - 1]];
         
         if (backgroundImagePortrait){
             newPage.backgroundImagePortrait = [backgroundImagePortrait retain];
@@ -543,7 +552,7 @@
 }
 
 - (void)pageViewControllerWillLoadPage:(PageViewController *)pageViewController{
-    
+
     //If the current rendering mode is screenshots then insert the screenshot for the page and fade it in
     if (renderingType == BakerRenderingTypeScreenshots){
         [self insertScreenshotForPageViewController:pageViewController animated:YES];
@@ -565,6 +574,13 @@
     //If the current rendering mode is screenshots then remove the screenshot for this page
     if (renderingType == BakerRenderingTypeScreenshots){
         [self removeScreenshotForPageViewController:pageViewController animated:NO];
+    }
+}
+
+- (void)pageViewController:(PageViewController*)pageViewController DidShowWebView:(UIWebView*) webView{
+    //If the current rendering mode is screenshots then take a screenshot
+    if (renderingType == BakerRenderingTypeScreenshots){
+        [self takeScreenshotForPageViewController:pageViewController andWebview:webView];
     }
 }
 
@@ -1059,18 +1075,21 @@
 #pragma mark - SCREENSHOTS
 
 - (void)insertScreenshotForPageViewController:(PageViewController*)pageViewController animated:(bool)animated{
+    
     int pageNumber = pageViewController.tag;
+    
+    NSLog(@"• Showing screenshot of page %d", pageNumber);
+    
     NSNumber *num = [NSNumber numberWithInt:pageNumber];
     
     UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
-    
     
     NSString *orientationFilePart = (UIInterfaceOrientationIsLandscape(orientation))?@"landscape":@"portrait";
     
     NSString *screenshotFile = [cachedScreenshotsPath stringByAppendingPathComponent:[NSString stringWithFormat:@"screenshot-%@-%i.jpg", orientationFilePart, pageNumber]];
     UIImageView *screenshotView = [[UIImageView alloc] initWithImage:[UIImage imageWithContentsOfFile:screenshotFile]];
     
-    NSMutableDictionary *attachedScreenshot = attachedScreenshotPortrait;
+    NSMutableDictionary *attachedScreenshot = (UIInterfaceOrientationIsLandscape(orientation))?attachedScreenshotLandscape:attachedScreenshotPortrait;
     CGSize pageSize = CGSizeMake(screenBounds.size.width, screenBounds.size.height);
     
     if (UIInterfaceOrientationIsLandscape(orientation)) {
@@ -1095,16 +1114,33 @@
     
     [pageViewController.view  addSubview:screenshotView];
     [UIView animateWithDuration:0.5*animated animations:^{ screenshotView.alpha = 1.0; }];
-    
-    [screenshotView release];
 }
 
 - (void)removeScreenshotForPageViewController:(PageViewController*)pageViewController animated:(bool)animated{
+    
     int pageNumber = pageViewController.tag;
+    
+    NSLog(@"• Removing screenshot of page %d", pageNumber);
+    
     NSNumber *num = [NSNumber numberWithInt:pageNumber];
     
     NSMutableDictionary *attachedScreenshot = attachedScreenshotPortrait;
     __block UIImageView *oldScreenshot = [attachedScreenshot objectForKey:num];
+    
+    if (oldScreenshot) {
+        
+        [UIView animateWithDuration:0.5*animated animations:^{
+            oldScreenshot.alpha = 0.0;
+        } completion:^(BOOL finished) {
+            [attachedScreenshot removeObjectForKey:num];
+            [oldScreenshot removeFromSuperview];
+            [oldScreenshot release];
+            oldScreenshot = nil;
+        }];
+    }
+    
+   attachedScreenshot = attachedScreenshotLandscape;
+   oldScreenshot = [attachedScreenshot objectForKey:num];
     
     if (oldScreenshot) {
         
@@ -1162,8 +1198,7 @@
         NSNumber *num = [NSNumber numberWithInt:i];
         [supportSet addObject:num];
         
-        if ([self checkScreeshotForPage:i andOrientation:interfaceOrientation] && ![attachedScreenshot objectForKey:num]) {
-            [self placeScreenshotForView:nil andPage:i andOrientation:interfaceOrientation];
+        if ([self screenshotExsistsForPage:i andOrientation:interfaceOrientation] && ![attachedScreenshot objectForKey:num]) {
             [completeSet addObject:num];
         }
     }
@@ -1180,7 +1215,7 @@
 }
 
 
-- (BOOL)checkScreeshotForPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation {
+- (BOOL)screenshotExsistsForPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation {
     
     if (![[NSFileManager defaultManager] fileExistsAtPath:cachedScreenshotsPath]) {
         [[NSFileManager defaultManager] createDirectoryAtPath:cachedScreenshotsPath withIntermediateDirectories:YES attributes:nil error:nil];
@@ -1191,33 +1226,31 @@
     return [[NSFileManager defaultManager] fileExistsAtPath:screenshotFile];
 }
 
-- (void)takeScreenshotFromView:(UIWebView *)webView forPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation {
+- (void)takeScreenshotForPageViewController:(PageViewController*)pageViewController andWebview:(UIWebView*)webView{
     
-    BOOL animating = YES;
+    UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
+    NSString *interfaceOrientation = (UIInterfaceOrientationIsLandscape(orientation))?@"landscape":@"portrait";
     
-    if (![self checkScreeshotForPage:pageNumber andOrientation:interfaceOrientation])
+    int pageNumber = pageViewController.tag;
+    
+    if (![self screenshotExsistsForPage:pageNumber andOrientation:interfaceOrientation])
     {
         NSLog(@"• Taking screenshot of page %d", pageNumber);
         
         NSString *screenshotFile = [cachedScreenshotsPath stringByAppendingPathComponent:[NSString stringWithFormat:@"screenshot-%@-%i.jpg", interfaceOrientation, pageNumber]];
         UIImage *screenshot = nil;
         
-        if ([interfaceOrientation isEqualToString:[self getCurrentInterfaceOrientation]]) {
-            
-            UIGraphicsBeginImageContextWithOptions(webView.frame.size, NO, [[UIScreen mainScreen] scale]);
-            [webView.layer renderInContext:UIGraphicsGetCurrentContext()];
-            screenshot = UIGraphicsGetImageFromCurrentImageContext();
-            UIGraphicsEndImageContext();
-            
-            if (screenshot) {
-                BOOL saved = [UIImageJPEGRepresentation(screenshot, 0.6) writeToFile:screenshotFile options:NSDataWritingAtomic error:nil];
-                if (saved) {
-                    NSLog(@"    Screenshot succesfully saved to file %@", screenshotFile);
-                }
+        UIGraphicsBeginImageContextWithOptions(webView.frame.size, NO, [[UIScreen mainScreen] scale]);
+        [webView.layer renderInContext:UIGraphicsGetCurrentContext()];
+        screenshot = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+        
+        if (screenshot) {
+            BOOL saved = [UIImageJPEGRepresentation(screenshot, 0.6) writeToFile:screenshotFile options:NSDataWritingAtomic error:nil];
+            if (saved) {
+                NSLog(@"    Screenshot succesfully saved to file %@", screenshotFile);
             }
         }
-        
-        [self performSelector:@selector(lockPage:) withObject:[NSNumber numberWithBool:NO] afterDelay:0.1];
     }
 }
 
