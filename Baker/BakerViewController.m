@@ -188,8 +188,6 @@
                                              otherButtonTitles:nil];
         }
         
-        
-        
         [feedbackAlert show];
         [feedbackAlert release];
         
@@ -1192,9 +1190,9 @@
     NSString *screenshotFile = [cachedScreenshotsPath stringByAppendingPathComponent:[NSString stringWithFormat:@"screenshot-%@-%i.jpg", interfaceOrientation, pageNumber]];
     return [[NSFileManager defaultManager] fileExistsAtPath:screenshotFile];
 }
+
 - (void)takeScreenshotFromView:(UIWebView *)webView forPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation {
     
-    BOOL shouldRevealWebView = YES;
     BOOL animating = YES;
     
     if (![self checkScreeshotForPage:pageNumber andOrientation:interfaceOrientation])
@@ -1215,8 +1213,6 @@
                 BOOL saved = [UIImageJPEGRepresentation(screenshot, 0.6) writeToFile:screenshotFile options:NSDataWritingAtomic error:nil];
                 if (saved) {
                     NSLog(@"    Screenshot succesfully saved to file %@", screenshotFile);
-                    [self placeScreenshotForView:webView andPage:pageNumber andOrientation:interfaceOrientation];
-                    shouldRevealWebView = NO;
                 }
             }
         }
