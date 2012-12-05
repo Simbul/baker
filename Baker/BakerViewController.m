@@ -134,21 +134,6 @@
     [self addChildViewController:self.wrapperViewController];
     [self.view addSubview:self.wrapperViewController.view];
     
-    if (pages.count > 0) {
-        //Start Reading
-        [self startReading];
-    } else {
-    
-        
-        feedbackAlert = [[UIAlertView alloc] initWithTitle:ZERO_PAGES_TITLE
-                                                   message:ZERO_PAGES_MESSAGE
-                                                  delegate:self
-                                         cancelButtonTitle:ALERT_FEEDBACK_CANCEL
-                                         otherButtonTitles:nil];
-        [feedbackAlert show];
-        [feedbackAlert release];
-    }
-    
 }
 
 
@@ -187,14 +172,24 @@
     } else {
         
         if (![bookPath isEqualToString:bundleBookPath]) {
+            
             [[NSFileManager defaultManager] removeItemAtPath:bookPath error:nil];
+            feedbackAlert = [[UIAlertView alloc] initWithTitle:ZERO_PAGES_TITLE
+                                                       message:ZERO_PAGES_MESSAGE
+                                                      delegate:self
+                                             cancelButtonTitle:ALERT_FEEDBACK_CANCEL
+                                             otherButtonTitles:nil];
+        } else {
+            
+            feedbackAlert = [[UIAlertView alloc] initWithTitle:ZERO_PAGES_TITLE
+                                                       message:ZERO_PAGES_MESSAGE
+                                                      delegate:self
+                                             cancelButtonTitle:nil
+                                             otherButtonTitles:nil];
         }
         
-        feedbackAlert = [[UIAlertView alloc] initWithTitle:ZERO_PAGES_TITLE
-                                                   message:ZERO_PAGES_MESSAGE
-                                                  delegate:self
-                                         cancelButtonTitle:ALERT_FEEDBACK_CANCEL
-                                         otherButtonTitles:nil];
+        
+        
         [feedbackAlert show];
         [feedbackAlert release];
         
