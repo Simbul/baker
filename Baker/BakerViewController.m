@@ -134,8 +134,20 @@
     [self addChildViewController:self.wrapperViewController];
     [self.view addSubview:self.wrapperViewController.view];
     
-    //Start Reading
-    [self startReading];
+    if (pages.count > 0) {
+        //Start Reading
+        [self startReading];
+    } else {
+    
+        
+        feedbackAlert = [[UIAlertView alloc] initWithTitle:ZERO_PAGES_TITLE
+                                                   message:ZERO_PAGES_MESSAGE
+                                                  delegate:self
+                                         cancelButtonTitle:ALERT_FEEDBACK_CANCEL
+                                         otherButtonTitles:nil];
+        [feedbackAlert show];
+        [feedbackAlert release];
+    }
     
 }
 
