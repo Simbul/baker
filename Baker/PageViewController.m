@@ -112,8 +112,7 @@
 }
 
 - (void)updateBackgroundImageToOrientation:(UIInterfaceOrientation)orientation{
-    if (orientation == UIInterfaceOrientationLandscapeLeft
-        || orientation == UIInterfaceOrientationLandscapeRight) {
+    if (UIInterfaceOrientationIsLandscape(orientation)) {
         NSLog(@"Page View Using Landscape Image");
         _backgroundImageView.image = _backgroundImageLandscape;
     } else {
@@ -167,6 +166,8 @@
         }
     
     NSString *path = [NSString stringWithString:pageURL];
+    
+    [self.delegate pageViewControllerWillLoadPage:self];
     
     if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
         NSLog(@"• Loading: book/%@", [[NSFileManager defaultManager] displayNameAtPath:path]);
@@ -261,6 +262,33 @@
     
     [_webView stringByEvaluatingJavaScriptFromString:jsOrientationGetter];
 }
+
+/*
+ 
+ - (void)webViewDidAppear:(UIWebView *)webView animating:(BOOL)animating {
+ 
+ if ([webView isEqual:currPage])
+ {
+ [self webView:webView dispatchHTMLEvent:@"focus"];
+ 
+ // If is the first time i load something in the currPage web view...
+ if (currentPageFirstLoading)
+ {
+ // ... check if there is a saved starting scroll index and set it
+ NSLog(@"   Handle last scroll index if necessary");
+ NSString *currPageScrollIndex = [[NSUserDefaults standardUserDefaults] objectForKey:@"lastScrollIndex"];
+ if (currPageScrollIndex != nil) {
+ [self scrollDownCurrentPage:[currPageScrollIndex intValue] animating:YES];
+ }
+ currentPageFirstLoading = NO;
+ }
+ else
+ {
+ NSLog(@"   Handle saved hash reference if necessary");
+ [self handleAnchor:YES];
+ }
+ }
+ } */
 
 - (void)dealloc {
     

@@ -410,8 +410,6 @@
     // In case the orientation changed while being in modal view, restore the
     // webview and stuff to the current orientation
     [indexViewController rotateFromOrientation:self.interfaceOrientation toOrientation:self.interfaceOrientation];
-    
-    [self updateBookLayout];
 }
 
 #pragma mark - PAGE MANAGEMENT
@@ -531,6 +529,7 @@
 
 - (void)wrapperViewController:(BakerWrapper *)wrapperViewController didFinishAnimating:(BOOL)finished previousViewControllers:(NSArray *)previousViewControllers transitionCompleted:(BOOL)completed{
     
+    //If the page transition has finished animating then make the page we have transitioned to become the new Current Page
     if (completed){
         PageViewController *newPage = (PageViewController*)[wrapperViewController.viewControllers objectAtIndex:0];
         [self pageViewHasBecomeCurrentPage:newPage];
@@ -538,9 +537,262 @@
     
 }
 
-- (void)pageViewControllerWillUnloadPage:(PageViewController*)pageViewController{
+- (void)pageViewControllerWillLoadPage:(PageViewController *)pageViewController{
+    
+    //If the current rendering mode is screenshots then insert the screenshot for the page and fade it in
+    if (renderingType == BakerRenderingTypeScreenshots){
+        [self insertScreenshotForPageViewController:pageViewController animated:YES];
+    }
     
 }
+
+- (void)pageViewControllerDidLoadPage:(PageViewController*)pageViewController{
+    
+    //If the current rendering mode is screenshots then fadeout and remove the screenshot for this page
+    if (renderingType == BakerRenderingTypeScreenshots){
+        [self removeScreenshotForPageViewController:pageViewController animated:YES];
+    }
+    
+}
+
+- (void)pageViewControllerWillUnloadPage:(PageViewController*)pageViewController{
+    
+    //If the current rendering mode is screenshots then remove the screenshot for this page
+    if (renderingType == BakerRenderingTypeScreenshots){
+        [self removeScreenshotForPageViewController:pageViewController animated:NO];
+    }
+}
+
+
+- (bool)pageViewController:(PageViewController*)pageViewController shouldStartPageLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType{
+    
+    //TODO: Needs to be reworked for new Page Management System
+    
+    // Sent before a web view begins loading content, useful to trigger actions before the WebView.
+    NSLog(@"• Should webView load the page ?");
+    NSURL *url = [request URL];
+    
+    // ****** Handle URI schemes
+    if (url)
+    {
+        // Existing, checking if index...
+        if([[url relativePath] isEqualToString:[indexViewController indexPath]])
+        {
+            NSLog(@"    Page is index --> load index");
+            return YES;
+        }
+        else
+        {
+            NSLog(@"    Handle clicked link: %@", [url absoluteString]);
+            
+            // Not index, checking scheme...
+            if ([[url scheme] isEqualToString:@"file"])
+            {
+                // ****** Handle: file://
+                NSLog(@"    Page is a link with scheme file:// --> load internal link");
+                
+                anchorFromURL  = [[url fragment] retain];
+                NSString *file = [[url relativePath] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+                
+                int page = [pages indexOfObject:file];
+                if (page == NSNotFound)
+                {
+                    // ****** Internal link, but not one of the book pages --> load page anyway
+                    return YES;
+                } else if (page + 1 == pageViewController.tag) {
+                    //If this is the same page then load it
+                    return YES;
+                }
+                
+                page = page + 1;
+                
+                PageViewController *newPageView = [self getPageViewForPage:page];
+                NSArray *viewControllers = @[[newPageView autorelease]];
+                
+                BakerWrapperNavigationDirection direction = (pageViewController.tag > newPageView.tag)? BakerWrapperNavigationDirectionBackward : BakerWrapperNavigationDirectionForward;
+                
+                [_wrapperViewController setViewControllers:[viewControllers autorelease] direction:direction animated:YES completion:^(BOOL finished) {
+                    NSLog(@"Navigated to page %i", page);
+                    
+                    /*if (anchorFromURL == nil) {
+                     return YES;
+                     }*/
+                    
+                    //[self handleAnchor:YES];
+                }];
+                
+                return NO;
+            }
+            else if ([[url scheme] isEqualToString:@"book"])
+            {
+                
+                
+                // ****** Handle: book://
+                NSLog(@"    Page is a link with scheme book:// --> download new book");
+                
+                if ([[url host] isEqualToString:@"local"] && [[NSFileManager defaultManager] fileExistsAtPath:bundleBookPath]) {
+                    // *** Back to bundled book
+                    feedbackAlert = [[UIAlertView alloc] initWithTitle:@""
+                                                               message:[NSString stringWithFormat:CLOSE_BOOK_MESSAGE]
+                                                              delegate:self
+                                                     cancelButtonTitle:ALERT_FEEDBACK_CANCEL
+                                                     otherButtonTitles:CLOSE_BOOK_CONFIRM, nil];
+                    [feedbackAlert show];
+                    [feedbackAlert release];
+                    
+                } else {
+                    
+                    if ([[url pathExtension] isEqualToString:@"html"]) {
+                        anchorFromURL = [[url fragment] retain];
+                        pageNameFromURL = [[[url lastPathComponent] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding] retain];
+                        NSString *tmpUrl = [[url URLByDeletingLastPathComponent] absoluteString];
+                        url = [NSURL URLWithString:[tmpUrl stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"/"]]];
+                    }
+                    
+                    // ****** Download book
+                    URLDownload = [[@"http:" stringByAppendingString:[url resourceSpecifier]] retain];
+                    
+                    if ([[[NSURL URLWithString:URLDownload] pathExtension] isEqualToString:@""]) {
+                        URLDownload = [[URLDownload stringByAppendingString:@".hpub"] retain];
+                    }
+                    
+                    [self downloadBook:nil];
+                }
+            }
+            else if ([[url scheme] isEqualToString:@"mailto"])
+            {
+                // Handle mailto links using MessageUI framework
+                NSLog(@"    Page is a link with scheme mailto: handle mail link");
+                
+                // Build temp array and dictionary
+                NSArray *tempArray = [[url absoluteString] componentsSeparatedByString:@"?"];
+                NSMutableDictionary *queryDictionary = [[NSMutableDictionary alloc] init];
+                
+                // Check array count to see if we have parameters to query
+                if ([tempArray count] == 2)
+                {
+                    NSArray *keyValuePairs = [[tempArray objectAtIndex:1] componentsSeparatedByString:@"&"];
+                    
+                    for (NSString *queryString in keyValuePairs) {
+                        NSArray *keyValuePair = [queryString componentsSeparatedByString:@"="];
+                        if (keyValuePair.count == 2) {
+                            [queryDictionary setObject:[keyValuePair objectAtIndex:1] forKey:[keyValuePair objectAtIndex:0]];
+                        }
+                    }
+                }
+                
+                NSString *email = ([tempArray objectAtIndex:0]) ? [tempArray objectAtIndex:0] : [url resourceSpecifier];
+                NSString *subject = [queryDictionary objectForKey:@"subject"];
+                NSString *body = [queryDictionary objectForKey:@"body"];
+                
+                [queryDictionary release];
+                
+                if ([MFMailComposeViewController canSendMail])
+                {
+                    MFMailComposeViewController *mailer = [[MFMailComposeViewController alloc] init];
+                    
+                    mailer.mailComposeDelegate = self;
+                    mailer.modalPresentationStyle = UIModalPresentationPageSheet;
+                    
+                    [mailer setToRecipients:[NSArray arrayWithObject:[email stringByReplacingOccurrencesOfString:@"mailto:" withString:@""]]];
+                    [mailer setSubject:[subject stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+                    [mailer setMessageBody:[body stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding] isHTML:NO];
+                    
+                    // Show the view
+                    [self presentModalViewController:mailer animated:YES];
+                    [mailer release];
+                }
+                else
+                {
+                    // Check if the system can handle a mailto link
+                    if ([[UIApplication sharedApplication] canOpenURL:url])
+                    {
+                        // Go for it and open the URL within the respective app
+                        [[UIApplication sharedApplication] openURL: url];
+                    }
+                    else
+                    {
+                        // Display error message
+                        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Failure"
+                                                                        message:@"Your device doesn't support the sending of emails!"
+                                                                       delegate:nil
+                                                              cancelButtonTitle:@"OK"
+                                                              otherButtonTitles:nil];
+                        
+                        [alert show];
+                        [alert release];
+                    }
+                }
+                
+                return NO;
+            }
+            else if (![[url scheme] isEqualToString:@""] && ![[url scheme] isEqualToString:@"http"] && ![[url scheme] isEqualToString:@"https"])
+            {
+                [[UIApplication sharedApplication] openURL:url];
+                return NO;
+            }
+            else
+            {
+                // **************************************************************************************************** OPEN OUTSIDE BAKER
+                // * This is required since the inclusion of external libraries (like Google Maps) requires
+                // * direct opening of external pages within Baker. So we have to handle when you want to actually
+                // * open a page outside of Baker.
+                
+                NSString *params = [url query];
+                NSLog(@"    Opening absolute URL: %@", [url absoluteString]);
+                
+                if (params != nil)
+                {
+                    NSRegularExpression *referrerExternalRegex = [NSRegularExpression regularExpressionWithPattern:URL_OPEN_EXTERNAL options:NSRegularExpressionCaseInsensitive error:NULL];
+                    NSUInteger matches = [referrerExternalRegex numberOfMatchesInString:params options:0 range:NSMakeRange(0, [params length])];
+                    
+                    NSRegularExpression *referrerModalRegex = [NSRegularExpression regularExpressionWithPattern:URL_OPEN_MODALLY options:NSRegularExpressionCaseInsensitive error:NULL];
+                    NSUInteger matchesModal = [referrerModalRegex numberOfMatchesInString:params options:0 range:NSMakeRange(0, [params length])];
+                    
+                    if (matches > 0)
+                    {
+                        NSLog(@"    Link contain param \"%@\" --> open link in Safari", URL_OPEN_EXTERNAL);
+                        
+                        // Generate new URL without
+                        // We are regexp-ing three things: the string alone, the string first with other content, the string with other content in any other position
+                        NSRegularExpression *replacerRegexp = [NSRegularExpression regularExpressionWithPattern:[[NSString alloc] initWithFormat:@"\\?%@$|(?<=\\?)%@&?|()&?%@", URL_OPEN_EXTERNAL, URL_OPEN_EXTERNAL, URL_OPEN_EXTERNAL] options:NSRegularExpressionCaseInsensitive error:NULL];
+                        NSString *oldURL = [url absoluteString];
+                        NSLog(@"    replacement pattern: %@", [replacerRegexp pattern]);
+                        NSString *newURL = [replacerRegexp stringByReplacingMatchesInString:oldURL options:0 range:NSMakeRange(0, [oldURL length]) withTemplate:@""];
+                        
+                        NSLog(@"    Opening with updated URL: %@", newURL);
+                        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:newURL]];
+                        
+                        return NO;
+                    }
+                    else if (matchesModal)
+                    {
+                        NSLog(@"    Link contain param \"%@\" --> open link modally", URL_OPEN_MODALLY);
+                        
+                        // Generate new URL without
+                        // We are regexp-ing three things: the string alone, the string first with other content, the string with other content in any other position
+                        NSRegularExpression *replacerRegexp = [NSRegularExpression regularExpressionWithPattern:[[NSString alloc] initWithFormat:@"\\?%@$|(?<=\\?)%@&?|()&?%@", URL_OPEN_MODALLY, URL_OPEN_MODALLY, URL_OPEN_MODALLY] options:NSRegularExpressionCaseInsensitive error:NULL];
+                        NSString *oldURL = [url absoluteString];
+                        NSLog(@"    replacement pattern: %@", [replacerRegexp pattern]);
+                        NSString *newURL = [replacerRegexp stringByReplacingMatchesInString:oldURL options:0 range:NSMakeRange(0, [oldURL length]) withTemplate:@""];
+                        
+                        NSLog(@"    Opening with updated URL: %@", newURL);
+                        [self loadModalWebView:url];
+                        
+                        return NO;
+                    }
+                }
+                
+                NSLog(@"    Link doesn't contain param \"%@\" --> open link in page", URL_OPEN_EXTERNAL);
+                
+                return YES;
+            }
+        }
+    }
+    
+    return NO;
+}
+
 
 #pragma mark - STATUS BAR
 - (void)toggleStatusBar {
@@ -799,421 +1051,171 @@
     }
 }
 
+#pragma mark - SCREENSHOTS
 
-#pragma mark - WEBVIEW
+- (void)insertScreenshotForPageViewController:(PageViewController*)pageViewController animated:(bool)animated{
+    int pageNumber = pageViewController.tag;
+    NSNumber *num = [NSNumber numberWithInt:pageNumber];
+    
+    UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
+    
+    
+    NSString *orientationFilePart = (UIInterfaceOrientationIsLandscape(orientation))?@"landscape":@"portrait";
+    
+    NSString *screenshotFile = [cachedScreenshotsPath stringByAppendingPathComponent:[NSString stringWithFormat:@"screenshot-%@-%i.jpg", orientationFilePart, pageNumber]];
+    UIImageView *screenshotView = [[UIImageView alloc] initWithImage:[UIImage imageWithContentsOfFile:screenshotFile]];
+    
+    NSMutableDictionary *attachedScreenshot = attachedScreenshotPortrait;
+    CGSize pageSize = CGSizeMake(screenBounds.size.width, screenBounds.size.height);
+    
+    if (UIInterfaceOrientationIsLandscape(orientation)) {
+        attachedScreenshot = attachedScreenshotLandscape;
+        pageSize = CGSizeMake(screenBounds.size.height, screenBounds.size.width);
+    }
+    
+    screenshotView.frame = CGRectMake(0, 0, pageSize.width, pageSize.height);
+    
+    UIImageView *oldScreenshot = [attachedScreenshot objectForKey:num];
+    
+    if (oldScreenshot) {
+        [attachedScreenshot removeObjectForKey:num];
+        [oldScreenshot removeFromSuperview];
+        [oldScreenshot release];
+        oldScreenshot = nil;
+    }
+    
+    [attachedScreenshot setObject:screenshotView forKey:num];
+    
+    screenshotView.alpha = 0.0;
+    
+    [pageViewController.view  addSubview:screenshotView];
+    [UIView animateWithDuration:0.5*animated animations:^{ screenshotView.alpha = 1.0; }];
+    
+    [screenshotView release];
+}
 
-- (bool)pageViewController:(PageViewController*)pageViewController shouldStartPageLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType{
+- (void)removeScreenshotForPageViewController:(PageViewController*)pageViewController animated:(bool)animated{
+    int pageNumber = pageViewController.tag;
+    NSNumber *num = [NSNumber numberWithInt:pageNumber];
     
-    // Sent before a web view begins loading content, useful to trigger actions before the WebView.
-    NSLog(@"• Should webView load the page ?");
-    NSURL *url = [request URL];
+    NSMutableDictionary *attachedScreenshot = attachedScreenshotPortrait;
+    __block UIImageView *oldScreenshot = [attachedScreenshot objectForKey:num];
     
-    // ****** Handle URI schemes
-    if (url)
+    if (oldScreenshot) {
+        
+        [UIView animateWithDuration:0.5*animated animations:^{
+            oldScreenshot.alpha = 0.0;
+        } completion:^(BOOL finished) {
+            [attachedScreenshot removeObjectForKey:num];
+            [oldScreenshot removeFromSuperview];
+            [oldScreenshot release];
+            oldScreenshot = nil;
+        }];
+    }
+}
+
+- (void)removeScreenshots {
+    
+    for (NSNumber *key in attachedScreenshotLandscape) {
+        UIView *value = [attachedScreenshotLandscape objectForKey:key];
+        [value removeFromSuperview];
+    }
+    
+    for (NSNumber *key in attachedScreenshotPortrait) {
+        UIView *value = [attachedScreenshotPortrait objectForKey:key];
+        [value removeFromSuperview];
+    }
+    
+    [attachedScreenshotLandscape removeAllObjects];
+    [attachedScreenshotPortrait removeAllObjects];
+
+}
+
+- (void)updateScreenshots {
+    
+    NSMutableSet *completeSet = [NSMutableSet new];
+    NSMutableSet *supportSet  = [NSMutableSet new];
+    
+    NSString *interfaceOrientation = nil;
+    NSMutableDictionary *attachedScreenshot = nil;
+    
+    if (UIInterfaceOrientationIsPortrait(self.interfaceOrientation))
     {
-        // Existing, checking if index...
-        if([[url relativePath] isEqualToString:[indexViewController indexPath]])
-        {
-            NSLog(@"    Page is index --> load index");
-            return YES;
-        }
-        else
-        {
-            NSLog(@"    Handle clicked link: %@", [url absoluteString]);
-            
-            // Not index, checking scheme...
-            if ([[url scheme] isEqualToString:@"file"])
-            {
-                // ****** Handle: file://
-                NSLog(@"    Page is a link with scheme file:// --> load internal link");
-                
-                anchorFromURL  = [[url fragment] retain];
-                NSString *file = [[url relativePath] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-                
-                int page = [pages indexOfObject:file];
-                if (page == NSNotFound)
-                {
-                    // ****** Internal link, but not one of the book pages --> load page anyway
-                    return YES;
-                }
-                
-                page = page + 1;
-                
-                PageViewController *newPageView = [self getPageViewForPage:page];
-                NSArray *viewControllers = @[[newPageView autorelease]];
-                
-                BakerWrapperNavigationDirection direction = (pageViewController.tag > newPageView.tag)? BakerWrapperNavigationDirectionBackward : BakerWrapperNavigationDirectionForward;
-                
-                [_wrapperViewController setViewControllers:[viewControllers autorelease] direction:direction animated:YES completion:^(BOOL finished) {
-                    NSLog(@"Navigated to page %i", page);
-                    
-                    /*if (anchorFromURL == nil) {
-                        return YES;
-                    }*/
-                    
-                    //[self handleAnchor:YES];
-                }];
-                
-                return NO;
-            }
-            else if ([[url scheme] isEqualToString:@"book"])
-            {
-                
-                
-                // ****** Handle: book://
-                NSLog(@"    Page is a link with scheme book:// --> download new book");
-                
-                if ([[url host] isEqualToString:@"local"] && [[NSFileManager defaultManager] fileExistsAtPath:bundleBookPath]) {
-                    // *** Back to bundled book
-                    feedbackAlert = [[UIAlertView alloc] initWithTitle:@""
-                                                               message:[NSString stringWithFormat:CLOSE_BOOK_MESSAGE]
-                                                              delegate:self
-                                                     cancelButtonTitle:ALERT_FEEDBACK_CANCEL
-                                                     otherButtonTitles:CLOSE_BOOK_CONFIRM, nil];
-                    [feedbackAlert show];
-                    [feedbackAlert release];
-                    
-                } else {
-                    
-                    if ([[url pathExtension] isEqualToString:@"html"]) {
-                        anchorFromURL = [[url fragment] retain];
-                        pageNameFromURL = [[[url lastPathComponent] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding] retain];
-                        NSString *tmpUrl = [[url URLByDeletingLastPathComponent] absoluteString];
-                        url = [NSURL URLWithString:[tmpUrl stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"/"]]];
-                    }
-                    
-                    // ****** Download book
-                    URLDownload = [[@"http:" stringByAppendingString:[url resourceSpecifier]] retain];
-                    
-                    if ([[[NSURL URLWithString:URLDownload] pathExtension] isEqualToString:@""]) {
-                        URLDownload = [[URLDownload stringByAppendingString:@".hpub"] retain];
-                    }
-                    
-                    [self downloadBook:nil];
-                }
-            }
-            else if ([[url scheme] isEqualToString:@"mailto"])
-            {
-                // Handle mailto links using MessageUI framework
-                NSLog(@"    Page is a link with scheme mailto: handle mail link");
-                
-                // Build temp array and dictionary
-                NSArray *tempArray = [[url absoluteString] componentsSeparatedByString:@"?"];
-                NSMutableDictionary *queryDictionary = [[NSMutableDictionary alloc] init];
-                
-                // Check array count to see if we have parameters to query
-                if ([tempArray count] == 2)
-                {
-                    NSArray *keyValuePairs = [[tempArray objectAtIndex:1] componentsSeparatedByString:@"&"];
-                    
-                    for (NSString *queryString in keyValuePairs) {
-                        NSArray *keyValuePair = [queryString componentsSeparatedByString:@"="];
-                        if (keyValuePair.count == 2) {
-                            [queryDictionary setObject:[keyValuePair objectAtIndex:1] forKey:[keyValuePair objectAtIndex:0]];
-                        }
-                    }
-                }
-                
-                NSString *email = ([tempArray objectAtIndex:0]) ? [tempArray objectAtIndex:0] : [url resourceSpecifier];
-                NSString *subject = [queryDictionary objectForKey:@"subject"];
-                NSString *body = [queryDictionary objectForKey:@"body"];
-                
-                [queryDictionary release];
-                
-                if ([MFMailComposeViewController canSendMail])
-                {
-                    MFMailComposeViewController *mailer = [[MFMailComposeViewController alloc] init];
-                    
-                    mailer.mailComposeDelegate = self;
-                    mailer.modalPresentationStyle = UIModalPresentationPageSheet;
-                    
-                    [mailer setToRecipients:[NSArray arrayWithObject:[email stringByReplacingOccurrencesOfString:@"mailto:" withString:@""]]];
-                    [mailer setSubject:[subject stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
-                    [mailer setMessageBody:[body stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding] isHTML:NO];
-                    
-                    // Show the view
-                    [self presentModalViewController:mailer animated:YES];
-                    [mailer release];
-                }
-                else
-                {
-                    // Check if the system can handle a mailto link
-                    if ([[UIApplication sharedApplication] canOpenURL:url])
-                    {
-                        // Go for it and open the URL within the respective app
-                        [[UIApplication sharedApplication] openURL: url];
-                    }
-                    else
-                    {
-                        // Display error message
-                        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Failure"
-                                                                        message:@"Your device doesn't support the sending of emails!"
-                                                                       delegate:nil
-                                                              cancelButtonTitle:@"OK"
-                                                              otherButtonTitles:nil];
-                        
-                        [alert show];
-                        [alert release];
-                    }
-                }
-                
-                return NO;
-            }
-            else if (![[url scheme] isEqualToString:@""] && ![[url scheme] isEqualToString:@"http"] && ![[url scheme] isEqualToString:@"https"])
-            {
-                [[UIApplication sharedApplication] openURL:url];
-                return NO;
-            }
-            else
-            {
-                // **************************************************************************************************** OPEN OUTSIDE BAKER
-                // * This is required since the inclusion of external libraries (like Google Maps) requires
-                // * direct opening of external pages within Baker. So we have to handle when you want to actually
-                // * open a page outside of Baker.
-                
-                NSString *params = [url query];
-                NSLog(@"    Opening absolute URL: %@", [url absoluteString]);
-                
-                if (params != nil)
-                {
-                    NSRegularExpression *referrerExternalRegex = [NSRegularExpression regularExpressionWithPattern:URL_OPEN_EXTERNAL options:NSRegularExpressionCaseInsensitive error:NULL];
-                    NSUInteger matches = [referrerExternalRegex numberOfMatchesInString:params options:0 range:NSMakeRange(0, [params length])];
-                    
-                    NSRegularExpression *referrerModalRegex = [NSRegularExpression regularExpressionWithPattern:URL_OPEN_MODALLY options:NSRegularExpressionCaseInsensitive error:NULL];
-                    NSUInteger matchesModal = [referrerModalRegex numberOfMatchesInString:params options:0 range:NSMakeRange(0, [params length])];
-                    
-                    if (matches > 0)
-                    {
-                        NSLog(@"    Link contain param \"%@\" --> open link in Safari", URL_OPEN_EXTERNAL);
-                        
-                        // Generate new URL without
-                        // We are regexp-ing three things: the string alone, the string first with other content, the string with other content in any other position
-                        NSRegularExpression *replacerRegexp = [NSRegularExpression regularExpressionWithPattern:[[NSString alloc] initWithFormat:@"\\?%@$|(?<=\\?)%@&?|()&?%@", URL_OPEN_EXTERNAL, URL_OPEN_EXTERNAL, URL_OPEN_EXTERNAL] options:NSRegularExpressionCaseInsensitive error:NULL];
-                        NSString *oldURL = [url absoluteString];
-                        NSLog(@"    replacement pattern: %@", [replacerRegexp pattern]);
-                        NSString *newURL = [replacerRegexp stringByReplacingMatchesInString:oldURL options:0 range:NSMakeRange(0, [oldURL length]) withTemplate:@""];
-                        
-                        NSLog(@"    Opening with updated URL: %@", newURL);
-                        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:newURL]];
-                        
-                        return NO;
-                    }
-                    else if (matchesModal)
-                    {
-                        NSLog(@"    Link contain param \"%@\" --> open link modally", URL_OPEN_MODALLY);
-                        
-                        // Generate new URL without
-                        // We are regexp-ing three things: the string alone, the string first with other content, the string with other content in any other position
-                        NSRegularExpression *replacerRegexp = [NSRegularExpression regularExpressionWithPattern:[[NSString alloc] initWithFormat:@"\\?%@$|(?<=\\?)%@&?|()&?%@", URL_OPEN_MODALLY, URL_OPEN_MODALLY, URL_OPEN_MODALLY] options:NSRegularExpressionCaseInsensitive error:NULL];
-                        NSString *oldURL = [url absoluteString];
-                        NSLog(@"    replacement pattern: %@", [replacerRegexp pattern]);
-                        NSString *newURL = [replacerRegexp stringByReplacingMatchesInString:oldURL options:0 range:NSMakeRange(0, [oldURL length]) withTemplate:@""];
-                        
-                        NSLog(@"    Opening with updated URL: %@", newURL);
-                        [self loadModalWebView:url];
-                        
-                        return NO;
-                    }
-                }
-                
-                NSLog(@"    Link doesn't contain param \"%@\" --> open link in page", URL_OPEN_EXTERNAL);
-                
-                return YES;
-            }
+        interfaceOrientation = @"portrait";
+        attachedScreenshot = attachedScreenshotPortrait;
+    }
+    else if (UIInterfaceOrientationIsLandscape(self.interfaceOrientation))
+    {
+        interfaceOrientation = @"landscape";
+        attachedScreenshot = attachedScreenshotLandscape;
+    }
+    
+    for (NSNumber *num in attachedScreenshot) [completeSet addObject:num];
+    
+    for (int i = MAX(1, currPage.tag - MAX_SCREENSHOT_BEFORE_CP); i <= MIN(pages.count, currPage.tag + MAX_SCREENSHOT_AFTER_CP); i++)
+    {
+        NSNumber *num = [NSNumber numberWithInt:i];
+        [supportSet addObject:num];
+        
+        if ([self checkScreeshotForPage:i andOrientation:interfaceOrientation] && ![attachedScreenshot objectForKey:num]) {
+            [self placeScreenshotForView:nil andPage:i andOrientation:interfaceOrientation];
+            [completeSet addObject:num];
         }
     }
     
-    return NO;
+    [completeSet minusSet:supportSet];
+    
+    for (NSNumber *num in completeSet) {
+        [[attachedScreenshot objectForKey:num] removeFromSuperview];
+        [attachedScreenshot removeObjectForKey:num];
+    }
+    
+    [completeSet release];
+    [supportSet release];
 }
 
 
-/*
- - (void)webViewDidAppear:(UIWebView *)webView animating:(BOOL)animating {
- 
- if ([webView isEqual:currPage])
- {
- [self webView:webView dispatchHTMLEvent:@"focus"];
- 
- // If is the first time i load something in the currPage web view...
- if (currentPageFirstLoading)
- {
- // ... check if there is a saved starting scroll index and set it
- NSLog(@"   Handle last scroll index if necessary");
- NSString *currPageScrollIndex = [[NSUserDefaults standardUserDefaults] objectForKey:@"lastScrollIndex"];
- if (currPageScrollIndex != nil) {
- [self scrollDownCurrentPage:[currPageScrollIndex intValue] animating:YES];
- }
- currentPageFirstLoading = NO;
- }
- else
- {
- NSLog(@"   Handle saved hash reference if necessary");
- [self handleAnchor:YES];
- }
- }
- }
- 
- #pragma mark - SCREENSHOTS
- - (void)removeScreenshots {
- 
- 
- for (NSNumber *key in attachedScreenshotLandscape) {
- UIView *value = [attachedScreenshotLandscape objectForKey:key];
- [value removeFromSuperview];
- }
- 
- for (NSNumber *key in attachedScreenshotPortrait) {
- UIView *value = [attachedScreenshotPortrait objectForKey:key];
- [value removeFromSuperview];
- }
- 
- [attachedScreenshotLandscape removeAllObjects];
- [attachedScreenshotPortrait removeAllObjects];
- }
- - (void)updateScreenshots {
- 
- NSMutableSet *completeSet = [NSMutableSet new];
- NSMutableSet *supportSet  = [NSMutableSet new];
- 
- NSString *interfaceOrientation = nil;
- NSMutableDictionary *attachedScreenshot = nil;
- 
- if (UIInterfaceOrientationIsPortrait(self.interfaceOrientation))
- {
- interfaceOrientation = @"portrait";
- attachedScreenshot = attachedScreenshotPortrait;
- }
- else if (UIInterfaceOrientationIsLandscape(self.interfaceOrientation))
- {
- interfaceOrientation = @"landscape";
- attachedScreenshot = attachedScreenshotLandscape;
- }
- 
- for (NSNumber *num in attachedScreenshot) [completeSet addObject:num];
- 
- for (int i = MAX(1, currPage.tag - MAX_SCREENSHOT_BEFORE_CP); i <= MIN(pages.count, currPage.tag + MAX_SCREENSHOT_AFTER_CP); i++)
- {
- NSNumber *num = [NSNumber numberWithInt:i];
- [supportSet addObject:num];
- 
- if ([self checkScreeshotForPage:i andOrientation:interfaceOrientation] && ![attachedScreenshot objectForKey:num]) {
- [self placeScreenshotForView:nil andPage:i andOrientation:interfaceOrientation];
- [completeSet addObject:num];
- }
- }
- 
- [completeSet minusSet:supportSet];
- 
- for (NSNumber *num in completeSet) {
- [[attachedScreenshot objectForKey:num] removeFromSuperview];
- [attachedScreenshot removeObjectForKey:num];
- }
- 
- [completeSet release];
- [supportSet release];
- }
- - (BOOL)checkScreeshotForPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation {
- 
- if (![[NSFileManager defaultManager] fileExistsAtPath:cachedScreenshotsPath]) {
- [[NSFileManager defaultManager] createDirectoryAtPath:cachedScreenshotsPath withIntermediateDirectories:YES attributes:nil error:nil];
- [self addSkipBackupAttributeToItemAtPath:cachedScreenshotsPath];
- }
- 
- NSString *screenshotFile = [cachedScreenshotsPath stringByAppendingPathComponent:[NSString stringWithFormat:@"screenshot-%@-%i.jpg", interfaceOrientation, pageNumber]];
- return [[NSFileManager defaultManager] fileExistsAtPath:screenshotFile];
- }
- - (void)takeScreenshotFromView:(UIWebView *)webView forPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation {
- 
- BOOL shouldRevealWebView = YES;
- BOOL animating = YES;
- 
- if (![self checkScreeshotForPage:pageNumber andOrientation:interfaceOrientation])
- {
- NSLog(@"• Taking screenshot of page %d", pageNumber);
- 
- NSString *screenshotFile = [cachedScreenshotsPath stringByAppendingPathComponent:[NSString stringWithFormat:@"screenshot-%@-%i.jpg", interfaceOrientation, pageNumber]];
- UIImage *screenshot = nil;
- 
- if ([interfaceOrientation isEqualToString:[self getCurrentInterfaceOrientation]]) {
- 
- UIGraphicsBeginImageContextWithOptions(webView.frame.size, NO, [[UIScreen mainScreen] scale]);
- [webView.layer renderInContext:UIGraphicsGetCurrentContext()];
- screenshot = UIGraphicsGetImageFromCurrentImageContext();
- UIGraphicsEndImageContext();
- 
- if (screenshot) {
- BOOL saved = [UIImageJPEGRepresentation(screenshot, 0.6) writeToFile:screenshotFile options:NSDataWritingAtomic error:nil];
- if (saved) {
- NSLog(@"    Screenshot succesfully saved to file %@", screenshotFile);
- [self placeScreenshotForView:webView andPage:pageNumber andOrientation:interfaceOrientation];
- shouldRevealWebView = NO;
- }
- }
- }
- 
- [self performSelector:@selector(lockPage:) withObject:[NSNumber numberWithBool:NO] afterDelay:0.1];
- }
- 
- if (shouldRevealWebView) {
- [self webView:webView hidden:NO animating:animating];
- }
- }
- - (void)placeScreenshotForView:(UIWebView *)webView andPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation {
- 
- int i = pageNumber - 1;
- NSNumber *num = [NSNumber numberWithInt:pageNumber];
- 
- NSString    *screenshotFile = [cachedScreenshotsPath stringByAppendingPathComponent:[NSString stringWithFormat:@"screenshot-%@-%i.jpg", interfaceOrientation, pageNumber]];
- UIImageView *screenshotView = [[UIImageView alloc] initWithImage:[UIImage imageWithContentsOfFile:screenshotFile]];
- 
- NSMutableDictionary *attachedScreenshot = attachedScreenshotPortrait;
- CGSize pageSize = CGSizeMake(screenBounds.size.width, screenBounds.size.height);
- 
- if ([interfaceOrientation isEqualToString:@"landscape"]) {
- attachedScreenshot = attachedScreenshotLandscape;
- pageSize = CGSizeMake(screenBounds.size.height, screenBounds.size.width);
- }
- 
- screenshotView.frame = CGRectMake(pageSize.width * i, 0, pageSize.width, pageSize.height);
- 
- BOOL alreadyPlaced = NO;
- UIImageView *oldScreenshot = [attachedScreenshot objectForKey:num];
- 
- if (oldScreenshot) {
- // [scrollView addSubview:screenshotView];
- [attachedScreenshot removeObjectForKey:num];
- [oldScreenshot removeFromSuperview];
- 
- alreadyPlaced = YES;
- }
- 
- [attachedScreenshot setObject:screenshotView forKey:num];
- 
- if (webView == nil)
- {
- screenshotView.alpha = 0.0;
- 
- // [scrollView addSubview:screenshotView];
- [UIView animateWithDuration:0.5 animations:^{ screenshotView.alpha = 1.0; }];
- }
- else if (webView != nil)
- {
- if (alreadyPlaced)
- {
- [self webView:webView hidden:NO animating:NO];
- }
- else if ([interfaceOrientation isEqualToString:[self getCurrentInterfaceOrientation]])
- {
- screenshotView.alpha = 0.0;
- 
- //[scrollView addSubview:screenshotView];
- /*[UIView animateWithDuration:0.5
- animations:^{ screenshotView.alpha = 1.0; }
- completion:^(BOOL finished) { if (!currentPageHasChanged) { [self webView:webView hidden:NO animating:NO]; }}];*
- }
- }
- 
- [screenshotView release];
- }
- */
+- (BOOL)checkScreeshotForPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation {
+    
+    if (![[NSFileManager defaultManager] fileExistsAtPath:cachedScreenshotsPath]) {
+        [[NSFileManager defaultManager] createDirectoryAtPath:cachedScreenshotsPath withIntermediateDirectories:YES attributes:nil error:nil];
+        [self addSkipBackupAttributeToItemAtPath:cachedScreenshotsPath];
+    }
+    
+    NSString *screenshotFile = [cachedScreenshotsPath stringByAppendingPathComponent:[NSString stringWithFormat:@"screenshot-%@-%i.jpg", interfaceOrientation, pageNumber]];
+    return [[NSFileManager defaultManager] fileExistsAtPath:screenshotFile];
+}
+- (void)takeScreenshotFromView:(UIWebView *)webView forPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation {
+    
+    BOOL shouldRevealWebView = YES;
+    BOOL animating = YES;
+    
+    if (![self checkScreeshotForPage:pageNumber andOrientation:interfaceOrientation])
+    {
+        NSLog(@"• Taking screenshot of page %d", pageNumber);
+        
+        NSString *screenshotFile = [cachedScreenshotsPath stringByAppendingPathComponent:[NSString stringWithFormat:@"screenshot-%@-%i.jpg", interfaceOrientation, pageNumber]];
+        UIImage *screenshot = nil;
+        
+        if ([interfaceOrientation isEqualToString:[self getCurrentInterfaceOrientation]]) {
+            
+            UIGraphicsBeginImageContextWithOptions(webView.frame.size, NO, [[UIScreen mainScreen] scale]);
+            [webView.layer renderInContext:UIGraphicsGetCurrentContext()];
+            screenshot = UIGraphicsGetImageFromCurrentImageContext();
+            UIGraphicsEndImageContext();
+            
+            if (screenshot) {
+                BOOL saved = [UIImageJPEGRepresentation(screenshot, 0.6) writeToFile:screenshotFile options:NSDataWritingAtomic error:nil];
+                if (saved) {
+                    NSLog(@"    Screenshot succesfully saved to file %@", screenshotFile);
+                    [self placeScreenshotForView:webView andPage:pageNumber andOrientation:interfaceOrientation];
+                    shouldRevealWebView = NO;
+                }
+            }
+        }
+        
+        [self performSelector:@selector(lockPage:) withObject:[NSNumber numberWithBool:NO] afterDelay:0.1];
+    }
+}
+
 @end

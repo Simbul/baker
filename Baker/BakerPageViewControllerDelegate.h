@@ -11,6 +11,7 @@
 @class PageViewController;
 @protocol BakerPageViewControllerDelegate <NSObject>
 - (bool)pageViewController:(PageViewController*)pageViewController shouldStartPageLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType;
+- (void)pageViewControllerWillLoadPage:(PageViewController*)pageViewController;
 - (void)pageViewControllerDidLoadPage:(PageViewController*)pageViewController;
 - (void)pageViewControllerWillUnloadPage:(PageViewController*)pageViewController;
 
