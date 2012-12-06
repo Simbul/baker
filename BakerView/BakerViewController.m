@@ -885,7 +885,7 @@
 
     NSLog(@"» Loading a modal webview for url %@", url.absoluteString);
 
-    myModalViewController = [[ModalViewController alloc] initWithUrl:url];
+    myModalViewController = [[[ModalViewController alloc] initWithUrl:url] autorelease];
     myModalViewController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
     myModalViewController.delegate = self;
 
@@ -900,8 +900,6 @@
         // iOS 4
         [self presentModalViewController:myModalViewController animated:YES];
     }
-
-    [myModalViewController release];
 }
 - (void)closeModalWebView {
     /****************************************************************************************************
