@@ -350,6 +350,20 @@
 
     [self.progressBar setProgress:((float)totalBytesWritten/(float)expectedTotalBytes) animated:YES];
 }
+- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
+    NSLog(@"Connection error when trying to download %@: %@", [connection currentRequest].URL, [error localizedDescription]);
+    [connection cancel];
+
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"DOWNLOAD_FAILED_TITLE", nil)
+                                                    message:NSLocalizedString(@"DOWNLOAD_FAILED_MESSAGE", nil)
+                                                   delegate:nil
+                                          cancelButtonTitle:NSLocalizedString(@"DOWNLOAD_FAILED_CLOSE", nil)
+                                          otherButtonTitles:nil];
+    [alert show];
+    [alert release];
+
+    [self refresh];
+}
 
 #pragma mark - Newsstand archive management
 

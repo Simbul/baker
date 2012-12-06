@@ -13,6 +13,11 @@
 "SUBSCRIPTION_FAILED_TITLE" = "Subscription failure";
 "SUBSCRIPTION_FAILED_CLOSE" = "Close";
 
+// Download alert
+"DOWNLOAD_FAILED_TITLE" = "Download failed";
+"DOWNLOAD_FAILED_MESSAGE" = "The issue could not be downloaded";
+"DOWNLOAD_FAILED_CLOSE" = "Close";
+
 // Issue buttons
 "ACTION_REMOTE_TEXT" = "DOWNLOAD";
 "ACTION_DOWNLOADED_TEXT" = "READ";
