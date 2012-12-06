@@ -326,6 +326,20 @@
     NSLog(@"File is being unzipped to %@", destinationPath);
     [SSZipArchive unzipFileAtPath:[destinationURL path] toDestination:destinationPath];
 
+    // Delete downloaded HPUB file
+    NSError *error;
+    
+    // Create file manager
+    NSFileManager *fileMgr = [NSFileManager defaultManager];
+    
+    // Attempt to delete the downloaded .HPUB file after it was unzipped
+    if ([fileMgr removeItemAtPath:[destinationURL path] error:&error] != YES){
+        NSLog(@"Unable to delete file: %@", [error localizedDescription]);
+    }
+    else{
+        NSLog(@"Deleted temporary downloaded file at location: %@", [destinationURL path]);
+    }
+    
     [self refresh];
 
     // TODO: notify of new content with setApplicationIconBadgeNumber
