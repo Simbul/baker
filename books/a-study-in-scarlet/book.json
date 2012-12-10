@@ -1,11 +1,11 @@
 {
     "hpub": 1,
-    "title": "The Study in Scarlet",
+    "title": "A Study in Scarlet",
     "author": ["Arthur Conan Doyle"],
     "creator": ["D. Casali, M. Colombo, A. Morandi"],
-    "date": "2011-06-15",
-    "url": "book://bakerframework.com/books/arthurconandoyle-thestudyinscarlet",
-    "cover": "thumb.png",
+    "date": "1887-10-10",
+    "url": "book://bakerframework.com/newsstand-books/a-study-in-scarlet",
+    "cover": "a-study-in-scarlet.png",
 
     "orientation": "both",
     "zoomable": false,
