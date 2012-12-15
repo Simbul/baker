@@ -36,6 +36,7 @@
 
 @property (copy, nonatomic) NSURL *url;
 @property (copy, nonatomic) NSArray *issues;
+@property (copy, nonatomic) NSString *shelfManifestPath;
 
 #ifdef BAKER_NEWSSTAND
 -(id)initWithURL:(NSString *)urlString;

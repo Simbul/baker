@@ -31,6 +31,7 @@
 
 #import "IssuesManager.h"
 #import "BakerIssue.h"
+#import "Utils.h"
 
 #import "JSONKit.h"
 
@@ -38,6 +39,7 @@
 
 @synthesize url;
 @synthesize issues;
+@synthesize shelfManifestPath;
 
 -(id)initWithURL:(NSString *)urlString {
     self = [super init];
@@ -45,6 +47,9 @@
     if (self) {
         self.url = [NSURL URLWithString:urlString];
         self.issues = nil;
+
+        NSString *cachePath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+        self.shelfManifestPath = [cachePath stringByAppendingPathComponent:@"shelf.json"];
     }
 
     return self;
@@ -52,12 +57,9 @@
 
 #ifdef BAKER_NEWSSTAND
 -(BOOL)refresh {
-    NSError *error = nil;
-    NSString *json = [NSString stringWithContentsOfURL:self.url encoding:NSUTF8StringEncoding error:&error];
-    if (error) {
-        NSLog(@"Error loading Newsstand manifest: %@", error);
-        return NO;
-    } else {
+    NSString *json = [self getShelfJSON];
+
+    if (json) {
         NSArray *jsonArr = [json objectFromJSONString];
 
         [self updateNewsstandIssuesList:jsonArr];
@@ -77,8 +79,42 @@
             return [second compare:first];
         }];
         return YES;
+    } else {
+        return NO;
     }
 }
+
+-(NSString *)getShelfJSON {
+    NSError *error = nil;
+    NSString *json = nil;
+
+    json = [NSString stringWithContentsOfURL:self.url encoding:NSUTF8StringEncoding error:&error];
+    if (error) {
+        NSLog(@"Error loading Shelf manifest: %@", error);
+        if ([[NSFileManager defaultManager] fileExistsAtPath:self.shelfManifestPath]) {
+            NSLog(@"Loading cached Shelf manifest from %@", self.shelfManifestPath);
+            json = [NSString stringWithContentsOfFile:self.shelfManifestPath encoding:NSUTF8StringEncoding error:&error];
+            if (error) {
+                NSLog(@"Error loading cached Shelf manifest: %@", error);
+            }
+        } else {
+            NSLog(@"No cached Shelf manifest found at %@", self.shelfManifestPath);
+            json = nil;
+        }
+    } else {
+        // Cache the shelf manifest
+        [[NSFileManager defaultManager] createFileAtPath:self.shelfManifestPath contents:nil attributes:nil];
+        [json writeToFile:self.shelfManifestPath atomically:YES encoding:NSUTF8StringEncoding error:&error];
+        if (error) {
+            NSLog(@"Error caching Shelf manifest: %@", error);
+        } else {
+            [Utils addSkipBackupAttributeToItemAtPath:self.shelfManifestPath];
+        }
+    }
+
+    return json;
+}
+
 -(void)updateNewsstandIssuesList:(NSArray *)issuesList {
     NKLibrary *nkLib = [NKLibrary sharedLibrary];
 
