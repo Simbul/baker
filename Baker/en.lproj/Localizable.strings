@@ -20,7 +20,7 @@
 
 // Connection alert
 "INTERNET_CONNECTION_UNAVAILABLE_TITLE" = "No Internet Connection";
-"INTERNET_CONNECTION_UNAVAILABLE" = "An Internet connection is unavailable. Some features of this application require an active connection.";
+"INTERNET_CONNECTION_UNAVAILABLE_MESSAGE" = "An Internet connection is unavailable. Some features of this application require an active connection.";
 "INTERNET_CONNECTION_UNAVAILABLE_CLOSE" = "OK";
 
 // Issue buttons
