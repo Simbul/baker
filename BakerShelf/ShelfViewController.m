@@ -239,21 +239,21 @@
 #ifdef BAKER_NEWSSTAND
 - (void)handleRefresh:(NSNotification *)notification {
     [self setrefreshButtonEnabled:NO];
-
+    
     if (!self.issuesManager) {
         self.issuesManager = [[[IssuesManager alloc] initWithURL:NEWSSTAND_MANIFEST_URL] autorelease];
     }
     if([self.issuesManager refresh]) {
         self.issues = issuesManager.issues;
-
+        
         [self.issues enumerateObjectsUsingBlock:^(id object, NSUInteger idx, BOOL *stop) {
             // NOTE: this block changes the issueViewController array while looping
-
+            
             IssueViewController *existingIvc = nil;
             if (idx < [self.issueViewControllers count]) {
                 existingIvc = [self.issueViewControllers objectAtIndex:idx];
             }
-
+            
             BakerIssue *issue = (BakerIssue*)object;
             if (!existingIvc || ![[existingIvc issue].ID isEqualToString:issue.ID]) {
                 IssueViewController *ivc = [self createIssueViewControllerWithIssue:issue];
@@ -261,6 +261,12 @@
                 [self.gridView insertItemsAtIndices:[NSIndexSet indexSetWithIndex:idx] withAnimation:AQGridViewItemAnimationNone];
             }
         }];
+    }
+    else{
+        UIAlertView *connAlert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"INTERNET_CONNECTION_UNAVAILABLE_TITLE", nil) message:NSLocalizedString(@"INTERNET_CONNECTION_UNAVAILABLE", nil)
+                                                         delegate:self cancelButtonTitle:NSLocalizedString(@"INTERNET_CONNECTION_UNAVAILABLE_CLOSE", nil) otherButtonTitles:nil];
+        [connAlert show];
+        [connAlert release];
     }
     [self setrefreshButtonEnabled:YES];
 }

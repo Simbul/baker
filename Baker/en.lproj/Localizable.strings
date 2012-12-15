@@ -18,6 +18,11 @@
 "DOWNLOAD_FAILED_MESSAGE" = "The issue could not be downloaded";
 "DOWNLOAD_FAILED_CLOSE" = "Close";
 
+// Connection alert
+"INTERNET_CONNECTION_UNAVAILABLE_TITLE" = "No Internet Connection";
+"INTERNET_CONNECTION_UNAVAILABLE" = "An Internet connection is unavailable. Some features of this application require an active connection.";
+"INTERNET_CONNECTION_UNAVAILABLE_CLOSE" = "OK";
+
 // Issue buttons
 "ACTION_REMOTE_TEXT" = "DOWNLOAD";
 "ACTION_DOWNLOADED_TEXT" = "READ";
