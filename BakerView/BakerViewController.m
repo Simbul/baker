@@ -1490,10 +1490,12 @@
 
     NSDictionary *userInfo = notification.userInfo;
     UITouch *touch = [userInfo objectForKey:@"touch"];
+    BOOL shouldPropagateIndexInterceptedTouch = NO;
 
     if (touch.phase == UITouchPhaseBegan) {
         userIsScrolling = NO;
         shouldPropagateInterceptedTouch = ([touch.view isDescendantOfView:scrollView]);
+        shouldPropagateIndexInterceptedTouch = [touch.view isDescendantOfView:indexViewController.view];
     } else if (touch.phase == UITouchPhaseMoved) {
         userIsScrolling = YES;
     }
@@ -1503,6 +1505,11 @@
             [self userDidScroll:touch];
         } else if (touch.phase == UITouchPhaseEnded) {
             [self userDidTap:touch];
+        }
+    } else if (shouldPropagateIndexInterceptedTouch) {
+        if (touch.tapCount == 2) {
+            NSLog(@"    Index Multi Tap TOGGLE STATUS BAR");
+            [self toggleBars];
         }
     }
 }
