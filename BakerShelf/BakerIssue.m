@@ -96,7 +96,7 @@
     if (contentStatus == NKIssueContentStatusNone) {
         return @"remote";
     } else if (contentStatus == NKIssueContentStatusDownloading) {
-        return @"downloading";
+        return @"connecting";
     } else if (contentStatus == NKIssueContentStatusAvailable) {
         return @"downloaded";
     }
