@@ -170,6 +170,7 @@
 - (void)viewWillAppear:(BOOL)animated {
 
     if (!currentPageWillAppearUnderModal) {
+
         [super viewWillAppear:animated];
         [self.navigationController.navigationBar setTranslucent:YES];
 
@@ -179,8 +180,6 @@
         // ****** LISTENER FOR CLOSING APPLICATION
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleApplicationWillResignActive:) name:@"applicationWillResignActiveNotification" object:nil];
     }
-
-    currentPageWillAppearUnderModal = NO;
 }
 - (void)handleApplicationWillResignActive:(NSNotification *)notification {
     NSLog(@"RESIGN, SAVING");
@@ -188,12 +187,17 @@
 }
 - (void)viewDidAppear:(BOOL)animated {
 
-    [super viewDidAppear:animated];
+    if (!currentPageWillAppearUnderModal) {
 
-    [self willRotateToInterfaceOrientation:self.interfaceOrientation duration:0];
-    [self performSelector:@selector(hideBars:) withObject:[NSNumber numberWithBool:YES] afterDelay:0.5];
+        [super viewDidAppear:animated];
 
-    [self startReading];
+        [self willRotateToInterfaceOrientation:self.interfaceOrientation duration:0];
+        [self performSelector:@selector(hideBars:) withObject:[NSNumber numberWithBool:YES] afterDelay:0.5];
+
+        [self startReading];
+    }
+
+    currentPageWillAppearUnderModal = NO;
 }
 - (BOOL)loadBookWithBookPath:(NSString *)bookPath {
     NSLog(@"• LOAD BOOK WITH PATH: %@", bookPath);
