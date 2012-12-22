@@ -132,6 +132,7 @@
     return self;
 }
 - (void)viewDidLoad {
+
     [super viewDidLoad];
     self.navigationItem.title = book.title;
 
@@ -167,6 +168,7 @@
     }
 }
 - (void)viewWillAppear:(BOOL)animated {
+
     if (!currentPageWillAppearUnderModal) {
         [super viewWillAppear:animated];
         [self.navigationController.navigationBar setTranslucent:YES];
@@ -176,8 +178,6 @@
 
         // ****** LISTENER FOR CLOSING APPLICATION
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleApplicationWillResignActive:) name:@"applicationWillResignActiveNotification" object:nil];
-
-        [self startReading];
     }
 
     currentPageWillAppearUnderModal = NO;
@@ -187,8 +187,13 @@
     [self saveBookStatusWithScrollIndex];
 }
 - (void)viewDidAppear:(BOOL)animated {
+
     [super viewDidAppear:animated];
+
+    [self willRotateToInterfaceOrientation:self.interfaceOrientation duration:0];
     [self performSelector:@selector(hideBars:) withObject:[NSNumber numberWithBool:YES] afterDelay:0.5];
+
+    [self startReading];
 }
 - (BOOL)loadBookWithBookPath:(NSString *)bookPath {
     NSLog(@"• LOAD BOOK WITH PATH: %@", bookPath);
@@ -295,9 +300,9 @@
 }
 - (void)startReading {
 
-    [self setPageSize:[self getCurrentInterfaceOrientation:self.interfaceOrientation]];
+    //[self setPageSize:[self getCurrentInterfaceOrientation:self.interfaceOrientation]];
     [self buildPageDetails];
-    [self updateBookLayout];
+    //[self updateBookLayout];
 
     // ****** INDEX WEBVIEW INIT
     // we move it here to make it more clear and clean
@@ -1334,6 +1339,7 @@
         interfaceOrientation = @"landscape";
         attachedScreenshot = attachedScreenshotLandscape;
     }
+
     /*
     DEPRECATED - Won't work if called during rotation
     if (UIInterfaceOrientationIsPortrait(self.interfaceOrientation))
@@ -1698,8 +1704,8 @@
 
 #pragma mark - ORIENTATION
 - (NSString *)getCurrentInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    if ([availableOrientation isEqualToString:@"portrait"] || [availableOrientation isEqualToString:@"landscape"]) {
-        return availableOrientation;
+    if ([book.orientation isEqualToString:@"portrait"] || [book.orientation isEqualToString:@"landscape"]) {
+        return book.orientation;
     } else {
         if (UIInterfaceOrientationIsLandscape(interfaceOrientation)) {
             return @"landscape";
@@ -1708,19 +1714,10 @@
         }
     }
 }
-- (NSInteger)supportedInterfaceOrientations {
-    if ([availableOrientation isEqualToString:@"portrait"]) {
-        return (UIInterfaceOrientationMaskPortrait | UIInterfaceOrientationPortraitUpsideDown);
-    } else if ([availableOrientation isEqualToString:@"landscape"]) {
-        return UIInterfaceOrientationMaskLandscape;
-    } else {
-        return UIInterfaceOrientationMaskAll;
-    }
-}
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    if ([availableOrientation isEqualToString:@"portrait"]) {
+    if ([book.orientation isEqualToString:@"portrait"]) {
         return UIInterfaceOrientationIsPortrait(interfaceOrientation);
-    } else if ([availableOrientation isEqualToString:@"landscape"]) {
+    } else if ([book.orientation isEqualToString:@"landscape"]) {
         return UIInterfaceOrientationIsLandscape(interfaceOrientation);
     } else {
         return YES;
@@ -1728,6 +1725,15 @@
 }
 - (BOOL)shouldAutorotate {
     return YES;
+}
+- (NSInteger)supportedInterfaceOrientations {
+    if ([book.orientation isEqualToString:@"portrait"]) {
+        return (UIInterfaceOrientationMaskPortrait | UIInterfaceOrientationMaskPortraitUpsideDown);
+    } else if ([book.orientation isEqualToString:@"landscape"]) {
+        return UIInterfaceOrientationMaskLandscape;
+    } else {
+        return UIInterfaceOrientationMaskAll;
+    }
 }
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
     // Notify the index view
