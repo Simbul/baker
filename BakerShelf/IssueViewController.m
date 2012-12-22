@@ -232,6 +232,17 @@
         self.progressBar.hidden = YES;
         self.loadingLabel.hidden = YES;
     }
+    else if ([status isEqualToString:@"connecting"])
+    {
+        [self.spinner startAnimating];
+
+        self.actionButton.hidden = YES;
+        self.archiveButton.hidden = YES;
+        self.progressBar.progress = 0;
+        self.loadingLabel.text = NSLocalizedString(@"CONNECTING_TEXT", nil);
+        self.loadingLabel.hidden = NO;
+        self.progressBar.hidden = YES;
+    }
     else if ([status isEqualToString:@"downloading"])
     {
         [self.spinner startAnimating];
@@ -309,7 +320,7 @@
 #ifdef BAKER_NEWSSTAND
 - (void)download
 {
-    [self refresh:@"downloading"];
+    [self refresh:@"connecting"];
     [self.issue downloadWithDelegate:self];
 }
 #endif
@@ -323,6 +334,10 @@
 
 - (void)connection:(NSURLConnection *)connection didWriteData:(long long)bytesWritten totalBytesWritten:(long long)totalBytesWritten expectedTotalBytes:(long long)expectedTotalBytes
 {
+    // TODO: use a better check (ideally check that status is "connecting" instead of relying on a UI property)
+    if (self.progressBar.hidden) {
+        [self refresh:@"downloading"];
+    }
     [self.progressBar setProgress:((float)totalBytesWritten/(float)expectedTotalBytes) animated:YES];
 }
 - (void)connectionDidFinishDownloading:(NSURLConnection *)connection destinationURL:(NSURL *)destinationURL
