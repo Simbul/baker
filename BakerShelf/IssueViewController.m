@@ -195,6 +195,17 @@
     self.progressBar.progressTintColor = [UIColor colorWithHexString:ISSUES_PROGRESSBAR_TINT_COLOR];
 
     [self.view addSubview:progressBar];
+
+    #ifdef BAKER_NEWSSTAND
+    // RESUME PENDING NEWSSTAND DOWNLOAD
+    NKLibrary *nkLib = [NKLibrary sharedLibrary];
+    for (NKAssetDownload *asset in [nkLib downloadingAssets]) {
+        if ([asset.issue.name isEqualToString:self.issue.ID]) {
+            NSLog(@"Resuming abandoned Newsstand download: %@", asset.issue.name);
+            [asset downloadWithDelegate:self];
+        }
+    }
+    #endif
 }
 - (void)viewWillAppear:(BOOL)animated
 {
@@ -347,8 +358,6 @@
 - (void)connectionDidResumeDownloading:(NSURLConnection *)connection totalBytesWritten:(long long)totalBytesWritten expectedTotalBytes:(long long)expectedTotalBytes
 {
     NSLog(@"Connection did resume downloading %lld %lld", totalBytesWritten, expectedTotalBytes);
-
-    [self.progressBar setProgress:((float)totalBytesWritten/(float)expectedTotalBytes) animated:YES];
 }
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
     NSLog(@"Connection error when trying to download %@: %@", [connection currentRequest].URL, [error localizedDescription]);
