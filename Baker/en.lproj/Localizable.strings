@@ -1,0 +1,47 @@
+
+// Shelf Navigation Title at the top of the main Issues List
+"SHELF_NAVIGATION_TITLE" = "Baker Shelf";
+
+// Subscription button
+"SUBSCRIBE_BUTTON_TEXT" = "Subscribe";
+"SUBSCRIBE_BUTTON_DISABLED_TEXT" = "Subscribing...";
+
+// Subscription alerts
+"SUBSCRIPTION_SUCCESSFUL_TITLE" = "Subscribed successfully";
+"SUBSCRIPTION_SUCCESSFUL_MESSAGE" = "You have successfully subscribed";
+"SUBSCRIPTION_SUCCESSFUL_CLOSE" = "Close";
+"SUBSCRIPTION_FAILED_TITLE" = "Subscription failure";
+"SUBSCRIPTION_FAILED_CLOSE" = "Close";
+
+// Download alert
+"DOWNLOAD_FAILED_TITLE" = "Download failed";
+"DOWNLOAD_FAILED_MESSAGE" = "The issue could not be downloaded";
+"DOWNLOAD_FAILED_CLOSE" = "Close";
+
+// Connection alert
+"INTERNET_CONNECTION_UNAVAILABLE_TITLE" = "No Internet Connection";
+"INTERNET_CONNECTION_UNAVAILABLE_MESSAGE" = "An Internet connection is unavailable. Some features of this application require an active connection.";
+"INTERNET_CONNECTION_UNAVAILABLE_CLOSE" = "OK";
+
+// Issue buttons
+"ACTION_REMOTE_TEXT" = "DOWNLOAD";
+"ACTION_DOWNLOADED_TEXT" = "READ";
+"ARCHIVE_TEXT" = "ARCHIVE";
+"CONNECTING_TEXT" = "CONNECTING...";
+"DOWNLOADING_TEXT" = "DOWNLOADING ...";
+"OPENING_TEXT" = "Loading...";
+
+// Archiving alert
+"ARCHIVE_ALERT_TITLE" = "Are you sure you want to archive this item?";
+"ARCHIVE_ALERT_MESSAGE" = "This item will be removed from your device. You may download it at anytime for free.";
+"ARCHIVE_ALERT_BUTTON_CANCEL" = "Cancel";
+"ARCHIVE_ALERT_BUTTON_OK" = "Archive";
+
+// Mail alert
+"MAILTO_ALERT_TITLE" = "Failure";
+"MAILTO_ALERT_MESSAGE" = "Your device doesn't support the sending of emails!";
+"MAILTO_ALERT_CLOSE" = "OK";
+
+// Modal web view
+"WEB_MODAL_FAILURE_MESSAGE" = "Unable to connect.";
+"WEB_MODAL_CLOSE_BUTTON_TEXT" = "Back";

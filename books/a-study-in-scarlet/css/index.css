@@ -1,0 +1,129 @@
+/*
+ * Baker Ebook Framework - Basic Book
+ * last update: 2011-10-10
+ * 
+ * Copyright (C) 2011 by Davide S. Casali <folletto AT gmail DOT com>
+ * 
+ */
+
+
+
+/****************************************************************************************************
+ * General
+ */
+body {
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    margin: 0;
+    padding: 25px;
+    background: rgba(240, 240, 240, 0.9);
+    
+    width: 2800px;
+}
+
+a {
+  color: #b50303;
+}
+
+
+/****************************************************************************************************
+ * Typography
+ */
+p, ul, ol {
+  font-size: 18px;
+  line-height: 40px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: "BodoniSvtyTwoITCTT-Book", Times, serif;
+  font-weight: normal;
+  text-align: center;
+  
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+/****************************************************************************************************
+ * Index
+ */
+#index .navigation h6,
+#index .navigation ol li a small { 
+  display: none;
+}
+
+#index .navigation ol {
+  display: inline;
+  padding: 0;
+  margin-right: 60px;
+}
+
+#index .navigation h5 {
+  background: #cf0000;
+  color: #ffffff;
+  display: inline-block;
+  font-size: 20px;
+  
+  padding: 5px;
+  width: 55px;
+  height: 140px;
+}
+
+#index .navigation li {
+  background: #ffffff url(../images/1-01-a.gif) -30px 0;
+  display: inline-block;
+  
+  margin-left: 30px;
+  overflow: hidden;
+  position: relative;
+  
+  padding: 0;
+  width: 150px;
+  height: 150px;
+  
+  vertical-align: top;
+}
+
+#index .navigation li a {
+  font-family: "BodoniSvtyTwoITCTT-Book", Times, serif;
+  font-weight: normal;
+  text-align: center;
+  text-decoration: none;
+  display: block;
+  width: 150px;
+  height: 150px;
+}
+
+#index .navigation li a h7 {
+  background: rgba(255, 255, 255, 0.9);
+  font-size: 30px;
+  padding-top: 8px;
+  
+  position: absolute;
+  bottom: 0;
+  
+  width: 100%;
+  height: 47px;
+}
+
+
+/****** Images */
+#index .navigation li.p1-01 { background: #ffffff url(../images/1-01-b.gif) -30px -72px; }
+#index .navigation li.p1-02 { background: #ffffff url(../images/1-02-a.gif) -30px -30px; }
+#index .navigation li.p1-03 { background: #ffffff url(../images/1-03-a.gif) -60px -180px; }
+#index .navigation li.p1-04 { background: #ffffff url(../images/1-04-a.gif) -20px -80px; }
+#index .navigation li.p1-05 { background: #ffffff url(../images/1-05-a.gif) -30px -60px; }
+#index .navigation li.p1-06 { background: #ffffff url(../images/1-06-a.gif) -60px -45px; }
+#index .navigation li.p1-07 { background: #ffffff url(../images/1-07-b.gif) -75px -40px; }
+
+#index .navigation li.p2-01 { background: #ffffff url(../images/2-01-a.gif) -30px 0; }
+#index .navigation li.p2-02 { background: #ffffff url(../images/2-02-b.gif) -30px -80px; }
+#index .navigation li.p2-03 { background: #ffffff url(../images/2-03-a.gif) -10px -60px; }
+#index .navigation li.p2-04 { background: #ffffff url(../images/2-04-b.gif) -40px -130px; }
+#index .navigation li.p2-05 { background: #ffffff url(../images/2-05-a.gif) -60px -80px; }
+#index .navigation li.p2-06 { background: #ffffff url(../images/2-06-a.gif) -70px -60px; }
+#index .navigation li.p2-07 { background: #ffffff url(../images/2-07-a.gif) -60px -80px; }
+
+
+
+
