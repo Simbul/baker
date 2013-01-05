@@ -177,7 +177,6 @@
 		ABAFB58D15AB9A2E002FA498 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		ABAFB58F15AB9A2E002FA498 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		ABAFB59315AB9A2E002FA498 /* Baker-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Baker-Info.plist"; sourceTree = "<group>"; };
-		ABAFB59515AB9A2E002FA498 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		ABAFB59715AB9A2E002FA498 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		ABAFB59915AB9A2E002FA498 /* Baker-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Baker-Prefix.pch"; sourceTree = "<group>"; };
 		ABAFB59A15AB9A2E002FA498 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -449,7 +448,6 @@
 				AB3496BC166148A400AEB508 /* en.lproj */,
 				BF3CCC9D15D080560087B9CA /* icon */,
 				ABAFB59315AB9A2E002FA498 /* Baker-Info.plist */,
-				ABAFB59415AB9A2E002FA498 /* InfoPlist.strings */,
 				ABAFB59715AB9A2E002FA498 /* main.m */,
 				ABAFB59915AB9A2E002FA498 /* Baker-Prefix.pch */,
 			);
@@ -599,14 +597,6 @@
 				AB3496C0166148A400AEB508 /* en */,
 			);
 			name = Localizable.strings;
-			sourceTree = "<group>";
-		};
-		ABAFB59415AB9A2E002FA498 /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				ABAFB59515AB9A2E002FA498 /* en */,
-			);
-			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
