@@ -47,4 +47,6 @@
 + (UIColor *)colorWithHexString:(NSString *)stringToConvert;
 + (void)addSkipBackupAttributeToItemAtPath:(NSString *)path;
 
++ (BOOL)webViewShouldBePaged:(UIWebView*)webView;
+
 @end

@@ -1237,6 +1237,9 @@
 
         [self handlePageLoading];
     }
+    
+    /** CHECK IF META TAG SAYS HTML FILE SHOULD BE PAGED **/
+    [webView.scrollView setPagingEnabled:[Utils webViewShouldBePaged:webView]];
 }
 - (void)webView:(UIWebView *)webView hidden:(BOOL)status animating:(BOOL)animating {
 
