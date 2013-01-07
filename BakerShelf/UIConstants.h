@@ -33,6 +33,9 @@
 #ifndef Baker_UIConstants_h
 #define Baker_UIConstants_h
 
+    // Background color for issues cover (before downloading the actual cover)
+    #define ISSUES_COVER_BACKGROUND_COLOR @"#ffffff"
+
     // Title for issues in the shelf
     #define ISSUES_TITLE_FONT @"Helvetica"
     #define ISSUES_TITLE_FONT_SIZE 15
@@ -53,13 +56,13 @@
     #define ISSUES_ARCHIVE_BUTTON_FONT @"Helvetica-Bold"
     #define ISSUES_ARCHIVE_BUTTON_FONT_SIZE 11
     #define ISSUES_ARCHIVE_BUTTON_COLOR @"#b72529"
-    #define ISSUES_ARCHIVE_BUTTON_BACKGROUND_COLOR @"ffffff"
+    #define ISSUES_ARCHIVE_BUTTON_BACKGROUND_COLOR @"#ffffff"
 
     // Text and spinner for issues that are being loaded in the shelf
     #define ISSUES_LOADING_LABEL_COLOR @"#b72529"
     #define ISSUES_LOADING_SPINNER_COLOR @"#929292"
 
     // Progress bar for issues that are being downloaded in the shelf
-    #define ISSUES_PROGRESSBAR_TINT_COLOR @"b72529"
+    #define ISSUES_PROGRESSBAR_TINT_COLOR @"#b72529"
 
 #endif

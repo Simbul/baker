@@ -73,24 +73,25 @@
 
     UI ui = [IssueViewController getIssueContentMeasures];
 
+    UIButton *issueCover = [UIButton buttonWithType:UIButtonTypeCustom];
+    issueCover.frame = CGRectMake(ui.cellPadding, ui.cellPadding, ui.thumbWidth, ui.thumbHeight);
+    
+    issueCover.backgroundColor = [UIColor colorWithHexString:ISSUES_COVER_BACKGROUND_COLOR];
+    issueCover.adjustsImageWhenHighlighted = NO;
+    issueCover.adjustsImageWhenDisabled = NO;
+        
+    issueCover.layer.shadowOpacity = 0.5;
+    issueCover.layer.shadowOffset = CGSizeMake(0, 2);
+    issueCover.layer.shouldRasterize = YES;
+    issueCover.layer.rasterizationScale = [UIScreen mainScreen].scale;
+    
+    [issueCover addTarget:self action:@selector(actionButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:issueCover];
+    
+    
     // SETUP COVER IMAGE
     [self.issue getCover:^(UIImage *image) {
-        UIButton *issueCover = [UIButton buttonWithType:UIButtonTypeCustom];
-        issueCover.frame = CGRectMake(ui.cellPadding, ui.cellPadding, ui.thumbWidth, ui.thumbHeight);
-        
-        issueCover.backgroundColor = [UIColor clearColor];
-        issueCover.adjustsImageWhenHighlighted = NO;
-        issueCover.adjustsImageWhenDisabled = NO;
-        
         [issueCover setBackgroundImage:image forState:UIControlStateNormal];
-        
-        issueCover.layer.shadowOpacity = 0.5;
-        issueCover.layer.shadowOffset = CGSizeMake(0, 2);
-        issueCover.layer.shouldRasterize = YES;
-        issueCover.layer.rasterizationScale = [UIScreen mainScreen].scale;
-
-        [issueCover addTarget:self action:@selector(actionButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-        [self.view addSubview:issueCover];
     }];
 
     int heightOffset = ui.cellPadding;
