@@ -29,6 +29,8 @@
 //  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //  
 
+#define ISPAGED_JS_SNIPPET @"document.getElementsByName('paged')[0].getAttribute('content')"
+
 #import "Utils.h"
 #import <sys/xattr.h>
 
@@ -78,6 +80,12 @@
             }
         }
     }
+}
+
++ (BOOL)webViewShouldBePaged:(UIWebView*)webView {
+    BOOL shouldBePaged = [[webView stringByEvaluatingJavaScriptFromString:ISPAGED_JS_SNIPPET] boolValue];
+    NSLog(@"• Paging for current page is enabled = %d", shouldBePaged);
+    return shouldBePaged;
 }
 
 @end
