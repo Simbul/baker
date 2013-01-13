@@ -41,6 +41,7 @@
 #ifdef BAKER_NEWSSTAND
 -(id)initWithURL:(NSString *)urlString;
 -(BOOL)refresh;
+-(NSSet *)productIDs;
 #endif
 
 @end
