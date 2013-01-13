@@ -128,8 +128,10 @@
                              action:@selector(handleFreeSubscription:)]
                             autorelease];
 
-    if ([PRODUCT_ID_FREE_SUBSCRIPTION length] == 0) {
-        self.subscribeButton.enabled = NO;
+    self.subscribeButton.enabled = NO;
+    if ([PRODUCT_ID_FREE_SUBSCRIPTION length] > 0) {
+        [purchasesManager retrievePriceFor:PRODUCT_ID_FREE_SUBSCRIPTION];
+    } else {
         NSLog(@"Subscription not enabled: constant PRODUCT_ID_FREE_SUBSCRIPTION not set");
     }
 
@@ -285,28 +287,11 @@
 #pragma mark - Store Kit
 
 - (void)handleFreeSubscription:(NSNotification *)notification {
-    if ([PRODUCT_ID_FREE_SUBSCRIPTION length] > 0) {
-        [self setSubscribeButtonEnabled:NO];
+    [self setSubscribeButtonEnabled:NO];
 
-        // Request "free subscription" product from App Store
-        SKProductsRequest *productsRequest = [[SKProductsRequest alloc] initWithProductIdentifiers:[NSSet setWithObject:PRODUCT_ID_FREE_SUBSCRIPTION]];
-        productsRequest.delegate = self;
-        [productsRequest start];
-    } else {
-        NSLog(@"Cannot subscribe: constant PRODUCT_ID_FREE_SUBSCRIPTION not set");
-    }
-}
-
--(void)productsRequest:(SKProductsRequest *)request didReceiveResponse:(SKProductsResponse *)response {
-    // Create a "payment" for the specified product (i.e. our free subscription)
-    for(SKProduct *product in response.products) {
-        SKPayment *payment = [SKPayment paymentWithProduct:product];
-        [[SKPaymentQueue defaultQueue] addPayment:payment];
-    }
-    if ([response.invalidProductIdentifiers count] > 0) {
-        NSLog(@"Invalid product identifiers: %@", response.invalidProductIdentifiers);
-        [self setSubscribeButtonEnabled:YES];
-    }
+    SKProduct *freeSubscription = [purchasesManager productFor:PRODUCT_ID_FREE_SUBSCRIPTION];
+    SKPayment *payment = [SKPayment paymentWithProduct:freeSubscription];
+    [[SKPaymentQueue defaultQueue] addPayment:payment];
 }
 
 -(void)paymentQueue:(SKPaymentQueue *)queue updatedTransactions:(NSArray *)transactions {
@@ -390,11 +375,19 @@
 }
 
 - (void)handleIssueProductRetrieved:(NSNotification *)notification {
-    NSString *price;
-    for (IssueViewController *controller in self.issueViewControllers) {
-        price = [purchasesManager priceFor:controller.issue.productID];
-        if (price) {
-            [controller setPrice:price];
+    NSSet *ids = [notification.userInfo objectForKey:@"ids"];
+
+    if (ids.count == 1 && [[ids anyObject] isEqualToString:PRODUCT_ID_FREE_SUBSCRIPTION]) {
+        // Free subscription retrieved
+        [self setSubscribeButtonEnabled:YES];
+    } else {
+        // Issues retrieved
+        NSString *price;
+        for (IssueViewController *controller in self.issueViewControllers) {
+            price = [purchasesManager priceFor:controller.issue.productID];
+            if (price) {
+                [controller setPrice:price];
+            }
         }
     }
 }

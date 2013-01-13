@@ -59,6 +59,15 @@
     [productsRequest start];
 }
 
+- (void)retrievePriceFor:(NSString *)productID {
+    NSSet *productIDs = [NSSet setWithObject:productID];
+    [self retrievePricesFor:productIDs];
+}
+
+- (SKProduct *)productFor:(NSString *)productID {
+    return [self.products objectForKey:productID];
+}
+
 - (NSString *)priceFor:(NSString *)productID {
     SKProduct *product = [products objectForKey:productID];
     if (product) {

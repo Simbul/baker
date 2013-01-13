@@ -44,6 +44,9 @@
 - (void)addPurchasedIssue:(NSString *)productID;
 
 - (void)retrievePricesFor:(NSSet *)productIDs;
+- (void)retrievePriceFor:(NSString *)productID;
+
+- (SKProduct *)productFor:(NSString *)productID;
 - (NSString *)priceFor:(NSString *)productID;
 
 @end
