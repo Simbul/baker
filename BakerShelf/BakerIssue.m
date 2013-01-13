@@ -142,7 +142,12 @@
 #ifdef BAKER_NEWSSTAND
     NKLibrary *nkLib = [NKLibrary sharedLibrary];
     NKIssue *nkIssue = [nkLib issueWithName:self.ID];
-    return [self nkIssueContentStatusToString:[nkIssue status]];
+    NSString *nkIssueStatus = [self nkIssueContentStatusToString:[nkIssue status]];
+    if ([nkIssueStatus isEqualToString:@"remote"] && self.productID) {
+        return @"purchasable";
+    } else {
+        return nkIssueStatus;
+    }
 #else
     return @"bundled";
 #endif
