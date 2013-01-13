@@ -40,6 +40,8 @@
 
 @property (retain, nonatomic) NSMutableDictionary *products;
 
++ (PurchasesManager *)sharedInstance;
+
 - (BOOL)purchased:(NSString *)productID;
 - (void)addPurchasedIssue:(NSString *)productID;
 

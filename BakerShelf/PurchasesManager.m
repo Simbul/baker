@@ -48,6 +48,15 @@
     return self;
 }
 
++ (PurchasesManager *)sharedInstance {
+    static dispatch_once_t once;
+    static PurchasesManager *sharedInstance;
+    dispatch_once(&once, ^{
+        sharedInstance = [[self alloc] init];
+    });
+    return sharedInstance;
+}
+
 - (BOOL)purchased:(NSString *)productID {
     return [[NSUserDefaults standardUserDefaults] boolForKey:productID];
 }

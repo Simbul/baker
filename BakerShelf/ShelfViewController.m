@@ -66,7 +66,7 @@
     if (self) {
         self.issues = currentBooks;
 
-        self.purchasesManager = [[PurchasesManager alloc] init];
+        self.purchasesManager = [PurchasesManager sharedInstance];
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(handleIssueProductRetrieved:)
                                                      name:@"notification_products_retrieved"
