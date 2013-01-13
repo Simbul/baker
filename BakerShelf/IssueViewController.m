@@ -341,6 +341,21 @@
         self.loadingLabel.hidden = NO;
         self.priceLabel.hidden = NO;
     }
+    else if ([status isEqualToString:@"purchased"])
+    {
+        [self.priceLabel setText:@"PURCHASED"];
+
+        [self.actionButton setTitle:NSLocalizedString(@"ACTION_REMOTE_TEXT", nil) forState:UIControlStateNormal];
+        [self.spinner stopAnimating];
+
+        self.actionButton.frame = CGRectMake(ui.contentOffset, self.actionButton.frame.origin.y, 110, 30);
+        self.actionButton.hidden = NO;
+        self.archiveButton.hidden = YES;
+        self.progressBar.hidden = YES;
+        self.loadingLabel.hidden = YES;
+        self.priceLabel.hidden = NO;
+    }
+
     currentStatus = status;
 }
 
@@ -441,7 +456,9 @@
 
 - (void)setPrice:(NSString *)price {
     self.issue.price = price;
-    [self.priceLabel setText:price];
+    if ([currentStatus isEqualToString:@"purchasable"]) {
+        [self.priceLabel setText:price];
+    }
 }
 #endif
 - (void)read

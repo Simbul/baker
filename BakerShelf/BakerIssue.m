@@ -147,7 +147,7 @@
     NSString *nkIssueStatus = [self nkIssueContentStatusToString:[nkIssue status]];
     if ([nkIssueStatus isEqualToString:@"remote"] && self.productID) {
         if ([self.purchasesManager isMarkedAsPurchased:self.productID]) {
-            return @"remote";
+            return @"purchased";
         } else {
             return @"purchasable";
         }
