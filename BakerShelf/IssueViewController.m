@@ -55,6 +55,7 @@
     self = [super init];
     if (self) {
         self.issue = bakerIssue;
+        currentStatus = nil;
     }
     return self;
 }
@@ -221,7 +222,7 @@
 {
     UI ui = [IssueViewController getIssueContentMeasures];
 
-    NSLog(@"Refreshing %@ view with status %@", self.issue.ID, status);
+    NSLog(@"Refreshing %@ view with status %@ -> %@", self.issue.ID, currentStatus, status);
     if ([status isEqualToString:@"remote"])
     {
         [self.actionButton setTitle:NSLocalizedString(@"ACTION_REMOTE_TEXT", nil) forState:UIControlStateNormal];
@@ -287,6 +288,7 @@
         self.loadingLabel.hidden = NO;
         self.progressBar.hidden = YES;
     }
+    currentStatus = status;
 }
 
 #pragma mark - Memory management

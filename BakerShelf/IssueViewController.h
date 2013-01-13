@@ -34,6 +34,7 @@
 
 @interface IssueViewController : UIViewController <NSURLConnectionDownloadDelegate> {
     NSString *currentAction;
+    NSString *currentStatus;
 }
 
 @property (strong, nonatomic) BakerIssue *issue;
