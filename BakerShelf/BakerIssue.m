@@ -42,6 +42,8 @@
 @synthesize bakerBook;
 @synthesize coverPath;
 @synthesize coverURL;
+@synthesize productID;
+@synthesize price;
 
 -(id)initWithBakerBook:(BakerBook *)book {
     self = [super init];
@@ -52,6 +54,8 @@
         self.date = book.date;
         self.url = [NSURL URLWithString:book.url];
         self.path = book.path;
+        self.productID = @"";
+        self.price = nil;
 
         self.bakerBook = book;
 
@@ -76,6 +80,8 @@
         self.date = [issueData objectForKey:@"date"];
         self.coverURL = [NSURL URLWithString:[issueData objectForKey:@"cover"]];
         self.url = [NSURL URLWithString:[issueData objectForKey:@"url"]];
+        self.productID = [issueData objectForKey:@"product_id"];
+        self.price = nil;
 
         NSString *cachePath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0];
         self.coverPath = [cachePath stringByAppendingPathComponent:self.ID];

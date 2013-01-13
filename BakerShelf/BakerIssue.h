@@ -50,6 +50,9 @@
 @property (copy, nonatomic) NSString *coverPath;
 @property (copy, nonatomic) NSURL *coverURL;
 
+@property (copy, nonatomic) NSString *productID;
+@property (copy, nonatomic) NSString *price;
+
 @property (retain, nonatomic) BakerBook *bakerBook;
 
 -(id)initWithBakerBook:(BakerBook *)bakerBook;
