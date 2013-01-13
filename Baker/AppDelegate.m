@@ -79,9 +79,6 @@
     NSArray *books = issuesManager.issues;
     self.rootViewController = [[[ShelfViewController alloc] initWithBooks:books] autorelease];
 
-    // Enable payment queue for In-App Purchases
-    [[SKPaymentQueue defaultQueue] addTransactionObserver:(ShelfViewController *)self.rootViewController];
-
     #else
 
     NSLog(@"====== Newsstand is not enabled ======");

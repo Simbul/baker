@@ -37,11 +37,7 @@
 #import "IssuesManager.h"
 #import "PurchasesManager.h"
 
-#ifdef BAKER_NEWSSTAND
-@interface ShelfViewController : UIViewController <AQGridViewDataSource, AQGridViewDelegate, SKPaymentTransactionObserver, SKRequestDelegate, SKProductsRequestDelegate>
-#else
 @interface ShelfViewController : UIViewController <AQGridViewDataSource, AQGridViewDelegate>
-#endif
 
 @property (copy, nonatomic) NSArray *issues;
 @property (retain, nonatomic) NSMutableArray *issueViewControllers;
@@ -63,11 +59,6 @@
 
 #pragma mark - Store Kit
 - (void)handleFreeSubscription:(NSNotification *)notification;
--(void)productsRequest:(SKProductsRequest *)request didReceiveResponse:(SKProductsResponse *)response;
--(void)paymentQueue:(SKPaymentQueue *)queue updatedTransactions:(NSArray *)transactions;
--(void)completeTransaction:(SKPaymentTransaction *)transaction;
--(void)recordTransaction:(SKPaymentTransaction *)transaction;
--(void)failedTransaction:(SKPaymentTransaction *)transaction;
 #endif
 
 #pragma mark - Navigation management

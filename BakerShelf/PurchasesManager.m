@@ -31,6 +31,9 @@
 
 #import "PurchasesManager.h"
 
+#import "JSONKit.h"
+#import "NSData+Base64.h"
+
 @implementation PurchasesManager
 
 @synthesize products;
@@ -81,6 +84,12 @@
     return nil;
 }
 
+- (void)purchase:(NSString *)productID {
+    SKProduct *product = [self productFor:productID];
+    SKPayment *payment = [SKPayment paymentWithProduct:product];
+    [[SKPaymentQueue defaultQueue] addPayment:payment];
+}
+
 - (void)productsRequest:(SKProductsRequest *)request didReceiveResponse:(SKProductsResponse *)response {
     for (NSString *productID in response.invalidProductIdentifiers) {
         NSLog(@"Invalid product identifier: %@", productID);
@@ -92,9 +101,84 @@
         [ids addObject:skProduct.productIdentifier];
     }
     
-    NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithObject:ids forKey:@"ids"];
+    NSDictionary *userInfo = [NSDictionary dictionaryWithObject:ids forKey:@"ids"];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_products_retrieved" object:self userInfo:userInfo];
 }
+
+# pragma mark - Payment queue
+
+- (void)paymentQueue:(SKPaymentQueue *)queue updatedTransactions:(NSArray *)transactions {
+    for(SKPaymentTransaction *transaction in transactions) {
+        switch (transaction.transactionState) {
+            case SKPaymentTransactionStateFailed:
+                [self failedTransaction:transaction];
+                break;
+            case SKPaymentTransactionStatePurchasing:
+                break;
+            case SKPaymentTransactionStatePurchased:
+            case SKPaymentTransactionStateRestored:
+                [self completeTransaction:transaction];
+                break;
+            default:
+                break;
+        }
+    }
+}
+
+- (void)completeTransaction:(SKPaymentTransaction *)transaction {
+    NSDictionary *userInfo = [NSDictionary dictionaryWithObject:transaction forKey:@"transaction"];
+
+    if ([transaction.payment.productIdentifier isEqualToString:PRODUCT_ID_FREE_SUBSCRIPTION]) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_free_subscription_purchased" object:self userInfo:userInfo];
+    }
+}
+
+-(void)failedTransaction:(SKPaymentTransaction *)transaction {
+    NSLog(@"Payment transaction failure: %@", transaction.error);
+
+    NSDictionary *userInfo = [NSDictionary dictionaryWithObject:transaction forKey:@"transaction"];
+
+    if ([transaction.payment.productIdentifier isEqualToString:PRODUCT_ID_FREE_SUBSCRIPTION]) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_free_subscription_failed" object:self userInfo:userInfo];
+    }
+
+    [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+}
+
+- (void)finishTransaction:(SKPaymentTransaction *)transaction {
+    [self recordTransaction:transaction];
+    [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+}
+
+-(void)recordTransaction:(SKPaymentTransaction *)transaction {
+    [[NSUserDefaults standardUserDefaults] setObject:transaction.transactionIdentifier forKey:@"receipt"];
+
+    if ([PURCHASE_CONFIRMATION_URL length] > 0) {
+        NSString *receiptData = [transaction.transactionReceipt base64EncodedString];
+        NSDictionary *jsonDict = [NSDictionary dictionaryWithObjectsAndKeys:
+                                  receiptData, @"receipt-data",
+                                  nil];
+        NSError *error = nil;
+        NSData *jsonData = [jsonDict JSONDataWithOptions:JKSerializeOptionNone error:&error];
+
+        if (error) {
+            NSLog(@"Error generating receipt JSON: %@", error);
+        } else {
+            NSURL *requestURL = [NSURL URLWithString:PURCHASE_CONFIRMATION_URL];
+            NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:requestURL];
+            [req setHTTPMethod:@"POST"];
+            [req setHTTPBody:jsonData];
+            NSURLConnection *conn = [[NSURLConnection alloc] initWithRequest:req delegate:nil];
+            if (conn) {
+                NSLog(@"Posting App Store transaction receipt to %@", PURCHASE_CONFIRMATION_URL);
+            } else {
+                NSLog(@"Cannot connect to %@", PURCHASE_CONFIRMATION_URL);
+            }
+        }
+    }
+}
+
+# pragma mark - Memory management
 
 -(void)dealloc {
     [products release];

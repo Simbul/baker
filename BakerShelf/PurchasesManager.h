@@ -36,7 +36,7 @@
 #import <StoreKit/StoreKit.h>
 #endif
 
-@interface PurchasesManager : NSObject <SKProductsRequestDelegate>
+@interface PurchasesManager : NSObject <SKProductsRequestDelegate, SKPaymentTransactionObserver>
 
 @property (retain, nonatomic) NSMutableDictionary *products;
 
@@ -48,5 +48,8 @@
 
 - (SKProduct *)productFor:(NSString *)productID;
 - (NSString *)priceFor:(NSString *)productID;
+
+- (void)purchase:(NSString *)productID;
+- (void)finishTransaction:(SKPaymentTransaction *)transaction;
 
 @end

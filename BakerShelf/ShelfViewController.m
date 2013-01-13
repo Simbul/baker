@@ -67,7 +67,19 @@
         self.issues = currentBooks;
 
         self.purchasesManager = [[PurchasesManager alloc] init];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleIssueProductRetrieved:) name:@"notification_products_retrieved" object:self.purchasesManager];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handleIssueProductRetrieved:)
+                                                     name:@"notification_products_retrieved"
+                                                   object:self.purchasesManager];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handleFreeSubscriptionPurchased:)
+                                                     name:@"notification_free_subscription_purchased"
+                                                   object:self.purchasesManager];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handleFreeSubscriptionFailed:)
+                                                     name:@"notification_free_subscription_failed"
+                                                   object:self.purchasesManager];
+        [[SKPaymentQueue defaultQueue] addTransactionObserver:purchasesManager];
 
         NSMutableArray *controllers = [NSMutableArray array];
         for (BakerIssue *issue in self.issues) {
@@ -288,34 +300,12 @@
 
 - (void)handleFreeSubscription:(NSNotification *)notification {
     [self setSubscribeButtonEnabled:NO];
-
-    SKProduct *freeSubscription = [purchasesManager productFor:PRODUCT_ID_FREE_SUBSCRIPTION];
-    SKPayment *payment = [SKPayment paymentWithProduct:freeSubscription];
-    [[SKPaymentQueue defaultQueue] addPayment:payment];
+    [purchasesManager purchase:PRODUCT_ID_FREE_SUBSCRIPTION];
 }
 
--(void)paymentQueue:(SKPaymentQueue *)queue updatedTransactions:(NSArray *)transactions {
-    // Verify whether store transactions (i.e. free subscription) were successful
-    for(SKPaymentTransaction *transaction in transactions) {
-        switch (transaction.transactionState) {
-            case SKPaymentTransactionStateFailed:
-                [self setSubscribeButtonEnabled:YES];
-                [self failedTransaction:transaction];
-                break;
-            case SKPaymentTransactionStatePurchasing:
-                break;
-            case SKPaymentTransactionStatePurchased:
-            case SKPaymentTransactionStateRestored:
-                [self setSubscribeButtonEnabled:YES];
-                [self completeTransaction:transaction];
-                break;
-            default:
-                break;
-        }
-    }
-}
+- (void)handleFreeSubscriptionPurchased:(NSNotification *)notification {
+    SKPaymentTransaction *transaction = [notification.userInfo objectForKey:@"transaction"];
 
--(void)completeTransaction:(SKPaymentTransaction *)transaction {
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"SUBSCRIPTION_SUCCESSFUL_TITLE", nil)
                                                     message:NSLocalizedString(@"SUBSCRIPTION_SUCCESSFUL_MESSAGE", nil)
                                                    delegate:nil
@@ -324,41 +314,13 @@
     [alert show];
     [alert release];
 
-    [self recordTransaction:transaction];
+    [self setSubscribeButtonEnabled:YES];
 
-    [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+    [purchasesManager finishTransaction:transaction];
 }
 
--(void)recordTransaction:(SKPaymentTransaction *)transaction {
-    [[NSUserDefaults standardUserDefaults] setObject:transaction.transactionIdentifier forKey:@"receipt"];
-
-    if ([PURCHASE_CONFIRMATION_URL length] > 0) {
-        NSString *receiptData = [transaction.transactionReceipt base64EncodedString];
-        NSDictionary *jsonDict = [NSDictionary dictionaryWithObjectsAndKeys:
-                                  receiptData, @"receipt-data",
-                                  nil];
-        NSError *error = nil;
-        NSData *jsonData = [jsonDict JSONDataWithOptions:JKSerializeOptionNone error:&error];
-
-        if (error) {
-            NSLog(@"Error generating receipt JSON: %@", error);
-        } else {
-            NSURL *requestURL = [NSURL URLWithString:PURCHASE_CONFIRMATION_URL];
-            NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:requestURL];
-            [req setHTTPMethod:@"POST"];
-            [req setHTTPBody:jsonData];
-            NSURLConnection *conn = [[NSURLConnection alloc] initWithRequest:req delegate:nil];
-            if (conn) {
-                NSLog(@"Posting App Store transaction receipt to %@", PURCHASE_CONFIRMATION_URL);
-            } else {
-                NSLog(@"Cannot connect to %@", PURCHASE_CONFIRMATION_URL);
-            }
-        }
-    }
-}
-
--(void)failedTransaction:(SKPaymentTransaction *)transaction {
-    NSLog(@"Payment transaction failure: %@", transaction.error);
+- (void)handleFreeSubscriptionFailed:(NSNotification *)notification {
+    SKPaymentTransaction *transaction = [notification.userInfo objectForKey:@"transaction"];
 
     // Show an error, unless it was the user who cancelled the transaction
     if (transaction.error.code != SKErrorPaymentCancelled) {
@@ -369,9 +331,9 @@
                                               otherButtonTitles:nil];
         [alert show];
         [alert release];
-    }
 
-    [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+        [self setSubscribeButtonEnabled:YES];
+    }
 }
 
 - (void)handleIssueProductRetrieved:(NSNotification *)notification {
