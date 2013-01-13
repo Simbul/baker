@@ -46,6 +46,8 @@
     #define ISSUES_INFO_FONT_SIZE 15
     #define ISSUES_INFO_COLOR @"#929292"
 
+    #define ISSUES_PRICE_COLOR @"#b72529"
+
     // Download/read button for issues in the shelf
     #define ISSUES_ACTION_BUTTON_FONT @"Helvetica-Bold"
     #define ISSUES_ACTION_BUTTON_FONT_SIZE 11

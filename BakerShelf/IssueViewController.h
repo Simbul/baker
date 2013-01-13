@@ -43,6 +43,7 @@
 @property (strong, nonatomic) UIProgressView *progressBar;
 @property (strong, nonatomic) UIActivityIndicatorView *spinner;
 @property (strong, nonatomic) UILabel *loadingLabel;
+@property (strong, nonatomic) UILabel *priceLabel;
 
 #pragma mark - Structs
 typedef struct {
@@ -61,8 +62,9 @@ typedef struct {
 
 #pragma mark - Issue management
 - (void)actionButtonPressed:(UIButton *)sender;
-#ifdef NEWSSTAND
+#ifdef BAKER_NEWSSTAND
 - (void)download;
+- (void)setPrice:(NSString *)price;
 #endif
 - (void)read;
 

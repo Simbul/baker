@@ -47,6 +47,7 @@
 @synthesize progressBar;
 @synthesize spinner;
 @synthesize loadingLabel;
+@synthesize priceLabel;
 
 #pragma mark - Init
 
@@ -140,7 +141,22 @@
     [self.view addSubview:infoLabel];
     [infoLabel release];
 
-    heightOffset = heightOffset + infoLabel.frame.size.height + 10;
+    heightOffset = heightOffset + infoLabel.frame.size.height + 5;
+
+
+    // SETUP PRICE LABEL
+    self.priceLabel = [[UILabel alloc] initWithFrame:CGRectMake(ui.contentOffset, heightOffset, 170, textLineheight)];
+    priceLabel.textColor = [UIColor colorWithHexString:ISSUES_PRICE_COLOR];
+    priceLabel.backgroundColor = [UIColor clearColor];
+    priceLabel.lineBreakMode = UILineBreakModeTailTruncation;
+    priceLabel.textAlignment = UITextAlignmentLeft;
+    priceLabel.text = @"RETRIEVING PRICE...";
+    priceLabel.font = titleFont;
+
+    [self.view addSubview:priceLabel];
+    [priceLabel release];
+
+    heightOffset = heightOffset + priceLabel.frame.size.height + 10;
 
 
     // SETUP ACTION BUTTON
@@ -225,6 +241,8 @@
     NSLog(@"Refreshing %@ view with status %@ -> %@", self.issue.ID, currentStatus, status);
     if ([status isEqualToString:@"remote"])
     {
+        [self.priceLabel setText:@"FREE"];
+
         [self.actionButton setTitle:NSLocalizedString(@"ACTION_REMOTE_TEXT", nil) forState:UIControlStateNormal];
         [self.spinner stopAnimating];
 
@@ -233,6 +251,7 @@
         self.archiveButton.hidden = YES;
         self.progressBar.hidden = YES;
         self.loadingLabel.hidden = YES;
+        self.priceLabel.hidden = NO;
     }
     else if ([status isEqualToString:@"connecting"])
     {
@@ -244,6 +263,7 @@
         self.loadingLabel.text = NSLocalizedString(@"CONNECTING_TEXT", nil);
         self.loadingLabel.hidden = NO;
         self.progressBar.hidden = YES;
+        self.priceLabel.hidden = YES;
     }
     else if ([status isEqualToString:@"downloading"])
     {
@@ -255,6 +275,7 @@
         self.loadingLabel.text = NSLocalizedString(@"DOWNLOADING_TEXT", nil);
         self.loadingLabel.hidden = NO;
         self.progressBar.hidden = NO;
+        self.priceLabel.hidden = YES;
     }
     else if ([status isEqualToString:@"downloaded"])
     {
@@ -266,6 +287,7 @@
         self.archiveButton.hidden = NO;
         self.loadingLabel.hidden = YES;
         self.progressBar.hidden = YES;
+        self.priceLabel.hidden = YES;
     }
     else if ([status isEqualToString:@"bundled"])
     {
@@ -277,9 +299,10 @@
         self.archiveButton.hidden = YES;
         self.loadingLabel.hidden = YES;
         self.progressBar.hidden = YES;
+        self.priceLabel.hidden = YES;
     }
     else if ([status isEqualToString:@"opening"])
-     {
+    {
         [self.spinner startAnimating];
 
         self.actionButton.hidden = YES;
@@ -287,6 +310,22 @@
         self.loadingLabel.text = NSLocalizedString(@"OPENING_TEXT", nil);
         self.loadingLabel.hidden = NO;
         self.progressBar.hidden = YES;
+        self.priceLabel.hidden = YES;
+    }
+    else if ([status isEqualToString:@"purchasable"])
+    {
+        [self.spinner stopAnimating];
+
+        if (self.issue.price) {
+            [self.priceLabel setText:self.issue.price];
+        }
+
+        self.actionButton.frame = CGRectMake(ui.contentOffset, self.actionButton.frame.origin.y, 110, 30);
+        self.actionButton.hidden = NO;
+        self.archiveButton.hidden = YES;
+        self.progressBar.hidden = YES;
+        self.loadingLabel.hidden = YES;
+        self.priceLabel.hidden = NO;
     }
     currentStatus = status;
 }
@@ -325,6 +364,11 @@
 {
     [self refresh:@"connecting"];
     [self.issue downloadWithDelegate:self];
+}
+
+- (void)setPrice:(NSString *)price {
+    self.issue.price = price;
+    [self.priceLabel setText:price];
 }
 #endif
 - (void)read
