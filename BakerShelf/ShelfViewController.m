@@ -331,9 +331,9 @@
                                               otherButtonTitles:nil];
         [alert show];
         [alert release];
-
-        [self setSubscribeButtonEnabled:YES];
     }
+
+    [self setSubscribeButtonEnabled:YES];
 }
 
 - (void)handleIssueProductRetrieved:(NSNotification *)notification {
