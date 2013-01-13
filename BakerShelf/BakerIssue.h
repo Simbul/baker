@@ -34,6 +34,7 @@
 
 #ifdef BAKER_NEWSSTAND
 #import <NewsstandKit/NewsstandKit.h>
+#import "PurchasesManager.h"
 #endif
 
 #import "BakerBook.h"
@@ -54,6 +55,7 @@
 @property (copy, nonatomic) NSString *price;
 
 @property (retain, nonatomic) BakerBook *bakerBook;
+@property (retain, nonatomic) PurchasesManager *purchasesManager;
 
 -(id)initWithBakerBook:(BakerBook *)bakerBook;
 -(void)getCover:(void(^)(UIImage *img))completionBlock;

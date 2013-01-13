@@ -34,6 +34,7 @@
 #import "IssueViewController.h"
 #import "SSZipArchive.h"
 #import "UIConstants.h"
+#import "PurchasesManager.h"
 
 #import "UIColor+Extensions.h"
 
@@ -328,6 +329,18 @@
         self.loadingLabel.hidden = YES;
         self.priceLabel.hidden = NO;
     }
+    else if ([status isEqualToString:@"purchasing"])
+    {
+        [self.spinner startAnimating];
+
+        self.loadingLabel.text = NSLocalizedString(@"BUYING_TEXT", nil);
+
+        self.actionButton.hidden = YES;
+        self.archiveButton.hidden = YES;
+        self.progressBar.hidden = YES;
+        self.loadingLabel.hidden = NO;
+        self.priceLabel.hidden = NO;
+    }
     currentStatus = status;
 }
 
@@ -371,7 +384,59 @@
     [self.issue downloadWithDelegate:self];
 }
 - (void)buy {
-    NSLog(@"BUY");
+    [self refresh:@"purchasing"];
+
+    PurchasesManager *purchasesManager = [PurchasesManager sharedInstance];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleIssuePurchased:)
+                                                 name:@"notification_issue_purchased"
+                                               object:purchasesManager];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleIssuePurchaseFailed:)
+                                                 name:@"notification_issue_purchase_failed"
+                                               object:purchasesManager];
+
+    [purchasesManager purchase:self.issue.productID];
+}
+- (void)handleIssuePurchased:(NSNotification *)notification {
+    PurchasesManager *purchasesManager = [PurchasesManager sharedInstance];
+    SKPaymentTransaction *transaction = [notification.userInfo objectForKey:@"transaction"];
+
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"ISSUE_PURCHASE_SUCCESSFUL_TITLE", nil)
+                                                    message:[NSString stringWithFormat:
+                                                             NSLocalizedString(@"ISSUE_PURCHASE_SUCCESSFUL_MESSAGE", nil), self.issue.title]
+                                                   delegate:nil
+                                          cancelButtonTitle:NSLocalizedString(@"ISSUE_PURCHASE_SUCCESSFUL_CLOSE", nil)
+                                          otherButtonTitles:nil];
+    [alert show];
+    [alert release];
+
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"notification_issues_purchased" object:purchasesManager];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"notification_issues_purchase_failed" object:purchasesManager];
+
+    [purchasesManager markAsPurchased:transaction.payment.productIdentifier];
+    [self refresh];
+    [purchasesManager finishTransaction:transaction];
+}
+- (void)handleIssuePurchaseFailed:(NSNotification *)notification {
+    PurchasesManager *purchasesManager = [PurchasesManager sharedInstance];
+    SKPaymentTransaction *transaction = [notification.userInfo objectForKey:@"transaction"];
+
+    // Show an error, unless it was the user who cancelled the transaction
+    if (transaction.error.code != SKErrorPaymentCancelled) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"ISSUE_PURCHASE_FAILED_TITLE", nil)
+                                                        message:[transaction.error localizedDescription]
+                                                       delegate:nil
+                                              cancelButtonTitle:NSLocalizedString(@"ISSUE_PURCHASE_FAILED_CLOSE", nil)
+                                              otherButtonTitles:nil];
+        [alert show];
+        [alert release];
+    }
+
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"notification_issues_purchased" object:purchasesManager];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"notification_issues_purchase_failed" object:purchasesManager];
+
+    [self refresh];
 }
 
 - (void)setPrice:(NSString *)price {

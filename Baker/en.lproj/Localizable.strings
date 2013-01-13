@@ -13,6 +13,13 @@
 "SUBSCRIPTION_FAILED_TITLE" = "Subscription failure";
 "SUBSCRIPTION_FAILED_CLOSE" = "Close";
 
+// Issue purchase alerts
+"ISSUE_PURCHASE_SUCCESSFUL_TITLE" = "Purchase successful";
+"ISSUE_PURCHASE_SUCCESSFUL_MESSAGE" = "You have successfully purchased %@";
+"ISSUE_PURCHASE_SUCCESSFUL_CLOSE" = "Close";
+"ISSUE_PURCHASE_FAILED_TITLE" = "Purchase failure";
+"ISSUE_PURCHASE_FAILED_CLOSE" = "Close";
+
 // Download alert
 "DOWNLOAD_FAILED_TITLE" = "Download failed";
 "DOWNLOAD_FAILED_MESSAGE" = "The issue could not be downloaded";
@@ -31,6 +38,7 @@
 "CONNECTING_TEXT" = "CONNECTING...";
 "DOWNLOADING_TEXT" = "DOWNLOADING ...";
 "OPENING_TEXT" = "Loading...";
+"BUYING_TEXT" = "BUYING...";
 
 // Archiving alert
 "ARCHIVE_ALERT_TITLE" = "Are you sure you want to archive this item?";

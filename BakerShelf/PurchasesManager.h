@@ -42,8 +42,8 @@
 
 + (PurchasesManager *)sharedInstance;
 
-- (BOOL)purchased:(NSString *)productID;
-- (void)addPurchasedIssue:(NSString *)productID;
+- (BOOL)isMarkedAsPurchased:(NSString *)productID;
+- (void)markAsPurchased:(NSString *)productID;
 
 - (void)retrievePricesFor:(NSSet *)productIDs;
 - (void)retrievePriceFor:(NSString *)productID;

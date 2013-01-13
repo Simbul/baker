@@ -57,10 +57,10 @@
     return sharedInstance;
 }
 
-- (BOOL)purchased:(NSString *)productID {
+- (BOOL)isMarkedAsPurchased:(NSString *)productID {
     return [[NSUserDefaults standardUserDefaults] boolForKey:productID];
 }
-- (void)addPurchasedIssue:(NSString *)productID {
+- (void)markAsPurchased:(NSString *)productID {
     [[NSUserDefaults standardUserDefaults] setBool:YES forKey:productID];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
@@ -139,6 +139,8 @@
 
     if ([transaction.payment.productIdentifier isEqualToString:PRODUCT_ID_FREE_SUBSCRIPTION]) {
         [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_free_subscription_purchased" object:self userInfo:userInfo];
+    } else {
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_issue_purchased" object:self userInfo:userInfo];
     }
 }
 
@@ -149,6 +151,8 @@
 
     if ([transaction.payment.productIdentifier isEqualToString:PRODUCT_ID_FREE_SUBSCRIPTION]) {
         [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_free_subscription_failed" object:self userInfo:userInfo];
+    } else {
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_issue_purchase_failed" object:self userInfo:userInfo];
     }
 
     [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
