@@ -67,7 +67,7 @@
         self.issues = currentBooks;
 
         self.purchasesManager = [[PurchasesManager alloc] init];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handlePriceRetrieved:) name:@"notification_price_retrieved" object:self.purchasesManager];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleIssueProductRetrieved:) name:@"notification_products_retrieved" object:self.purchasesManager];
 
         NSMutableArray *controllers = [NSMutableArray array];
         for (BakerIssue *issue in self.issues) {
@@ -389,11 +389,10 @@
     [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
 }
 
-- (void)handlePriceRetrieved:(NSNotification *)notification {
-    NSDictionary *userInfo = notification.userInfo;
+- (void)handleIssueProductRetrieved:(NSNotification *)notification {
     NSString *price;
     for (IssueViewController *controller in self.issueViewControllers) {
-        price = [userInfo objectForKey:controller.issue.productID];
+        price = [purchasesManager priceFor:controller.issue.productID];
         if (price) {
             [controller setPrice:price];
         }

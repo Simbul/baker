@@ -33,6 +33,18 @@
 
 @implementation PurchasesManager
 
+@synthesize products;
+
+-(id)init {
+    self = [super init];
+
+    if (self) {
+        self.products = [[NSMutableDictionary alloc] init];
+    }
+
+    return self;
+}
+
 - (BOOL)purchased:(NSString *)productID {
     return [[NSUserDefaults standardUserDefaults] boolForKey:productID];
 }
@@ -47,22 +59,38 @@
     [productsRequest start];
 }
 
+- (NSString *)priceFor:(NSString *)productID {
+    SKProduct *product = [products objectForKey:productID];
+    if (product) {
+        NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
+        [numberFormatter setFormatterBehavior:NSNumberFormatterBehavior10_4];
+        [numberFormatter setNumberStyle:NSNumberFormatterCurrencyStyle];
+        [numberFormatter setLocale:product.priceLocale];
+
+        return [numberFormatter stringFromNumber:product.price];
+    }
+    return nil;
+}
+
 - (void)productsRequest:(SKProductsRequest *)request didReceiveResponse:(SKProductsResponse *)response {
     for (NSString *productID in response.invalidProductIdentifiers) {
         NSLog(@"Invalid product identifier: %@", productID);
     }
     
-    NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-    NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
-    [numberFormatter setFormatterBehavior:NSNumberFormatterBehavior10_4];
-    [numberFormatter setNumberStyle:NSNumberFormatterCurrencyStyle];
-    
+    NSMutableSet *ids = [NSMutableSet setWithCapacity:response.products.count];
     for (SKProduct *skProduct in response.products) {
-        [numberFormatter setLocale:skProduct.priceLocale];
-        [userInfo setObject:[numberFormatter stringFromNumber:skProduct.price] forKey:skProduct.productIdentifier];
+        [self.products setObject:skProduct forKey:skProduct.productIdentifier];
+        [ids addObject:skProduct.productIdentifier];
     }
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_price_retrieved" object:self userInfo:userInfo];
+    NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithObject:ids forKey:@"ids"];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_products_retrieved" object:self userInfo:userInfo];
+}
+
+-(void)dealloc {
+    [products release];
+
+    [super dealloc];
 }
 
 @end

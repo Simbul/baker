@@ -38,9 +38,12 @@
 
 @interface PurchasesManager : NSObject <SKProductsRequestDelegate>
 
+@property (retain, nonatomic) NSMutableDictionary *products;
+
 - (BOOL)purchased:(NSString *)productID;
 - (void)addPurchasedIssue:(NSString *)productID;
 
 - (void)retrievePricesFor:(NSSet *)productIDs;
+- (NSString *)priceFor:(NSString *)productID;
 
 @end
