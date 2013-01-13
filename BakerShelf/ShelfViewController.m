@@ -48,6 +48,7 @@
 @synthesize issuesManager;
 @synthesize subscribeButton;
 @synthesize refreshButton;
+@synthesize purchasesManager;
 
 #pragma mark - Init
 
@@ -64,6 +65,10 @@
     self = [super init];
     if (self) {
         self.issues = currentBooks;
+
+        self.purchasesManager = [[PurchasesManager alloc] init];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handlePriceRetrieved:) name:@"notification_price_retrieved" object:self.purchasesManager];
+
         NSMutableArray *controllers = [NSMutableArray array];
         for (BakerIssue *issue in self.issues) {
             IssueViewController *controller = [self createIssueViewControllerWithIssue:issue];
@@ -83,6 +88,7 @@
     [issues release];
     [subscribeButton release];
     [refreshButton release];
+    [purchasesManager release];
 
     [super dealloc];
 }
@@ -261,6 +267,8 @@
                 [self.gridView insertItemsAtIndices:[NSIndexSet indexSetWithIndex:idx] withAnimation:AQGridViewItemAnimationNone];
             }
         }];
+
+        [self.purchasesManager retrievePricesFor:self.issuesManager.productIDs];
     }
     else{
         UIAlertView *connAlert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"INTERNET_CONNECTION_UNAVAILABLE_TITLE", nil)
@@ -379,6 +387,17 @@
     }
 
     [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+}
+
+- (void)handlePriceRetrieved:(NSNotification *)notification {
+    NSDictionary *userInfo = notification.userInfo;
+    NSString *price;
+    for (IssueViewController *controller in self.issueViewControllers) {
+        price = [userInfo objectForKey:controller.issue.productID];
+        if (price) {
+            [controller setPrice:price];
+        }
+    }
 }
 
 #endif
