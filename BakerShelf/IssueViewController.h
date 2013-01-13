@@ -65,6 +65,7 @@ typedef struct {
 #ifdef BAKER_NEWSSTAND
 - (void)download;
 - (void)setPrice:(NSString *)price;
+- (void)buy;
 #endif
 - (void)read;
 

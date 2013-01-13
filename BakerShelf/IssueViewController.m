@@ -314,6 +314,7 @@
     }
     else if ([status isEqualToString:@"purchasable"])
     {
+        [self.actionButton setTitle:NSLocalizedString(@"ACTION_BUY_TEXT", nil) forState:UIControlStateNormal];
         [self.spinner stopAnimating];
 
         if (self.issue.price) {
@@ -357,6 +358,10 @@
         [self read];
     } else if ([status isEqualToString:@"downloading"]) {
         // TODO: assuming it is supported by NewsstandKit, implement a "Cancel" operation
+    } else if ([status isEqualToString:@"purchasable"]) {
+    #ifdef BAKER_NEWSSTAND
+        [self buy];
+    #endif
     }
 }
 #ifdef BAKER_NEWSSTAND
@@ -364,6 +369,9 @@
 {
     [self refresh:@"connecting"];
     [self.issue downloadWithDelegate:self];
+}
+- (void)buy {
+    NSLog(@"BUY");
 }
 
 - (void)setPrice:(NSString *)price {
