@@ -36,5 +36,6 @@
 #pragma mark - SHA management
 - (NSString *)stringSHAEncoded;
 + (NSString *)encodeSHAString:(NSString *)str;
++ (NSString *)stringFromInterfaceOrientation:(UIInterfaceOrientation)orientation;
 
 @end
