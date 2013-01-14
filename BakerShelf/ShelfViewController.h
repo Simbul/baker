@@ -43,6 +43,8 @@
 #endif
 
 @property (copy, nonatomic) NSArray *issues;
+@property (copy, nonatomic) NSArray *supportedOrientation;
+
 @property (retain, nonatomic) NSMutableArray *issueViewControllers;
 @property (retain, nonatomic) IssuesManager *issuesManager;
 
