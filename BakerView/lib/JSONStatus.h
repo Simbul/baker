@@ -1,5 +1,5 @@
 //
-//  BakerBookStatus.h
+//  JSONStatus.h
 //  Baker
 //
 //  ==========================================================================================
@@ -30,14 +30,13 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "JSONStatus.h"
 
-@interface BakerBookStatus : JSONStatus
+@interface JSONStatus : NSObject
 
-@property (copy, nonatomic) NSNumber *page;
-@property (copy, nonatomic) NSString *scrollIndex;
+@property (copy, nonatomic) NSString *path;
 
-- (void)save;
-- (void)load;
+- (id)initWithJSONPath:(NSString *)JSONPath;
+- (void)save:(NSDictionary *)status;
+- (NSDictionary *)load;
 
 @end

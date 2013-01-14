@@ -73,6 +73,7 @@
 		ABD24C1E1620309B0042E49C /* IssueViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = ABD24C1D1620309B0042E49C /* IssueViewController.m */; };
 		ABD6FC4016544EAD0032BC44 /* NSData+Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = ABD6FC3F16544EAD0032BC44 /* NSData+Base64.m */; };
 		ABD7D45F1616FC5B008B13B5 /* BakerIssue.m in Sources */ = {isa = PBXBuildFile; fileRef = ABD7D45E1616FC5B008B13B5 /* BakerIssue.m */; };
+		ABDC05AF16A4C42A00F6B63D /* JSONStatus.m in Sources */ = {isa = PBXBuildFile; fileRef = ABDC05AE16A4C42A00F6B63D /* JSONStatus.m */; };
 		BF3CCCA215D080560087B9CA /* ios-icon-ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = BF3CCC9E15D080560087B9CA /* ios-icon-ipad.png */; };
 		BF3CCCA315D080560087B9CA /* ios-icon-ipad@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BF3CCC9F15D080560087B9CA /* ios-icon-ipad@2x.png */; };
 		BF3CCCA415D080560087B9CA /* ios-icon-iphone.png in Resources */ = {isa = PBXBuildFile; fileRef = BF3CCCA015D080560087B9CA /* ios-icon-iphone.png */; };
@@ -193,6 +194,8 @@
 		ABD6FC3F16544EAD0032BC44 /* NSData+Base64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+Base64.m"; sourceTree = "<group>"; };
 		ABD7D45D1616FC5B008B13B5 /* BakerIssue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BakerIssue.h; sourceTree = "<group>"; };
 		ABD7D45E1616FC5B008B13B5 /* BakerIssue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BakerIssue.m; sourceTree = "<group>"; };
+		ABDC05AD16A4C42A00F6B63D /* JSONStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSONStatus.h; sourceTree = "<group>"; };
+		ABDC05AE16A4C42A00F6B63D /* JSONStatus.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSONStatus.m; sourceTree = "<group>"; };
 		BF3CCC9E15D080560087B9CA /* ios-icon-ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ios-icon-ipad.png"; sourceTree = "<group>"; };
 		BF3CCC9F15D080560087B9CA /* ios-icon-ipad@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ios-icon-ipad@2x.png"; sourceTree = "<group>"; };
 		BF3CCCA015D080560087B9CA /* ios-icon-iphone.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ios-icon-iphone.png"; sourceTree = "<group>"; };
@@ -335,6 +338,8 @@
 				AB40044915B4B83000D87E2A /* SSZipArchive.m */,
 				AB40044A15B4B83000D87E2A /* Utils.h */,
 				AB40044B15B4B83000D87E2A /* Utils.m */,
+				ABDC05AD16A4C42A00F6B63D /* JSONStatus.h */,
+				ABDC05AE16A4C42A00F6B63D /* JSONStatus.m */,
 			);
 			path = lib;
 			sourceTree = "<group>";
@@ -591,6 +596,7 @@
 				9FAB40DA162B13CF0088E9C1 /* UIColor+Extensions.m in Sources */,
 				ABD6FC4016544EAD0032BC44 /* NSData+Base64.m in Sources */,
 				AB2317D4169F808000BE3BE7 /* PurchasesManager.m in Sources */,
+				ABDC05AF16A4C42A00F6B63D /* JSONStatus.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

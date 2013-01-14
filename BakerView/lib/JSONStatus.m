@@ -1,5 +1,5 @@
 //
-//  BakerBookStatus.h
+//  JSONStatus.m
 //  Baker
 //
 //  ==========================================================================================
@@ -29,15 +29,63 @@
 //  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-#import <Foundation/Foundation.h>
 #import "JSONStatus.h"
+#import "Utils.h"
+#import "JSONKit.h"
 
-@interface BakerBookStatus : JSONStatus
+@implementation JSONStatus
 
-@property (copy, nonatomic) NSNumber *page;
-@property (copy, nonatomic) NSString *scrollIndex;
+@synthesize path;
 
-- (void)save;
-- (void)load;
+- (id)initWithJSONPath:(NSString *)JSONPath
+{
+    self = [super init];
+    
+    if (self) {
+        path = [JSONPath retain];
+        [self load];
+    }
+    
+    return self;
+}
+
+- (NSDictionary *)load {
+    NSError *error = nil;
+    NSString *json = [NSString stringWithContentsOfFile:self.path encoding:NSUTF8StringEncoding error:&error];
+    if (error) {
+        NSLog(@"Error when loading JSON status: %@", error);
+    }
+    return [json objectFromJSONString];
+}
+
+- (void)save:(NSDictionary *)status {
+    NSString *json = [status JSONString];
+    NSError *error = nil;
+    
+    NSString *dirPath = [path stringByDeletingLastPathComponent];
+    if (![[NSFileManager defaultManager] fileExistsAtPath:dirPath]) {
+        [[NSFileManager defaultManager] createDirectoryAtPath:dirPath withIntermediateDirectories:YES attributes:nil error:&error];
+        if (error) {
+            NSLog(@"Error when creating JSON status folder: %@", error);
+        }
+        [Utils addSkipBackupAttributeToItemAtPath:dirPath];
+    }
+    
+    if (![[NSFileManager defaultManager] fileExistsAtPath:path]) {
+        [[NSFileManager defaultManager] createFileAtPath:path contents:nil attributes:nil];
+        [Utils addSkipBackupAttributeToItemAtPath:path];
+    }
+    
+    [json writeToFile:path atomically:YES encoding:NSUTF8StringEncoding error:&error];
+    if (error) {
+        NSLog(@"Error when saving JSON status: %@", error);
+    }
+}
+
+- (void)dealloc {
+    [path release];
+    
+    [super dealloc];
+}
 
 @end

@@ -30,34 +30,14 @@
 //
 
 #import "BakerBookStatus.h"
-#import "Utils.h"
-#import "JSONKit.h"
 
 @implementation BakerBookStatus
 
 @synthesize page;
 @synthesize scrollIndex;
-@synthesize path;
-
-- (id)initWithJSONPath:(NSString *)JSONPath
-{
-    self = [super init];
-
-    if (self) {
-        path = JSONPath;
-        [self load];
-    }
-
-    return self;
-}
 
 - (void)load {
-    NSError *error = nil;
-    NSString *json = [NSString stringWithContentsOfFile:self.path encoding:NSUTF8StringEncoding error:&error];
-    if (error) {
-        NSLog(@"Error when loading book status: %@", error);
-    }
-    NSDictionary *jsonDict = [json objectFromJSONString];
+    NSDictionary *jsonDict = [super load];
 
     self.page        = [jsonDict objectForKey:@"page"];
     self.scrollIndex = [jsonDict objectForKey:@"scroll-index"];
@@ -65,31 +45,11 @@
 
 - (void)save {
     NSDictionary *jsonDict = [NSDictionary dictionaryWithObjectsAndKeys:page, @"page", scrollIndex, @"scroll-index", nil];
-    NSString *json = [jsonDict JSONString];
-    NSError *error = nil;
-
-    NSString *dirPath = [path stringByDeletingLastPathComponent];
-    if (![[NSFileManager defaultManager] fileExistsAtPath:dirPath]) {
-        [[NSFileManager defaultManager] createDirectoryAtPath:dirPath withIntermediateDirectories:YES attributes:nil error:&error];
-        if (error) {
-            NSLog(@"Error when creating statuses folder: %@", error);
-        }
-        [Utils addSkipBackupAttributeToItemAtPath:dirPath];
-    }
-
-    if (![[NSFileManager defaultManager] fileExistsAtPath:path]) {
-        [[NSFileManager defaultManager] createFileAtPath:path contents:nil attributes:nil];
-        [Utils addSkipBackupAttributeToItemAtPath:path];
-    }
-
-    [json writeToFile:path atomically:YES encoding:NSUTF8StringEncoding error:&error];
-    if (error) {
-        NSLog(@"Error when saving book status: %@", error);
-    }
+    
+    [super save:jsonDict];
 }
 
 - (void)dealloc {
-    [path release];
     [page release];
     [scrollIndex release];
 
