@@ -39,6 +39,7 @@
 "DOWNLOADING_TEXT" = "DOWNLOADING ...";
 "OPENING_TEXT" = "Loading...";
 "BUYING_TEXT" = "BUYING...";
+"RETRIEVING_TEXT" = "RETRIEVING PRICE...";
 
 // Archiving alert
 "ARCHIVE_ALERT_TITLE" = "Are you sure you want to archive this item?";

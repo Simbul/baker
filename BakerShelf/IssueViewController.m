@@ -151,7 +151,6 @@
     priceLabel.backgroundColor = [UIColor clearColor];
     priceLabel.lineBreakMode = UILineBreakModeTailTruncation;
     priceLabel.textAlignment = UITextAlignmentLeft;
-    priceLabel.text = @"RETRIEVING PRICE...";
     priceLabel.font = titleFont;
 
     [self.view addSubview:priceLabel];
@@ -355,6 +354,18 @@
         self.loadingLabel.hidden = YES;
         self.priceLabel.hidden = NO;
     }
+    else if ([status isEqualToString:@"unpriced"])
+    {
+        [self.spinner startAnimating];
+
+        self.loadingLabel.text = NSLocalizedString(@"RETRIEVING_TEXT", nil);
+
+        self.actionButton.hidden = YES;
+        self.archiveButton.hidden = YES;
+        self.progressBar.hidden = YES;
+        self.loadingLabel.hidden = NO;
+        self.priceLabel.hidden = YES;
+    }
 
     currentStatus = status;
 }
@@ -456,9 +467,7 @@
 
 - (void)setPrice:(NSString *)price {
     self.issue.price = price;
-    if ([currentStatus isEqualToString:@"purchasable"]) {
-        [self.priceLabel setText:price];
-    }
+    [self refresh];
 }
 #endif
 - (void)read

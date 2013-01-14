@@ -148,8 +148,10 @@
     if ([nkIssueStatus isEqualToString:@"remote"] && self.productID) {
         if ([self.purchasesManager isMarkedAsPurchased:self.productID]) {
             return @"purchased";
-        } else {
+        } else if (self.price) {
             return @"purchasable";
+        } else {
+            return @"unpriced";
         }
     } else {
         return nkIssueStatus;
