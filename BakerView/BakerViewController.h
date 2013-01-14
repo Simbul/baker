@@ -46,7 +46,6 @@
 
     NSString *defaultScreeshotsPath;
     NSString *cachedScreenshotsPath;
-    NSString *statusPath;
 
     NSString *availableOrientation;
     NSString *renderingType;

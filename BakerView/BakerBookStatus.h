@@ -37,6 +37,7 @@
 @property (copy, nonatomic) NSNumber *page;
 @property (copy, nonatomic) NSString *scrollIndex;
 
+- (id)initWithBookId:(NSString *)bookId;
 - (void)save;
 - (void)load;
 
