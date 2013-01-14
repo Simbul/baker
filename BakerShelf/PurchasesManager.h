@@ -31,27 +31,34 @@
 
 #import "Constants.h"
 #import <Foundation/Foundation.h>
-
-#ifdef BAKER_NEWSSTAND
 #import <StoreKit/StoreKit.h>
-#endif
 
 @interface PurchasesManager : NSObject <SKProductsRequestDelegate, SKPaymentTransactionObserver>
 
 @property (retain, nonatomic) NSMutableDictionary *products;
 
+#pragma mark - Singleton
+
 + (PurchasesManager *)sharedInstance;
+
+#pragma mark - Purchased flag
 
 - (BOOL)isMarkedAsPurchased:(NSString *)productID;
 - (void)markAsPurchased:(NSString *)productID;
 
+#pragma mark - Prices
+
 - (void)retrievePricesFor:(NSSet *)productIDs;
 - (void)retrievePriceFor:(NSString *)productID;
-
-- (SKProduct *)productFor:(NSString *)productID;
 - (NSString *)priceFor:(NSString *)productID;
+
+#pragma mark - Purchases
 
 - (void)purchase:(NSString *)productID;
 - (void)finishTransaction:(SKPaymentTransaction *)transaction;
+
+#pragma mark - Products
+
+- (SKProduct *)productFor:(NSString *)productID;
 
 @end
