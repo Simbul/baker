@@ -141,10 +141,14 @@
                             autorelease];
 
     self.subscribeButton.enabled = NO;
-    if ([PRODUCT_ID_FREE_SUBSCRIPTION length] > 0) {
-        [purchasesManager retrievePriceFor:PRODUCT_ID_FREE_SUBSCRIPTION];
+    if ([purchasesManager isMarkedAsPurchased:PRODUCT_ID_FREE_SUBSCRIPTION]) {
+        self.subscribeButton.title = NSLocalizedString(@"SUBSCRIBE_BUTTON_SUBSCRIBED_TEXT", nil);
     } else {
-        NSLog(@"Subscription not enabled: constant PRODUCT_ID_FREE_SUBSCRIPTION not set");
+        if ([PRODUCT_ID_FREE_SUBSCRIPTION length] > 0) {
+            [purchasesManager retrievePriceFor:PRODUCT_ID_FREE_SUBSCRIPTION];
+        } else {
+            NSLog(@"Subscription not enabled: constant PRODUCT_ID_FREE_SUBSCRIPTION not set");
+        }
     }
 
     self.navigationItem.leftBarButtonItems = [NSArray arrayWithObjects:
@@ -314,7 +318,9 @@
     [alert show];
     [alert release];
 
-    [self setSubscribeButtonEnabled:YES];
+    [purchasesManager markAsPurchased:PRODUCT_ID_FREE_SUBSCRIPTION];
+
+    self.subscribeButton.title = NSLocalizedString(@"SUBSCRIBE_BUTTON_SUBSCRIBED_TEXT", nil);
 
     [purchasesManager finishTransaction:transaction];
 }

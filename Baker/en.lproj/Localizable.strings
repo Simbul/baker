@@ -5,6 +5,7 @@
 // Subscription button
 "SUBSCRIBE_BUTTON_TEXT" = "Subscribe";
 "SUBSCRIBE_BUTTON_DISABLED_TEXT" = "Subscribing...";
+"SUBSCRIBE_BUTTON_SUBSCRIBED_TEXT" = "Subscribed";
 
 // Subscription alerts
 "SUBSCRIPTION_SUCCESSFUL_TITLE" = "Subscribed successfully";
