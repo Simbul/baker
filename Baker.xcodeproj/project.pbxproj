@@ -36,6 +36,7 @@
 		9FF795A115B4C4F600899E51 /* NSIndexSet+AQIsSetContiguous.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF7959415B4C4F600899E51 /* NSIndexSet+AQIsSetContiguous.m */; };
 		9FF795A215B4C4F600899E51 /* UIColor+AQGridView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF7959615B4C4F600899E51 /* UIColor+AQGridView.m */; };
 		9FF795A715B4C57E00899E51 /* ShelfViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF795A615B4C57E00899E51 /* ShelfViewController.m */; };
+		AB2317D4169F808000BE3BE7 /* PurchasesManager.m in Sources */ = {isa = PBXBuildFile; fileRef = AB2317D3169F808000BE3BE7 /* PurchasesManager.m */; };
 		AB26005116011D9D00E9AA66 /* BakerBookStatus.m in Sources */ = {isa = PBXBuildFile; fileRef = AB26005016011D9D00E9AA66 /* BakerBookStatus.m */; };
 		AB3496C2166148A400AEB508 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = AB3496BF166148A400AEB508 /* Localizable.strings */; };
 		AB40045315B4B83000D87E2A /* BakerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40042B15B4B83000D87E2A /* BakerViewController.m */; };
@@ -127,6 +128,8 @@
 		9FF7959615B4C4F600899E51 /* UIColor+AQGridView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+AQGridView.m"; sourceTree = "<group>"; };
 		9FF795A515B4C57D00899E51 /* ShelfViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShelfViewController.h; sourceTree = "<group>"; };
 		9FF795A615B4C57E00899E51 /* ShelfViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShelfViewController.m; sourceTree = "<group>"; };
+		AB2317D2169F808000BE3BE7 /* PurchasesManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PurchasesManager.h; sourceTree = "<group>"; };
+		AB2317D3169F808000BE3BE7 /* PurchasesManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PurchasesManager.m; sourceTree = "<group>"; };
 		AB26004F16011D9D00E9AA66 /* BakerBookStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BakerBookStatus.h; sourceTree = "<group>"; };
 		AB26005016011D9D00E9AA66 /* BakerBookStatus.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BakerBookStatus.m; sourceTree = "<group>"; };
 		AB3496BB1661472A00AEB508 /* UIConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UIConstants.h; sourceTree = "<group>"; };
@@ -391,6 +394,8 @@
 				ABD24C1C1620309B0042E49C /* IssueViewController.h */,
 				ABD24C1D1620309B0042E49C /* IssueViewController.m */,
 				AB379313161759A900B4C1A3 /* Constants.h */,
+				AB2317D2169F808000BE3BE7 /* PurchasesManager.h */,
+				AB2317D3169F808000BE3BE7 /* PurchasesManager.m */,
 			);
 			path = BakerShelf;
 			sourceTree = "<group>";
@@ -585,6 +590,7 @@
 				ABD24C1E1620309B0042E49C /* IssueViewController.m in Sources */,
 				9FAB40DA162B13CF0088E9C1 /* UIColor+Extensions.m in Sources */,
 				ABD6FC4016544EAD0032BC44 /* NSData+Base64.m in Sources */,
+				AB2317D4169F808000BE3BE7 /* PurchasesManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
