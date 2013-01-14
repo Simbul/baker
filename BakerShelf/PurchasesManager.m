@@ -73,9 +73,11 @@
 #pragma mark - Prices
 
 - (void)retrievePricesFor:(NSSet *)productIDs {
-    SKProductsRequest *productsRequest = [[SKProductsRequest alloc] initWithProductIdentifiers:productIDs];
-    productsRequest.delegate = self;
-    [productsRequest start];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void) {
+        SKProductsRequest *productsRequest = [[SKProductsRequest alloc] initWithProductIdentifiers:productIDs];
+        productsRequest.delegate = self;
+        [productsRequest start];
+    });
 }
 
 - (void)retrievePriceFor:(NSString *)productID {
