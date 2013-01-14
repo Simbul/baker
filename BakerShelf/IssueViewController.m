@@ -389,7 +389,7 @@
 - (void)actionButtonPressed:(UIButton *)sender
 {
     NSString *status = [self.issue getStatus];
-    if ([status isEqualToString:@"remote"]) {
+    if ([status isEqualToString:@"remote"] || [status isEqualToString:@"purchased"]) {
     #ifdef BAKER_NEWSSTAND
         [self download];
     #endif
