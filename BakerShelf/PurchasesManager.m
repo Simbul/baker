@@ -168,14 +168,17 @@
 - (void)paymentQueue:(SKPaymentQueue *)queue updatedTransactions:(NSArray *)transactions {
     for(SKPaymentTransaction *transaction in transactions) {
         switch (transaction.transactionState) {
+            case SKPaymentTransactionStatePurchasing:
+                // Nothing to do at the moment
+                break;
+            case SKPaymentTransactionStatePurchased:
+                [self completeTransaction:transaction];
+                break;
             case SKPaymentTransactionStateFailed:
                 [self failedTransaction:transaction];
                 break;
-            case SKPaymentTransactionStatePurchasing:
-                break;
-            case SKPaymentTransactionStatePurchased:
             case SKPaymentTransactionStateRestored:
-                [self completeTransaction:transaction];
+                // Nothing to do at the moment
                 break;
             default:
                 break;

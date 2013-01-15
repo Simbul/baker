@@ -427,42 +427,47 @@
     [purchasesManager purchase:self.issue.productID];
 }
 - (void)handleIssuePurchased:(NSNotification *)notification {
-    PurchasesManager *purchasesManager = [PurchasesManager sharedInstance];
     SKPaymentTransaction *transaction = [notification.userInfo objectForKey:@"transaction"];
 
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"ISSUE_PURCHASE_SUCCESSFUL_TITLE", nil)
-                                                    message:[NSString stringWithFormat:
-                                                             NSLocalizedString(@"ISSUE_PURCHASE_SUCCESSFUL_MESSAGE", nil), self.issue.title]
-                                                   delegate:nil
-                                          cancelButtonTitle:NSLocalizedString(@"ISSUE_PURCHASE_SUCCESSFUL_CLOSE", nil)
-                                          otherButtonTitles:nil];
-    [alert show];
-    [alert release];
+    if ([transaction.payment.productIdentifier isEqualToString:issue.productID]) {
+        PurchasesManager *purchasesManager = [PurchasesManager sharedInstance];
 
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"notification_issues_purchased" object:purchasesManager];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"notification_issues_purchase_failed" object:purchasesManager];
-
-    [purchasesManager markAsPurchased:transaction.payment.productIdentifier];
-    [self refresh];
-    [purchasesManager finishTransaction:transaction];
-}
-- (void)handleIssuePurchaseFailed:(NSNotification *)notification {
-    PurchasesManager *purchasesManager = [PurchasesManager sharedInstance];
-    SKPaymentTransaction *transaction = [notification.userInfo objectForKey:@"transaction"];
-
-    // Show an error, unless it was the user who cancelled the transaction
-    if (transaction.error.code != SKErrorPaymentCancelled) {
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"ISSUE_PURCHASE_FAILED_TITLE", nil)
-                                                        message:[transaction.error localizedDescription]
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"ISSUE_PURCHASE_SUCCESSFUL_TITLE", nil)
+                                                        message:[NSString stringWithFormat:
+                                                                 NSLocalizedString(@"ISSUE_PURCHASE_SUCCESSFUL_MESSAGE", nil), self.issue.title]
                                                        delegate:nil
-                                              cancelButtonTitle:NSLocalizedString(@"ISSUE_PURCHASE_FAILED_CLOSE", nil)
+                                              cancelButtonTitle:NSLocalizedString(@"ISSUE_PURCHASE_SUCCESSFUL_CLOSE", nil)
                                               otherButtonTitles:nil];
         [alert show];
         [alert release];
+
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:@"notification_issue_purchased" object:nil];
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:@"notification_issue_purchase_failed" object:nil];
+
+        [purchasesManager markAsPurchased:transaction.payment.productIdentifier];
+        [purchasesManager finishTransaction:transaction];
     }
 
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"notification_issues_purchased" object:purchasesManager];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"notification_issues_purchase_failed" object:purchasesManager];
+    [self refresh];
+}
+- (void)handleIssuePurchaseFailed:(NSNotification *)notification {
+    SKPaymentTransaction *transaction = [notification.userInfo objectForKey:@"transaction"];
+
+    if ([transaction.payment.productIdentifier isEqualToString:issue.productID]) {
+        // Show an error, unless it was the user who cancelled the transaction
+        if (transaction.error.code != SKErrorPaymentCancelled) {
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"ISSUE_PURCHASE_FAILED_TITLE", nil)
+                                                            message:[transaction.error localizedDescription]
+                                                           delegate:nil
+                                                  cancelButtonTitle:NSLocalizedString(@"ISSUE_PURCHASE_FAILED_CLOSE", nil)
+                                                  otherButtonTitles:nil];
+            [alert show];
+            [alert release];
+        }
+
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:@"notification_issue_purchased" object:nil];
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:@"notification_issue_purchase_failed" object:nil];
+    }
 
     [self refresh];
 }
