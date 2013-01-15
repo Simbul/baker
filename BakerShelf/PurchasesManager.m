@@ -100,6 +100,14 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_products_retrieved" object:self userInfo:userInfo];
 }
 
+- (void)request:(SKRequest *)request didFailWithError:(NSError *)error {
+    NSLog(@"App Store request failure: %@", error);
+
+    NSDictionary *userInfo = [NSDictionary dictionaryWithObject:error forKey:@"error"];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_products_request_failed" object:self userInfo:userInfo];
+
+}
+
 - (NSString *)priceFor:(NSString *)productID {
     SKProduct *product = [products objectForKey:productID];
     if (product) {

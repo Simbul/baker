@@ -2,6 +2,10 @@
 // Shelf Navigation Title at the top of the main Issues List
 "SHELF_NAVIGATION_TITLE" = "Baker Shelf";
 
+// Products alert
+"PRODUCTS_REQUEST_FAILED_TITLE" = "Failure connecting to the App Store";
+"PRODUCTS_REQUEST_FAILED_CLOSE" = "Close";
+
 // Subscription button
 "SUBSCRIBE_BUTTON_TEXT" = "Subscribe";
 "SUBSCRIBE_BUTTON_DISABLED_TEXT" = "Subscribing...";

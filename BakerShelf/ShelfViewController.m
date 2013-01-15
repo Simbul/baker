@@ -70,8 +70,12 @@
 
         self.purchasesManager = [PurchasesManager sharedInstance];
         [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(handleIssueProductRetrieved:)
+                                                 selector:@selector(handleProductsRetrieved:)
                                                      name:@"notification_products_retrieved"
+                                                   object:self.purchasesManager];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handleProductsRequestFailed:)
+                                                     name:@"notification_products_request_failed"
                                                    object:self.purchasesManager];
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(handleFreeSubscriptionPurchased:)
@@ -351,7 +355,7 @@
     [self setSubscribeButtonEnabled:YES];
 }
 
-- (void)handleIssueProductRetrieved:(NSNotification *)notification {
+- (void)handleProductsRetrieved:(NSNotification *)notification {
     NSSet *ids = [notification.userInfo objectForKey:@"ids"];
 
     if (ids.count == 1 && [[ids anyObject] isEqualToString:PRODUCT_ID_FREE_SUBSCRIPTION]) {
@@ -369,6 +373,18 @@
         }
         [shelfStatus save];
     }
+}
+
+- (void)handleProductsRequestFailed:(NSNotification *)notification {
+    NSError *error = [notification.userInfo objectForKey:@"error"];
+
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"PRODUCTS_REQUEST_FAILED_TITLE", nil)
+                                                    message:[error localizedDescription]
+                                                   delegate:nil
+                                          cancelButtonTitle:NSLocalizedString(@"PRODUCTS_REQUEST_FAILED_CLOSE", nil)
+                                          otherButtonTitles:nil];
+    [alert show];
+    [alert release];
 }
 
 #endif
