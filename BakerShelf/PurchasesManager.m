@@ -34,6 +34,7 @@
 #import "JSONKit.h"
 #import "NSData+Base64.h"
 
+#ifdef BAKER_NEWSSTAND
 @implementation PurchasesManager
 
 @synthesize products;
@@ -221,3 +222,4 @@
 }
 
 @end
+#endif

@@ -55,7 +55,9 @@
 @property (copy, nonatomic) NSString *price;
 
 @property (retain, nonatomic) BakerBook *bakerBook;
+#ifdef BAKER_NEWSSTAND
 @property (retain, nonatomic) PurchasesManager *purchasesManager;
+#endif
 
 -(id)initWithBakerBook:(BakerBook *)bakerBook;
 -(void)getCover:(void(^)(UIImage *img))completionBlock;

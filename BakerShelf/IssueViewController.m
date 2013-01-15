@@ -34,7 +34,9 @@
 #import "IssueViewController.h"
 #import "SSZipArchive.h"
 #import "UIConstants.h"
+#ifdef BAKER_NEWSSTAND
 #import "PurchasesManager.h"
+#endif
 
 #import "UIColor+Extensions.h"
 

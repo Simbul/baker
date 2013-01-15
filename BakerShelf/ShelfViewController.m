@@ -48,8 +48,10 @@
 @synthesize issuesManager;
 @synthesize subscribeButton;
 @synthesize refreshButton;
-@synthesize purchasesManager;
 @synthesize shelfStatus;
+#ifdef BAKER_NEWSSTAND
+@synthesize purchasesManager;
+#endif
 
 #pragma mark - Init
 
@@ -68,6 +70,7 @@
     if (self) {
         self.issues = currentBooks;
 
+        #ifdef BAKER_NEWSSTAND
         self.purchasesManager = [PurchasesManager sharedInstance];
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(handleProductsRetrieved:)
@@ -86,6 +89,7 @@
                                                      name:@"notification_free_subscription_failed"
                                                    object:self.purchasesManager];
         [[SKPaymentQueue defaultQueue] addTransactionObserver:purchasesManager];
+        #endif
 
         self.shelfStatus = [[[ShelfStatus alloc] init] retain];
         [shelfStatus load];
@@ -112,8 +116,10 @@
     [issues release];
     [subscribeButton release];
     [refreshButton release];
-    [purchasesManager release];
     [shelfStatus release];
+    #ifdef BAKER_NEWSSTAND
+    [purchasesManager release];
+    #endif
 
     [super dealloc];
 }

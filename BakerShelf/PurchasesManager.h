@@ -33,6 +33,7 @@
 #import <Foundation/Foundation.h>
 #import <StoreKit/StoreKit.h>
 
+#ifdef BAKER_NEWSSTAND
 @interface PurchasesManager : NSObject <SKProductsRequestDelegate, SKPaymentTransactionObserver>
 
 @property (retain, nonatomic) NSMutableDictionary *products;
@@ -62,3 +63,4 @@
 - (SKProduct *)productFor:(NSString *)productID;
 
 @end
+#endif
