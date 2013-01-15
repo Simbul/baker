@@ -49,6 +49,7 @@
 @synthesize subscribeButton;
 @synthesize refreshButton;
 @synthesize purchasesManager;
+@synthesize shelfStatus;
 
 #pragma mark - Init
 
@@ -57,6 +58,7 @@
     self = [super init];
     if (self) {
         self.issues = [ShelfManager localBooksList];
+        self.shelfStatus = [[[ShelfStatus alloc] init] retain];
     }
     return self;
 }
@@ -81,6 +83,12 @@
                                                    object:self.purchasesManager];
         [[SKPaymentQueue defaultQueue] addTransactionObserver:purchasesManager];
 
+        self.shelfStatus = [[[ShelfStatus alloc] init] retain];
+        [shelfStatus load];
+        for (BakerIssue *issue in self.issues) {
+            issue.price = [shelfStatus priceFor:issue.productID];
+        }
+
         NSMutableArray *controllers = [NSMutableArray array];
         for (BakerIssue *issue in self.issues) {
             IssueViewController *controller = [self createIssueViewControllerWithIssue:issue];
@@ -101,6 +109,7 @@
     [subscribeButton release];
     [refreshButton release];
     [purchasesManager release];
+    [shelfStatus release];
 
     [super dealloc];
 }
@@ -355,8 +364,10 @@
             price = [purchasesManager priceFor:controller.issue.productID];
             if (price) {
                 [controller setPrice:price];
+                [shelfStatus setPrice:price for:controller.issue.productID];
             }
         }
+        [shelfStatus save];
     }
 }
 

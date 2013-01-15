@@ -36,6 +36,7 @@
 #import "BakerIssue.h"
 #import "IssuesManager.h"
 #import "PurchasesManager.h"
+#import "ShelfStatus.h"
 
 @interface ShelfViewController : UIViewController <AQGridViewDataSource, AQGridViewDelegate>
 
@@ -43,6 +44,7 @@
 @property (retain, nonatomic) NSMutableArray *issueViewControllers;
 @property (retain, nonatomic) IssuesManager *issuesManager;
 @property (retain, nonatomic) PurchasesManager *purchasesManager;
+@property (retain, nonatomic) ShelfStatus *shelfStatus;
 
 @property (strong, nonatomic) AQGridView *gridView;
 @property (strong, nonatomic) UIImageView *background;
