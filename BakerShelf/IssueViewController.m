@@ -60,6 +60,7 @@
     if (self) {
         self.issue = bakerIssue;
         currentStatus = nil;
+        purchaseDelayed = NO;
     }
     return self;
 }
@@ -412,9 +413,8 @@
     [self.issue downloadWithDelegate:self];
 }
 - (void)buy {
-    [self refresh:@"purchasing"];
-
     PurchasesManager *purchasesManager = [PurchasesManager sharedInstance];
+
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(handleIssuePurchased:)
                                                  name:@"notification_issue_purchased"
@@ -424,7 +424,19 @@
                                                  name:@"notification_issue_purchase_failed"
                                                object:purchasesManager];
 
-    [purchasesManager purchase:self.issue.productID];
+    if (![purchasesManager purchase:self.issue.productID]) {
+        // Still retrieving SKProduct: delay purchase
+        purchaseDelayed = YES;
+
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:@"notification_issue_purchased" object:purchasesManager];
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:@"notification_issue_purchase_failed" object:purchasesManager];
+
+        [purchasesManager retrievePriceFor:self.issue.productID];
+
+        [self refresh:@"unpriced"];
+    } else {
+        [self refresh:@"purchasing"];
+    }
 }
 - (void)handleIssuePurchased:(NSNotification *)notification {
     SKPaymentTransaction *transaction = [notification.userInfo objectForKey:@"transaction"];
@@ -467,14 +479,21 @@
 
         [[NSNotificationCenter defaultCenter] removeObserver:self name:@"notification_issue_purchased" object:nil];
         [[NSNotificationCenter defaultCenter] removeObserver:self name:@"notification_issue_purchase_failed" object:nil];
-    }
 
-    [self refresh];
+        [self refresh];
+    }
 }
 
 - (void)setPrice:(NSString *)price {
     self.issue.price = price;
-    [self refresh];
+    if (purchaseDelayed) {
+        purchaseDelayed = NO;
+        [self buy];
+    } else {
+        if (![currentStatus isEqualToString:@"purchasing"]) {
+            [self refresh];
+        }
+    }
 }
 #endif
 - (void)read

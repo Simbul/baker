@@ -55,7 +55,7 @@
 
 #pragma mark - Purchases
 
-- (void)purchase:(NSString *)productID;
+- (BOOL)purchase:(NSString *)productID;
 - (void)finishTransaction:(SKPaymentTransaction *)transaction;
 
 #pragma mark - Products

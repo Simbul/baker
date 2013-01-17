@@ -35,6 +35,7 @@
 @interface IssueViewController : UIViewController <NSURLConnectionDownloadDelegate> {
     NSString *currentAction;
     NSString *currentStatus;
+    BOOL purchaseDelayed;
 }
 
 @property (strong, nonatomic) BakerIssue *issue;

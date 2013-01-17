@@ -124,10 +124,18 @@
 
 #pragma mark - Purchases
 
-- (void)purchase:(NSString *)productID {
+- (BOOL)purchase:(NSString *)productID {
     SKProduct *product = [self productFor:productID];
-    SKPayment *payment = [SKPayment paymentWithProduct:product];
-    [[SKPaymentQueue defaultQueue] addPayment:payment];
+    if (product) {
+        SKPayment *payment = [SKPayment paymentWithProduct:product];
+        [[SKPaymentQueue defaultQueue] addPayment:payment];
+
+        return YES;
+    } else {
+        NSLog(@"Trying to buy unavailable product %@", productID);
+
+        return NO;
+    }
 }
 
 - (void)finishTransaction:(SKPaymentTransaction *)transaction {
