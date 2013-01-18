@@ -407,7 +407,7 @@
     NSString *status = [issue getStatus];
 
     #ifdef BAKER_NEWSSTAND
-    if (status == @"downloaded") {
+    if (status == @"opening") {
         book = [[[BakerBook alloc] initWithBookPath:issue.path bundled:NO] autorelease];
         [self pushViewControllerWithBook:book];
     }

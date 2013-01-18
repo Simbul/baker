@@ -433,9 +433,11 @@
 
         [purchasesManager retrievePriceFor:self.issue.productID];
 
-        [self refresh:@"unpriced"];
+        self.issue.transientStatus = BakerIssueTransientStatusUnpriced;
+        [self refresh];
     } else {
-        [self refresh:@"purchasing"];
+        self.issue.transientStatus = BakerIssueTransientStatusPurchasing;
+        [self refresh];
     }
 }
 - (void)handleIssuePurchased:(NSNotification *)notification {
@@ -458,9 +460,10 @@
 
         [purchasesManager markAsPurchased:transaction.payment.productIdentifier];
         [purchasesManager finishTransaction:transaction];
-    }
 
-    [self refresh];
+        self.issue.transientStatus = BakerIssueTransientStatusNone;
+        [self refresh];
+    }
 }
 - (void)handleIssuePurchaseFailed:(NSNotification *)notification {
     SKPaymentTransaction *transaction = [notification.userInfo objectForKey:@"transaction"];
@@ -480,6 +483,7 @@
         [[NSNotificationCenter defaultCenter] removeObserver:self name:@"notification_issue_purchased" object:nil];
         [[NSNotificationCenter defaultCenter] removeObserver:self name:@"notification_issue_purchase_failed" object:nil];
 
+        self.issue.transientStatus = BakerIssueTransientStatusNone;
         [self refresh];
     }
 }
@@ -490,15 +494,14 @@
         purchaseDelayed = NO;
         [self buy];
     } else {
-        if (![currentStatus isEqualToString:@"purchasing"]) {
-            [self refresh];
-        }
+        [self refresh];
     }
 }
 #endif
 - (void)read
 {
-    [self refresh:@"opening"];
+    self.issue.transientStatus = BakerIssueTransientStatusOpening;
+    [self refresh];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"read_issue_request" object:self];
 }
 
@@ -508,7 +511,8 @@
 {
     // TODO: use a better check (ideally check that status is "connecting" instead of relying on a UI property)
     if (self.progressBar.hidden) {
-        [self refresh:@"downloading"];
+        self.issue.transientStatus = BakerIssueTransientStatusDownloading;
+        [self refresh];
     }
     [self.progressBar setProgress:((float)totalBytesWritten/(float)expectedTotalBytes) animated:YES];
 }
@@ -531,6 +535,7 @@
         NSLog(@"Unable to delete file: %@", [error localizedDescription]);
     }
     
+    self.issue.transientStatus = BakerIssueTransientStatusNone;
     [self refresh];
 
     // TODO: notify of new content with setApplicationIconBadgeNumber
@@ -558,6 +563,7 @@
     [alert show];
     [alert release];
 
+    self.issue.transientStatus = BakerIssueTransientStatusNone;
     [self refresh];
 }
 

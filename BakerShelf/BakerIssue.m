@@ -66,6 +66,8 @@
         } else {
             self.coverPath = [book.path stringByAppendingPathComponent:book.cover];
         }
+
+        self.transientStatus = BakerIssueTransientStatusNone;
     }
     return self;
 }
@@ -97,6 +99,8 @@
         }
 
         self.bakerBook = nil;
+
+        self.transientStatus = BakerIssueTransientStatusNone;
     }
     return self;
 }
@@ -142,6 +146,20 @@
 }
 -(NSString *)getStatus {
 #ifdef BAKER_NEWSSTAND
+    switch (self.transientStatus) {
+        case BakerIssueTransientStatusDownloading:
+            return @"downloading";
+            break;
+        case BakerIssueTransientStatusOpening:
+            return @"opening";
+            break;
+        case BakerIssueTransientStatusPurchasing:
+            return @"purchasing";
+            break;
+        default:
+            break;
+    }
+
     NKLibrary *nkLib = [NKLibrary sharedLibrary];
     NKIssue *nkIssue = [nkLib issueWithName:self.ID];
     NSString *nkIssueStatus = [self nkIssueContentStatusToString:[nkIssue status]];

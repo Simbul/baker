@@ -39,6 +39,14 @@
 
 #import "BakerBook.h"
 
+typedef enum transientStates {
+    BakerIssueTransientStatusNone,
+    BakerIssueTransientStatusDownloading,
+    BakerIssueTransientStatusOpening,
+    BakerIssueTransientStatusPurchasing,
+    BakerIssueTransientStatusUnpriced
+} BakerIssueTransientStatus;
+
 @interface BakerIssue : NSObject
 
 @property (copy, nonatomic) NSString *ID;
@@ -58,6 +66,8 @@
 #ifdef BAKER_NEWSSTAND
 @property (retain, nonatomic) PurchasesManager *purchasesManager;
 #endif
+
+@property (nonatomic, assign) BakerIssueTransientStatus transientStatus;
 
 -(id)initWithBakerBook:(BakerBook *)bakerBook;
 -(void)getCover:(void(^)(UIImage *img))completionBlock;
