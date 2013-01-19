@@ -74,11 +74,13 @@
 #pragma mark - Prices
 
 - (void)retrievePricesFor:(NSSet *)productIDs {
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void) {
-        SKProductsRequest *productsRequest = [[SKProductsRequest alloc] initWithProductIdentifiers:productIDs];
-        productsRequest.delegate = self;
-        [productsRequest start];
-    });
+    if ([productIDs count] > 0) {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void) {
+            SKProductsRequest *productsRequest = [[SKProductsRequest alloc] initWithProductIdentifiers:productIDs];
+            productsRequest.delegate = self;
+            [productsRequest start];
+        });
+    }
 }
 
 - (void)retrievePriceFor:(NSString *)productID {
@@ -87,6 +89,8 @@
 }
 
 - (void)productsRequest:(SKProductsRequest *)request didReceiveResponse:(SKProductsResponse *)response {
+    NSLog(@"############ REQUEST RECEIVED RESPONSE %@", response.products);
+    
     for (NSString *productID in response.invalidProductIdentifiers) {
         NSLog(@"Invalid product identifier: %@", productID);
     }
@@ -174,6 +178,8 @@
 #pragma mark - Payment queue
 
 - (void)paymentQueue:(SKPaymentQueue *)queue updatedTransactions:(NSArray *)transactions {
+    NSLog(@"############ UPDATED TRANSACTIONS %@", transactions);
+    
     for(SKPaymentTransaction *transaction in transactions) {
         switch (transaction.transactionState) {
             case SKPaymentTransactionStatePurchasing:
