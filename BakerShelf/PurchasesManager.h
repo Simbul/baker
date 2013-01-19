@@ -37,6 +37,7 @@
 @interface PurchasesManager : NSObject <SKProductsRequestDelegate, SKPaymentTransactionObserver>
 
 @property (retain, nonatomic) NSMutableDictionary *products;
+@property (retain, nonatomic) NSNumberFormatter *numberFormatter;
 
 #pragma mark - Singleton
 

@@ -548,6 +548,8 @@
     if (coverImage) {
         [[UIApplication sharedApplication] setNewsstandIconImage:coverImage];
     }
+    [book release];
+    [connection release];
     #endif
 }
 - (void)connectionDidResumeDownloading:(NSURLConnection *)connection totalBytesWritten:(long long)totalBytesWritten expectedTotalBytes:(long long)expectedTotalBytes

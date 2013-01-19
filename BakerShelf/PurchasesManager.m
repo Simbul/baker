@@ -44,6 +44,10 @@
 
     if (self) {
         self.products = [[NSMutableDictionary alloc] init];
+
+        _numberFormatter = [[NSNumberFormatter alloc] init];
+        [_numberFormatter setFormatterBehavior:NSNumberFormatterBehavior10_4];
+        [_numberFormatter setNumberStyle:NSNumberFormatterCurrencyStyle];
     }
 
     return self;
@@ -103,6 +107,8 @@
     
     NSDictionary *userInfo = [NSDictionary dictionaryWithObject:ids forKey:@"ids"];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_products_retrieved" object:self userInfo:userInfo];
+
+    [request release];
 }
 
 - (void)request:(SKRequest *)request didFailWithError:(NSError *)error {
@@ -111,17 +117,14 @@
     NSDictionary *userInfo = [NSDictionary dictionaryWithObject:error forKey:@"error"];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_products_request_failed" object:self userInfo:userInfo];
 
+    [request release];
 }
 
 - (NSString *)priceFor:(NSString *)productID {
     SKProduct *product = [products objectForKey:productID];
     if (product) {
-        NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
-        [numberFormatter setFormatterBehavior:NSNumberFormatterBehavior10_4];
-        [numberFormatter setNumberStyle:NSNumberFormatterCurrencyStyle];
-        [numberFormatter setLocale:product.priceLocale];
-
-        return [numberFormatter stringFromNumber:product.price];
+        [_numberFormatter setLocale:product.priceLocale];
+        return [_numberFormatter stringFromNumber:product.price];
     }
     return nil;
 }
@@ -157,7 +160,7 @@
                                   nil];
         NSError *error = nil;
         NSData *jsonData = [jsonDict JSONDataWithOptions:JKSerializeOptionNone error:&error];
-        
+
         if (error) {
             NSLog(@"Error generating receipt JSON: %@", error);
         } else {
@@ -171,6 +174,8 @@
             } else {
                 NSLog(@"Cannot connect to %@", PURCHASE_CONFIRMATION_URL);
             }
+            [conn release];
+            [req release];
         }
     }
 }
@@ -234,6 +239,7 @@
 
 -(void)dealloc {
     [products release];
+    [_numberFormatter release];
 
     [super dealloc];
 }
