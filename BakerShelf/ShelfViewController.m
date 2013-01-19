@@ -187,6 +187,7 @@
     #endif
 
     for (IssueViewController *controller in self.issueViewControllers) {
+        controller.issue.transientStatus = BakerIssueTransientStatusNone;
         [controller refresh];
     }
 }
