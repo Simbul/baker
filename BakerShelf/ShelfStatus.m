@@ -46,13 +46,15 @@
     return self;
 }
 
-- (void)load {
+- (NSDictionary *)load {
     NSDictionary *jsonDict = [super load];
 
     NSDictionary *jsonPrices = [jsonDict objectForKey:@"prices"];
     [jsonPrices enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
         [self setPrice:obj for:key];
     }];
+
+    return jsonDict;
 }
 
 - (void)save {

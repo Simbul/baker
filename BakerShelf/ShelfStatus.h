@@ -38,7 +38,6 @@
 
 - (id)init;
 - (void)save;
-- (void)load;
 - (NSString *)priceFor:(NSString *)productID;
 - (void)setPrice:(NSString *)price for:(NSString *)productID;
 

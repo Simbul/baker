@@ -43,11 +43,13 @@
     return [super initWithJSONPath:statusPath];
 }
 
-- (void)load {
+- (NSDictionary *)load {
     NSDictionary *jsonDict = [super load];
 
     self.page        = [jsonDict objectForKey:@"page"];
     self.scrollIndex = [jsonDict objectForKey:@"scroll-index"];
+
+    return jsonDict;
 }
 
 - (void)save {

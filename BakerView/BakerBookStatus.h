@@ -39,6 +39,5 @@
 
 - (id)initWithBookId:(NSString *)bookId;
 - (void)save;
-- (void)load;
 
 @end
