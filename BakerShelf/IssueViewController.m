@@ -446,14 +446,17 @@
     if ([transaction.payment.productIdentifier isEqualToString:issue.productID]) {
         PurchasesManager *purchasesManager = [PurchasesManager sharedInstance];
 
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"ISSUE_PURCHASE_SUCCESSFUL_TITLE", nil)
-                                                        message:[NSString stringWithFormat:
-                                                                 NSLocalizedString(@"ISSUE_PURCHASE_SUCCESSFUL_MESSAGE", nil), self.issue.title]
-                                                       delegate:nil
-                                              cancelButtonTitle:NSLocalizedString(@"ISSUE_PURCHASE_SUCCESSFUL_CLOSE", nil)
-                                              otherButtonTitles:nil];
-        [alert show];
-        [alert release];
+        if (!transaction.originalTransaction) {
+            // Do not show alert on restoring a transaction
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"ISSUE_PURCHASE_SUCCESSFUL_TITLE", nil)
+                                                            message:[NSString stringWithFormat:
+                                                                     NSLocalizedString(@"ISSUE_PURCHASE_SUCCESSFUL_MESSAGE", nil), self.issue.title]
+                                                           delegate:nil
+                                                  cancelButtonTitle:NSLocalizedString(@"ISSUE_PURCHASE_SUCCESSFUL_CLOSE", nil)
+                                                  otherButtonTitles:nil];
+            [alert show];
+            [alert release];
+        }
 
         [[NSNotificationCenter defaultCenter] removeObserver:self name:@"notification_issue_purchased" object:nil];
         [[NSNotificationCenter defaultCenter] removeObserver:self name:@"notification_issue_purchase_failed" object:nil];
