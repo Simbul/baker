@@ -159,21 +159,20 @@
                              action:@selector(handleFreeSubscription:)]
                             autorelease];
 
-    self.subscribeButton.enabled = NO;
-    if ([purchasesManager isMarkedAsPurchased:PRODUCT_ID_FREE_SUBSCRIPTION]) {
-        self.subscribeButton.title = NSLocalizedString(@"SUBSCRIBE_BUTTON_SUBSCRIBED_TEXT", nil);
-    } else {
-        if ([PRODUCT_ID_FREE_SUBSCRIPTION length] > 0) {
-            [purchasesManager retrievePriceFor:PRODUCT_ID_FREE_SUBSCRIPTION];
-        } else {
-            NSLog(@"Subscription not enabled: constant PRODUCT_ID_FREE_SUBSCRIPTION not set");
-        }
-    }
+    NSMutableArray *leftBarButtonItems = [NSMutableArray arrayWithObject:self.refreshButton];
+    if ([PRODUCT_ID_FREE_SUBSCRIPTION length] > 0) {
+        self.subscribeButton.enabled = NO;
+        [leftBarButtonItems addObject:self.subscribeButton];
 
-    self.navigationItem.leftBarButtonItems = [NSArray arrayWithObjects:
-                                              self.refreshButton,
-                                              self.subscribeButton,
-                                              nil];
+        if ([purchasesManager isMarkedAsPurchased:PRODUCT_ID_FREE_SUBSCRIPTION]) {
+            self.subscribeButton.title = NSLocalizedString(@"SUBSCRIBE_BUTTON_SUBSCRIBED_TEXT", nil);
+        } else {
+            [purchasesManager retrievePriceFor:PRODUCT_ID_FREE_SUBSCRIPTION];
+        }
+    } else {
+        NSLog(@"Subscription not enabled: constant PRODUCT_ID_FREE_SUBSCRIPTION not set");
+    }
+    self.navigationItem.leftBarButtonItems = leftBarButtonItems;
     #endif
 }
 - (void)viewWillAppear:(BOOL)animated
