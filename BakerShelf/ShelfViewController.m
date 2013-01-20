@@ -89,6 +89,10 @@
                                                  selector:@selector(handleFreeSubscriptionFailed:)
                                                      name:@"notification_free_subscription_failed"
                                                    object:self.purchasesManager];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handleRestoreFinished:)
+                                                     name:@"notification_restore_finished"
+                                                   object:self.purchasesManager];
         [[SKPaymentQueue defaultQueue] addTransactionObserver:purchasesManager];
         #endif
 
@@ -119,6 +123,7 @@
     [refreshButton release];
     [shelfStatus release];
     [subscriptionsActionSheet release];
+    [self.blockingProgressView release];
     #ifdef BAKER_NEWSSTAND
     [purchasesManager release];
     #endif
@@ -160,6 +165,18 @@
                              target:self
                              action:@selector(handleSubscribeButtonPressed:)]
                             autorelease];
+
+    self.blockingProgressView = [[UIAlertView alloc]
+                                 initWithTitle:@"Processing..."
+                                 message:@"\n"
+                                 delegate:nil
+                                 cancelButtonTitle:nil
+                                 otherButtonTitles:nil];
+    UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    spinner.center = CGPointMake(139.5, 75.5); // .5 so it doesn't blur
+    [self.blockingProgressView addSubview:spinner];
+    [spinner startAnimating];
+    [spinner release];
 
     if ([PRODUCT_ID_FREE_SUBSCRIPTION length] > 0) {
         self.subscribeButton.enabled = NO;
@@ -355,6 +372,8 @@
             NSLog(@"Action sheet: cancel");
             [self setSubscribeButtonEnabled:YES];
         } else if ([action isEqualToString:@"restore"]) {
+            [self.blockingProgressView show];
+            [purchasesManager restore];
             NSLog(@"Action sheet: restore");
         } else {
             NSLog(@"Action sheet: %@", action);
@@ -362,6 +381,10 @@
             [purchasesManager purchase:action];
         }
     }
+}
+
+- (void)handleRestoreFinished:(NSNotification *)notification {
+    [self.blockingProgressView dismissWithClickedButtonIndex:0 animated:YES];
 }
 
 - (void)handleFreeSubscription:(NSNotification *)notification {

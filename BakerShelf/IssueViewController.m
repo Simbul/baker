@@ -63,6 +63,10 @@
         purchaseDelayed = NO;
 
         self.purchasesManager = [PurchasesManager sharedInstance];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handleIssueRestored:)
+                                                     name:@"notification_issue_restored"
+                                                   object:self.purchasesManager];
     }
     return self;
 }
@@ -483,6 +487,18 @@
 
         [[NSNotificationCenter defaultCenter] removeObserver:self name:@"notification_issue_purchased" object:nil];
         [[NSNotificationCenter defaultCenter] removeObserver:self name:@"notification_issue_purchase_failed" object:nil];
+
+        self.issue.transientStatus = BakerIssueTransientStatusNone;
+        [self refresh];
+    }
+}
+
+- (void)handleIssueRestored:(NSNotification *)notification {
+    SKPaymentTransaction *transaction = [notification.userInfo objectForKey:@"transaction"];
+
+    if ([transaction.payment.productIdentifier isEqualToString:issue.productID]) {
+        [self.purchasesManager markAsPurchased:transaction.payment.productIdentifier];
+        [self.purchasesManager finishTransaction:transaction];
 
         self.issue.transientStatus = BakerIssueTransientStatusNone;
         [self refresh];

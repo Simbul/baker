@@ -58,6 +58,7 @@
 
 - (BOOL)purchase:(NSString *)productID;
 - (void)finishTransaction:(SKPaymentTransaction *)transaction;
+- (void)restore;
 
 #pragma mark - Products
 

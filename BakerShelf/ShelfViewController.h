@@ -57,6 +57,7 @@
 
 @property (strong, nonatomic) UIActionSheet *subscriptionsActionSheet;
 @property (strong, nonatomic) NSArray *subscriptionsActionSheetActions;
+@property (strong, nonatomic) UIAlertView *blockingProgressView;
 
 #pragma mark - Init
 - (id)initWithBooks:(NSArray *)currentBooks;

@@ -197,7 +197,7 @@
                 [self failedTransaction:transaction];
                 break;
             case SKPaymentTransactionStateRestored:
-                // Nothing to do at the moment
+                [self restoreTransaction:transaction];
                 break;
             default:
                 break;
@@ -215,6 +215,16 @@
     }
 }
 
+- (void)restoreTransaction:(SKPaymentTransaction *)transaction {
+    NSDictionary *userInfo = [NSDictionary dictionaryWithObject:transaction forKey:@"transaction"];
+
+    if ([transaction.payment.productIdentifier isEqualToString:PRODUCT_ID_FREE_SUBSCRIPTION]) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_free_subscription_restored" object:self userInfo:userInfo];
+    } else {
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_issue_restored" object:self userInfo:userInfo];
+    }
+}
+
 -(void)failedTransaction:(SKPaymentTransaction *)transaction {
     NSLog(@"Payment transaction failure: %@", transaction.error);
 
@@ -227,6 +237,14 @@
     }
 
     [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+}
+
+- (void)restore {
+    [[SKPaymentQueue defaultQueue] restoreCompletedTransactions];
+}
+
+- (void)paymentQueueRestoreCompletedTransactionsFinished:(SKPaymentQueue *)queue {
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_restore_finished" object:self userInfo:nil];
 }
 
 #pragma mark - Products
