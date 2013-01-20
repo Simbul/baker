@@ -31,6 +31,7 @@
 
 #import <UIKit/UIKit.h>
 #import "BakerIssue.h"
+#import "PurchasesManager.h"
 
 @interface IssueViewController : UIViewController <NSURLConnectionDownloadDelegate> {
     NSString *currentAction;
@@ -45,6 +46,7 @@
 @property (strong, nonatomic) UIActivityIndicatorView *spinner;
 @property (strong, nonatomic) UILabel *loadingLabel;
 @property (strong, nonatomic) UILabel *priceLabel;
+@property (strong, nonatomic) PurchasesManager *purchasesManager;
 
 #pragma mark - Structs
 typedef struct {
