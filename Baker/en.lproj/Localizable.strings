@@ -11,6 +11,10 @@
 "SUBSCRIBE_BUTTON_DISABLED_TEXT" = "Subscribing...";
 "SUBSCRIBE_BUTTON_SUBSCRIBED_TEXT" = "Subscribed";
 
+"SUBSCRIPTIONS_SHEET_FREE" = "Subscribe for free";
+"SUBSCRIPTIONS_SHEET_RESTORE" = "Restore purchases";
+"SUBSCRIPTIONS_SHEET_CLOSE" = "Close";
+
 // Subscription alerts
 "SUBSCRIPTION_SUCCESSFUL_TITLE" = "Subscribed successfully";
 "SUBSCRIPTION_SUCCESSFUL_MESSAGE" = "You have successfully subscribed";

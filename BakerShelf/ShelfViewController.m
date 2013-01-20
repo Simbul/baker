@@ -49,6 +49,7 @@
 @synthesize subscribeButton;
 @synthesize refreshButton;
 @synthesize shelfStatus;
+@synthesize subscriptionsActionSheet;
 #ifdef BAKER_NEWSSTAND
 @synthesize purchasesManager;
 #endif
@@ -117,6 +118,7 @@
     [subscribeButton release];
     [refreshButton release];
     [shelfStatus release];
+    [subscriptionsActionSheet release];
     #ifdef BAKER_NEWSSTAND
     [purchasesManager release];
     #endif
@@ -156,23 +158,15 @@
                              initWithTitle: NSLocalizedString(@"SUBSCRIBE_BUTTON_TEXT", nil)
                              style:UIBarButtonItemStylePlain
                              target:self
-                             action:@selector(handleFreeSubscription:)]
+                             action:@selector(handleSubscribeButtonPressed:)]
                             autorelease];
 
-    NSMutableArray *leftBarButtonItems = [NSMutableArray arrayWithObject:self.refreshButton];
     if ([PRODUCT_ID_FREE_SUBSCRIPTION length] > 0) {
         self.subscribeButton.enabled = NO;
-        [leftBarButtonItems addObject:self.subscribeButton];
-
-        if ([purchasesManager isMarkedAsPurchased:PRODUCT_ID_FREE_SUBSCRIPTION]) {
-            self.subscribeButton.title = NSLocalizedString(@"SUBSCRIBE_BUTTON_SUBSCRIBED_TEXT", nil);
-        } else {
-            [purchasesManager retrievePriceFor:PRODUCT_ID_FREE_SUBSCRIPTION];
-        }
-    } else {
-        NSLog(@"Subscription not enabled: constant PRODUCT_ID_FREE_SUBSCRIPTION not set");
+        [purchasesManager retrievePriceFor:PRODUCT_ID_FREE_SUBSCRIPTION];
     }
-    self.navigationItem.leftBarButtonItems = leftBarButtonItems;
+
+    self.navigationItem.leftBarButtonItems = [NSArray arrayWithObjects:self.refreshButton, self.subscribeButton, nil];
     #endif
 }
 - (void)viewWillAppear:(BOOL)animated
@@ -321,6 +315,55 @@
 
 #pragma mark - Store Kit
 
+- (void)handleSubscribeButtonPressed:(NSNotification *)notification {
+    if (subscriptionsActionSheet.visible) {
+        [subscriptionsActionSheet dismissWithClickedButtonIndex:(subscriptionsActionSheet.numberOfButtons - 1) animated:YES];
+    } else {
+        [self.subscriptionsActionSheet release];
+        self.subscriptionsActionSheet = [self buildSubscriptionsActionSheet];
+        [subscriptionsActionSheet showFromBarButtonItem:self.subscribeButton animated:YES];
+    }
+}
+
+- (UIActionSheet *)buildSubscriptionsActionSheet {
+    UIActionSheet *sheet = [[UIActionSheet alloc]initWithTitle:NSLocalizedString(@"SUBSCRIBE_BUTTON_TEXT", nil)
+                                                      delegate:self
+                                             cancelButtonTitle:nil
+                                        destructiveButtonTitle:nil
+                                             otherButtonTitles: nil];
+    NSMutableArray *actions = [NSMutableArray array];
+    if ([PRODUCT_ID_FREE_SUBSCRIPTION length] > 0 && ![purchasesManager isMarkedAsPurchased:PRODUCT_ID_FREE_SUBSCRIPTION]) {
+        [sheet addButtonWithTitle:NSLocalizedString(@"SUBSCRIPTIONS_SHEET_FREE", nil)];
+        [actions addObject:PRODUCT_ID_FREE_SUBSCRIPTION];
+    }
+
+    [sheet addButtonWithTitle:NSLocalizedString(@"SUBSCRIPTIONS_SHEET_RESTORE", nil)];
+    [actions addObject:@"restore"];
+    [sheet addButtonWithTitle:NSLocalizedString(@"SUBSCRIPTIONS_SHEET_CLOSE", nil)];
+    [actions addObject:@"cancel"];
+
+    self.subscriptionsActionSheetActions = actions;
+
+    sheet.cancelButtonIndex = sheet.numberOfButtons - 1;
+    return sheet;
+}
+
+- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
+    if (actionSheet == subscriptionsActionSheet) {
+        NSString *action = [self.subscriptionsActionSheetActions objectAtIndex:buttonIndex];
+        if ([action isEqualToString:@"cancel"]) {
+            NSLog(@"Action sheet: cancel");
+            [self setSubscribeButtonEnabled:YES];
+        } else if ([action isEqualToString:@"restore"]) {
+            NSLog(@"Action sheet: restore");
+        } else {
+            NSLog(@"Action sheet: %@", action);
+            [self setSubscribeButtonEnabled:NO];
+            [purchasesManager purchase:action];
+        }
+    }
+}
+
 - (void)handleFreeSubscription:(NSNotification *)notification {
     [self setSubscribeButtonEnabled:NO];
     [purchasesManager purchase:PRODUCT_ID_FREE_SUBSCRIPTION];
@@ -339,7 +382,7 @@
 
     [purchasesManager markAsPurchased:PRODUCT_ID_FREE_SUBSCRIPTION];
 
-    self.subscribeButton.title = NSLocalizedString(@"SUBSCRIBE_BUTTON_SUBSCRIBED_TEXT", nil);
+    [self setSubscribeButtonEnabled:YES];
 
     [purchasesManager finishTransaction:transaction];
 }

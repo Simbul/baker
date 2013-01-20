@@ -40,7 +40,7 @@
 #import "PurchasesManager.h"
 #endif
 
-@interface ShelfViewController : UIViewController <AQGridViewDataSource, AQGridViewDelegate>
+@interface ShelfViewController : UIViewController <AQGridViewDataSource, AQGridViewDelegate, UIActionSheetDelegate>
 
 @property (copy, nonatomic) NSArray *issues;
 @property (retain, nonatomic) NSMutableArray *issueViewControllers;
@@ -54,6 +54,9 @@
 @property (strong, nonatomic) UIImageView *background;
 @property (strong, nonatomic) UIBarButtonItem *refreshButton;
 @property (strong, nonatomic) UIBarButtonItem *subscribeButton;
+
+@property (strong, nonatomic) UIActionSheet *subscriptionsActionSheet;
+@property (strong, nonatomic) NSArray *subscriptionsActionSheetActions;
 
 #pragma mark - Init
 - (id)initWithBooks:(NSArray *)currentBooks;
