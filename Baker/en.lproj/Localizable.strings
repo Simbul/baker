@@ -1,6 +1,6 @@
 
 // Shelf Navigation Title at the top of the main Issues List
-"SHELF_NAVIGATION_TITLE" = "Baker Shelf";
+"SHELF_NAVIGATION_TITLE" = "Shelf";
 
 // Subscription button
 "SUBSCRIBE_BUTTON_TEXT" = "Subscribe";
@@ -32,8 +32,8 @@
 "OPENING_TEXT" = "Loading...";
 
 // Archiving alert
-"ARCHIVE_ALERT_TITLE" = "Are you sure you want to archive this item?";
-"ARCHIVE_ALERT_MESSAGE" = "This item will be removed from your device. You may download it at anytime for free.";
+"ARCHIVE_ALERT_TITLE" = "Are you sure you want to archive this issue?";
+"ARCHIVE_ALERT_MESSAGE" = "This issue will be removed from your device. You may download it at anytime for free.";
 "ARCHIVE_ALERT_BUTTON_CANCEL" = "Cancel";
 "ARCHIVE_ALERT_BUTTON_OK" = "Archive";
 
