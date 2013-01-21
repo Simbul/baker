@@ -90,6 +90,10 @@
                                                      name:@"notification_free_subscription_failed"
                                                    object:self.purchasesManager];
         [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handleFreeSubscriptionRestored:)
+                                                     name:@"notification_free_subscription_restored"
+                                                   object:self.purchasesManager];
+        [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(handleRestoreFinished:)
                                                      name:@"notification_restore_finished"
                                                    object:self.purchasesManager];
@@ -425,6 +429,14 @@
     }
 
     [self setSubscribeButtonEnabled:YES];
+}
+
+- (void)handleFreeSubscriptionRestored:(NSNotification *)notification {
+    SKPaymentTransaction *transaction = [notification.userInfo objectForKey:@"transaction"];
+
+    [purchasesManager markAsPurchased:PRODUCT_ID_FREE_SUBSCRIPTION];
+
+    [purchasesManager finishTransaction:transaction];
 }
 
 - (void)handleProductsRetrieved:(NSNotification *)notification {
