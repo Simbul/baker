@@ -35,23 +35,31 @@
 #import "AQGridView.h"
 #import "BakerIssue.h"
 #import "IssuesManager.h"
-
+#import "ShelfStatus.h"
 #ifdef BAKER_NEWSSTAND
-@interface ShelfViewController : UIViewController <AQGridViewDataSource, AQGridViewDelegate, SKPaymentTransactionObserver, SKRequestDelegate, SKProductsRequestDelegate>
-#else
-@interface ShelfViewController : UIViewController <AQGridViewDataSource, AQGridViewDelegate>
+#import "PurchasesManager.h"
 #endif
+
+@interface ShelfViewController : UIViewController <AQGridViewDataSource, AQGridViewDelegate, UIActionSheetDelegate>
 
 @property (copy, nonatomic) NSArray *issues;
 @property (copy, nonatomic) NSArray *supportedOrientation;
 
 @property (retain, nonatomic) NSMutableArray *issueViewControllers;
 @property (retain, nonatomic) IssuesManager *issuesManager;
+@property (retain, nonatomic) ShelfStatus *shelfStatus;
+#ifdef BAKER_NEWSSTAND
+@property (retain, nonatomic) PurchasesManager *purchasesManager;
+#endif
 
 @property (strong, nonatomic) AQGridView *gridView;
 @property (strong, nonatomic) UIImageView *background;
 @property (strong, nonatomic) UIBarButtonItem *refreshButton;
 @property (strong, nonatomic) UIBarButtonItem *subscribeButton;
+
+@property (strong, nonatomic) UIActionSheet *subscriptionsActionSheet;
+@property (strong, nonatomic) NSArray *subscriptionsActionSheetActions;
+@property (strong, nonatomic) UIAlertView *blockingProgressView;
 
 #pragma mark - Init
 - (id)initWithBooks:(NSArray *)currentBooks;
@@ -63,11 +71,6 @@
 
 #pragma mark - Store Kit
 - (void)handleFreeSubscription:(NSNotification *)notification;
--(void)productsRequest:(SKProductsRequest *)request didReceiveResponse:(SKProductsResponse *)response;
--(void)paymentQueue:(SKPaymentQueue *)queue updatedTransactions:(NSArray *)transactions;
--(void)completeTransaction:(SKPaymentTransaction *)transaction;
--(void)recordTransaction:(SKPaymentTransaction *)transaction;
--(void)failedTransaction:(SKPaymentTransaction *)transaction;
 #endif
 
 #pragma mark - Navigation management

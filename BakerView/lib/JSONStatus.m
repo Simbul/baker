@@ -1,5 +1,5 @@
 //
-//  UIConstants.h
+//  JSONStatus.m
 //  Baker
 //
 //  ==========================================================================================
@@ -29,42 +29,63 @@
 //  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
+#import "JSONStatus.h"
+#import "Utils.h"
+#import "JSONKit.h"
 
-#ifndef Baker_UIConstants_h
-#define Baker_UIConstants_h
+@implementation JSONStatus
 
-    // Background color for issues cover (before downloading the actual cover)
-    #define ISSUES_COVER_BACKGROUND_COLOR @"#ffffff"
+@synthesize path;
 
-    // Title for issues in the shelf
-    #define ISSUES_TITLE_FONT @"Helvetica"
-    #define ISSUES_TITLE_FONT_SIZE 15
-    #define ISSUES_TITLE_COLOR @"#000000"
+- (id)initWithJSONPath:(NSString *)JSONPath
+{
+    self = [super init];
+    
+    if (self) {
+        path = [JSONPath retain];
+        [self load];
+    }
+    
+    return self;
+}
 
-    // Info text for issues in the shelf
-    #define ISSUES_INFO_FONT @"Helvetica"
-    #define ISSUES_INFO_FONT_SIZE 15
-    #define ISSUES_INFO_COLOR @"#929292"
+- (NSDictionary *)load {
+    NSError *error = nil;
+    NSString *json = [NSString stringWithContentsOfFile:self.path encoding:NSUTF8StringEncoding error:&error];
+    if (error) {
+        NSLog(@"Error when loading JSON status: %@", error);
+    }
+    return [json objectFromJSONString];
+}
 
-    #define ISSUES_PRICE_COLOR @"#b72529"
+- (void)save:(NSDictionary *)status {
+    NSString *json = [status JSONString];
+    NSError *error = nil;
+    
+    NSString *dirPath = [path stringByDeletingLastPathComponent];
+    if (![[NSFileManager defaultManager] fileExistsAtPath:dirPath]) {
+        [[NSFileManager defaultManager] createDirectoryAtPath:dirPath withIntermediateDirectories:YES attributes:nil error:&error];
+        if (error) {
+            NSLog(@"Error when creating JSON status folder: %@", error);
+        }
+        [Utils addSkipBackupAttributeToItemAtPath:dirPath];
+    }
+    
+    if (![[NSFileManager defaultManager] fileExistsAtPath:path]) {
+        [[NSFileManager defaultManager] createFileAtPath:path contents:nil attributes:nil];
+        [Utils addSkipBackupAttributeToItemAtPath:path];
+    }
+    
+    [json writeToFile:path atomically:YES encoding:NSUTF8StringEncoding error:&error];
+    if (error) {
+        NSLog(@"Error when saving JSON status: %@", error);
+    }
+}
 
-    // Download/read button for issues in the shelf
-    #define ISSUES_ACTION_BUTTON_FONT @"Helvetica-Bold"
-    #define ISSUES_ACTION_BUTTON_FONT_SIZE 11
-    #define ISSUES_ACTION_BUTTON_BACKGROUND_COLOR @"#b72529"
-    #define ISSUES_ACTION_BUTTON_COLOR @"#ffffff"
+- (void)dealloc {
+    [path release];
+    
+    [super dealloc];
+}
 
-    // Archive button for issues in the shelf
-    #define ISSUES_ARCHIVE_BUTTON_FONT @"Helvetica-Bold"
-    #define ISSUES_ARCHIVE_BUTTON_FONT_SIZE 11
-    #define ISSUES_ARCHIVE_BUTTON_COLOR @"#b72529"
-    #define ISSUES_ARCHIVE_BUTTON_BACKGROUND_COLOR @"#ffffff"
-
-    // Text and spinner for issues that are being loaded in the shelf
-    #define ISSUES_LOADING_LABEL_COLOR @"#b72529"
-    #define ISSUES_LOADING_SPINNER_COLOR @"#929292"
-
-    // Progress bar for issues that are being downloaded in the shelf
-    #define ISSUES_PROGRESSBAR_TINT_COLOR @"#b72529"
-
-#endif
+@end

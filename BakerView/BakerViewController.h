@@ -48,7 +48,6 @@
 
     NSString *defaultScreeshotsPath;
     NSString *cachedScreenshotsPath;
-    NSString *statusPath;
 
     NSString *renderingType;
 

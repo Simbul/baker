@@ -87,8 +87,7 @@
 
 
         // ****** STATUS FILE
-        statusPath = [[[[cachePath stringByAppendingPathComponent:@"statuses"] stringByAppendingPathComponent:book.ID] stringByAppendingPathExtension:@"json"] retain];
-        bookStatus = [[BakerBookStatus alloc] initWithJSONPath:statusPath];
+        bookStatus = [[BakerBookStatus alloc] initWithBookId:book.ID];
 
         NSLog(@"STATUS: page: %@", bookStatus.page);
         NSLog(@"STATUS: scrollIndex: %@", bookStatus.scrollIndex);

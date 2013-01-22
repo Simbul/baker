@@ -34,9 +34,18 @@
 
 #ifdef BAKER_NEWSSTAND
 #import <NewsstandKit/NewsstandKit.h>
+#import "PurchasesManager.h"
 #endif
 
 #import "BakerBook.h"
+
+typedef enum transientStates {
+    BakerIssueTransientStatusNone,
+    BakerIssueTransientStatusDownloading,
+    BakerIssueTransientStatusOpening,
+    BakerIssueTransientStatusPurchasing,
+    BakerIssueTransientStatusUnpriced
+} BakerIssueTransientStatus;
 
 @interface BakerIssue : NSObject
 
@@ -50,7 +59,15 @@
 @property (copy, nonatomic) NSString *coverPath;
 @property (copy, nonatomic) NSURL *coverURL;
 
+@property (copy, nonatomic) NSString *productID;
+@property (copy, nonatomic) NSString *price;
+
 @property (retain, nonatomic) BakerBook *bakerBook;
+#ifdef BAKER_NEWSSTAND
+@property (retain, nonatomic) PurchasesManager *purchasesManager;
+#endif
+
+@property (nonatomic, assign) BakerIssueTransientStatus transientStatus;
 
 -(id)initWithBakerBook:(BakerBook *)bakerBook;
 -(void)getCover:(void(^)(UIImage *img))completionBlock;

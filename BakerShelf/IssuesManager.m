@@ -78,6 +78,8 @@
             NSDate *second = [dateFormat dateFromString:[(BakerIssue*)b date]];
             return [second compare:first];
         }];
+        [dateFormat release];
+
         return YES;
     } else {
         return NO;
@@ -137,11 +139,22 @@
         [dateFormat release];
     }
 }
+
+-(NSSet *)productIDs {
+    NSMutableSet *set = [NSMutableSet set];
+    for (BakerIssue *issue in self.issues) {
+        if (issue.productID) {
+            [set addObject:issue.productID];
+        }
+    }
+    return set;
+}
 #endif
 
 -(void)dealloc {
     [issues release];
     [url release];
+    [shelfManifestPath release];
 
     [super dealloc];
 }

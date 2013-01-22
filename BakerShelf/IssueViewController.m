@@ -34,6 +34,9 @@
 #import "IssueViewController.h"
 #import "SSZipArchive.h"
 #import "UIConstants.h"
+#ifdef BAKER_NEWSSTAND
+#import "PurchasesManager.h"
+#endif
 
 #import "UIColor+Extensions.h"
 
@@ -47,6 +50,7 @@
 @synthesize progressBar;
 @synthesize spinner;
 @synthesize loadingLabel;
+@synthesize priceLabel;
 
 #pragma mark - Init
 
@@ -55,6 +59,14 @@
     self = [super init];
     if (self) {
         self.issue = bakerIssue;
+        currentStatus = nil;
+        purchaseDelayed = NO;
+
+        self.purchasesManager = [PurchasesManager sharedInstance];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handleIssueRestored:)
+                                                     name:@"notification_issue_restored"
+                                                   object:self.purchasesManager];
     }
     return self;
 }
@@ -139,7 +151,21 @@
     [self.view addSubview:infoLabel];
     [infoLabel release];
 
-    heightOffset = heightOffset + infoLabel.frame.size.height + 10;
+    heightOffset = heightOffset + infoLabel.frame.size.height + 5;
+
+
+    // SETUP PRICE LABEL
+    self.priceLabel = [[UILabel alloc] initWithFrame:CGRectMake(ui.contentOffset, heightOffset, 170, textLineheight)];
+    priceLabel.textColor = [UIColor colorWithHexString:ISSUES_PRICE_COLOR];
+    priceLabel.backgroundColor = [UIColor clearColor];
+    priceLabel.lineBreakMode = UILineBreakModeTailTruncation;
+    priceLabel.textAlignment = UITextAlignmentLeft;
+    priceLabel.font = titleFont;
+
+    [self.view addSubview:priceLabel];
+    [priceLabel release];
+
+    heightOffset = heightOffset + priceLabel.frame.size.height + 10;
 
 
     // SETUP ACTION BUTTON
@@ -221,9 +247,11 @@
 {
     UI ui = [IssueViewController getIssueContentMeasures];
 
-    NSLog(@"Refreshing %@ view with status %@", self.issue.ID, status);
+    NSLog(@"Refreshing %@ view with status %@ -> %@", self.issue.ID, currentStatus, status);
     if ([status isEqualToString:@"remote"])
     {
+        [self.priceLabel setText:@"FREE"];
+
         [self.actionButton setTitle:NSLocalizedString(@"ACTION_REMOTE_TEXT", nil) forState:UIControlStateNormal];
         [self.spinner stopAnimating];
 
@@ -232,6 +260,7 @@
         self.archiveButton.hidden = YES;
         self.progressBar.hidden = YES;
         self.loadingLabel.hidden = YES;
+        self.priceLabel.hidden = NO;
     }
     else if ([status isEqualToString:@"connecting"])
     {
@@ -243,6 +272,7 @@
         self.loadingLabel.text = NSLocalizedString(@"CONNECTING_TEXT", nil);
         self.loadingLabel.hidden = NO;
         self.progressBar.hidden = YES;
+        self.priceLabel.hidden = YES;
     }
     else if ([status isEqualToString:@"downloading"])
     {
@@ -254,6 +284,7 @@
         self.loadingLabel.text = NSLocalizedString(@"DOWNLOADING_TEXT", nil);
         self.loadingLabel.hidden = NO;
         self.progressBar.hidden = NO;
+        self.priceLabel.hidden = YES;
     }
     else if ([status isEqualToString:@"downloaded"])
     {
@@ -265,6 +296,7 @@
         self.archiveButton.hidden = NO;
         self.loadingLabel.hidden = YES;
         self.progressBar.hidden = YES;
+        self.priceLabel.hidden = YES;
     }
     else if ([status isEqualToString:@"bundled"])
     {
@@ -276,9 +308,10 @@
         self.archiveButton.hidden = YES;
         self.loadingLabel.hidden = YES;
         self.progressBar.hidden = YES;
+        self.priceLabel.hidden = YES;
     }
     else if ([status isEqualToString:@"opening"])
-     {
+    {
         [self.spinner startAnimating];
 
         self.actionButton.hidden = YES;
@@ -286,7 +319,64 @@
         self.loadingLabel.text = NSLocalizedString(@"OPENING_TEXT", nil);
         self.loadingLabel.hidden = NO;
         self.progressBar.hidden = YES;
+        self.priceLabel.hidden = YES;
     }
+    else if ([status isEqualToString:@"purchasable"])
+    {
+        [self.actionButton setTitle:NSLocalizedString(@"ACTION_BUY_TEXT", nil) forState:UIControlStateNormal];
+        [self.spinner stopAnimating];
+
+        if (self.issue.price) {
+            [self.priceLabel setText:self.issue.price];
+        }
+
+        self.actionButton.frame = CGRectMake(ui.contentOffset, self.actionButton.frame.origin.y, 110, 30);
+        self.actionButton.hidden = NO;
+        self.archiveButton.hidden = YES;
+        self.progressBar.hidden = YES;
+        self.loadingLabel.hidden = YES;
+        self.priceLabel.hidden = NO;
+    }
+    else if ([status isEqualToString:@"purchasing"])
+    {
+        [self.spinner startAnimating];
+
+        self.loadingLabel.text = NSLocalizedString(@"BUYING_TEXT", nil);
+
+        self.actionButton.hidden = YES;
+        self.archiveButton.hidden = YES;
+        self.progressBar.hidden = YES;
+        self.loadingLabel.hidden = NO;
+        self.priceLabel.hidden = NO;
+    }
+    else if ([status isEqualToString:@"purchased"])
+    {
+        [self.priceLabel setText:@"PURCHASED"];
+
+        [self.actionButton setTitle:NSLocalizedString(@"ACTION_REMOTE_TEXT", nil) forState:UIControlStateNormal];
+        [self.spinner stopAnimating];
+
+        self.actionButton.frame = CGRectMake(ui.contentOffset, self.actionButton.frame.origin.y, 110, 30);
+        self.actionButton.hidden = NO;
+        self.archiveButton.hidden = YES;
+        self.progressBar.hidden = YES;
+        self.loadingLabel.hidden = YES;
+        self.priceLabel.hidden = NO;
+    }
+    else if ([status isEqualToString:@"unpriced"])
+    {
+        [self.spinner startAnimating];
+
+        self.loadingLabel.text = NSLocalizedString(@"RETRIEVING_TEXT", nil);
+
+        self.actionButton.hidden = YES;
+        self.archiveButton.hidden = YES;
+        self.progressBar.hidden = YES;
+        self.loadingLabel.hidden = NO;
+        self.priceLabel.hidden = YES;
+    }
+
+    currentStatus = status;
 }
 
 #pragma mark - Memory management
@@ -308,7 +398,7 @@
 - (void)actionButtonPressed:(UIButton *)sender
 {
     NSString *status = [self.issue getStatus];
-    if ([status isEqualToString:@"remote"]) {
+    if ([status isEqualToString:@"remote"] || [status isEqualToString:@"purchased"]) {
     #ifdef BAKER_NEWSSTAND
         [self download];
     #endif
@@ -316,6 +406,10 @@
         [self read];
     } else if ([status isEqualToString:@"downloading"]) {
         // TODO: assuming it is supported by NewsstandKit, implement a "Cancel" operation
+    } else if ([status isEqualToString:@"purchasable"]) {
+    #ifdef BAKER_NEWSSTAND
+        [self buy];
+    #endif
     }
 }
 #ifdef BAKER_NEWSSTAND
@@ -324,10 +418,107 @@
     [self refresh:@"connecting"];
     [self.issue downloadWithDelegate:self];
 }
+- (void)buy {
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleIssuePurchased:)
+                                                 name:@"notification_issue_purchased"
+                                               object:self.purchasesManager];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleIssuePurchaseFailed:)
+                                                 name:@"notification_issue_purchase_failed"
+                                               object:self.purchasesManager];
+
+    if (![self.purchasesManager purchase:self.issue.productID]) {
+        // Still retrieving SKProduct: delay purchase
+        purchaseDelayed = YES;
+
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:@"notification_issue_purchased" object:self.purchasesManager];
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:@"notification_issue_purchase_failed" object:self.purchasesManager];
+
+        [self.purchasesManager retrievePriceFor:self.issue.productID];
+
+        self.issue.transientStatus = BakerIssueTransientStatusUnpriced;
+        [self refresh];
+    } else {
+        self.issue.transientStatus = BakerIssueTransientStatusPurchasing;
+        [self refresh];
+    }
+}
+- (void)handleIssuePurchased:(NSNotification *)notification {
+    SKPaymentTransaction *transaction = [notification.userInfo objectForKey:@"transaction"];
+
+    if ([transaction.payment.productIdentifier isEqualToString:issue.productID]) {
+        if (!transaction.originalTransaction) {
+            // Do not show alert on restoring a transaction
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"ISSUE_PURCHASE_SUCCESSFUL_TITLE", nil)
+                                                            message:[NSString stringWithFormat:
+                                                                     NSLocalizedString(@"ISSUE_PURCHASE_SUCCESSFUL_MESSAGE", nil), self.issue.title]
+                                                           delegate:nil
+                                                  cancelButtonTitle:NSLocalizedString(@"ISSUE_PURCHASE_SUCCESSFUL_CLOSE", nil)
+                                                  otherButtonTitles:nil];
+            [alert show];
+            [alert release];
+        }
+
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:@"notification_issue_purchased" object:nil];
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:@"notification_issue_purchase_failed" object:nil];
+
+        [self.purchasesManager markAsPurchased:transaction.payment.productIdentifier];
+        [self.purchasesManager finishTransaction:transaction];
+
+        self.issue.transientStatus = BakerIssueTransientStatusNone;
+        [self refresh];
+    }
+}
+- (void)handleIssuePurchaseFailed:(NSNotification *)notification {
+    SKPaymentTransaction *transaction = [notification.userInfo objectForKey:@"transaction"];
+
+    if ([transaction.payment.productIdentifier isEqualToString:issue.productID]) {
+        // Show an error, unless it was the user who cancelled the transaction
+        if (transaction.error.code != SKErrorPaymentCancelled) {
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"ISSUE_PURCHASE_FAILED_TITLE", nil)
+                                                            message:[transaction.error localizedDescription]
+                                                           delegate:nil
+                                                  cancelButtonTitle:NSLocalizedString(@"ISSUE_PURCHASE_FAILED_CLOSE", nil)
+                                                  otherButtonTitles:nil];
+            [alert show];
+            [alert release];
+        }
+
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:@"notification_issue_purchased" object:nil];
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:@"notification_issue_purchase_failed" object:nil];
+
+        self.issue.transientStatus = BakerIssueTransientStatusNone;
+        [self refresh];
+    }
+}
+
+- (void)handleIssueRestored:(NSNotification *)notification {
+    SKPaymentTransaction *transaction = [notification.userInfo objectForKey:@"transaction"];
+
+    if ([transaction.payment.productIdentifier isEqualToString:issue.productID]) {
+        [self.purchasesManager markAsPurchased:transaction.payment.productIdentifier];
+        [self.purchasesManager finishTransaction:transaction];
+
+        self.issue.transientStatus = BakerIssueTransientStatusNone;
+        [self refresh];
+    }
+}
+
+- (void)setPrice:(NSString *)price {
+    self.issue.price = price;
+    if (purchaseDelayed) {
+        purchaseDelayed = NO;
+        [self buy];
+    } else {
+        [self refresh];
+    }
+}
 #endif
 - (void)read
 {
-    [self refresh:@"opening"];
+    self.issue.transientStatus = BakerIssueTransientStatusOpening;
+    [self refresh];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"read_issue_request" object:self];
 }
 
@@ -337,7 +528,8 @@
 {
     // TODO: use a better check (ideally check that status is "connecting" instead of relying on a UI property)
     if (self.progressBar.hidden) {
-        [self refresh:@"downloading"];
+        self.issue.transientStatus = BakerIssueTransientStatusDownloading;
+        [self refresh];
     }
     [self.progressBar setProgress:((float)totalBytesWritten/(float)expectedTotalBytes) animated:YES];
 }
@@ -360,6 +552,7 @@
         NSLog(@"Unable to delete file: %@", [error localizedDescription]);
     }
     
+    self.issue.transientStatus = BakerIssueTransientStatusNone;
     [self refresh];
 
     // TODO: notify of new content with setApplicationIconBadgeNumber
@@ -369,6 +562,8 @@
     if (coverImage) {
         [[UIApplication sharedApplication] setNewsstandIconImage:coverImage];
     }
+    [book release];
+    [connection release];
     #endif
 }
 - (void)connectionDidResumeDownloading:(NSURLConnection *)connection totalBytesWritten:(long long)totalBytesWritten expectedTotalBytes:(long long)expectedTotalBytes
@@ -387,6 +582,7 @@
     [alert show];
     [alert release];
 
+    self.issue.transientStatus = BakerIssueTransientStatusNone;
     [self refresh];
 }
 

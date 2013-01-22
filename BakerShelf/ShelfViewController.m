@@ -49,7 +49,12 @@
 @synthesize issuesManager;
 @synthesize subscribeButton;
 @synthesize refreshButton;
+@synthesize shelfStatus;
+@synthesize subscriptionsActionSheet;
 @synthesize supportedOrientation;
+#ifdef BAKER_NEWSSTAND
+@synthesize purchasesManager;
+#endif
 
 #pragma mark - Init
 
@@ -58,6 +63,7 @@
     self = [super init];
     if (self) {
         self.issues = [ShelfManager localBooksList];
+        self.shelfStatus = [[[ShelfStatus alloc] init] retain];
         self.supportedOrientation = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"UISupportedInterfaceOrientations"];
     }
     return self;
@@ -67,6 +73,42 @@
     self = [super init];
     if (self) {
         self.issues = currentBooks;
+
+        #ifdef BAKER_NEWSSTAND
+        self.purchasesManager = [PurchasesManager sharedInstance];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handleProductsRetrieved:)
+                                                     name:@"notification_products_retrieved"
+                                                   object:self.purchasesManager];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handleProductsRequestFailed:)
+                                                     name:@"notification_products_request_failed"
+                                                   object:self.purchasesManager];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handleFreeSubscriptionPurchased:)
+                                                     name:@"notification_free_subscription_purchased"
+                                                   object:self.purchasesManager];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handleFreeSubscriptionFailed:)
+                                                     name:@"notification_free_subscription_failed"
+                                                   object:self.purchasesManager];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handleFreeSubscriptionRestored:)
+                                                     name:@"notification_free_subscription_restored"
+                                                   object:self.purchasesManager];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handleRestoreFinished:)
+                                                     name:@"notification_restore_finished"
+                                                   object:self.purchasesManager];
+        [[SKPaymentQueue defaultQueue] addTransactionObserver:purchasesManager];
+        #endif
+
+        self.shelfStatus = [[[ShelfStatus alloc] init] retain];
+        [shelfStatus load];
+        for (BakerIssue *issue in self.issues) {
+            issue.price = [shelfStatus priceFor:issue.productID];
+        }
+
         NSMutableArray *controllers = [NSMutableArray array];
         for (BakerIssue *issue in self.issues) {
             IssueViewController *controller = [self createIssueViewControllerWithIssue:issue];
@@ -87,7 +129,13 @@
     [issues release];
     [subscribeButton release];
     [refreshButton release];
+    [shelfStatus release];
+    [subscriptionsActionSheet release];
     [supportedOrientation release];
+    [self.blockingProgressView release];
+    #ifdef BAKER_NEWSSTAND
+    [purchasesManager release];
+    #endif
 
     [super dealloc];
 }
@@ -124,18 +172,27 @@
                              initWithTitle: NSLocalizedString(@"SUBSCRIBE_BUTTON_TEXT", nil)
                              style:UIBarButtonItemStylePlain
                              target:self
-                             action:@selector(handleFreeSubscription:)]
+                             action:@selector(handleSubscribeButtonPressed:)]
                             autorelease];
 
-    if ([PRODUCT_ID_FREE_SUBSCRIPTION length] == 0) {
+    self.blockingProgressView = [[UIAlertView alloc]
+                                 initWithTitle:@"Processing..."
+                                 message:@"\n"
+                                 delegate:nil
+                                 cancelButtonTitle:nil
+                                 otherButtonTitles:nil];
+    UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    spinner.center = CGPointMake(139.5, 75.5); // .5 so it doesn't blur
+    [self.blockingProgressView addSubview:spinner];
+    [spinner startAnimating];
+    [spinner release];
+
+    if ([PRODUCT_ID_FREE_SUBSCRIPTION length] > 0) {
         self.subscribeButton.enabled = NO;
-        NSLog(@"Subscription not enabled: constant PRODUCT_ID_FREE_SUBSCRIPTION not set");
+        [purchasesManager retrievePriceFor:PRODUCT_ID_FREE_SUBSCRIPTION];
     }
 
-    self.navigationItem.leftBarButtonItems = [NSArray arrayWithObjects:
-                                              self.refreshButton,
-                                              self.subscribeButton,
-                                              nil];
+    self.navigationItem.leftBarButtonItems = [NSArray arrayWithObjects:self.refreshButton, self.subscribeButton, nil];
     #endif
 }
 - (void)viewWillAppear:(BOOL)animated
@@ -149,6 +206,7 @@
     #endif
 
     for (IssueViewController *controller in self.issueViewControllers) {
+        controller.issue.transientStatus = BakerIssueTransientStatusNone;
         [controller refresh];
     }
 }
@@ -266,6 +324,8 @@
                 [self.gridView insertItemsAtIndices:[NSIndexSet indexSetWithIndex:idx] withAnimation:AQGridViewItemAnimationNone];
             }
         }];
+
+        [self.purchasesManager retrievePricesFor:self.issuesManager.productIDs];
     }
     else{
         UIAlertView *connAlert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"INTERNET_CONNECTION_UNAVAILABLE_TITLE", nil)
@@ -281,53 +341,69 @@
 
 #pragma mark - Store Kit
 
-- (void)handleFreeSubscription:(NSNotification *)notification {
-    if ([PRODUCT_ID_FREE_SUBSCRIPTION length] > 0) {
-        [self setSubscribeButtonEnabled:NO];
-
-        // Request "free subscription" product from App Store
-        SKProductsRequest *productsRequest = [[SKProductsRequest alloc] initWithProductIdentifiers:[NSSet setWithObject:PRODUCT_ID_FREE_SUBSCRIPTION]];
-        productsRequest.delegate = self;
-        [productsRequest start];
+- (void)handleSubscribeButtonPressed:(NSNotification *)notification {
+    if (subscriptionsActionSheet.visible) {
+        [subscriptionsActionSheet dismissWithClickedButtonIndex:(subscriptionsActionSheet.numberOfButtons - 1) animated:YES];
     } else {
-        NSLog(@"Cannot subscribe: constant PRODUCT_ID_FREE_SUBSCRIPTION not set");
+        [self.subscriptionsActionSheet release];
+        self.subscriptionsActionSheet = [self buildSubscriptionsActionSheet];
+        [subscriptionsActionSheet showFromBarButtonItem:self.subscribeButton animated:YES];
     }
 }
 
--(void)productsRequest:(SKProductsRequest *)request didReceiveResponse:(SKProductsResponse *)response {
-    // Create a "payment" for the specified product (i.e. our free subscription)
-    for(SKProduct *product in response.products) {
-        SKPayment *payment = [SKPayment paymentWithProduct:product];
-        [[SKPaymentQueue defaultQueue] addPayment:payment];
+- (UIActionSheet *)buildSubscriptionsActionSheet {
+    UIActionSheet *sheet = [[UIActionSheet alloc]initWithTitle:NSLocalizedString(@"SUBSCRIBE_BUTTON_TEXT", nil)
+                                                      delegate:self
+                                             cancelButtonTitle:nil
+                                        destructiveButtonTitle:nil
+                                             otherButtonTitles: nil];
+    NSMutableArray *actions = [NSMutableArray array];
+    if ([PRODUCT_ID_FREE_SUBSCRIPTION length] > 0 && ![purchasesManager isMarkedAsPurchased:PRODUCT_ID_FREE_SUBSCRIPTION]) {
+        [sheet addButtonWithTitle:NSLocalizedString(@"SUBSCRIPTIONS_SHEET_FREE", nil)];
+        [actions addObject:PRODUCT_ID_FREE_SUBSCRIPTION];
     }
-    if ([response.invalidProductIdentifiers count] > 0) {
-        NSLog(@"Invalid product identifiers: %@", response.invalidProductIdentifiers);
-        [self setSubscribeButtonEnabled:YES];
-    }
+
+    [sheet addButtonWithTitle:NSLocalizedString(@"SUBSCRIPTIONS_SHEET_RESTORE", nil)];
+    [actions addObject:@"restore"];
+    [sheet addButtonWithTitle:NSLocalizedString(@"SUBSCRIPTIONS_SHEET_CLOSE", nil)];
+    [actions addObject:@"cancel"];
+
+    self.subscriptionsActionSheetActions = actions;
+
+    sheet.cancelButtonIndex = sheet.numberOfButtons - 1;
+    return sheet;
 }
 
--(void)paymentQueue:(SKPaymentQueue *)queue updatedTransactions:(NSArray *)transactions {
-    // Verify whether store transactions (i.e. free subscription) were successful
-    for(SKPaymentTransaction *transaction in transactions) {
-        switch (transaction.transactionState) {
-            case SKPaymentTransactionStateFailed:
-                [self setSubscribeButtonEnabled:YES];
-                [self failedTransaction:transaction];
-                break;
-            case SKPaymentTransactionStatePurchasing:
-                break;
-            case SKPaymentTransactionStatePurchased:
-            case SKPaymentTransactionStateRestored:
-                [self setSubscribeButtonEnabled:YES];
-                [self completeTransaction:transaction];
-                break;
-            default:
-                break;
+- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
+    if (actionSheet == subscriptionsActionSheet) {
+        NSString *action = [self.subscriptionsActionSheetActions objectAtIndex:buttonIndex];
+        if ([action isEqualToString:@"cancel"]) {
+            NSLog(@"Action sheet: cancel");
+            [self setSubscribeButtonEnabled:YES];
+        } else if ([action isEqualToString:@"restore"]) {
+            [self.blockingProgressView show];
+            [purchasesManager restore];
+            NSLog(@"Action sheet: restore");
+        } else {
+            NSLog(@"Action sheet: %@", action);
+            [self setSubscribeButtonEnabled:NO];
+            [purchasesManager purchase:action];
         }
     }
 }
 
--(void)completeTransaction:(SKPaymentTransaction *)transaction {
+- (void)handleRestoreFinished:(NSNotification *)notification {
+    [self.blockingProgressView dismissWithClickedButtonIndex:0 animated:YES];
+}
+
+- (void)handleFreeSubscription:(NSNotification *)notification {
+    [self setSubscribeButtonEnabled:NO];
+    [purchasesManager purchase:PRODUCT_ID_FREE_SUBSCRIPTION];
+}
+
+- (void)handleFreeSubscriptionPurchased:(NSNotification *)notification {
+    SKPaymentTransaction *transaction = [notification.userInfo objectForKey:@"transaction"];
+
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"SUBSCRIPTION_SUCCESSFUL_TITLE", nil)
                                                     message:NSLocalizedString(@"SUBSCRIPTION_SUCCESSFUL_MESSAGE", nil)
                                                    delegate:nil
@@ -336,41 +412,15 @@
     [alert show];
     [alert release];
 
-    [self recordTransaction:transaction];
+    [purchasesManager markAsPurchased:PRODUCT_ID_FREE_SUBSCRIPTION];
 
-    [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+    [self setSubscribeButtonEnabled:YES];
+
+    [purchasesManager finishTransaction:transaction];
 }
 
--(void)recordTransaction:(SKPaymentTransaction *)transaction {
-    [[NSUserDefaults standardUserDefaults] setObject:transaction.transactionIdentifier forKey:@"receipt"];
-
-    if ([PURCHASE_CONFIRMATION_URL length] > 0) {
-        NSString *receiptData = [transaction.transactionReceipt base64EncodedString];
-        NSDictionary *jsonDict = [NSDictionary dictionaryWithObjectsAndKeys:
-                                  receiptData, @"receipt-data",
-                                  nil];
-        NSError *error = nil;
-        NSData *jsonData = [jsonDict JSONDataWithOptions:JKSerializeOptionNone error:&error];
-
-        if (error) {
-            NSLog(@"Error generating receipt JSON: %@", error);
-        } else {
-            NSURL *requestURL = [NSURL URLWithString:PURCHASE_CONFIRMATION_URL];
-            NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:requestURL];
-            [req setHTTPMethod:@"POST"];
-            [req setHTTPBody:jsonData];
-            NSURLConnection *conn = [[NSURLConnection alloc] initWithRequest:req delegate:nil];
-            if (conn) {
-                NSLog(@"Posting App Store transaction receipt to %@", PURCHASE_CONFIRMATION_URL);
-            } else {
-                NSLog(@"Cannot connect to %@", PURCHASE_CONFIRMATION_URL);
-            }
-        }
-    }
-}
-
--(void)failedTransaction:(SKPaymentTransaction *)transaction {
-    NSLog(@"Payment transaction failure: %@", transaction.error);
+- (void)handleFreeSubscriptionFailed:(NSNotification *)notification {
+    SKPaymentTransaction *transaction = [notification.userInfo objectForKey:@"transaction"];
 
     // Show an error, unless it was the user who cancelled the transaction
     if (transaction.error.code != SKErrorPaymentCancelled) {
@@ -383,7 +433,47 @@
         [alert release];
     }
 
-    [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+    [self setSubscribeButtonEnabled:YES];
+}
+
+- (void)handleFreeSubscriptionRestored:(NSNotification *)notification {
+    SKPaymentTransaction *transaction = [notification.userInfo objectForKey:@"transaction"];
+
+    [purchasesManager markAsPurchased:PRODUCT_ID_FREE_SUBSCRIPTION];
+
+    [purchasesManager finishTransaction:transaction];
+}
+
+- (void)handleProductsRetrieved:(NSNotification *)notification {
+    NSSet *ids = [notification.userInfo objectForKey:@"ids"];
+
+    if (ids.count == 1 && [[ids anyObject] isEqualToString:PRODUCT_ID_FREE_SUBSCRIPTION]) {
+        // Free subscription retrieved
+        [self setSubscribeButtonEnabled:YES];
+    } else {
+        // Issues retrieved
+        NSString *price;
+        for (IssueViewController *controller in self.issueViewControllers) {
+            price = [purchasesManager priceFor:controller.issue.productID];
+            if (price) {
+                [controller setPrice:price];
+                [shelfStatus setPrice:price for:controller.issue.productID];
+            }
+        }
+        [shelfStatus save];
+    }
+}
+
+- (void)handleProductsRequestFailed:(NSNotification *)notification {
+    NSError *error = [notification.userInfo objectForKey:@"error"];
+
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"PRODUCTS_REQUEST_FAILED_TITLE", nil)
+                                                    message:[error localizedDescription]
+                                                   delegate:nil
+                                          cancelButtonTitle:NSLocalizedString(@"PRODUCTS_REQUEST_FAILED_CLOSE", nil)
+                                          otherButtonTitles:nil];
+    [alert show];
+    [alert release];
 }
 
 #endif
@@ -400,7 +490,7 @@
     NSString *status = [issue getStatus];
 
     #ifdef BAKER_NEWSSTAND
-    if (status == @"downloaded") {
+    if (status == @"opening") {
         book = [[[BakerBook alloc] initWithBookPath:issue.path bundled:NO] autorelease];
         [self pushViewControllerWithBook:book];
     }

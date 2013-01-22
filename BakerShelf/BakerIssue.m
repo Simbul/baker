@@ -42,6 +42,8 @@
 @synthesize bakerBook;
 @synthesize coverPath;
 @synthesize coverURL;
+@synthesize productID;
+@synthesize price;
 
 -(id)initWithBakerBook:(BakerBook *)book {
     self = [super init];
@@ -52,6 +54,8 @@
         self.date = book.date;
         self.url = [NSURL URLWithString:book.url];
         self.path = book.path;
+        self.productID = @"";
+        self.price = nil;
 
         self.bakerBook = book;
 
@@ -62,6 +66,8 @@
         } else {
             self.coverPath = [book.path stringByAppendingPathComponent:book.cover];
         }
+
+        self.transientStatus = BakerIssueTransientStatusNone;
     }
     return self;
 }
@@ -76,6 +82,10 @@
         self.date = [issueData objectForKey:@"date"];
         self.coverURL = [NSURL URLWithString:[issueData objectForKey:@"cover"]];
         self.url = [NSURL URLWithString:[issueData objectForKey:@"url"]];
+        self.productID = [issueData objectForKey:@"product_id"];
+        self.price = nil;
+
+        self.purchasesManager = [PurchasesManager sharedInstance];
 
         NSString *cachePath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0];
         self.coverPath = [cachePath stringByAppendingPathComponent:self.ID];
@@ -89,6 +99,8 @@
         }
 
         self.bakerBook = nil;
+
+        self.transientStatus = BakerIssueTransientStatusNone;
     }
     return self;
 }
@@ -134,9 +146,34 @@
 }
 -(NSString *)getStatus {
 #ifdef BAKER_NEWSSTAND
+    switch (self.transientStatus) {
+        case BakerIssueTransientStatusDownloading:
+            return @"downloading";
+            break;
+        case BakerIssueTransientStatusOpening:
+            return @"opening";
+            break;
+        case BakerIssueTransientStatusPurchasing:
+            return @"purchasing";
+            break;
+        default:
+            break;
+    }
+
     NKLibrary *nkLib = [NKLibrary sharedLibrary];
     NKIssue *nkIssue = [nkLib issueWithName:self.ID];
-    return [self nkIssueContentStatusToString:[nkIssue status]];
+    NSString *nkIssueStatus = [self nkIssueContentStatusToString:[nkIssue status]];
+    if ([nkIssueStatus isEqualToString:@"remote"] && self.productID) {
+        if ([self.purchasesManager isMarkedAsPurchased:self.productID]) {
+            return @"purchased";
+        } else if (self.price) {
+            return @"purchasable";
+        } else {
+            return @"unpriced";
+        }
+    } else {
+        return nkIssueStatus;
+    }
 #else
     return @"bundled";
 #endif

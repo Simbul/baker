@@ -1,5 +1,5 @@
 //
-//  UIConstants.h
+//  PurchasesManager.h
 //  Baker
 //
 //  ==========================================================================================
@@ -29,42 +29,40 @@
 //  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
+#import "Constants.h"
+#import <Foundation/Foundation.h>
+#import <StoreKit/StoreKit.h>
 
-#ifndef Baker_UIConstants_h
-#define Baker_UIConstants_h
+#ifdef BAKER_NEWSSTAND
+@interface PurchasesManager : NSObject <SKProductsRequestDelegate, SKPaymentTransactionObserver>
 
-    // Background color for issues cover (before downloading the actual cover)
-    #define ISSUES_COVER_BACKGROUND_COLOR @"#ffffff"
+@property (retain, nonatomic) NSMutableDictionary *products;
+@property (retain, nonatomic) NSNumberFormatter *numberFormatter;
 
-    // Title for issues in the shelf
-    #define ISSUES_TITLE_FONT @"Helvetica"
-    #define ISSUES_TITLE_FONT_SIZE 15
-    #define ISSUES_TITLE_COLOR @"#000000"
+#pragma mark - Singleton
 
-    // Info text for issues in the shelf
-    #define ISSUES_INFO_FONT @"Helvetica"
-    #define ISSUES_INFO_FONT_SIZE 15
-    #define ISSUES_INFO_COLOR @"#929292"
++ (PurchasesManager *)sharedInstance;
 
-    #define ISSUES_PRICE_COLOR @"#b72529"
+#pragma mark - Purchased flag
 
-    // Download/read button for issues in the shelf
-    #define ISSUES_ACTION_BUTTON_FONT @"Helvetica-Bold"
-    #define ISSUES_ACTION_BUTTON_FONT_SIZE 11
-    #define ISSUES_ACTION_BUTTON_BACKGROUND_COLOR @"#b72529"
-    #define ISSUES_ACTION_BUTTON_COLOR @"#ffffff"
+- (BOOL)isMarkedAsPurchased:(NSString *)productID;
+- (void)markAsPurchased:(NSString *)productID;
 
-    // Archive button for issues in the shelf
-    #define ISSUES_ARCHIVE_BUTTON_FONT @"Helvetica-Bold"
-    #define ISSUES_ARCHIVE_BUTTON_FONT_SIZE 11
-    #define ISSUES_ARCHIVE_BUTTON_COLOR @"#b72529"
-    #define ISSUES_ARCHIVE_BUTTON_BACKGROUND_COLOR @"#ffffff"
+#pragma mark - Prices
 
-    // Text and spinner for issues that are being loaded in the shelf
-    #define ISSUES_LOADING_LABEL_COLOR @"#b72529"
-    #define ISSUES_LOADING_SPINNER_COLOR @"#929292"
+- (void)retrievePricesFor:(NSSet *)productIDs;
+- (void)retrievePriceFor:(NSString *)productID;
+- (NSString *)priceFor:(NSString *)productID;
 
-    // Progress bar for issues that are being downloaded in the shelf
-    #define ISSUES_PROGRESSBAR_TINT_COLOR @"#b72529"
+#pragma mark - Purchases
 
+- (BOOL)purchase:(NSString *)productID;
+- (void)finishTransaction:(SKPaymentTransaction *)transaction;
+- (void)restore;
+
+#pragma mark - Products
+
+- (SKProduct *)productFor:(NSString *)productID;
+
+@end
 #endif
