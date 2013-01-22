@@ -72,6 +72,10 @@
         NSLog(@"    Device Height: %f", screenBounds.size.height);
 
 
+        // ****** SUPPORTED ORIENTATION FROM PLIST
+        supportedOrientation = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"UISupportedInterfaceOrientations"];
+
+
         NSString *cachePath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0];
         if (![[NSFileManager defaultManager] fileExistsAtPath:cachePath]) {
             [[NSFileManager defaultManager] createDirectoryAtPath:cachePath withIntermediateDirectories:YES attributes:nil error:nil];
@@ -1728,12 +1732,15 @@
     }
 }
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+
+    BOOL appOrientation = [supportedOrientation indexOfObject:[Utils stringFromInterfaceOrientation:interfaceOrientation]] != NSNotFound;
+
     if ([book.orientation isEqualToString:@"portrait"]) {
-        return UIInterfaceOrientationIsPortrait(interfaceOrientation);
+        return appOrientation && UIInterfaceOrientationIsPortrait(interfaceOrientation);
     } else if ([book.orientation isEqualToString:@"landscape"]) {
-        return UIInterfaceOrientationIsLandscape(interfaceOrientation);
+        return appOrientation && UIInterfaceOrientationIsLandscape(interfaceOrientation);
     } else {
-        return YES;
+        return appOrientation;
     }
 }
 - (BOOL)shouldAutorotate {
@@ -1791,6 +1798,8 @@
     prevPage.delegate = nil;
 }
 - (void)dealloc {
+
+    [supportedOrientation release];
 
     [cachedScreenshotsPath release];
     [defaultScreeshotsPath release];

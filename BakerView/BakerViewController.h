@@ -44,10 +44,11 @@
 
     CGRect screenBounds;
 
+    NSArray *supportedOrientation;
+
     NSString *defaultScreeshotsPath;
     NSString *cachedScreenshotsPath;
 
-    NSString *availableOrientation;
     NSString *renderingType;
 
     NSMutableArray *pages;

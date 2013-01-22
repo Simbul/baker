@@ -38,15 +38,14 @@
 #define SYSTEM_VERSION_LESS_THAN(version)                 ([[[UIDevice currentDevice] systemVersion] compare:version options:NSNumericSearch] == NSOrderedAscending)
 #define SYSTEM_VERSION_LESS_THAN_OR_EQUAL_TO(version)     ([[[UIDevice currentDevice] systemVersion] compare:version options:NSNumericSearch] != NSOrderedDescending)
 
-
 @interface Utils : NSObject {
     
 }
 
 + (UIColor *)colorWithRGBHex:(UInt32)hex;
 + (UIColor *)colorWithHexString:(NSString *)stringToConvert;
++ (NSString *)stringFromInterfaceOrientation:(UIInterfaceOrientation)orientation;
 + (void)addSkipBackupAttributeToItemAtPath:(NSString *)path;
-
 + (BOOL)webViewShouldBePaged:(UIWebView*)webView;
 
 @end

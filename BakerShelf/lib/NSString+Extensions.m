@@ -40,19 +40,29 @@
 {
     const char *src = [self UTF8String];
     unsigned char result[CC_SHA1_DIGEST_LENGTH];
-    
+
     CC_SHA1(src, strlen(src), result);
     NSMutableString *sha = [NSMutableString stringWithCapacity:CC_SHA1_DIGEST_LENGTH * 2];
-    
+
     for (int i = 0; i < 8; i++) {
         if (result[i]) [sha appendFormat:@"%02X", result[i]];
     }
-    
+
     return sha;
 }
 + (NSString *)encodeSHAString:(NSString *)str
 {
     return [str stringSHAEncoded];
+}
++ (NSString *)stringFromInterfaceOrientation:(UIInterfaceOrientation)orientation
+{
+    switch (orientation) {
+		case UIInterfaceOrientationPortrait:           return @"UIInterfaceOrientationPortrait";
+		case UIInterfaceOrientationPortraitUpsideDown: return @"UIInterfaceOrientationPortraitUpsideDown";
+		case UIInterfaceOrientationLandscapeLeft:      return @"UIInterfaceOrientationLandscapeLeft";
+		case UIInterfaceOrientationLandscapeRight:     return @"UIInterfaceOrientationLandscapeRight";
+	}
+	return nil;
 }
 
 @end

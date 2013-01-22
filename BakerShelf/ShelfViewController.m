@@ -39,6 +39,7 @@
 
 #import "JSONKit.h"
 #import "NSData+Base64.h"
+#import "NSString+Extensions.h"
 
 @implementation ShelfViewController
 
@@ -50,6 +51,7 @@
 @synthesize refreshButton;
 @synthesize shelfStatus;
 @synthesize subscriptionsActionSheet;
+@synthesize supportedOrientation;
 #ifdef BAKER_NEWSSTAND
 @synthesize purchasesManager;
 #endif
@@ -62,6 +64,7 @@
     if (self) {
         self.issues = [ShelfManager localBooksList];
         self.shelfStatus = [[[ShelfStatus alloc] init] retain];
+        self.supportedOrientation = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"UISupportedInterfaceOrientations"];
     }
     return self;
 }
@@ -112,6 +115,7 @@
             [controllers addObject:controller];
         }
         self.issueViewControllers = [NSMutableArray arrayWithArray:controllers];
+        self.supportedOrientation = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"UISupportedInterfaceOrientations"];
     }
     return self;
 }
@@ -127,6 +131,7 @@
     [refreshButton release];
     [shelfStatus release];
     [subscriptionsActionSheet release];
+    [supportedOrientation release];
     [self.blockingProgressView release];
     #ifdef BAKER_NEWSSTAND
     [purchasesManager release];
@@ -211,7 +216,7 @@
 }
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
-    return YES;
+    return [supportedOrientation indexOfObject:[NSString stringFromInterfaceOrientation:interfaceOrientation]] != NSNotFound;
 }
 - (BOOL)shouldAutorotate
 {

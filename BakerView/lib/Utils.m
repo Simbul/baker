@@ -37,28 +37,38 @@
 @implementation Utils
 
 + (UIColor *)colorWithRGBHex:(UInt32)hex {
-    int r = (hex >> 16) & 0xFF;
-    int g = (hex >> 8) & 0xFF;
-    int b = (hex) & 0xFF;
-    
-    return [UIColor colorWithRed:r / 255.0f
-                           green:g / 255.0f
-                            blue:b / 255.0f
-                           alpha:1.0f];
-}
+	int r = (hex >> 16) & 0xFF;
+	int g = (hex >> 8) & 0xFF;
+	int b = (hex) & 0xFF;
 
-// Returns a UIColor by scanning the string for a hex number and passing that to +[UIColor colorWithRGBHex:]
-// Skips any leading whitespace and ignores any trailing characters
+	return [UIColor colorWithRed:r / 255.0f
+						   green:g / 255.0f
+							blue:b / 255.0f
+						   alpha:1.0f];
+}
 + (UIColor *)colorWithHexString:(NSString *)stringToConvert {
+    // Returns a UIColor by scanning the string for a hex number and passing that to (UIColor *)colorWithRGBHex:(UInt32)hex
+    // Skips any leading whitespace and ignores any trailing characters
+
     NSString *hexString = [stringToConvert stringByReplacingOccurrencesOfString:@"#" withString:@""];
-    NSScanner *scanner = [NSScanner scannerWithString:hexString];
+	NSScanner *scanner = [NSScanner scannerWithString:hexString];
+
     unsigned hexNum;
-    if (![scanner scanHexInt:&hexNum]) return nil;
-    return [self colorWithRGBHex:hexNum];
+	if (![scanner scanHexInt:&hexNum]) {
+        return nil;
+    }
+	return [Utils colorWithRGBHex:hexNum];
 }
-
++ (NSString *)stringFromInterfaceOrientation:(UIInterfaceOrientation)orientation {
+    switch (orientation) {
+		case UIInterfaceOrientationPortrait:           return @"UIInterfaceOrientationPortrait";
+		case UIInterfaceOrientationPortraitUpsideDown: return @"UIInterfaceOrientationPortraitUpsideDown";
+		case UIInterfaceOrientationLandscapeLeft:      return @"UIInterfaceOrientationLandscapeLeft";
+		case UIInterfaceOrientationLandscapeRight:     return @"UIInterfaceOrientationLandscapeRight";
+	}
+	return nil;
+}
 + (void)addSkipBackupAttributeToItemAtPath:(NSString *)path {
-
     if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
 
         if (SYSTEM_VERSION_LESS_THAN_OR_EQUAL_TO(@"5.0.1")) {
@@ -81,10 +91,10 @@
         }
     }
 }
-
 + (BOOL)webViewShouldBePaged:(UIWebView*)webView {
     BOOL shouldBePaged = [[webView stringByEvaluatingJavaScriptFromString:ISPAGED_JS_SNIPPET] boolValue];
     NSLog(@"• Paging for current page is enabled = %d", shouldBePaged);
+
     return shouldBePaged;
 }
 
