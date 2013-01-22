@@ -62,11 +62,13 @@
         currentStatus = nil;
         purchaseDelayed = NO;
 
+        #ifdef BAKER_NEWSSTAND
         self.purchasesManager = [PurchasesManager sharedInstance];
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(handleIssueRestored:)
                                                      name:@"notification_issue_restored"
                                                    object:self.purchasesManager];
+        #endif
     }
     return self;
 }

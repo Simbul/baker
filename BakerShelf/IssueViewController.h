@@ -46,7 +46,9 @@
 @property (strong, nonatomic) UIActivityIndicatorView *spinner;
 @property (strong, nonatomic) UILabel *loadingLabel;
 @property (strong, nonatomic) UILabel *priceLabel;
+#ifdef BAKER_NEWSSTAND
 @property (strong, nonatomic) PurchasesManager *purchasesManager;
+#endif
 
 #pragma mark - Structs
 typedef struct {
