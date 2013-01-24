@@ -149,6 +149,10 @@
     }
     return set;
 }
+
+- (BOOL)hasProductIDs {
+    return [[self productIDs] count] > 0;
+}
 #endif
 
 -(void)dealloc {

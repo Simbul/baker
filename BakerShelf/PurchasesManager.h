@@ -64,5 +64,9 @@
 
 - (SKProduct *)productFor:(NSString *)productID;
 
+#pragma mark - Subscriptions
+
+- (BOOL)hasSubscriptions;
+
 @end
 #endif

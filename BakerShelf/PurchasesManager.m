@@ -253,6 +253,12 @@
     return [self.products objectForKey:productID];
 }
 
+#pragma mark - Subscriptions
+
+- (BOOL)hasSubscriptions {
+    return [PRODUCT_ID_FREE_SUBSCRIPTION length] > 0;
+}
+
 #pragma mark - Memory management
 
 -(void)dealloc {

@@ -191,8 +191,6 @@
         self.subscribeButton.enabled = NO;
         [purchasesManager retrievePriceFor:PRODUCT_ID_FREE_SUBSCRIPTION];
     }
-
-    self.navigationItem.leftBarButtonItems = [NSArray arrayWithObjects:self.refreshButton, self.subscribeButton, nil];
     #endif
 }
 - (void)viewWillAppear:(BOOL)animated
@@ -209,6 +207,12 @@
         controller.issue.transientStatus = BakerIssueTransientStatusNone;
         [controller refresh];
     }
+
+    NSMutableArray *buttonItems = [NSMutableArray arrayWithObject:self.refreshButton];
+    if ([purchasesManager hasSubscriptions] || [issuesManager hasProductIDs]) {
+        [buttonItems addObject:self.subscribeButton];
+    }
+    self.navigationItem.leftBarButtonItems = buttonItems;
 }
 - (NSInteger)supportedInterfaceOrientations
 {
@@ -363,8 +367,11 @@
         [actions addObject:PRODUCT_ID_FREE_SUBSCRIPTION];
     }
 
-    [sheet addButtonWithTitle:NSLocalizedString(@"SUBSCRIPTIONS_SHEET_RESTORE", nil)];
-    [actions addObject:@"restore"];
+    if ([self.issuesManager hasProductIDs]) {
+        [sheet addButtonWithTitle:NSLocalizedString(@"SUBSCRIPTIONS_SHEET_RESTORE", nil)];
+        [actions addObject:@"restore"];
+    }
+
     [sheet addButtonWithTitle:NSLocalizedString(@"SUBSCRIPTIONS_SHEET_CLOSE", nil)];
     [actions addObject:@"cancel"];
 

@@ -42,6 +42,7 @@
 -(id)initWithURL:(NSString *)urlString;
 -(BOOL)refresh;
 -(NSSet *)productIDs;
+-(BOOL)hasProductIDs;
 #endif
 
 @end
