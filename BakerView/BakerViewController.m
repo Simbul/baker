@@ -123,6 +123,7 @@
 
         userIsScrolling = NO;
         shouldPropagateInterceptedTouch = YES;
+        shouldForceOrientationUpdate = YES;
 
         webViewBackground = nil;
 
@@ -169,10 +170,6 @@
         backgroundPathPortrait  = [book.path stringByAppendingPathComponent:backgroundPathPortrait];
         backgroundImagePortrait = [[UIImage imageWithContentsOfFile:backgroundPathPortrait] retain];
     }
-    
-    // Present and dismiss a vanilla view controller to trigger the orientation update
-    [self presentViewController:[UIViewController new] animated:NO completion:^{ [self dismissViewControllerAnimated:NO completion:nil]; }];
-
 }
 - (void)viewWillAppear:(BOOL)animated {
 
@@ -201,6 +198,7 @@
 
         [super viewDidAppear:animated];
 
+        [self forceOrientationUpdate];
         [self willRotateToInterfaceOrientation:self.interfaceOrientation duration:0];
         [self performSelector:@selector(hideBars:) withObject:[NSNumber numberWithBool:YES] afterDelay:0.5];
 
@@ -1777,6 +1775,32 @@
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
     [indexViewController rotateFromOrientation:fromInterfaceOrientation toOrientation:self.interfaceOrientation];
     [self setCurrentPageHeight];
+}
+
+- (void)forceOrientationUpdate {
+    
+    if (shouldForceOrientationUpdate) {
+        
+        // We need to run this only once to prevent looping in -viewWillAppear
+        shouldForceOrientationUpdate = NO;
+
+        UIDeviceOrientation deviceOrientation = [[UIApplication sharedApplication] statusBarOrientation];
+        
+        if ( (UIInterfaceOrientationIsLandscape(deviceOrientation) && [book.orientation isEqualToString:@"landscape"])
+            ||
+            (UIInterfaceOrientationIsPortrait(deviceOrientation) && [book.orientation isEqualToString:@"portrait"]) ) {
+            
+            NSLog(@"Device and book orientations are in sync");
+            
+        } else {
+            
+            NSLog(@"Device and book orientations are out of sync, force orientation update");
+            
+            // Present and dismiss a vanilla view controller to trigger the orientation update
+            [self presentViewController:[UIViewController new] animated:NO completion:^{ [self dismissViewControllerAnimated:NO completion:nil]; }];
+            
+        }
+    }
 }
 
 #pragma mark - MEMORY
