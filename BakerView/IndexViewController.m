@@ -48,7 +48,7 @@
         indexWidth = 0;
         indexHeight = 0;
 
-        [self setPageSizeForOrientation:[self interfaceOrientation]];
+        [self setPageSizeForOrientation:[UIApplication sharedApplication].statusBarOrientation];
     }
     return self;
 }
