@@ -47,7 +47,9 @@ typedef enum transientStates {
     BakerIssueTransientStatusUnpriced
 } BakerIssueTransientStatus;
 
-@interface BakerIssue : NSObject
+@interface BakerIssue : NSObject {
+    PurchasesManager *purchasesManager;
+}
 
 @property (copy, nonatomic) NSString *ID;
 @property (copy, nonatomic) NSString *title;
@@ -63,9 +65,6 @@ typedef enum transientStates {
 @property (copy, nonatomic) NSString *price;
 
 @property (retain, nonatomic) BakerBook *bakerBook;
-#ifdef BAKER_NEWSSTAND
-@property (retain, nonatomic) PurchasesManager *purchasesManager;
-#endif
 
 @property (nonatomic, assign) BakerIssueTransientStatus transientStatus;
 

@@ -63,7 +63,7 @@
         purchaseDelayed = NO;
 
         #ifdef BAKER_NEWSSTAND
-        self.purchasesManager = [PurchasesManager sharedInstance];
+        purchasesManager = [PurchasesManager sharedInstance];
         [self addPurchaseObserver:@selector(handleIssueRestored:) name:@"notification_issue_restored"];
         #endif
     }
@@ -421,14 +421,14 @@
     [self addPurchaseObserver:@selector(handleIssuePurchased:) name:@"notification_issue_purchased"];
     [self addPurchaseObserver:@selector(handleIssuePurchaseFailed:) name:@"notification_issue_purchase_failed"];
 
-    if (![self.purchasesManager purchase:self.issue.productID]) {
+    if (![purchasesManager purchase:self.issue.productID]) {
         // Still retrieving SKProduct: delay purchase
         purchaseDelayed = YES;
 
         [self removePurchaseObserver:@"notification_issue_purchased"];
         [self removePurchaseObserver:@"notification_issue_purchase_failed"];
 
-        [self.purchasesManager retrievePriceFor:self.issue.productID];
+        [purchasesManager retrievePriceFor:self.issue.productID];
 
         self.issue.transientStatus = BakerIssueTransientStatusUnpriced;
         [self refresh];
@@ -456,8 +456,8 @@
         [self removePurchaseObserver:@"notification_issue_purchased"];
         [self removePurchaseObserver:@"notification_issue_purchase_failed"];
 
-        [self.purchasesManager markAsPurchased:transaction.payment.productIdentifier];
-        [self.purchasesManager finishTransaction:transaction];
+        [purchasesManager markAsPurchased:transaction.payment.productIdentifier];
+        [purchasesManager finishTransaction:transaction];
 
         self.issue.transientStatus = BakerIssueTransientStatusNone;
         [self refresh];
@@ -490,8 +490,8 @@
     SKPaymentTransaction *transaction = [notification.userInfo objectForKey:@"transaction"];
 
     if ([transaction.payment.productIdentifier isEqualToString:issue.productID]) {
-        [self.purchasesManager markAsPurchased:transaction.payment.productIdentifier];
-        [self.purchasesManager finishTransaction:transaction];
+        [purchasesManager markAsPurchased:transaction.payment.productIdentifier];
+        [purchasesManager finishTransaction:transaction];
 
         self.issue.transientStatus = BakerIssueTransientStatusNone;
         [self refresh];
@@ -618,13 +618,13 @@
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:notificationSelector
                                                  name:notificationName
-                                               object:self.purchasesManager];
+                                               object:purchasesManager];
 }
 
 - (void)removePurchaseObserver:(NSString *)notificationName {
     [[NSNotificationCenter defaultCenter] removeObserver:self
                                                     name:notificationName
-                                                  object:self.purchasesManager];
+                                                  object:purchasesManager];
 }
 
 + (UI)getIssueContentMeasures

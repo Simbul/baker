@@ -40,7 +40,9 @@
 #import "PurchasesManager.h"
 #endif
 
-@interface ShelfViewController : UIViewController <AQGridViewDataSource, AQGridViewDelegate, UIActionSheetDelegate>
+@interface ShelfViewController : UIViewController <AQGridViewDataSource, AQGridViewDelegate, UIActionSheetDelegate> {
+    PurchasesManager *purchasesManager;
+}
 
 @property (copy, nonatomic) NSArray *issues;
 @property (copy, nonatomic) NSArray *supportedOrientation;
@@ -48,9 +50,6 @@
 @property (retain, nonatomic) NSMutableArray *issueViewControllers;
 @property (retain, nonatomic) IssuesManager *issuesManager;
 @property (retain, nonatomic) ShelfStatus *shelfStatus;
-#ifdef BAKER_NEWSSTAND
-@property (retain, nonatomic) PurchasesManager *purchasesManager;
-#endif
 
 @property (strong, nonatomic) AQGridView *gridView;
 @property (strong, nonatomic) UIImageView *background;

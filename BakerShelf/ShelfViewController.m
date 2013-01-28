@@ -52,9 +52,6 @@
 @synthesize shelfStatus;
 @synthesize subscriptionsActionSheet;
 @synthesize supportedOrientation;
-#ifdef BAKER_NEWSSTAND
-@synthesize purchasesManager;
-#endif
 
 #pragma mark - Init
 
@@ -75,7 +72,7 @@
         self.issues = currentBooks;
 
         #ifdef BAKER_NEWSSTAND
-        self.purchasesManager = [PurchasesManager sharedInstance];
+        purchasesManager = [PurchasesManager sharedInstance];
         [self addPurchaseObserver:@selector(handleProductsRetrieved:)
                              name:@"notification_products_retrieved"];
         [self addPurchaseObserver:@selector(handleProductsRequestFailed:)
@@ -320,7 +317,7 @@
             }
         }];
 
-        [self.purchasesManager retrievePricesFor:self.issuesManager.productIDs];
+        [purchasesManager retrievePricesFor:self.issuesManager.productIDs];
     }
     else{
         UIAlertView *connAlert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"INTERNET_CONNECTION_UNAVAILABLE_TITLE", nil)
@@ -546,7 +543,7 @@
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:notificationSelector
                                                  name:notificationName
-                                               object:self.purchasesManager];
+                                               object:purchasesManager];
 }
 
 + (int)getBannerHeight
