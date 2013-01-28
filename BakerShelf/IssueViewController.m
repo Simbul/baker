@@ -64,10 +64,7 @@
 
         #ifdef BAKER_NEWSSTAND
         self.purchasesManager = [PurchasesManager sharedInstance];
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(handleIssueRestored:)
-                                                     name:@"notification_issue_restored"
-                                                   object:self.purchasesManager];
+        [self addPurchaseObserver:@selector(handleIssueRestored:) name:@"notification_issue_restored"];
         #endif
     }
     return self;
@@ -421,21 +418,15 @@
     [self.issue downloadWithDelegate:self];
 }
 - (void)buy {
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(handleIssuePurchased:)
-                                                 name:@"notification_issue_purchased"
-                                               object:self.purchasesManager];
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(handleIssuePurchaseFailed:)
-                                                 name:@"notification_issue_purchase_failed"
-                                               object:self.purchasesManager];
+    [self addPurchaseObserver:@selector(handleIssuePurchased:) name:@"notification_issue_purchased"];
+    [self addPurchaseObserver:@selector(handleIssuePurchaseFailed:) name:@"notification_issue_purchase_failed"];
 
     if (![self.purchasesManager purchase:self.issue.productID]) {
         // Still retrieving SKProduct: delay purchase
         purchaseDelayed = YES;
 
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:@"notification_issue_purchased" object:self.purchasesManager];
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:@"notification_issue_purchase_failed" object:self.purchasesManager];
+        [self removePurchaseObserver:@"notification_issue_purchased"];
+        [self removePurchaseObserver:@"notification_issue_purchase_failed"];
 
         [self.purchasesManager retrievePriceFor:self.issue.productID];
 
@@ -462,8 +453,8 @@
             [alert release];
         }
 
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:@"notification_issue_purchased" object:nil];
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:@"notification_issue_purchase_failed" object:nil];
+        [self removePurchaseObserver:@"notification_issue_purchased"];
+        [self removePurchaseObserver:@"notification_issue_purchase_failed"];
 
         [self.purchasesManager markAsPurchased:transaction.payment.productIdentifier];
         [self.purchasesManager finishTransaction:transaction];
@@ -487,8 +478,8 @@
             [alert release];
         }
 
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:@"notification_issue_purchased" object:nil];
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:@"notification_issue_purchase_failed" object:nil];
+        [self removePurchaseObserver:@"notification_issue_purchased"];
+        [self removePurchaseObserver:@"notification_issue_purchase_failed"];
 
         self.issue.transientStatus = BakerIssueTransientStatusNone;
         [self refresh];
@@ -622,6 +613,19 @@
 #endif
 
 #pragma mark - Helper methods
+
+- (void)addPurchaseObserver:(SEL)notificationSelector name:(NSString *)notificationName {
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:notificationSelector
+                                                 name:notificationName
+                                               object:self.purchasesManager];
+}
+
+- (void)removePurchaseObserver:(NSString *)notificationName {
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:notificationName
+                                                  object:self.purchasesManager];
+}
 
 + (UI)getIssueContentMeasures
 {

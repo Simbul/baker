@@ -76,34 +76,21 @@
 
         #ifdef BAKER_NEWSSTAND
         self.purchasesManager = [PurchasesManager sharedInstance];
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(handleProductsRetrieved:)
-                                                     name:@"notification_products_retrieved"
-                                                   object:self.purchasesManager];
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(handleProductsRequestFailed:)
-                                                     name:@"notification_products_request_failed"
-                                                   object:self.purchasesManager];
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(handleFreeSubscriptionPurchased:)
-                                                     name:@"notification_free_subscription_purchased"
-                                                   object:self.purchasesManager];
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(handleFreeSubscriptionFailed:)
-                                                     name:@"notification_free_subscription_failed"
-                                                   object:self.purchasesManager];
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(handleFreeSubscriptionRestored:)
-                                                     name:@"notification_free_subscription_restored"
-                                                   object:self.purchasesManager];
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(handleRestoreFinished:)
-                                                     name:@"notification_restore_finished"
-                                                   object:self.purchasesManager];
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(handleRestoreFailed:)
-                                                     name:@"notification_restore_failed"
-                                                   object:self.purchasesManager];
+        [self addPurchaseObserver:@selector(handleProductsRetrieved:)
+                             name:@"notification_products_retrieved"];
+        [self addPurchaseObserver:@selector(handleProductsRequestFailed:)
+                             name:@"notification_products_request_failed"];
+        [self addPurchaseObserver:@selector(handleFreeSubscriptionPurchased:)
+                             name:@"notification_free_subscription_purchased"];
+        [self addPurchaseObserver:@selector(handleFreeSubscriptionFailed:)
+                             name:@"notification_free_subscription_failed"];
+        [self addPurchaseObserver:@selector(handleFreeSubscriptionRestored:)
+                             name:@"notification_free_subscription_restored"];
+        [self addPurchaseObserver:@selector(handleRestoreFinished:)
+                             name:@"notification_restore_finished"];
+        [self addPurchaseObserver:@selector(handleRestoreFailed:)
+                             name:@"notification_restore_failed"];
+
         [[SKPaymentQueue defaultQueue] addTransactionObserver:purchasesManager];
         #endif
 
@@ -554,6 +541,13 @@
 }
 
 #pragma mark - Helper methods
+
+- (void)addPurchaseObserver:(SEL)notificationSelector name:(NSString *)notificationName {
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:notificationSelector
+                                                 name:notificationName
+                                               object:self.purchasesManager];
+}
 
 + (int)getBannerHeight
 {
