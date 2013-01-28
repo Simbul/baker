@@ -100,6 +100,10 @@
                                                  selector:@selector(handleRestoreFinished:)
                                                      name:@"notification_restore_finished"
                                                    object:self.purchasesManager];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handleRestoreFailed:)
+                                                     name:@"notification_restore_failed"
+                                                   object:self.purchasesManager];
         [[SKPaymentQueue defaultQueue] addTransactionObserver:purchasesManager];
         #endif
 
@@ -401,6 +405,20 @@
 
 - (void)handleRestoreFinished:(NSNotification *)notification {
     [self.blockingProgressView dismissWithClickedButtonIndex:0 animated:YES];
+}
+
+- (void)handleRestoreFailed:(NSNotification *)notification {
+    NSError *error = [notification.userInfo objectForKey:@"error"];
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"RESTORE_FAILED_TITLE", nil)
+                                                    message:[error localizedDescription]
+                                                   delegate:self
+                                          cancelButtonTitle:NSLocalizedString(@"RESTORE_FAILED_CLOSE", nil)
+                                          otherButtonTitles:nil];
+    [alert show];
+    [alert release];
+
+    [self.blockingProgressView dismissWithClickedButtonIndex:0 animated:YES];
+
 }
 
 - (void)handleFreeSubscription:(NSNotification *)notification {

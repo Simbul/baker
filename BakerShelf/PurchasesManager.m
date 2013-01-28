@@ -247,6 +247,14 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_restore_finished" object:self userInfo:nil];
 }
 
+- (void)paymentQueue:(SKPaymentQueue *)queue restoreCompletedTransactionsFailedWithError:(NSError *)error {
+    NSLog(@"Transaction restore failure: %@", error);
+
+    NSDictionary *userInfo = [NSDictionary dictionaryWithObject:error forKey:@"error"];
+
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_restore_failed" object:self userInfo:userInfo];
+}
+
 #pragma mark - Products
 
 - (SKProduct *)productFor:(NSString *)productID {
