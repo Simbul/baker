@@ -70,6 +70,8 @@
 {
     self.window = [[[InterceptorWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]] autorelease];
     self.window.backgroundColor = [UIColor whiteColor];
+    // Let the device know we want to handle Newsstand push notifications
+    [application registerForRemoteNotificationTypes:UIRemoteNotificationTypeNewsstandContentAvailability];
 
     #ifdef BAKER_NEWSSTAND
 
@@ -100,6 +102,16 @@
     [self.window makeKeyAndVisible];
 
     return YES;
+}
+
+- (void)application:(UIApplication*)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)deviceToken
+{
+	NSLog(@"My token is: %@", deviceToken);
+}
+
+- (void)application:(UIApplication*)application didFailToRegisterForRemoteNotificationsWithError:(NSError*)error
+{
+	NSLog(@"Failed to get token, error: %@", error);
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application
