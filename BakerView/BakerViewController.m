@@ -932,6 +932,7 @@
     // In case the orientation changed while being in modal view, restore the
     // webview and stuff to the current orientation
     [self willRotateToInterfaceOrientation:self.interfaceOrientation duration:0];
+    [self didRotateFromInterfaceOrientation:self.interfaceOrientation];
 }
 
 #pragma mark - SCROLLVIEW
