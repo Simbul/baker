@@ -114,6 +114,23 @@
 	NSLog(@"Failed to get token, error: %@", error);
 }
 
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo
+{
+    #ifdef BAKER_NEWSSTAND
+    NSDictionary *aps = [userInfo objectForKey:@"aps"];
+    if (aps) {
+        NSString *contentAvailable = [aps objectForKey:@"content-available"];
+        NSString *contentName = [aps objectForKey:@"content-name"];
+
+        if (contentAvailable && contentName && [contentAvailable caseInsensitiveCompare:@"1"] == NSOrderedSame) {
+            [[NSNotificationCenter defaultCenter] postNotificationName:[NSString stringWithFormat:@"notification_shelf_refresh_and_download"]
+                                                                object:nil
+                                                              userInfo:[NSDictionary dictionaryWithObject:contentName forKey:@"content-name"]];
+        }
+    }
+    #endif
+}
+
 - (void)applicationWillResignActive:(UIApplication *)application
 {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
