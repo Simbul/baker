@@ -39,6 +39,8 @@
 
 #ifdef BAKER_NEWSSTAND
 #import "IssuesManager.h"
+#import "IssueViewController.h"
+#import "BakerIssue.h"
 #endif
 
 #import "BakerViewController.h"
@@ -68,22 +70,56 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    self.window = [[[InterceptorWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]] autorelease];
-    self.window.backgroundColor = [UIColor whiteColor];
+    NSLog(@"application didFinishLaunchingWithOptions");
+
     // Let the device know we want to handle Newsstand push notifications
     [application registerForRemoteNotificationTypes:UIRemoteNotificationTypeNewsstandContentAvailability];
 
     #ifdef BAKER_NEWSSTAND
 
     NSLog(@"====== Newsstand is enabled ======");
-    IssuesManager *issuesManager = [[[IssuesManager alloc] initWithURL:NEWSSTAND_MANIFEST_URL] autorelease];
-    [issuesManager refresh];
+    IssuesManager *issuesManager = nil;
+
+    // Check if the app is runnig in response to a notification
+    NSDictionary *payload = [launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
+    if (payload) {
+        NSDictionary *aps = [payload objectForKey:@"aps"];
+        if (aps) {
+            NSString *contentAvailable = [aps objectForKey:@"content-available"];
+            NSString *contentName = [aps objectForKey:@"content-name"];
+
+            if (contentAvailable && contentName && [contentAvailable caseInsensitiveCompare:@"1"] == NSOrderedSame) {
+
+                __block UIBackgroundTaskIdentifier backgroundTask = [application beginBackgroundTaskWithExpirationHandler:^{
+                    backgroundTask = UIBackgroundTaskInvalid;
+                }];
+
+                issuesManager = [[[IssuesManager alloc] initWithURL:NEWSSTAND_MANIFEST_URL] autorelease];
+                [issuesManager refresh];
+
+                for (BakerIssue *issue in issuesManager.issues) {
+                    if ([issue.ID isEqualToString:contentName]) {
+                        IssueViewController *issueViewController = [[[IssueViewController alloc] initWithBakerIssue:issue] autorelease];
+                        [issue downloadWithDelegate:issueViewController];
+                        break;
+                    }
+                }
+
+                [application endBackgroundTask:backgroundTask];
+            }
+        }
+    } else {
+        issuesManager = [[[IssuesManager alloc] initWithURL:NEWSSTAND_MANIFEST_URL] autorelease];
+        [issuesManager refresh];
+    }
+
     NSArray *books = issuesManager.issues;
     self.rootViewController = [[[ShelfViewController alloc] initWithBooks:books] autorelease];
 
     #else
 
     NSLog(@"====== Newsstand is not enabled ======");
+
     NSArray *books = [ShelfManager localBooksList];
     if ([books count] == 1) {
         self.rootViewController = [[[BakerViewController alloc] initWithBook:[[books objectAtIndex:0] bakerBook]] autorelease];
@@ -97,6 +133,9 @@
     UICustomNavigationBar *navigationBar = (UICustomNavigationBar *)self.rootNavigationController.navigationBar;
     [navigationBar setBackgroundImage:[UIImage imageNamed:@"navigation-bar-bg.png"] forBarMetrics:UIBarMetricsDefault];
     [navigationBar setTintColor:[UIColor clearColor]];
+
+    self.window = [[[InterceptorWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]] autorelease];
+    self.window.backgroundColor = [UIColor whiteColor];
 
     self.window.rootViewController = self.rootNavigationController;
     [self.window makeKeyAndVisible];
