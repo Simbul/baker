@@ -52,15 +52,26 @@
         #define NEWSSTAND_MANIFEST_URL @""
 
         // ----------------------------------------------------------------------------------------------------
-        // Mandatory - This constant identifies the subscription you set up in iTunesConnect.
+        // Mandatory - This constant identifies the free subscription you set up in iTunesConnect.
         // See: iTunes Connect -> Manage Your Application -> (Your application) -> Manage In App Purchases
         // E.g. @"com.example.MyBook.subscription.free"
         #define PRODUCT_ID_FREE_SUBSCRIPTION @""
 
         // ----------------------------------------------------------------------------------------------------
-        // Optional - This constant specifies the URL to ping back when a user subscribes.
-        // E.g. @"http://example.com/subscribe"
         #define PURCHASE_CONFIRMATION_URL @""
+        // Optional - This constant specifies the URL to ping back when a user purchases an issue or a subscription.
+        // E.g. @"http://example.com/purchased"
+
+        // ----------------------------------------------------------------------------------------------------
+        // Optional - This constant identifies the auto-renewable subscriptions you set up in iTunesConnect.
+        // See: iTunes Connect -> Manage Your Application -> (Your application) -> Manage In App Purchases
+        // E.g.:
+        // #define SUBSCRIPTION_PRODUCT_IDS [NSArray arrayWithObjects: \
+        //     @"com.example.MyBook.subscription.3months", \
+        //     @"com.example.MyBook.subscription.6months", \
+        //     nil]
+        #define SUBSCRIPTION_PRODUCT_IDS [NSArray arrayWithObjects: \
+            nil]
 
     #endif
 

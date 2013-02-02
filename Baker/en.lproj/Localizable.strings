@@ -68,3 +68,8 @@
 // Modal web view
 "WEB_MODAL_FAILURE_MESSAGE" = "Unable to connect.";
 "WEB_MODAL_CLOSE_BUTTON_TEXT" = "Back";
+
+// Subscriptions
+// (These are just examples: you'll need to provide your own product IDs and names)
+//"com.example.MyBook.subscription.3months" = "3 Months Subscription";
+//"com.example.MyBook.subscription.6months" = "Half Year Subscription";

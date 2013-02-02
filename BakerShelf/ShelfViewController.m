@@ -62,12 +62,12 @@
                              name:@"notification_products_retrieved"];
         [self addPurchaseObserver:@selector(handleProductsRequestFailed:)
                              name:@"notification_products_request_failed"];
-        [self addPurchaseObserver:@selector(handleFreeSubscriptionPurchased:)
-                             name:@"notification_free_subscription_purchased"];
-        [self addPurchaseObserver:@selector(handleFreeSubscriptionFailed:)
-                             name:@"notification_free_subscription_failed"];
-        [self addPurchaseObserver:@selector(handleFreeSubscriptionRestored:)
-                             name:@"notification_free_subscription_restored"];
+        [self addPurchaseObserver:@selector(handleSubscriptionPurchased:)
+                             name:@"notification_subscription_purchased"];
+        [self addPurchaseObserver:@selector(handleSubscriptionFailed:)
+                             name:@"notification_subscription_failed"];
+        [self addPurchaseObserver:@selector(handleSubscriptionRestored:)
+                             name:@"notification_subscription_restored"];
         [self addPurchaseObserver:@selector(handleRestoreFinished:)
                              name:@"notification_restore_finished"];
         [self addPurchaseObserver:@selector(handleRestoreFailed:)
@@ -172,6 +172,9 @@
     if ([PRODUCT_ID_FREE_SUBSCRIPTION length] > 0) {
         self.subscribeButton.enabled = NO;
         [purchasesManager retrievePriceFor:PRODUCT_ID_FREE_SUBSCRIPTION];
+    }
+    for (NSString *subscriptionId in SUBSCRIPTION_PRODUCT_IDS) {
+        [purchasesManager retrievePriceFor:subscriptionId];
     }
     #endif
 }
@@ -353,6 +356,15 @@
         [actions addObject:PRODUCT_ID_FREE_SUBSCRIPTION];
     }
 
+    for (NSString *productId in SUBSCRIPTION_PRODUCT_IDS) {
+        NSString *title = NSLocalizedString(productId, nil);
+        NSString *price = [purchasesManager priceFor:productId];
+        if (price && ![purchasesManager isMarkedAsPurchased:productId]) {
+            [sheet addButtonWithTitle:[NSString stringWithFormat:@"%@ %@", title, price]];
+            [actions addObject:productId];
+        }
+    }
+
     if ([issuesManager hasProductIDs]) {
         [sheet addButtonWithTitle:NSLocalizedString(@"SUBSCRIPTIONS_SHEET_RESTORE", nil)];
         [actions addObject:@"restore"];
@@ -403,12 +415,13 @@
 
 }
 
-- (void)handleFreeSubscription:(NSNotification *)notification {
+// TODO: this can probably be removed
+- (void)handleSubscription:(NSNotification *)notification {
     [self setSubscribeButtonEnabled:NO];
     [purchasesManager purchase:PRODUCT_ID_FREE_SUBSCRIPTION];
 }
 
-- (void)handleFreeSubscriptionPurchased:(NSNotification *)notification {
+- (void)handleSubscriptionPurchased:(NSNotification *)notification {
     SKPaymentTransaction *transaction = [notification.userInfo objectForKey:@"transaction"];
 
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"SUBSCRIPTION_SUCCESSFUL_TITLE", nil)
@@ -419,14 +432,14 @@
     [alert show];
     [alert release];
 
-    [purchasesManager markAsPurchased:PRODUCT_ID_FREE_SUBSCRIPTION];
+    [purchasesManager markAsPurchased:transaction.payment.productIdentifier];
 
     [self setSubscribeButtonEnabled:YES];
 
     [purchasesManager finishTransaction:transaction];
 }
 
-- (void)handleFreeSubscriptionFailed:(NSNotification *)notification {
+- (void)handleSubscriptionFailed:(NSNotification *)notification {
     SKPaymentTransaction *transaction = [notification.userInfo objectForKey:@"transaction"];
 
     // Show an error, unless it was the user who cancelled the transaction
@@ -443,10 +456,10 @@
     [self setSubscribeButtonEnabled:YES];
 }
 
-- (void)handleFreeSubscriptionRestored:(NSNotification *)notification {
+- (void)handleSubscriptionRestored:(NSNotification *)notification {
     SKPaymentTransaction *transaction = [notification.userInfo objectForKey:@"transaction"];
 
-    [purchasesManager markAsPurchased:PRODUCT_ID_FREE_SUBSCRIPTION];
+    [purchasesManager markAsPurchased:transaction.payment.productIdentifier];
 
     [purchasesManager finishTransaction:transaction];
 }
@@ -458,6 +471,9 @@
     for (NSString *productId in ids) {
         if ([productId isEqualToString:PRODUCT_ID_FREE_SUBSCRIPTION]) {
             // ID is for a free subscription
+            [self setSubscribeButtonEnabled:YES];
+        } else if ([SUBSCRIPTION_PRODUCT_IDS containsObject:productId]) {
+            // ID is for an auto-renewable subscription
             [self setSubscribeButtonEnabled:YES];
         } else {
             // ID is for an issue

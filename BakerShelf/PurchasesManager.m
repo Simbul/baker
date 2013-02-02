@@ -207,9 +207,10 @@
 
 - (void)completeTransaction:(SKPaymentTransaction *)transaction {
     NSDictionary *userInfo = [NSDictionary dictionaryWithObject:transaction forKey:@"transaction"];
+    NSString *productId = transaction.payment.productIdentifier;
 
-    if ([transaction.payment.productIdentifier isEqualToString:PRODUCT_ID_FREE_SUBSCRIPTION]) {
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_free_subscription_purchased" object:self userInfo:userInfo];
+    if ([productId isEqualToString:PRODUCT_ID_FREE_SUBSCRIPTION] || [SUBSCRIPTION_PRODUCT_IDS containsObject:productId]) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_subscription_purchased" object:self userInfo:userInfo];
     } else {
         [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_issue_purchased" object:self userInfo:userInfo];
     }
@@ -217,9 +218,10 @@
 
 - (void)restoreTransaction:(SKPaymentTransaction *)transaction {
     NSDictionary *userInfo = [NSDictionary dictionaryWithObject:transaction forKey:@"transaction"];
+    NSString *productId = transaction.payment.productIdentifier;
 
-    if ([transaction.payment.productIdentifier isEqualToString:PRODUCT_ID_FREE_SUBSCRIPTION]) {
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_free_subscription_restored" object:self userInfo:userInfo];
+    if ([productId isEqualToString:PRODUCT_ID_FREE_SUBSCRIPTION] || [SUBSCRIPTION_PRODUCT_IDS containsObject:productId]) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_subscription_restored" object:self userInfo:userInfo];
     } else {
         [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_issue_restored" object:self userInfo:userInfo];
     }
@@ -229,9 +231,10 @@
     NSLog(@"Payment transaction failure: %@", transaction.error);
 
     NSDictionary *userInfo = [NSDictionary dictionaryWithObject:transaction forKey:@"transaction"];
+    NSString *productId = transaction.payment.productIdentifier;
 
-    if ([transaction.payment.productIdentifier isEqualToString:PRODUCT_ID_FREE_SUBSCRIPTION]) {
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_free_subscription_failed" object:self userInfo:userInfo];
+    if ([productId isEqualToString:PRODUCT_ID_FREE_SUBSCRIPTION] || [SUBSCRIPTION_PRODUCT_IDS containsObject:productId]) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_subscription_failed" object:self userInfo:userInfo];
     } else {
         [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_issue_purchase_failed" object:self userInfo:userInfo];
     }

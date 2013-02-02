@@ -72,7 +72,7 @@
 - (void)handleRefresh:(NSNotification *)notification;
 
 #pragma mark - Store Kit
-- (void)handleFreeSubscription:(NSNotification *)notification;
+- (void)handleSubscription:(NSNotification *)notification;
 #endif
 
 #pragma mark - Navigation management
