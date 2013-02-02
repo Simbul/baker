@@ -551,7 +551,7 @@
     // TODO: notify of new content with setApplicationIconBadgeNumber
 
     BakerBook *book = [[BakerBook alloc]initWithBookPath:destinationPath bundled:NO];
-    UIImage *coverImage = [UIImage imageWithContentsOfFile:[destinationPath stringByAppendingPathComponent:book.cover]];
+    UIImage *coverImage = [UIImage imageWithContentsOfFile:self.issue.coverPath];
     if (coverImage) {
         [[UIApplication sharedApplication] setNewsstandIconImage:coverImage];
     }
