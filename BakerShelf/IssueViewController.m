@@ -615,16 +615,20 @@
 #pragma mark - Helper methods
 
 - (void)addPurchaseObserver:(SEL)notificationSelector name:(NSString *)notificationName {
+    #ifdef BAKER_NEWSSTAND
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:notificationSelector
                                                  name:notificationName
                                                object:purchasesManager];
+    #endif
 }
 
 - (void)removePurchaseObserver:(NSString *)notificationName {
+    #ifdef BAKER_NEWSSTAND
     [[NSNotificationCenter defaultCenter] removeObserver:self
                                                     name:notificationName
                                                   object:purchasesManager];
+    #endif
 }
 
 + (UI)getIssueContentMeasures

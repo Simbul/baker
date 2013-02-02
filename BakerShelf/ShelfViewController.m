@@ -197,9 +197,11 @@
     }
 
     NSMutableArray *buttonItems = [NSMutableArray arrayWithObject:self.refreshButton];
+    #ifdef BAKER_NEWSSTAND
     if ([purchasesManager hasSubscriptions] || [issuesManager hasProductIDs]) {
         [buttonItems addObject:self.subscribeButton];
     }
+    #endif
     self.navigationItem.leftBarButtonItems = buttonItems;
 }
 - (NSInteger)supportedInterfaceOrientations
@@ -540,10 +542,12 @@
 #pragma mark - Helper methods
 
 - (void)addPurchaseObserver:(SEL)notificationSelector name:(NSString *)notificationName {
+    #ifdef BAKER_NEWSSTAND
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:notificationSelector
                                                  name:notificationName
                                                object:purchasesManager];
+    #endif
 }
 
 + (int)getBannerHeight

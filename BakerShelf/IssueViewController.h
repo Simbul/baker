@@ -31,13 +31,17 @@
 
 #import <UIKit/UIKit.h>
 #import "BakerIssue.h"
+#ifdef BAKER_NEWSSTAND
 #import "PurchasesManager.h"
+#endif
 
 @interface IssueViewController : UIViewController <NSURLConnectionDownloadDelegate> {
     NSString *currentAction;
     NSString *currentStatus;
     BOOL purchaseDelayed;
+    #ifdef BAKER_NEWSSTAND
     PurchasesManager *purchasesManager;
+    #endif
 }
 
 @property (strong, nonatomic) BakerIssue *issue;

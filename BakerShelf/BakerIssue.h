@@ -48,7 +48,9 @@ typedef enum transientStates {
 } BakerIssueTransientStatus;
 
 @interface BakerIssue : NSObject {
+    #ifdef BAKER_NEWSSTAND
     PurchasesManager *purchasesManager;
+    #endif
 }
 
 @property (copy, nonatomic) NSString *ID;
