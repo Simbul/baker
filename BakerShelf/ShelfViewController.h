@@ -63,6 +63,7 @@
 @property (strong, nonatomic) UIAlertView *blockingProgressView;
 
 #pragma mark - Init
+- (id)initWithoutBooks;
 - (id)initWithBooks:(NSArray *)currentBooks;
 
 #pragma mark - Shelf data source

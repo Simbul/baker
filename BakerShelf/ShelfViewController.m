@@ -65,12 +65,10 @@
     }
     return self;
 }
-- (id)initWithBooks:(NSArray *)currentBooks
-{
+
+- (id)initWithoutBooks {
     self = [super init];
     if (self) {
-        self.issues = currentBooks;
-
         #ifdef BAKER_NEWSSTAND
         purchasesManager = [PurchasesManager sharedInstance];
         [self addPurchaseObserver:@selector(handleProductsRetrieved:)
@@ -92,10 +90,17 @@
         #endif
 
         self.shelfStatus = [[[ShelfStatus alloc] init] retain];
-        [shelfStatus load];
-        for (BakerIssue *issue in self.issues) {
-            issue.price = [shelfStatus priceFor:issue.productID];
-        }
+        self.issueViewControllers = [[NSMutableArray alloc] init];
+        self.supportedOrientation = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"UISupportedInterfaceOrientations"];
+    }
+    return self;
+}
+
+- (id)initWithBooks:(NSArray *)currentBooks
+{
+    self = [self initWithoutBooks];
+    if (self) {
+        self.issues = currentBooks;
 
         NSMutableArray *controllers = [NSMutableArray array];
         for (BakerIssue *issue in self.issues) {
@@ -103,7 +108,6 @@
             [controllers addObject:controller];
         }
         self.issueViewControllers = [NSMutableArray arrayWithArray:controllers];
-        self.supportedOrientation = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"UISupportedInterfaceOrientations"];
     }
     return self;
 }
@@ -196,13 +200,13 @@
         [controller refresh];
     }
 
-    NSMutableArray *buttonItems = [NSMutableArray arrayWithObject:self.refreshButton];
     #ifdef BAKER_NEWSSTAND
+    NSMutableArray *buttonItems = [NSMutableArray arrayWithObject:self.refreshButton];
     if ([purchasesManager hasSubscriptions] || [issuesManager hasProductIDs]) {
         [buttonItems addObject:self.subscribeButton];
     }
-    #endif
     self.navigationItem.leftBarButtonItems = buttonItems;
+    #endif
 }
 - (NSInteger)supportedInterfaceOrientations
 {
@@ -302,6 +306,11 @@
     }
     if([self.issuesManager refresh]) {
         self.issues = issuesManager.issues;
+
+        [shelfStatus load];
+        for (BakerIssue *issue in self.issues) {
+            issue.price = [shelfStatus priceFor:issue.productID];
+        }
 
         [self.issues enumerateObjectsUsingBlock:^(id object, NSUInteger idx, BOOL *stop) {
             // NOTE: this block changes the issueViewController array while looping
