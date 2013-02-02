@@ -453,12 +453,19 @@
 
 - (void)handleProductsRetrieved:(NSNotification *)notification {
     NSSet *ids = [notification.userInfo objectForKey:@"ids"];
+    BOOL issuesRetrieved = NO;
 
-    if (ids.count == 1 && [[ids anyObject] isEqualToString:PRODUCT_ID_FREE_SUBSCRIPTION]) {
-        // Free subscription retrieved
-        [self setSubscribeButtonEnabled:YES];
-    } else {
-        // Issues retrieved
+    for (NSString *productId in ids) {
+        if ([productId isEqualToString:PRODUCT_ID_FREE_SUBSCRIPTION]) {
+            // ID is for a free subscription
+            [self setSubscribeButtonEnabled:YES];
+        } else {
+            // ID is for an issue
+            issuesRetrieved = YES;
+        }
+    }
+
+    if (issuesRetrieved) {
         NSString *price;
         for (IssueViewController *controller in self.issueViewControllers) {
             price = [purchasesManager priceFor:controller.issue.productID];
