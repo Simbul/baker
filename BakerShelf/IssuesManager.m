@@ -91,7 +91,10 @@
     NSError *cachedShelfError = nil;
     NSString *json = nil;
 
-    json = [NSString stringWithContentsOfURL:self.url encoding:NSUTF8StringEncoding error:&shelfError];
+    NSURLResponse *response = nil;
+    NSURLRequest *request = [NSURLRequest requestWithURL:self.url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:REQUEST_TIMEOUT];
+    NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&shelfError];
+
     if (shelfError) {
         NSLog(@"Error loading Shelf manifest: %@", shelfError);
         if ([[NSFileManager defaultManager] fileExistsAtPath:self.shelfManifestPath]) {
@@ -105,6 +108,8 @@
             json = nil;
         }
     } else {
+        json = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+
         // Cache the shelf manifest
         [[NSFileManager defaultManager] createFileAtPath:self.shelfManifestPath contents:nil attributes:nil];
         [json writeToFile:self.shelfManifestPath atomically:YES encoding:NSUTF8StringEncoding error:&cachedShelfError];
