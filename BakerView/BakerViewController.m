@@ -1810,7 +1810,6 @@
     [pages release];
 
     [indexViewController release];
-    [myModalViewController release];
 
     [book release];
     [bookStatus release];
