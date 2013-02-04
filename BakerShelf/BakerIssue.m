@@ -85,7 +85,7 @@
         self.productID = [issueData objectForKey:@"product_id"];
         self.price = nil;
 
-        self.purchasesManager = [PurchasesManager sharedInstance];
+        purchasesManager = [PurchasesManager sharedInstance];
 
         NSString *cachePath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0];
         self.coverPath = [cachePath stringByAppendingPathComponent:self.ID];
@@ -164,7 +164,7 @@
     NKIssue *nkIssue = [nkLib issueWithName:self.ID];
     NSString *nkIssueStatus = [self nkIssueContentStatusToString:[nkIssue status]];
     if ([nkIssueStatus isEqualToString:@"remote"] && self.productID) {
-        if ([self.purchasesManager isMarkedAsPurchased:self.productID]) {
+        if ([purchasesManager isMarkedAsPurchased:self.productID]) {
             return @"purchased";
         } else if (self.price) {
             return @"purchasable";

@@ -87,28 +87,34 @@
 }
 
 -(NSString *)getShelfJSON {
-    NSError *error = nil;
+    NSError *shelfError = nil;
+    NSError *cachedShelfError = nil;
     NSString *json = nil;
 
-    json = [NSString stringWithContentsOfURL:self.url encoding:NSUTF8StringEncoding error:&error];
-    if (error) {
-        NSLog(@"Error loading Shelf manifest: %@", error);
+    NSURLResponse *response = nil;
+    NSURLRequest *request = [NSURLRequest requestWithURL:self.url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:REQUEST_TIMEOUT];
+    NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&shelfError];
+
+    if (shelfError) {
+        NSLog(@"Error loading Shelf manifest: %@", shelfError);
         if ([[NSFileManager defaultManager] fileExistsAtPath:self.shelfManifestPath]) {
             NSLog(@"Loading cached Shelf manifest from %@", self.shelfManifestPath);
-            json = [NSString stringWithContentsOfFile:self.shelfManifestPath encoding:NSUTF8StringEncoding error:&error];
-            if (error) {
-                NSLog(@"Error loading cached Shelf manifest: %@", error);
+            json = [NSString stringWithContentsOfFile:self.shelfManifestPath encoding:NSUTF8StringEncoding error:&cachedShelfError];
+            if (cachedShelfError) {
+                NSLog(@"Error loading cached Shelf manifest: %@", cachedShelfError);
             }
         } else {
             NSLog(@"No cached Shelf manifest found at %@", self.shelfManifestPath);
             json = nil;
         }
     } else {
+        json = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+
         // Cache the shelf manifest
         [[NSFileManager defaultManager] createFileAtPath:self.shelfManifestPath contents:nil attributes:nil];
-        [json writeToFile:self.shelfManifestPath atomically:YES encoding:NSUTF8StringEncoding error:&error];
-        if (error) {
-            NSLog(@"Error caching Shelf manifest: %@", error);
+        [json writeToFile:self.shelfManifestPath atomically:YES encoding:NSUTF8StringEncoding error:&cachedShelfError];
+        if (cachedShelfError) {
+            NSLog(@"Error caching Shelf manifest: %@", cachedShelfError);
         } else {
             [Utils addSkipBackupAttributeToItemAtPath:self.shelfManifestPath];
         }

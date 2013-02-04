@@ -31,12 +31,17 @@
 
 #import <UIKit/UIKit.h>
 #import "BakerIssue.h"
+#ifdef BAKER_NEWSSTAND
 #import "PurchasesManager.h"
+#endif
 
 @interface IssueViewController : UIViewController <NSURLConnectionDownloadDelegate> {
     NSString *currentAction;
     NSString *currentStatus;
     BOOL purchaseDelayed;
+    #ifdef BAKER_NEWSSTAND
+    PurchasesManager *purchasesManager;
+    #endif
 }
 
 @property (strong, nonatomic) BakerIssue *issue;
@@ -46,9 +51,6 @@
 @property (strong, nonatomic) UIActivityIndicatorView *spinner;
 @property (strong, nonatomic) UILabel *loadingLabel;
 @property (strong, nonatomic) UILabel *priceLabel;
-#ifdef BAKER_NEWSSTAND
-@property (strong, nonatomic) PurchasesManager *purchasesManager;
-#endif
 
 #pragma mark - Structs
 typedef struct {

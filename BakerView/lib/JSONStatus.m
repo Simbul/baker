@@ -43,6 +43,7 @@
     
     if (self) {
         path = [JSONPath retain];
+        [self createFileIfMissing];
         [self load];
     }
     
@@ -62,6 +63,15 @@
     NSString *json = [status JSONString];
     NSError *error = nil;
     
+    [json writeToFile:path atomically:YES encoding:NSUTF8StringEncoding error:&error];
+    if (error) {
+        NSLog(@"Error when saving JSON status: %@", error);
+    }
+}
+
+- (void)createFileIfMissing {
+    NSError *error = nil;
+
     NSString *dirPath = [path stringByDeletingLastPathComponent];
     if (![[NSFileManager defaultManager] fileExistsAtPath:dirPath]) {
         [[NSFileManager defaultManager] createDirectoryAtPath:dirPath withIntermediateDirectories:YES attributes:nil error:&error];
@@ -72,13 +82,12 @@
     }
     
     if (![[NSFileManager defaultManager] fileExistsAtPath:path]) {
-        [[NSFileManager defaultManager] createFileAtPath:path contents:nil attributes:nil];
-        [Utils addSkipBackupAttributeToItemAtPath:path];
-    }
+        if ([[NSFileManager defaultManager] createFileAtPath:path contents:nil attributes:nil]) {
+            [Utils addSkipBackupAttributeToItemAtPath:path];
+        } else {
+            NSLog(@"JSON status file could not be created at %@", path);
+        }
     
-    [json writeToFile:path atomically:YES encoding:NSUTF8StringEncoding error:&error];
-    if (error) {
-        NSLog(@"Error when saving JSON status: %@", error);
     }
 }
 

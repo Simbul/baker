@@ -64,4 +64,7 @@
 
     #endif
 
+    // Timeout for most network requests (in seconds)
+    #define REQUEST_TIMEOUT 5
+
 #endif

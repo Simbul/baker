@@ -52,9 +52,6 @@
 @synthesize shelfStatus;
 @synthesize subscriptionsActionSheet;
 @synthesize supportedOrientation;
-#ifdef BAKER_NEWSSTAND
-@synthesize purchasesManager;
-#endif
 
 #pragma mark - Init
 
@@ -68,14 +65,12 @@
     }
     return self;
 }
-- (id)initWithBooks:(NSArray *)currentBooks
-{
+
+- (id)initWithoutBooks {
     self = [super init];
     if (self) {
-        self.issues = currentBooks;
-
         #ifdef BAKER_NEWSSTAND
-        self.purchasesManager = [PurchasesManager sharedInstance];
+        purchasesManager = [PurchasesManager sharedInstance];
         [self addPurchaseObserver:@selector(handleProductsRetrieved:)
                              name:@"notification_products_retrieved"];
         [self addPurchaseObserver:@selector(handleProductsRequestFailed:)
@@ -99,10 +94,17 @@
         #endif
 
         self.shelfStatus = [[[ShelfStatus alloc] init] retain];
-        [shelfStatus load];
-        for (BakerIssue *issue in self.issues) {
-            issue.price = [shelfStatus priceFor:issue.productID];
-        }
+        self.issueViewControllers = [[NSMutableArray alloc] init];
+        self.supportedOrientation = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"UISupportedInterfaceOrientations"];
+    }
+    return self;
+}
+
+- (id)initWithBooks:(NSArray *)currentBooks
+{
+    self = [self initWithoutBooks];
+    if (self) {
+        self.issues = currentBooks;
 
         NSMutableArray *controllers = [NSMutableArray array];
         for (BakerIssue *issue in self.issues) {
@@ -110,7 +112,6 @@
             [controllers addObject:controller];
         }
         self.issueViewControllers = [NSMutableArray arrayWithArray:controllers];
-        self.supportedOrientation = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"UISupportedInterfaceOrientations"];
     }
     return self;
 }
@@ -203,11 +204,13 @@
         [controller refresh];
     }
 
+    #ifdef BAKER_NEWSSTAND
     NSMutableArray *buttonItems = [NSMutableArray arrayWithObject:self.refreshButton];
     if ([purchasesManager hasSubscriptions] || [issuesManager hasProductIDs]) {
         [buttonItems addObject:self.subscribeButton];
     }
     self.navigationItem.leftBarButtonItems = buttonItems;
+    #endif
 }
 - (NSInteger)supportedInterfaceOrientations
 {
@@ -321,6 +324,11 @@
     if([self.issuesManager refresh]) {
         self.issues = issuesManager.issues;
 
+        [shelfStatus load];
+        for (BakerIssue *issue in self.issues) {
+            issue.price = [shelfStatus priceFor:issue.productID];
+        }
+
         [self.issues enumerateObjectsUsingBlock:^(id object, NSUInteger idx, BOOL *stop) {
             // NOTE: this block changes the issueViewController array while looping
 
@@ -337,7 +345,7 @@
             }
         }];
 
-        [self.purchasesManager retrievePricesFor:self.issuesManager.productIDs];
+        [purchasesManager retrievePricesFor:self.issuesManager.productIDs];
     }
     else{
         UIAlertView *connAlert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"INTERNET_CONNECTION_UNAVAILABLE_TITLE", nil)
@@ -560,10 +568,12 @@
 #pragma mark - Helper methods
 
 - (void)addPurchaseObserver:(SEL)notificationSelector name:(NSString *)notificationName {
+    #ifdef BAKER_NEWSSTAND
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:notificationSelector
                                                  name:notificationName
-                                               object:self.purchasesManager];
+                                               object:purchasesManager];
+    #endif
 }
 
 + (int)getBannerHeight

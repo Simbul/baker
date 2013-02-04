@@ -78,7 +78,6 @@
     #ifdef BAKER_NEWSSTAND
 
     NSLog(@"====== Newsstand is enabled ======");
-    IssuesManager *issuesManager = nil;
 
     // Check if the app is runnig in response to a notification
     NSDictionary *payload = [launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
@@ -94,7 +93,7 @@
                     backgroundTask = UIBackgroundTaskInvalid;
                 }];
 
-                issuesManager = [[[IssuesManager alloc] initWithURL:NEWSSTAND_MANIFEST_URL] autorelease];
+                IssuesManager *issuesManager = [[[IssuesManager alloc] initWithURL:NEWSSTAND_MANIFEST_URL] autorelease];
                 [issuesManager refresh];
 
                 for (BakerIssue *issue in issuesManager.issues) {
@@ -108,13 +107,9 @@
                 [application endBackgroundTask:backgroundTask];
             }
         }
-    } else {
-        issuesManager = [[[IssuesManager alloc] initWithURL:NEWSSTAND_MANIFEST_URL] autorelease];
-        [issuesManager refresh];
     }
 
-    NSArray *books = issuesManager.issues;
-    self.rootViewController = [[[ShelfViewController alloc] initWithBooks:books] autorelease];
+    self.rootViewController = [[[ShelfViewController alloc] initWithoutBooks] autorelease];
 
     #else
 
