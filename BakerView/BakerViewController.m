@@ -897,7 +897,7 @@
 
     NSLog(@"» Loading a modal webview for url %@", url.absoluteString);
 
-    myModalViewController = [[[ModalViewController alloc] initWithUrl:url] autorelease];
+    myModalViewController = [[ModalViewController alloc] initWithUrl:url];
     myModalViewController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
     myModalViewController.delegate = self;
 
@@ -933,6 +933,8 @@
     // webview and stuff to the current orientation
     [self willRotateToInterfaceOrientation:self.interfaceOrientation duration:0];
     [self didRotateFromInterfaceOrientation:self.interfaceOrientation];
+    
+    [myModalViewController release];
 }
 
 #pragma mark - SCROLLVIEW
