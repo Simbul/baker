@@ -78,7 +78,6 @@
     #ifdef BAKER_NEWSSTAND
 
     NSLog(@"====== Newsstand is enabled ======");
-
     // Check if the app is runnig in response to a notification
     NSDictionary *payload = [launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
     if (payload) {
