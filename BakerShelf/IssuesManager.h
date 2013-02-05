@@ -31,6 +31,7 @@
 
 #import <Foundation/Foundation.h>
 #import <NewsstandKit/NewsstandKit.h>
+#import "BakerIssue.h"
 
 @interface IssuesManager : NSObject
 
@@ -43,6 +44,7 @@
 -(BOOL)refresh;
 -(NSSet *)productIDs;
 -(BOOL)hasProductIDs;
+-(BakerIssue *)latestIssue;
 #endif
 
 @end
