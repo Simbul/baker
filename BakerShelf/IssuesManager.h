@@ -46,5 +46,6 @@
 -(BOOL)hasProductIDs;
 -(BakerIssue *)latestIssue;
 #endif
++ (NSArray *)localBooksList;
 
 @end

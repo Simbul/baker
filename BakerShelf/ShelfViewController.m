@@ -30,7 +30,6 @@
 //
 
 #import "ShelfViewController.h"
-#import "ShelfManager.h"
 #import "UICustomNavigationBar.h"
 #import "Constants.h"
 
