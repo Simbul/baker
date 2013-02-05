@@ -52,7 +52,7 @@
 + (void)initialize {
     // Set user agent (the only problem is that we can't modify the User-Agent later in the program)
     // We use a more browser-like User-Agent in order to allow browser detection scripts to run (like Tumult Hype).
-    NSDictionary *userAgent = [[NSDictionary alloc] initWithObjectsAndKeys:@"Mozilla/5.0 (compatible; BakerFramework) AppleWebKit/533.00+ (KHTML, like Gecko) Mobile", @"UserAgent", nil];
+    NSDictionary *userAgent = [[NSDictionary alloc] initWithObjectsAndKeys:@"Mozilla/5.0 (compatible; BakerFramework) AppleWebKit/533.00+ (KHTML, like Gecko) Mobile", @"UserAgent", nil]; 
     [[NSUserDefaults standardUserDefaults] registerDefaults:userAgent];
     [userAgent release];
 }
