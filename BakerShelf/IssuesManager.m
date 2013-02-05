@@ -159,6 +159,10 @@
 - (BOOL)hasProductIDs {
     return [[self productIDs] count] > 0;
 }
+
+- (BakerIssue *)latestIssue {
+    return [issues objectAtIndex:0];
+}
 #endif
 
 -(void)dealloc {
