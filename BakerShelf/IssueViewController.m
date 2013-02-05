@@ -552,7 +552,7 @@
     self.issue.transientStatus = BakerIssueTransientStatusNone;
     [self refresh];
 
-    // TODO: notify of new content with setApplicationIconBadgeNumber
+    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:1];
 
     BakerBook *book = [[BakerBook alloc]initWithBookPath:destinationPath bundled:NO];
     UIImage *coverImage = [UIImage imageWithContentsOfFile:self.issue.coverPath];
