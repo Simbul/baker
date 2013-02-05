@@ -45,7 +45,6 @@
 @synthesize issues;
 @synthesize issueViewControllers;
 @synthesize gridView;
-@synthesize issuesManager;
 @synthesize subscribeButton;
 @synthesize refreshButton;
 @synthesize shelfStatus;
@@ -80,6 +79,8 @@
                                                      name:@"notification_refresh_and_download"
                                                    object:nil];
         #endif
+
+        issuesManager = [[IssuesManager sharedInstance] retain];
 
         self.shelfStatus = [[[ShelfStatus alloc] init] retain];
         self.issueViewControllers = [[NSMutableArray alloc] init];
@@ -117,6 +118,7 @@
     [subscriptionsActionSheet release];
     [supportedOrientation release];
     [self.blockingProgressView release];
+    [issuesManager release];
     #ifdef BAKER_NEWSSTAND
     [purchasesManager release];
     #endif
@@ -306,10 +308,7 @@
 - (void)handleRefresh:(NSNotification *)notification {
     [self setrefreshButtonEnabled:NO];
 
-    if (!self.issuesManager) {
-        self.issuesManager = [[[IssuesManager alloc] initWithURL:NEWSSTAND_MANIFEST_URL] autorelease];
-    }
-    if([self.issuesManager refresh]) {
+    if([issuesManager refresh]) {
         self.issues = issuesManager.issues;
 
         [shelfStatus load];
@@ -333,7 +332,7 @@
             }
         }];
 
-        [purchasesManager retrievePricesFor:self.issuesManager.productIDs];
+        [purchasesManager retrievePricesFor:issuesManager.productIDs];
     }
     else{
         UIAlertView *connAlert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"INTERNET_CONNECTION_UNAVAILABLE_TITLE", nil)
@@ -371,7 +370,7 @@
         [actions addObject:PRODUCT_ID_FREE_SUBSCRIPTION];
     }
 
-    if ([self.issuesManager hasProductIDs]) {
+    if ([issuesManager hasProductIDs]) {
         [sheet addButtonWithTitle:NSLocalizedString(@"SUBSCRIPTIONS_SHEET_RESTORE", nil)];
         [actions addObject:@"restore"];
     }

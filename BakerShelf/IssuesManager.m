@@ -41,11 +41,13 @@
 @synthesize issues;
 @synthesize shelfManifestPath;
 
--(id)initWithURL:(NSString *)urlString {
+-(id)init {
     self = [super init];
 
     if (self) {
-        self.url = [NSURL URLWithString:urlString];
+        #ifdef BAKER_NEWSSTAND
+        self.url = [NSURL URLWithString:NEWSSTAND_MANIFEST_URL];
+        #endif
         self.issues = nil;
 
         NSString *cachePath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0];
@@ -53,6 +55,17 @@
     }
 
     return self;
+}
+
+#pragma mark - Singleton
+
++ (IssuesManager *)sharedInstance {
+    static dispatch_once_t once;
+    static IssuesManager *sharedInstance;
+    dispatch_once(&once, ^{
+        sharedInstance = [[self alloc] init];
+    });
+    return sharedInstance;
 }
 
 #ifdef BAKER_NEWSSTAND
