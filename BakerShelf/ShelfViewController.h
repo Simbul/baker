@@ -44,13 +44,13 @@
     #ifdef BAKER_NEWSSTAND
     PurchasesManager *purchasesManager;
     #endif
+    IssuesManager *issuesManager;
 }
 
 @property (copy, nonatomic) NSArray *issues;
 @property (copy, nonatomic) NSArray *supportedOrientation;
 
 @property (retain, nonatomic) NSMutableArray *issueViewControllers;
-@property (retain, nonatomic) IssuesManager *issuesManager;
 @property (retain, nonatomic) ShelfStatus *shelfStatus;
 
 @property (strong, nonatomic) AQGridView *gridView;
