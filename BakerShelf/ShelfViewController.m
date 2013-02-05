@@ -55,18 +55,7 @@
 
 #pragma mark - Init
 
-- (id)init
-{
-    self = [super init];
-    if (self) {
-        self.issues = [ShelfManager localBooksList];
-        self.shelfStatus = [[[ShelfStatus alloc] init] retain];
-        self.supportedOrientation = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"UISupportedInterfaceOrientations"];
-    }
-    return self;
-}
-
-- (id)initWithoutBooks {
+- (id)init {
     self = [super init];
     if (self) {
         #ifdef BAKER_NEWSSTAND
@@ -102,7 +91,7 @@
 
 - (id)initWithBooks:(NSArray *)currentBooks
 {
-    self = [self initWithoutBooks];
+    self = [self init];
     if (self) {
         self.issues = currentBooks;
 

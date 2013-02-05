@@ -108,7 +108,7 @@
         }
     }
 
-    self.rootViewController = [[[ShelfViewController alloc] initWithoutBooks] autorelease];
+    self.rootViewController = [[[ShelfViewController alloc] init] autorelease];
 
     #else
 
