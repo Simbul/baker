@@ -47,11 +47,13 @@ typedef enum transientStates {
     BakerIssueTransientStatusUnpriced
 } BakerIssueTransientStatus;
 
-@interface BakerIssue : NSObject {
-    #ifdef BAKER_NEWSSTAND
+#ifdef BAKER_NEWSSTAND
+@interface BakerIssue : NSObject <NSURLConnectionDownloadDelegate> {
     PurchasesManager *purchasesManager;
-    #endif
 }
+#else
+@interface BakerIssue : NSObject
+#endif
 
 @property (copy, nonatomic) NSString *ID;
 @property (copy, nonatomic) NSString *title;
@@ -76,7 +78,8 @@ typedef enum transientStates {
 
 #ifdef BAKER_NEWSSTAND
 -(id)initWithIssueData:(NSDictionary *)issueData;
--(void)downloadWithDelegate:(id < NSURLConnectionDownloadDelegate >)delegate;
+-(void)download;
+-(void)downloadWithAsset:(NKAssetDownload *)asset;
 #endif
 
 @end
