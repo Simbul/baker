@@ -34,12 +34,7 @@
 #import "AppDelegate.h"
 #import "UICustomNavigationController.h"
 #import "UICustomNavigationBar.h"
-
-#import "ShelfManager.h"
-
-#ifdef BAKER_NEWSSTAND
 #import "IssuesManager.h"
-#endif
 
 #import "BakerViewController.h"
 
@@ -79,7 +74,7 @@
     #else
 
     NSLog(@"====== Newsstand is not enabled ======");
-    NSArray *books = [ShelfManager localBooksList];
+    NSArray *books = [IssuesManager localBooksList];
     if ([books count] == 1) {
         self.rootViewController = [[[BakerViewController alloc] initWithBook:[[books objectAtIndex:0] bakerBook]] autorelease];
     } else  {
