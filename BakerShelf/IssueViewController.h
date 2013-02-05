@@ -35,7 +35,7 @@
 #import "PurchasesManager.h"
 #endif
 
-@interface IssueViewController : UIViewController <NSURLConnectionDownloadDelegate> {
+@interface IssueViewController : UIViewController {
     NSString *currentAction;
     NSString *currentStatus;
     BOOL purchaseDelayed;
