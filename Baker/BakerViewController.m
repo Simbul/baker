@@ -1253,4 +1253,86 @@
     }
 }
 
+ #pragma mark - GESTURES
+
+
+
+/*
+ TODO: Reimplement for new Page Management System
+ 
+ - (void)handleInterceptedTouch:(NSNotification *)notification {
+ 
+ NSDictionary *userInfo = notification.userInfo;
+ UITouch *touch = [userInfo objectForKey:@"touch"];
+ 
+ if (touch.phase == UITouchPhaseBegan) {
+ userIsScrolling = NO;
+ //shouldPropagateInterceptedTouch = ([touch.view isDescendantOfView:scrollView]);
+ } else if (touch.phase == UITouchPhaseMoved) {
+ userIsScrolling = YES;
+ }
+ 
+ if (shouldPropagateInterceptedTouch) {
+ if (userIsScrolling) {
+ [self userDidScroll:touch];
+ } else if (touch.phase == UITouchPhaseEnded) {
+ [self userDidTap:touch];
+ }
+ }
+ }
+ - (void)userDidTap:(UITouch *)touch {
+ /****************************************************************************************************
+ * This function handles all the possible user navigation taps:
+ * up, down, left, right and double-tap.
+ 
+ 
+ 
+ CGPoint tapPoint = [touch locationInView:self.view];
+ NSLog(@"• User tap at [%f, %f]", tapPoint.x, tapPoint.y);
+ 
+ // Swipe or scroll the page.
+ if (!currentPageIsLocked)
+ {
+ if (CGRectContainsPoint(upTapArea, tapPoint)) {
+ NSLog(@"    Tap UP /\\!");
+ [self scrollUpCurrentPage:([self getCurrentPageOffset] - pageHeight + 50) animating:YES];
+ } else if (CGRectContainsPoint(downTapArea, tapPoint)) {
+ NSLog(@"    Tap DOWN \\/");
+ [self scrollDownCurrentPage:([self getCurrentPageOffset] + pageHeight - 50) animating:YES];
+ } else if (CGRectContainsPoint(leftTapArea, tapPoint) || CGRectContainsPoint(rightTapArea, tapPoint)) {
+ int page = 0;
+ if (CGRectContainsPoint(leftTapArea, tapPoint)) {
+ NSLog(@"    Tap LEFT >>>");
+ page = currentPageNumber - 1;
+ } else if (CGRectContainsPoint(rightTapArea, tapPoint)) {
+ NSLog(@"    Tap RIGHT <<<");
+ page = currentPageNumber + 1;
+ }
+ 
+ if ([[properties get:@"-baker-page-turn-tap", nil] boolValue]) [self changePage:page];
+ }
+ else if (touch.tapCount == 2) {
+ NSLog(@"    Multi Tap TOGGLE STATUS BAR");
+ [self toggleStatusBar];
+ }
+ }
+ }
+ 
+ #pragma mark - PAGE SCROLLING
+ 
+ - (void)setTappableAreaSize {
+ NSLog(@"• Set tappable area size");
+ 
+ int tappableAreaSize = screenBounds.size.width/16;
+ if (screenBounds.size.width < 768) {
+ tappableAreaSize = screenBounds.size.width/8;
+ }
+ 
+ upTapArea    = CGRectMake(tappableAreaSize, 0, pageWidth - (tappableAreaSize * 2), tappableAreaSize);
+ downTapArea  = CGRectMake(tappableAreaSize, pageHeight - tappableAreaSize, pageWidth - (tappableAreaSize * 2), tappableAreaSize);
+ leftTapArea  = CGRectMake(0, tappableAreaSize, tappableAreaSize, pageHeight - (tappableAreaSize * 2));
+ rightTapArea = CGRectMake(pageWidth - tappableAreaSize, tappableAreaSize, tappableAreaSize, pageHeight - (tappableAreaSize * 2));
+ }
+ */
+
 @end
