@@ -31,6 +31,7 @@
 
 #import <Foundation/Foundation.h>
 #import <NewsstandKit/NewsstandKit.h>
+#import "BakerIssue.h"
 
 @interface IssuesManager : NSObject
 
@@ -38,11 +39,16 @@
 @property (copy, nonatomic) NSArray *issues;
 @property (retain, nonatomic) NSString *shelfManifestPath;
 
+#pragma mark - Singleton
+
++ (IssuesManager *)sharedInstance;
+
 #ifdef BAKER_NEWSSTAND
--(id)initWithURL:(NSString *)urlString;
 -(BOOL)refresh;
 -(NSSet *)productIDs;
 -(BOOL)hasProductIDs;
+-(BakerIssue *)latestIssue;
 #endif
++ (NSArray *)localBooksList;
 
 @end

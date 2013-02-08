@@ -56,7 +56,6 @@
 		AB40047115B4B83000D87E2A /* Utils.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40044B15B4B83000D87E2A /* Utils.m */; };
 		AB40047315B4B83000D87E2A /* ModalViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40044D15B4B83000D87E2A /* ModalViewController.m */; };
 		AB40047715B4B83000D87E2A /* PageTitleLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40045215B4B83000D87E2A /* PageTitleLabel.m */; };
-		AB40047E15B4B8B800D87E2A /* ShelfManager.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40047D15B4B8B800D87E2A /* ShelfManager.m */; };
 		AB40048115B4B90200D87E2A /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB40048015B4B90200D87E2A /* MessageUI.framework */; };
 		AB40048315B4B90A00D87E2A /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = AB40048215B4B90A00D87E2A /* libz.dylib */; };
 		AB40048515B4BB8B00D87E2A /* books in Resources */ = {isa = PBXBuildFile; fileRef = AB40048415B4BB8B00D87E2A /* books */; };
@@ -169,8 +168,6 @@
 		AB40044D15B4B83000D87E2A /* ModalViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ModalViewController.m; sourceTree = "<group>"; };
 		AB40045115B4B83000D87E2A /* PageTitleLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageTitleLabel.h; sourceTree = "<group>"; };
 		AB40045215B4B83000D87E2A /* PageTitleLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PageTitleLabel.m; sourceTree = "<group>"; };
-		AB40047C15B4B8B800D87E2A /* ShelfManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShelfManager.h; sourceTree = "<group>"; };
-		AB40047D15B4B8B800D87E2A /* ShelfManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShelfManager.m; sourceTree = "<group>"; };
 		AB40048015B4B90200D87E2A /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		AB40048215B4B90A00D87E2A /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		AB40048415B4BB8B00D87E2A /* books */ = {isa = PBXFileReference; lastKnownFileType = folder; path = books; sourceTree = "<group>"; };
@@ -294,8 +291,6 @@
 				AB40042E15B4B83000D87E2A /* img */,
 				AB40043715B4B83000D87E2A /* lib */,
 				AB40045015B4B83000D87E2A /* ui */,
-				AB40043515B4B83000D87E2A /* InterceptorWindow.h */,
-				AB40043615B4B83000D87E2A /* InterceptorWindow.m */,
 				9F8FC1C215C55E8C0065F0A3 /* BakerBook.h */,
 				9F8FC1C315C55E8C0065F0A3 /* BakerBook.m */,
 				AB26004F16011D9D00E9AA66 /* BakerBookStatus.h */,
@@ -304,6 +299,8 @@
 				AB40042B15B4B83000D87E2A /* BakerViewController.m */,
 				AB40043315B4B83000D87E2A /* IndexViewController.h */,
 				AB40043415B4B83000D87E2A /* IndexViewController.m */,
+				AB40043515B4B83000D87E2A /* InterceptorWindow.h */,
+				AB40043615B4B83000D87E2A /* InterceptorWindow.m */,
 				AB40044C15B4B83000D87E2A /* ModalViewController.h */,
 				AB40044D15B4B83000D87E2A /* ModalViewController.m */,
 			);
@@ -376,28 +373,26 @@
 		AB40047B15B4B8B800D87E2A /* BakerShelf */ = {
 			isa = PBXGroup;
 			children = (
+				AB379313161759A900B4C1A3 /* Constants.h */,
 				AB3496BB1661472A00AEB508 /* UIConstants.h */,
 				9F58D85E15D6743C0027902C /* img */,
 				9FF7957E15B4C4F600899E51 /* lib */,
-				9F58D84F15D66E870027902C /* UICustomNavigationController.h */,
-				9F58D85015D66E870027902C /* UICustomNavigationController.m */,
-				9F58D84D15D66E870027902C /* UICustomNavigationBar.h */,
-				9F58D84E15D66E870027902C /* UICustomNavigationBar.m */,
 				ABD7D45D1616FC5B008B13B5 /* BakerIssue.h */,
 				ABD7D45E1616FC5B008B13B5 /* BakerIssue.m */,
 				ABC270CF1616F3CB00AD97E9 /* IssuesManager.h */,
 				ABC270D01616F3CB00AD97E9 /* IssuesManager.m */,
-				AB40047C15B4B8B800D87E2A /* ShelfManager.h */,
-				AB40047D15B4B8B800D87E2A /* ShelfManager.m */,
-				9FF795A515B4C57D00899E51 /* ShelfViewController.h */,
-				9FF795A615B4C57E00899E51 /* ShelfViewController.m */,
 				ABD24C1C1620309B0042E49C /* IssueViewController.h */,
 				ABD24C1D1620309B0042E49C /* IssueViewController.m */,
-				AB379313161759A900B4C1A3 /* Constants.h */,
 				AB2317D2169F808000BE3BE7 /* PurchasesManager.h */,
 				AB2317D3169F808000BE3BE7 /* PurchasesManager.m */,
 				ABDC05B016A4CB3900F6B63D /* ShelfStatus.h */,
 				ABDC05B116A4CB3900F6B63D /* ShelfStatus.m */,
+				9FF795A515B4C57D00899E51 /* ShelfViewController.h */,
+				9FF795A615B4C57E00899E51 /* ShelfViewController.m */,
+				9F58D84D15D66E870027902C /* UICustomNavigationBar.h */,
+				9F58D84E15D66E870027902C /* UICustomNavigationBar.m */,
+				9F58D84F15D66E870027902C /* UICustomNavigationController.h */,
+				9F58D85015D66E870027902C /* UICustomNavigationController.m */,
 			);
 			path = BakerShelf;
 			sourceTree = "<group>";
@@ -570,7 +565,6 @@
 				AB40047115B4B83000D87E2A /* Utils.m in Sources */,
 				AB40047315B4B83000D87E2A /* ModalViewController.m in Sources */,
 				AB40047715B4B83000D87E2A /* PageTitleLabel.m in Sources */,
-				AB40047E15B4B8B800D87E2A /* ShelfManager.m in Sources */,
 				9FF7959915B4C4F600899E51 /* AQGridView.m in Sources */,
 				9FF7959A15B4C4F600899E51 /* AQGridViewAnimatorItem.m in Sources */,
 				9FF7959B15B4C4F600899E51 /* AQGridViewCell.m in Sources */,

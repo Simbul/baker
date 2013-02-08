@@ -29,6 +29,10 @@
 "ISSUE_PURCHASE_FAILED_TITLE" = "Purchase failure";
 "ISSUE_PURCHASE_FAILED_CLOSE" = "Close";
 
+// Restore alerts
+"RESTORE_FAILED_TITLE" = "Restore failure";
+"RESTORE_FAILED_CLOSE" = "Close";
+
 // Download alert
 "DOWNLOAD_FAILED_TITLE" = "Download failed";
 "DOWNLOAD_FAILED_MESSAGE" = "The issue could not be downloaded";

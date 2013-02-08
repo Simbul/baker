@@ -34,12 +34,7 @@
 #import "AppDelegate.h"
 #import "UICustomNavigationController.h"
 #import "UICustomNavigationBar.h"
-
-#import "ShelfManager.h"
-
-#ifdef BAKER_NEWSSTAND
 #import "IssuesManager.h"
-#endif
 
 #import "BakerViewController.h"
 
@@ -74,15 +69,12 @@
     #ifdef BAKER_NEWSSTAND
 
     NSLog(@"====== Newsstand is enabled ======");
-    IssuesManager *issuesManager = [[[IssuesManager alloc] initWithURL:NEWSSTAND_MANIFEST_URL] autorelease];
-    [issuesManager refresh];
-    NSArray *books = issuesManager.issues;
-    self.rootViewController = [[[ShelfViewController alloc] initWithBooks:books] autorelease];
+    self.rootViewController = [[[ShelfViewController alloc] init] autorelease];
 
     #else
 
     NSLog(@"====== Newsstand is not enabled ======");
-    NSArray *books = [ShelfManager localBooksList];
+    NSArray *books = [IssuesManager localBooksList];
     if ([books count] == 1) {
         self.rootViewController = [[[BakerViewController alloc] initWithBook:[[books objectAtIndex:0] bakerBook]] autorelease];
     } else  {
@@ -113,6 +105,11 @@
 {
     // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
     // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+
+    #ifdef BAKER_NEWSSTAND
+    // Everything that happened while the application was opened can be considered as "seen"
+    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
+    #endif
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application
@@ -124,6 +121,11 @@
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+
+    #ifdef BAKER_NEWSSTAND
+    // Opening the application means all new items can be considered as "seen".
+    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
+    #endif
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application

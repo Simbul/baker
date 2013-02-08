@@ -85,7 +85,7 @@
         self.productID = [issueData objectForKey:@"product_id"];
         self.price = nil;
 
-        self.purchasesManager = [PurchasesManager sharedInstance];
+        purchasesManager = [PurchasesManager sharedInstance];
 
         NSString *cachePath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0];
         self.coverPath = [cachePath stringByAppendingPathComponent:self.ID];
@@ -114,13 +114,48 @@
     }
     return @"";
 }
--(void)downloadWithDelegate:(id < NSURLConnectionDownloadDelegate >)delegate {
+- (void)download {
     NKLibrary *nkLib = [NKLibrary sharedLibrary];
     NKIssue *nkIssue = [nkLib issueWithName:self.ID];
     NSURLRequest *req = [NSURLRequest requestWithURL:self.url];
     NKAssetDownload *assetDownload = [nkIssue addAssetWithRequest:req];
-    [assetDownload downloadWithDelegate:delegate];
+    [self downloadWithAsset:assetDownload];
 }
+- (void)downloadWithAsset:(NKAssetDownload *)asset {
+    [asset downloadWithDelegate:self];
+}
+
+#pragma mark - Newsstand download management
+
+- (void)connection:(NSURLConnection *)connection didWriteData:(long long)bytesWritten totalBytesWritten:(long long)totalBytesWritten expectedTotalBytes:(long long)expectedTotalBytes {
+    NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+                              [NSNumber numberWithLongLong:totalBytesWritten], @"totalBytesWritten",
+                              [NSNumber numberWithLongLong:expectedTotalBytes], @"expectedTotalBytes",
+                              nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_download_progressing" object:self userInfo:userInfo];
+}
+
+- (void)connectionDidFinishDownloading:(NSURLConnection *)connection destinationURL:(NSURL *)destinationURL {
+    NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+                              connection.newsstandAssetDownload, @"assetDownload",
+                              destinationURL, @"destinationURL",
+                              nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_download_finished" object:self userInfo:userInfo];
+}
+
+- (void)connectionDidResumeDownloading:(NSURLConnection *)connection totalBytesWritten:(long long)totalBytesWritten expectedTotalBytes:(long long)expectedTotalBytes {
+    // Nothing to do for now
+}
+
+- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
+    NSLog(@"Connection error when trying to download %@: %@", [connection currentRequest].URL, [error localizedDescription]);
+
+    [connection cancel];
+
+    NSDictionary *userInfo = [NSDictionary dictionaryWithObject:error forKey:@"error"];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_download_error" object:self userInfo:userInfo];
+}
+
 #endif
 
 -(void)getCover:(void(^)(UIImage *img))completionBlock {
@@ -164,7 +199,7 @@
     NKIssue *nkIssue = [nkLib issueWithName:self.ID];
     NSString *nkIssueStatus = [self nkIssueContentStatusToString:[nkIssue status]];
     if ([nkIssueStatus isEqualToString:@"remote"] && self.productID) {
-        if ([self.purchasesManager isMarkedAsPurchased:self.productID]) {
+        if ([purchasesManager isMarkedAsPurchased:self.productID]) {
             return @"purchased";
         } else if (self.price) {
             return @"purchasable";

@@ -41,11 +41,13 @@
 @synthesize issues;
 @synthesize shelfManifestPath;
 
--(id)initWithURL:(NSString *)urlString {
+-(id)init {
     self = [super init];
 
     if (self) {
-        self.url = [NSURL URLWithString:urlString];
+        #ifdef BAKER_NEWSSTAND
+        self.url = [NSURL URLWithString:NEWSSTAND_MANIFEST_URL];
+        #endif
         self.issues = nil;
 
         NSString *cachePath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0];
@@ -53,6 +55,17 @@
     }
 
     return self;
+}
+
+#pragma mark - Singleton
+
++ (IssuesManager *)sharedInstance {
+    static dispatch_once_t once;
+    static IssuesManager *sharedInstance;
+    dispatch_once(&once, ^{
+        sharedInstance = [[self alloc] init];
+    });
+    return sharedInstance;
 }
 
 #ifdef BAKER_NEWSSTAND
@@ -87,28 +100,34 @@
 }
 
 -(NSString *)getShelfJSON {
-    NSError *error = nil;
+    NSError *shelfError = nil;
+    NSError *cachedShelfError = nil;
     NSString *json = nil;
 
-    json = [NSString stringWithContentsOfURL:self.url encoding:NSUTF8StringEncoding error:&error];
-    if (error) {
-        NSLog(@"Error loading Shelf manifest: %@", error);
+    NSURLResponse *response = nil;
+    NSURLRequest *request = [NSURLRequest requestWithURL:self.url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:REQUEST_TIMEOUT];
+    NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&shelfError];
+
+    if (shelfError) {
+        NSLog(@"Error loading Shelf manifest: %@", shelfError);
         if ([[NSFileManager defaultManager] fileExistsAtPath:self.shelfManifestPath]) {
             NSLog(@"Loading cached Shelf manifest from %@", self.shelfManifestPath);
-            json = [NSString stringWithContentsOfFile:self.shelfManifestPath encoding:NSUTF8StringEncoding error:&error];
-            if (error) {
-                NSLog(@"Error loading cached Shelf manifest: %@", error);
+            json = [NSString stringWithContentsOfFile:self.shelfManifestPath encoding:NSUTF8StringEncoding error:&cachedShelfError];
+            if (cachedShelfError) {
+                NSLog(@"Error loading cached Shelf manifest: %@", cachedShelfError);
             }
         } else {
             NSLog(@"No cached Shelf manifest found at %@", self.shelfManifestPath);
             json = nil;
         }
     } else {
+        json = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+
         // Cache the shelf manifest
         [[NSFileManager defaultManager] createFileAtPath:self.shelfManifestPath contents:nil attributes:nil];
-        [json writeToFile:self.shelfManifestPath atomically:YES encoding:NSUTF8StringEncoding error:&error];
-        if (error) {
-            NSLog(@"Error caching Shelf manifest: %@", error);
+        [json writeToFile:self.shelfManifestPath atomically:YES encoding:NSUTF8StringEncoding error:&cachedShelfError];
+        if (cachedShelfError) {
+            NSLog(@"Error caching Shelf manifest: %@", cachedShelfError);
         } else {
             [Utils addSkipBackupAttributeToItemAtPath:self.shelfManifestPath];
         }
@@ -153,7 +172,31 @@
 - (BOOL)hasProductIDs {
     return [[self productIDs] count] > 0;
 }
+
+- (BakerIssue *)latestIssue {
+    return [issues objectAtIndex:0];
+}
 #endif
+
++ (NSArray *)localBooksList {
+    NSMutableArray *booksList = [NSMutableArray array];
+    NSFileManager *localFileManager = [NSFileManager defaultManager];
+    NSString *booksDir = [[NSBundle mainBundle] pathForResource:@"books" ofType:nil];
+
+    NSArray *dirContents = [localFileManager contentsOfDirectoryAtPath:booksDir error:nil];
+    for (NSString *file in dirContents) {
+        NSString *manifestFile = [booksDir stringByAppendingPathComponent:[file stringByAppendingPathComponent:@"book.json"]];
+        if ([localFileManager fileExistsAtPath:manifestFile]) {
+            BakerBook *book = [[[BakerBook alloc] initWithBookPath:[booksDir stringByAppendingPathComponent:file] bundled:YES] autorelease];
+            BakerIssue *issue = [[[BakerIssue alloc] initWithBakerBook:book] autorelease];
+            [booksList addObject:issue];
+        } else {
+            NSLog(@"CANNOT FIND MANIFEST %@", manifestFile);
+        }
+    }
+
+    return [NSArray arrayWithArray:booksList];
+}
 
 -(void)dealloc {
     [issues release];

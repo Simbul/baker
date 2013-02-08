@@ -73,7 +73,7 @@
 
 
         // ****** SUPPORTED ORIENTATION FROM PLIST
-        supportedOrientation = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"UISupportedInterfaceOrientations"];
+        supportedOrientation = [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"UISupportedInterfaceOrientations"] retain];
 
 
         NSString *cachePath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0];
@@ -939,6 +939,7 @@
     // In case the orientation changed while being in modal view, restore the
     // webview and stuff to the current orientation
     [self willRotateToInterfaceOrientation:self.interfaceOrientation duration:0];
+    [self didRotateFromInterfaceOrientation:self.interfaceOrientation];
 }
 
 #pragma mark - SCROLLVIEW
@@ -1816,7 +1817,6 @@
     [pages release];
 
     [indexViewController release];
-    [myModalViewController release];
 
     [book release];
     [bookStatus release];

@@ -63,11 +63,12 @@
         purchaseDelayed = NO;
 
         #ifdef BAKER_NEWSSTAND
-        self.purchasesManager = [PurchasesManager sharedInstance];
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(handleIssueRestored:)
-                                                     name:@"notification_issue_restored"
-                                                   object:self.purchasesManager];
+        purchasesManager = [PurchasesManager sharedInstance];
+        [self addPurchaseObserver:@selector(handleIssueRestored:) name:@"notification_issue_restored"];
+
+        [self addIssueObserver:@selector(handleDownloadProgressing:) name:@"notification_download_progressing"];
+        [self addIssueObserver:@selector(handleDownloadFinished:) name:@"notification_download_finished"];
+        [self addIssueObserver:@selector(handleDownloadError:) name:@"notification_download_error"];
         #endif
     }
     return self;
@@ -231,7 +232,7 @@
     for (NKAssetDownload *asset in [nkLib downloadingAssets]) {
         if ([asset.issue.name isEqualToString:self.issue.ID]) {
             NSLog(@"Resuming abandoned Newsstand download: %@", asset.issue.name);
-            [asset downloadWithDelegate:self];
+            [self.issue downloadWithAsset:asset];
         }
     }
     #endif
@@ -418,26 +419,20 @@
 - (void)download
 {
     [self refresh:@"connecting"];
-    [self.issue downloadWithDelegate:self];
+    [self.issue download];
 }
 - (void)buy {
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(handleIssuePurchased:)
-                                                 name:@"notification_issue_purchased"
-                                               object:self.purchasesManager];
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(handleIssuePurchaseFailed:)
-                                                 name:@"notification_issue_purchase_failed"
-                                               object:self.purchasesManager];
+    [self addPurchaseObserver:@selector(handleIssuePurchased:) name:@"notification_issue_purchased"];
+    [self addPurchaseObserver:@selector(handleIssuePurchaseFailed:) name:@"notification_issue_purchase_failed"];
 
-    if (![self.purchasesManager purchase:self.issue.productID]) {
+    if (![purchasesManager purchase:self.issue.productID]) {
         // Still retrieving SKProduct: delay purchase
         purchaseDelayed = YES;
 
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:@"notification_issue_purchased" object:self.purchasesManager];
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:@"notification_issue_purchase_failed" object:self.purchasesManager];
+        [self removePurchaseObserver:@"notification_issue_purchased"];
+        [self removePurchaseObserver:@"notification_issue_purchase_failed"];
 
-        [self.purchasesManager retrievePriceFor:self.issue.productID];
+        [purchasesManager retrievePriceFor:self.issue.productID];
 
         self.issue.transientStatus = BakerIssueTransientStatusUnpriced;
         [self refresh];
@@ -462,11 +457,11 @@
             [alert release];
         }
 
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:@"notification_issue_purchased" object:nil];
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:@"notification_issue_purchase_failed" object:nil];
+        [self removePurchaseObserver:@"notification_issue_purchased"];
+        [self removePurchaseObserver:@"notification_issue_purchase_failed"];
 
-        [self.purchasesManager markAsPurchased:transaction.payment.productIdentifier];
-        [self.purchasesManager finishTransaction:transaction];
+        [purchasesManager markAsPurchased:transaction.payment.productIdentifier];
+        [purchasesManager finishTransaction:transaction];
 
         self.issue.transientStatus = BakerIssueTransientStatusNone;
         [self refresh];
@@ -487,8 +482,8 @@
             [alert release];
         }
 
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:@"notification_issue_purchased" object:nil];
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:@"notification_issue_purchase_failed" object:nil];
+        [self removePurchaseObserver:@"notification_issue_purchased"];
+        [self removePurchaseObserver:@"notification_issue_purchase_failed"];
 
         self.issue.transientStatus = BakerIssueTransientStatusNone;
         [self refresh];
@@ -499,8 +494,8 @@
     SKPaymentTransaction *transaction = [notification.userInfo objectForKey:@"transaction"];
 
     if ([transaction.payment.productIdentifier isEqualToString:issue.productID]) {
-        [self.purchasesManager markAsPurchased:transaction.payment.productIdentifier];
-        [self.purchasesManager finishTransaction:transaction];
+        [purchasesManager markAsPurchased:transaction.payment.productIdentifier];
+        [purchasesManager finishTransaction:transaction];
 
         self.issue.transientStatus = BakerIssueTransientStatusNone;
         [self refresh];
@@ -526,21 +521,21 @@
 
 #pragma mark - Newsstand download management
 
-- (void)connection:(NSURLConnection *)connection didWriteData:(long long)bytesWritten totalBytesWritten:(long long)totalBytesWritten expectedTotalBytes:(long long)expectedTotalBytes
-{
+- (void)handleDownloadProgressing:(NSNotification *)notification {
+    float bytesWritten = [[notification.userInfo objectForKey:@"totalBytesWritten"] floatValue];
+    float bytesExpected = [[notification.userInfo objectForKey:@"expectedTotalBytes"] floatValue];
+
     // TODO: use a better check (ideally check that status is "connecting" instead of relying on a UI property)
     if (self.progressBar.hidden) {
         self.issue.transientStatus = BakerIssueTransientStatusDownloading;
         [self refresh];
     }
-    [self.progressBar setProgress:((float)totalBytesWritten/(float)expectedTotalBytes) animated:YES];
+    [self.progressBar setProgress:(bytesWritten / bytesExpected) animated:YES];
 }
-- (void)connectionDidFinishDownloading:(NSURLConnection *)connection destinationURL:(NSURL *)destinationURL
-{
+- (void)handleDownloadFinished:(NSNotification *)notification {
     #ifdef BAKER_NEWSSTAND
-    NSLog(@"Connection did finish downloading %@", destinationURL);
-
-    NKAssetDownload *dnl = connection.newsstandAssetDownload;
+    NKAssetDownload *dnl = [notification.userInfo objectForKey:@"assetDownload"];
+    NSURL *destinationURL = [notification.userInfo objectForKey:@"destinationURL"];
     NKIssue *nkIssue = dnl.issue;
     NSString *destinationPath = [[nkIssue contentURL] path];
 
@@ -557,25 +552,17 @@
     self.issue.transientStatus = BakerIssueTransientStatusNone;
     [self refresh];
 
-    // TODO: notify of new content with setApplicationIconBadgeNumber
+    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:1];
 
     BakerBook *book = [[BakerBook alloc]initWithBookPath:destinationPath bundled:NO];
-    UIImage *coverImage = [UIImage imageWithContentsOfFile:[destinationPath stringByAppendingPathComponent:book.cover]];
+    UIImage *coverImage = [UIImage imageWithContentsOfFile:self.issue.coverPath];
     if (coverImage) {
         [[UIApplication sharedApplication] setNewsstandIconImage:coverImage];
     }
     [book release];
-    [connection release];
     #endif
 }
-- (void)connectionDidResumeDownloading:(NSURLConnection *)connection totalBytesWritten:(long long)totalBytesWritten expectedTotalBytes:(long long)expectedTotalBytes
-{
-    NSLog(@"Connection did resume downloading %lld %lld", totalBytesWritten, expectedTotalBytes);
-}
-- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
-    NSLog(@"Connection error when trying to download %@: %@", [connection currentRequest].URL, [error localizedDescription]);
-    [connection cancel];
-
+- (void)handleDownloadError:(NSNotification *)notification {
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"DOWNLOAD_FAILED_TITLE", nil)
                                                     message:NSLocalizedString(@"DOWNLOAD_FAILED_MESSAGE", nil)
                                                    delegate:nil
@@ -622,6 +609,32 @@
 #endif
 
 #pragma mark - Helper methods
+
+- (void)addPurchaseObserver:(SEL)notificationSelector name:(NSString *)notificationName {
+    #ifdef BAKER_NEWSSTAND
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:notificationSelector
+                                                 name:notificationName
+                                               object:purchasesManager];
+    #endif
+}
+
+- (void)removePurchaseObserver:(NSString *)notificationName {
+    #ifdef BAKER_NEWSSTAND
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:notificationName
+                                                  object:purchasesManager];
+    #endif
+}
+
+- (void)addIssueObserver:(SEL)notificationSelector name:(NSString *)notificationName {
+    #ifdef BAKER_NEWSSTAND
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:notificationSelector
+                                                 name:notificationName
+                                               object:self.issue];
+    #endif
+}
 
 + (UI)getIssueContentMeasures
 {
