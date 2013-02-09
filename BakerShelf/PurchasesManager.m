@@ -34,6 +34,7 @@
 #import "JSONKit.h"
 #import "NSData+Base64.h"
 #import "NSMutableURLRequest+WebServiceClient.h"
+#import "NSString+UUID.h"
 
 #ifdef BAKER_NEWSSTAND
 @implementation PurchasesManager
@@ -190,7 +191,7 @@
     NSString *jsonIDs = [[productIDs allObjects] JSONStringWithOptions:JKSerializeOptionNone error:&error];
     NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
                             @"com.bakerframework.Baker", @"app_id",
-                            @"asdfgh123456", @"user_id",
+                            [PurchasesManager UUID], @"user_id",
                             jsonIDs, @"issues",
                             nil];
 
@@ -304,6 +305,22 @@
 
 - (BOOL)hasSubscriptions {
     return [PRODUCT_ID_FREE_SUBSCRIPTION length] > 0;
+}
+
+#pragma mark - User ID
+
++ (BOOL)generateUUIDOnce {
+    if (![self UUID]) {
+        [[NSUserDefaults standardUserDefaults] setObject:[NSString uuid] forKey:@"UUID"];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+        return YES;
+    } else {
+        return NO;
+    }
+}
+
++ (NSString *)UUID {
+    return [[NSUserDefaults standardUserDefaults] stringForKey:@"UUID"];
 }
 
 #pragma mark - Memory management

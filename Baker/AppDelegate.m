@@ -35,6 +35,7 @@
 #import "UICustomNavigationController.h"
 #import "UICustomNavigationBar.h"
 #import "IssuesManager.h"
+#import "PurchasesManager.h"
 
 #import "BakerViewController.h"
 
@@ -69,6 +70,7 @@
     #ifdef BAKER_NEWSSTAND
 
     NSLog(@"====== Newsstand is enabled ======");
+    [PurchasesManager generateUUIDOnce];
     self.rootViewController = [[[ShelfViewController alloc] init] autorelease];
 
     #else
