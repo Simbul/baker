@@ -33,6 +33,7 @@
 
 #import "JSONKit.h"
 #import "NSData+Base64.h"
+#import "NSMutableURLRequest+WebServiceClient.h"
 
 #ifdef BAKER_NEWSSTAND
 @implementation PurchasesManager
@@ -44,6 +45,8 @@
 
     if (self) {
         self.products = [[NSMutableDictionary alloc] init];
+
+        _purchases = [[NSMutableDictionary alloc] init];
 
         _numberFormatter = [[NSNumberFormatter alloc] init];
         [_numberFormatter setFormatterBehavior:NSNumberFormatterBehavior10_4];
@@ -180,6 +183,39 @@
     }
 }
 
+- (void)retrievePurchasesFor:(NSSet *)productIDs {
+    NSError *error;
+    NSURLResponse *response = nil;
+
+    NSString *jsonIDs = [[productIDs allObjects] JSONStringWithOptions:JKSerializeOptionNone error:&error];
+    NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
+                            @"com.bakerframework.Baker", @"app_id",
+                            @"asdfgh123456", @"user_id",
+                            jsonIDs, @"issues",
+                            nil];
+
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:@"http://localhost/baker/index.php"] cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:REQUEST_TIMEOUT];
+    [request setHTTPMethod:@"POST"];
+    [request setFormPostParameters:params];
+    NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
+    NSString *jsonResponse = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    NSLog(@"DATA %@", jsonResponse);
+
+    NSDictionary *purchasesResponse = [jsonResponse objectFromJSONString];
+    [purchasesResponse enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+        [_purchases setObject:obj forKey:key];
+    }];
+}
+
+- (BOOL)isPurchased:(NSString *)productID {
+    id purchased = [_purchases objectForKey:productID];
+    if (purchased) {
+        return [purchased boolValue];
+    } else {
+        return [self isMarkedAsPurchased:productID];
+    }
+}
+
 #pragma mark - Payment queue
 
 - (void)paymentQueue:(SKPaymentQueue *)queue updatedTransactions:(NSArray *)transactions {
@@ -275,6 +311,7 @@
 -(void)dealloc {
     [products release];
     [_numberFormatter release];
+    [_purchases release];
 
     [super dealloc];
 }
