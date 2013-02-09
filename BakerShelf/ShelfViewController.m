@@ -433,19 +433,26 @@
 - (void)handleSubscriptionPurchased:(NSNotification *)notification {
     SKPaymentTransaction *transaction = [notification.userInfo objectForKey:@"transaction"];
 
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"SUBSCRIPTION_SUCCESSFUL_TITLE", nil)
-                                                    message:NSLocalizedString(@"SUBSCRIPTION_SUCCESSFUL_MESSAGE", nil)
-                                                   delegate:nil
-                                          cancelButtonTitle:NSLocalizedString(@"SUBSCRIPTION_SUCCESSFUL_CLOSE", nil)
-                                          otherButtonTitles:nil];
-    [alert show];
-    [alert release];
-
     [purchasesManager markAsPurchased:transaction.payment.productIdentifier];
-
     [self setSubscribeButtonEnabled:YES];
 
-    [purchasesManager finishTransaction:transaction];
+    if ([purchasesManager finishTransaction:transaction]) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"SUBSCRIPTION_SUCCESSFUL_TITLE", nil)
+                                                        message:NSLocalizedString(@"SUBSCRIPTION_SUCCESSFUL_MESSAGE", nil)
+                                                       delegate:nil
+                                              cancelButtonTitle:NSLocalizedString(@"SUBSCRIPTION_SUCCESSFUL_CLOSE", nil)
+                                              otherButtonTitles:nil];
+        [alert show];
+        [alert release];
+    } else {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"TRANSACTION_RECORDING_FAILED_TITLE", nil)
+                                                        message:NSLocalizedString(@"TRANSACTION_RECORDING_FAILED_MESSAGE", nil)
+                                                       delegate:nil
+                                              cancelButtonTitle:NSLocalizedString(@"TRANSACTION_RECORDING_FAILED_CLOSE", nil)
+                                              otherButtonTitles:nil];
+        [alert show];
+        [alert release];
+    }
 }
 
 - (void)handleSubscriptionFailed:(NSNotification *)notification {
@@ -470,7 +477,9 @@
 
     [purchasesManager markAsPurchased:transaction.payment.productIdentifier];
 
-    [purchasesManager finishTransaction:transaction];
+    if (![purchasesManager finishTransaction:transaction]) {
+        NSLog(@"Could not confirm purchase restore with remote server for %@", transaction.payment.productIdentifier);
+    }
 }
 
 - (void)handleProductsRetrieved:(NSNotification *)notification {

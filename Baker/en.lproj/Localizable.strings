@@ -69,6 +69,11 @@
 "WEB_MODAL_FAILURE_MESSAGE" = "Unable to connect.";
 "WEB_MODAL_CLOSE_BUTTON_TEXT" = "Back";
 
+// Transaction recording alert
+"TRANSACTION_RECORDING_FAILED_TITLE" = "Could not confirm purchase with remote server";
+"TRANSACTION_RECORDING_FAILED_MESSAGE" = "The operation will be retried until it is successful";
+"TRANSACTION_RECORDING_FAILED_CLOSE" = "Close";
+
 // Subscriptions
 // (These are just examples: you'll need to provide your own product IDs and names)
 //"com.example.MyBook.subscription.3months" = "3 Months Subscription";
