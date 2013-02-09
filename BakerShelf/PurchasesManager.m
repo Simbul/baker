@@ -165,7 +165,10 @@
         NSError *error = nil;
 
         NSString *receiptData = [transaction.transactionReceipt base64EncodedString];
-        NSDictionary *params = [NSDictionary dictionaryWithObject:receiptData forKey:@"receipt_data"];
+        NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
+                                [self transactionType:transaction], @"type",
+                                receiptData, @"receipt_data",
+                                nil];
 
         [self postParams:params toURL:[NSURL URLWithString:PURCHASE_CONFIRMATION_URL] error:&error];
         if (error) {
@@ -174,6 +177,17 @@
         }
     }
     return YES;
+}
+
+- (NSString *)transactionType:(SKPaymentTransaction *)transaction {
+    NSString *productID = transaction.payment.productIdentifier;
+    if ([productID isEqualToString:PRODUCT_ID_FREE_SUBSCRIPTION]) {
+        return @"free-subscription";
+    } else if ([SUBSCRIPTION_PRODUCT_IDS containsObject:productID]) {
+        return @"auto-renewable-subscription";
+    } else {
+        return @"issue";
+    }
 }
 
 - (void)retrievePurchasesFor:(NSSet *)productIDs {
