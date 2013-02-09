@@ -68,6 +68,7 @@
 		ABAFB59015AB9A2E002FA498 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABAFB58F15AB9A2E002FA498 /* CoreGraphics.framework */; };
 		ABAFB59815AB9A2E002FA498 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = ABAFB59715AB9A2E002FA498 /* main.m */; };
 		ABAFB59C15AB9A2E002FA498 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = ABAFB59B15AB9A2E002FA498 /* AppDelegate.m */; };
+		ABBFD8F216C6614300BA64A4 /* NSString+UUID.m in Sources */ = {isa = PBXBuildFile; fileRef = ABBFD8F116C6614300BA64A4 /* NSString+UUID.m */; };
 		ABC270D11616F3CB00AD97E9 /* IssuesManager.m in Sources */ = {isa = PBXBuildFile; fileRef = ABC270D01616F3CB00AD97E9 /* IssuesManager.m */; };
 		ABD245531639E3650080F056 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABD245521639E3650080F056 /* AVFoundation.framework */; };
 		ABD24C1E1620309B0042E49C /* IssueViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = ABD24C1D1620309B0042E49C /* IssueViewController.m */; };
@@ -186,6 +187,8 @@
 		ABAFB59915AB9A2E002FA498 /* Baker-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Baker-Prefix.pch"; sourceTree = "<group>"; };
 		ABAFB59A15AB9A2E002FA498 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		ABAFB59B15AB9A2E002FA498 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		ABBFD8F016C6614300BA64A4 /* NSString+UUID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+UUID.h"; sourceTree = "<group>"; };
+		ABBFD8F116C6614300BA64A4 /* NSString+UUID.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+UUID.m"; sourceTree = "<group>"; };
 		ABC270CF1616F3CB00AD97E9 /* IssuesManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IssuesManager.h; sourceTree = "<group>"; };
 		ABC270D01616F3CB00AD97E9 /* IssuesManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IssuesManager.m; sourceTree = "<group>"; };
 		ABD245521639E3650080F056 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
@@ -256,6 +259,8 @@
 				9FAB40D9162B13CF0088E9C1 /* UIColor+Extensions.m */,
 				AB246A2F16C5BC6E00715E25 /* NSMutableURLRequest+WebServiceClient.h */,
 				AB246A3016C5BC6E00715E25 /* NSMutableURLRequest+WebServiceClient.m */,
+				ABBFD8F016C6614300BA64A4 /* NSString+UUID.h */,
+				ABBFD8F116C6614300BA64A4 /* NSString+UUID.m */,
 			);
 			path = lib;
 			sourceTree = "<group>";
@@ -595,6 +600,7 @@
 				ABDC05AF16A4C42A00F6B63D /* JSONStatus.m in Sources */,
 				ABDC05B216A4CB3900F6B63D /* ShelfStatus.m in Sources */,
 				AB246A3116C5BC6E00715E25 /* NSMutableURLRequest+WebServiceClient.m in Sources */,
+				ABBFD8F216C6614300BA64A4 /* NSString+UUID.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
