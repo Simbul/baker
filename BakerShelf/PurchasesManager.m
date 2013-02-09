@@ -149,12 +149,16 @@
     }
 }
 
-- (void)finishTransaction:(SKPaymentTransaction *)transaction {
-    [self recordTransaction:transaction];
-    [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+- (BOOL)finishTransaction:(SKPaymentTransaction *)transaction {
+    if ([self recordTransaction:transaction]) {
+        [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+        return YES;
+    } else {
+        return NO;
+    }
 }
 
--(void)recordTransaction:(SKPaymentTransaction *)transaction {
+- (BOOL)recordTransaction:(SKPaymentTransaction *)transaction {
     [[NSUserDefaults standardUserDefaults] setObject:transaction.transactionIdentifier forKey:@"receipt"];
     
     if ([PURCHASE_CONFIRMATION_URL length] > 0) {
@@ -166,8 +170,10 @@
         [self postParams:params toURL:[NSURL URLWithString:PURCHASE_CONFIRMATION_URL] error:&error];
         if (error) {
             NSLog(@"Error sending purchase confirmation %@", error);
+            return NO;
         }
     }
+    return YES;
 }
 
 - (void)retrievePurchasesFor:(NSSet *)productIDs {

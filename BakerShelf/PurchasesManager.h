@@ -59,7 +59,7 @@
 #pragma mark - Purchases
 
 - (BOOL)purchase:(NSString *)productID;
-- (void)finishTransaction:(SKPaymentTransaction *)transaction;
+- (BOOL)finishTransaction:(SKPaymentTransaction *)transaction;
 - (void)restore;
 - (void)retrievePurchasesFor:(NSSet *)productIDs;
 - (BOOL)isPurchased:(NSString *)productID;
