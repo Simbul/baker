@@ -54,36 +54,30 @@
     // We use a more browser-like User-Agent in order to allow browser detection scripts to run (like Tumult Hype).
     NSDictionary *userAgent = [[NSDictionary alloc] initWithObjectsAndKeys:@"Mozilla/5.0 (compatible; BakerFramework) AppleWebKit/533.00+ (KHTML, like Gecko) Mobile", @"UserAgent", nil]; 
     [[NSUserDefaults standardUserDefaults] registerDefaults:userAgent];
-    [userAgent release];
 }
 
 - (void)dealloc
 {
-    [window release];
-    [rootViewController release];
-    [rootNavigationController release];
-
-    [super dealloc];
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    self.window = [[[InterceptorWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]] autorelease];
+    self.window = [[InterceptorWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.backgroundColor = [UIColor whiteColor];
 
     #ifdef BAKER_NEWSSTAND
 
     NSLog(@"====== Newsstand is enabled ======");
-    self.rootViewController = [[[ShelfViewController alloc] initWithoutBooks] autorelease];
+    self.rootViewController = [[ShelfViewController alloc] initWithoutBooks];
 
     #else
 
     NSLog(@"====== Newsstand is not enabled ======");
     NSArray *books = [ShelfManager localBooksList];
     if ([books count] == 1) {
-        self.rootViewController = [[[BakerViewController alloc] initWithBook:[[books objectAtIndex:0] bakerBook]] autorelease];
+        self.rootViewController = [[[BakerViewController alloc] initWithBook:[[books objectAtIndex:0] bakerBook]]  ];
     } else  {
-        self.rootViewController = [[[ShelfViewController alloc] initWithBooks:books] autorelease];
+        self.rootViewController = [[[ShelfViewController alloc] initWithBooks:books]  ];
     }
 
     #endif
@@ -108,7 +102,7 @@
 
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
-    // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
+    // Use this method to   shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
     // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
 }
 

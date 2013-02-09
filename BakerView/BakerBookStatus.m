@@ -59,10 +59,6 @@
 }
 
 - (void)dealloc {
-    [page release];
-    [scrollIndex release];
-
-    [super dealloc];
 }
 
 @end

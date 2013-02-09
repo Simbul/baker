@@ -180,17 +180,7 @@
 }
 
 -(void)dealloc {
-    [ID release];
-    [title release];
-    [info release];
-    [date release];
-    [url release];
-    [path release];
-    [bakerBook release];
-    [coverPath release];
-    [coverURL release];
 
-    [super dealloc];
 }
 
 @end

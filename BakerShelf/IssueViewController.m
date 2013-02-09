@@ -129,7 +129,6 @@
     titleLabel.font = titleFont;
 
     [self.view addSubview:titleLabel];
-    [titleLabel release];
 
     heightOffset = heightOffset + titleLabel.frame.size.height + 5;
 
@@ -148,7 +147,6 @@
     infoLabel.font = infoFont;
 
     [self.view addSubview:infoLabel];
-    [infoLabel release];
 
     heightOffset = heightOffset + infoLabel.frame.size.height + 5;
 
@@ -162,12 +160,10 @@
     priceLabel.font = titleFont;
 
     [self.view addSubview:priceLabel];
-    [priceLabel release];
-
     heightOffset = heightOffset + priceLabel.frame.size.height + 10;
 
 
-    // SETUP ACTION BUTTON
+    // SETUP ACTION BUTTON>
     self.actionButton = [UIButton buttonWithType:UIButtonTypeCustom];
     actionButton.frame = CGRectMake(ui.contentOffset, heightOffset, 80, 30);
     actionButton.backgroundColor = [UIColor colorWithHexString:ISSUES_ACTION_BUTTON_BACKGROUND_COLOR];
@@ -196,7 +192,7 @@
 
 
     // SETUP DOWN/LOADING SPINNER AND LABEL
-    self.spinner = [[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray] autorelease];
+    self.spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
     spinner.color = [UIColor colorWithHexString:ISSUES_LOADING_SPINNER_COLOR];
     spinner.frame = CGRectMake(ui.contentOffset, heightOffset, 30, 30);
     spinner.backgroundColor = [UIColor clearColor];
@@ -216,7 +212,7 @@
 
 
     // SETUP PROGRESS BAR
-    self.progressBar = [[[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleDefault] autorelease];
+    self.progressBar = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleDefault];
     self.progressBar.frame = CGRectMake(ui.contentOffset, heightOffset, 170, 30);
     self.progressBar.progressTintColor = [UIColor colorWithHexString:ISSUES_PROGRESSBAR_TINT_COLOR];
 
@@ -382,14 +378,7 @@
 
 - (void)dealloc
 {
-    [issue release];
-    [actionButton release];
-    [archiveButton release];
-    [progressBar release];
-    [spinner release];
-    [loadingLabel release];
 
-    [super dealloc];
 }
 
 #pragma mark - Issue management
@@ -449,8 +438,6 @@
                                                            delegate:nil
                                                   cancelButtonTitle:NSLocalizedString(@"ISSUE_PURCHASE_SUCCESSFUL_CLOSE", nil)
                                                   otherButtonTitles:nil];
-            [alert show];
-            [alert release];
         }
 
         [self removePurchaseObserver:@"notification_issue_purchased"];
@@ -475,7 +462,6 @@
                                                   cancelButtonTitle:NSLocalizedString(@"ISSUE_PURCHASE_FAILED_CLOSE", nil)
                                                   otherButtonTitles:nil];
             [alert show];
-            [alert release];
         }
 
         [self removePurchaseObserver:@"notification_issue_purchased"];
@@ -555,8 +541,6 @@
     if (coverImage) {
         [[UIApplication sharedApplication] setNewsstandIconImage:coverImage];
     }
-    [book release];
-    [connection release];
     #endif
 }
 - (void)connectionDidResumeDownloading:(NSURLConnection *)connection totalBytesWritten:(long long)totalBytesWritten expectedTotalBytes:(long long)expectedTotalBytes
@@ -573,7 +557,6 @@
                                           cancelButtonTitle:NSLocalizedString(@"DOWNLOAD_FAILED_CLOSE", nil)
                                           otherButtonTitles:nil];
     [alert show];
-    [alert release];
 
     self.issue.transientStatus = BakerIssueTransientStatusNone;
     [self refresh];
@@ -591,7 +574,6 @@
                                 cancelButtonTitle: NSLocalizedString(@"ARCHIVE_ALERT_BUTTON_CANCEL", nil)
                                 otherButtonTitles: NSLocalizedString(@"ARCHIVE_ALERT_BUTTON_OK", nil), nil];
     [updateAlert show];
-    [updateAlert release];
 }
 
 - (void) alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex

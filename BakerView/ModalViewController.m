@@ -41,7 +41,7 @@
 //
 //      - (void)loadModalWebView:(NSURL *) url {
 //          // initialize
-//          myModalViewController = [[[ModalViewController alloc] initWithUrl:url] autorelease];
+//          myModalViewController = [[[ModalViewController alloc] initWithUrl:url]  ];
 //          myModalViewController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
 //          myModalViewController.delegate = self;
 //
@@ -93,34 +93,34 @@
 
 
     // ****** Buttons
-    UIBarButtonItem *btnClose  = [[[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"WEB_MODAL_CLOSE_BUTTON_TEXT", nil)
+    UIBarButtonItem *btnClose  = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"WEB_MODAL_CLOSE_BUTTON_TEXT", nil)
                                                                    style:UIBarButtonItemStyleBordered
                                                                   target:self
-                                                                  action:@selector(dismissAction)] autorelease];
-    UIBarButtonItem *btnAction = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(openInSafari)] autorelease];
+                                                                  action:@selector(dismissAction)];
+    UIBarButtonItem *btnAction = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(openInSafari)];
 
-    self.btnGoBack = [[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"back.png"] style:UIBarButtonItemStylePlain target:self action:@selector(goBack)] autorelease];
+    self.btnGoBack = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"back.png"] style:UIBarButtonItemStylePlain target:self action:@selector(goBack)];
     btnGoBack.enabled = NO;
     btnGoBack.width = 30;
 
-    self.btnGoForward = [[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"forward.png"] style:UIBarButtonItemStylePlain target:self action:@selector(goForward)] autorelease];
+    self.btnGoForward = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"forward.png"] style:UIBarButtonItemStylePlain target:self action:@selector(goForward)];
     btnGoForward.enabled = NO;
     btnGoForward.width = 30;
 
-    self.spinner = [[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray] autorelease];
+    self.spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
     spinner.frame = CGRectMake(3, 3, 25, 25);
     spinner.hidesWhenStopped = YES;
 
     [spinner startAnimating];
 
-    UIBarButtonItem *btnSpinner = [[[UIBarButtonItem alloc] initWithCustomView:spinner] autorelease];
+    UIBarButtonItem *btnSpinner = [[UIBarButtonItem alloc] initWithCustomView:spinner];
     btnSpinner.width = 30;
 
-    UIBarButtonItem *spacer = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease];
+    UIBarButtonItem *spacer = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
 
 
     // ****** Add Toolbar
-    self.toolbar = [[UIToolbar new] autorelease];
+    self.toolbar = [UIToolbar new];
     toolbar.barStyle = UIBarStyleDefault;
 
 
@@ -130,7 +130,7 @@
 
 
     // ****** Add WebView
-    self.webView = [[[UIWebView alloc] initWithFrame:CGRectMake(0, 44, 1, 1)] autorelease];
+    self.webView = [[UIWebView alloc] initWithFrame:CGRectMake(0, 44, 1, 1)];
     webView.backgroundColor = [UIColor underPageBackgroundColor];
     webView.contentMode = UIViewContentModeScaleToFill;
     webView.scalesPageToFit = YES;
@@ -160,16 +160,6 @@
 
     [self.webView stopLoading];
     self.webView.delegate = nil;
-
-    [btnGoBack release];
-    [btnGoForward release];
-
-    [spinner release];
-    [toolbar release];
-
-    [webView release];
-
-    [super dealloc];
 }
 
 #pragma mark - WEBVIEW
@@ -200,7 +190,7 @@
 - (void)webView:(UIWebView *)webViewIn didFailLoadWithError:(NSError *)error {
     NSLog(@"[Modal] Failed to load \"%@\", error code %i", [webViewIn.request.URL absoluteString], [error code]);
     if ([error code] == -1009) {
-        UILabel *errorLabel = [[[UILabel alloc] initWithFrame:self.webView.frame] autorelease];
+        UILabel *errorLabel = [[UILabel alloc] initWithFrame:self.webView.frame];
         errorLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         errorLabel.textAlignment = UITextAlignmentCenter;
         errorLabel.textColor = [UIColor grayColor];

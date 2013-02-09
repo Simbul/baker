@@ -48,14 +48,11 @@
     NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:data];
     [archiver encodeObject:self forKey:@"self"];
     [archiver finishEncoding];
-    [archiver release];
 
     NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
     [unarchiver setClass:[UICustomNavigationBar class] forClassName:@"UINavigationBar"];
-    self = [unarchiver decodeObjectForKey:@"self"];
+    //self = [unarchiver decodeObjectForKey:@"self"];
     [unarchiver finishDecoding];
-    [unarchiver release];
-
     return self;
 }
 - (NSInteger)supportedInterfaceOrientations

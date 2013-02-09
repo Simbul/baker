@@ -41,7 +41,7 @@
 
     self = [super initWithJSONPath:statusPath];
     if (self) {
-        self.prices = [[[NSMutableDictionary alloc] init] retain];
+        self.prices = [[NSMutableDictionary alloc] init];
     }
     return self;
 }
@@ -72,9 +72,6 @@
 }
 
 - (void)dealloc {
-    [prices release];
-
-    [super dealloc];
 }
 
 @end

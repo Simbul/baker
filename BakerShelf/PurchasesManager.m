@@ -108,7 +108,6 @@
     NSDictionary *userInfo = [NSDictionary dictionaryWithObject:ids forKey:@"ids"];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_products_retrieved" object:self userInfo:userInfo];
 
-    [request release];
 }
 
 - (void)request:(SKRequest *)request didFailWithError:(NSError *)error {
@@ -117,7 +116,6 @@
     NSDictionary *userInfo = [NSDictionary dictionaryWithObject:error forKey:@"error"];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_products_request_failed" object:self userInfo:userInfo];
 
-    [request release];
 }
 
 - (NSString *)priceFor:(NSString *)productID {
@@ -174,8 +172,6 @@
             } else {
                 NSLog(@"Cannot connect to %@", PURCHASE_CONFIRMATION_URL);
             }
-            [conn release];
-            [req release];
         }
     }
 }
@@ -270,10 +266,6 @@
 #pragma mark - Memory management
 
 -(void)dealloc {
-    [products release];
-    [_numberFormatter release];
-
-    [super dealloc];
 }
 
 @end

@@ -154,11 +154,7 @@
         self.author = [NSArray arrayWithObject:[bookData objectForKey:@"author"]];
     }
 
-    if ([[bookData objectForKey:@"creator"] isKindOfClass:[NSArray class]]) {
-        self.creator = [bookData objectForKey:@"creator"];
-    } else {
-        self.creator = [NSArray arrayWithObject:[bookData objectForKey:@"creator"]];
-    }
+    
 
     self.publisher = [bookData objectForKey:@"publisher"];
 
@@ -253,7 +249,7 @@
 
     for (NSString *param in bookData) {
         NSLog(@"Validating book JSON param \"%@\"", param);
-
+        
         id obj = [bookData objectForKey:param];
         if ([obj isKindOfClass:[NSArray class]] && ![self validateArray:(NSArray *)obj forParam:param]) {
             return NO;
@@ -415,51 +411,7 @@
 
 - (void)dealloc
 {
-    [hpub release];
-    [title release];
-    [date release];
-
-    [author release];
-    [creator release];
-    [publisher release];
-
-    [url release];
-    [cover release];
-
-    [orientation release];
-    [zoomable release];
-
-    [contents release];
-
-    [bakerBackground release];
-    [bakerBackgroundImagePortrait release];
-    [bakerBackgroundImageLandscape release];
-    [bakerPageNumbersColor release];
-    [bakerPageNumbersAlpha release];
-    [bakerPageScreenshots release];
-
-    [bakerRendering release];
-    [bakerVerticalBounce release];
-    [bakerVerticalPagination release];
-    [bakerPageTurnTap release];
-    [bakerPageTurnSwipe release];
-    [bakerMediaAutoplay release];
-
-    [bakerIndexWidth release];
-    [bakerIndexHeight release];
-    [bakerIndexBounce release];
-    [bakerStartAtPage release];
-
-    [ID release];
-    [path release];
-    [isBundled release];
-    [screenshotsPath release];
-    [screenshotsWritable release];
-    [currentPage release];
-    [lastScrollIndex release];
-    [lastOpenedDate release];
-
-    [super dealloc];
+ 
 }
 
 @end

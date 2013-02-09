@@ -35,7 +35,7 @@
 
 @interface ModalViewController : UIViewController <UIWebViewDelegate>
 {
-    id <modalWebViewDelegate> delegate;
+    __unsafe_unretained id <modalWebViewDelegate> delegate;
     NSURL *myUrl;
 }
 

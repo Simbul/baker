@@ -35,10 +35,6 @@
 
 - (void)dealloc
 {
-    [backgroundImages release];
-    [backgroundImageView release];
-
-    [super dealloc];
 }
 
 - (NSMutableDictionary *)backgroundImages

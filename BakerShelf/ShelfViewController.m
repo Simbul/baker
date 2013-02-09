@@ -60,7 +60,7 @@
     self = [super init];
     if (self) {
         self.issues = [ShelfManager localBooksList];
-        self.shelfStatus = [[[ShelfStatus alloc] init] retain];
+        self.shelfStatus = [[ShelfStatus alloc] init];
         self.supportedOrientation = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"UISupportedInterfaceOrientations"];
     }
     return self;
@@ -89,7 +89,7 @@
         [[SKPaymentQueue defaultQueue] addTransactionObserver:purchasesManager];
         #endif
 
-        self.shelfStatus = [[[ShelfStatus alloc] init] retain];
+        self.shelfStatus = [[ShelfStatus alloc] init];
         self.issueViewControllers = [[NSMutableArray alloc] init];
         self.supportedOrientation = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"UISupportedInterfaceOrientations"];
     }
@@ -116,20 +116,6 @@
 
 - (void)dealloc
 {
-    [gridView release];
-    [issueViewControllers release];
-    [issues release];
-    [subscribeButton release];
-    [refreshButton release];
-    [shelfStatus release];
-    [subscriptionsActionSheet release];
-    [supportedOrientation release];
-    [self.blockingProgressView release];
-    #ifdef BAKER_NEWSSTAND
-    [purchasesManager release];
-    #endif
-
-    [super dealloc];
 }
 
 #pragma mark - View lifecycle
@@ -154,18 +140,16 @@
     [self.gridView reloadData];
 
     #ifdef BAKER_NEWSSTAND
-    self.refreshButton = [[[UIBarButtonItem alloc]
+    self.refreshButton = [[UIBarButtonItem alloc]
                                        initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh
                                        target:self
-                                       action:@selector(handleRefresh:)]
-                                      autorelease];
+                                       action:@selector(handleRefresh:)];
 
-    self.subscribeButton = [[[UIBarButtonItem alloc]
+    self.subscribeButton = [[UIBarButtonItem alloc]
                              initWithTitle: NSLocalizedString(@"SUBSCRIBE_BUTTON_TEXT", nil)
                              style:UIBarButtonItemStylePlain
                              target:self
-                             action:@selector(handleSubscribeButtonPressed:)]
-                            autorelease];
+                             action:@selector(handleSubscribeButtonPressed:)];
 
     self.blockingProgressView = [[UIAlertView alloc]
                                  initWithTitle:@"Processing..."
@@ -177,8 +161,6 @@
     spinner.center = CGPointMake(139.5, 75.5); // .5 so it doesn't blur
     [self.blockingProgressView addSubview:spinner];
     [spinner startAnimating];
-    [spinner release];
-
     if ([PRODUCT_ID_FREE_SUBSCRIPTION length] > 0) {
         self.subscribeButton.enabled = NO;
         [purchasesManager retrievePriceFor:PRODUCT_ID_FREE_SUBSCRIPTION];
@@ -256,7 +238,7 @@
 }
 - (IssueViewController *)createIssueViewControllerWithIssue:(BakerIssue *)issue
 {
-    IssueViewController *controller = [[[IssueViewController alloc] initWithBakerIssue:issue] autorelease];
+    IssueViewController *controller = [[IssueViewController alloc] initWithBakerIssue:issue];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleReadIssue:) name:@"read_issue_request" object:controller];
     return controller;
 }
@@ -276,7 +258,7 @@
     AQGridViewCell *cell = (AQGridViewCell *)[self.gridView dequeueReusableCellWithIdentifier:cellIdentifier];
 	if (cell == nil)
 	{
-		cell = [[[AQGridViewCell alloc] initWithFrame:cellFrame reuseIdentifier:cellIdentifier] autorelease];
+		cell = [[AQGridViewCell alloc] initWithFrame:cellFrame reuseIdentifier:cellIdentifier];
 		cell.selectionStyle = AQGridViewCellSelectionStyleNone;
 
         cell.contentView.backgroundColor = [UIColor clearColor];
@@ -302,7 +284,7 @@
     [self setrefreshButtonEnabled:NO];
 
     if (!self.issuesManager) {
-        self.issuesManager = [[[IssuesManager alloc] initWithURL:NEWSSTAND_MANIFEST_URL] autorelease];
+        self.issuesManager = [[IssuesManager alloc] initWithURL:NEWSSTAND_MANIFEST_URL];
     }
     if([self.issuesManager refresh]) {
         self.issues = issuesManager.issues;
@@ -337,7 +319,6 @@
                                                   cancelButtonTitle:NSLocalizedString(@"INTERNET_CONNECTION_UNAVAILABLE_CLOSE", nil)
                                                   otherButtonTitles:nil];
         [connAlert show];
-        [connAlert release];
     }
     [self setrefreshButtonEnabled:YES];
 }
@@ -348,7 +329,6 @@
     if (subscriptionsActionSheet.visible) {
         [subscriptionsActionSheet dismissWithClickedButtonIndex:(subscriptionsActionSheet.numberOfButtons - 1) animated:YES];
     } else {
-        [self.subscriptionsActionSheet release];
         self.subscriptionsActionSheet = [self buildSubscriptionsActionSheet];
         [subscriptionsActionSheet showFromBarButtonItem:self.subscribeButton animated:YES];
     }
@@ -410,7 +390,6 @@
                                           cancelButtonTitle:NSLocalizedString(@"RESTORE_FAILED_CLOSE", nil)
                                           otherButtonTitles:nil];
     [alert show];
-    [alert release];
 
     [self.blockingProgressView dismissWithClickedButtonIndex:0 animated:YES];
 
@@ -430,8 +409,6 @@
                                           cancelButtonTitle:NSLocalizedString(@"SUBSCRIPTION_SUCCESSFUL_CLOSE", nil)
                                           otherButtonTitles:nil];
     [alert show];
-    [alert release];
-
     [purchasesManager markAsPurchased:PRODUCT_ID_FREE_SUBSCRIPTION];
 
     [self setSubscribeButtonEnabled:YES];
@@ -450,7 +427,6 @@
                                               cancelButtonTitle:NSLocalizedString(@"SUBSCRIPTION_FAILED_CLOSE", nil)
                                               otherButtonTitles:nil];
         [alert show];
-        [alert release];
     }
 
     [self setSubscribeButtonEnabled:YES];
@@ -493,7 +469,6 @@
                                           cancelButtonTitle:NSLocalizedString(@"PRODUCTS_REQUEST_FAILED_CLOSE", nil)
                                           otherButtonTitles:nil];
     [alert show];
-    [alert release];
 }
 
 #endif
@@ -511,7 +486,7 @@
 
     #ifdef BAKER_NEWSSTAND
     if (status == @"opening") {
-        book = [[[BakerBook alloc] initWithBookPath:issue.path bundled:NO] autorelease];
+        book = [[BakerBook alloc] initWithBookPath:issue.path bundled:NO] ;
         [self pushViewControllerWithBook:book];
     }
     #else
@@ -530,7 +505,6 @@
 {
     BakerViewController *bakerViewController = [[BakerViewController alloc] initWithBook:book];
     [self.navigationController pushViewController:bakerViewController animated:YES];
-    [bakerViewController release];
 }
 
 #pragma mark - Buttons management

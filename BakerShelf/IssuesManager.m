@@ -66,7 +66,7 @@
 
         NSMutableArray *tmpIssues = [NSMutableArray array];
         [jsonArr enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-            BakerIssue *issue = [[[BakerIssue alloc] initWithIssueData:obj] autorelease];
+            BakerIssue *issue = [[BakerIssue alloc] initWithIssueData:obj];
             [tmpIssues addObject:issue];
         }];
 
@@ -78,7 +78,6 @@
             NSDate *second = [dateFormat dateFromString:[(BakerIssue*)b date]];
             return [second compare:first];
         }];
-        [dateFormat release];
 
         return YES;
     } else {
@@ -128,6 +127,7 @@
 
     for (NSDictionary *issue in issuesList) {
         NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
+        
         [dateFormat setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
         NSDate *date = [dateFormat dateFromString:[issue objectForKey:@"date"]];
         NSString *name = [issue objectForKey:@"name"];
@@ -142,7 +142,6 @@
             }
 
         }
-        [dateFormat release];
     }
 }
 
@@ -162,11 +161,6 @@
 #endif
 
 -(void)dealloc {
-    [issues release];
-    [url release];
-    [shelfManifestPath release];
-
-    [super dealloc];
 }
 
 @end
