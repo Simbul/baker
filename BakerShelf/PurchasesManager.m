@@ -158,47 +158,25 @@
     [[NSUserDefaults standardUserDefaults] setObject:transaction.transactionIdentifier forKey:@"receipt"];
     
     if ([PURCHASE_CONFIRMATION_URL length] > 0) {
-        NSString *receiptData = [transaction.transactionReceipt base64EncodedString];
-        NSDictionary *jsonDict = [NSDictionary dictionaryWithObjectsAndKeys:
-                                  receiptData, @"receipt-data",
-                                  nil];
         NSError *error = nil;
-        NSData *jsonData = [jsonDict JSONDataWithOptions:JKSerializeOptionNone error:&error];
 
+        NSString *receiptData = [transaction.transactionReceipt base64EncodedString];
+        NSDictionary *params = [NSDictionary dictionaryWithObject:receiptData forKey:@"receipt_data"];
+
+        [self postParams:params toURL:[NSURL URLWithString:PURCHASE_CONFIRMATION_URL] error:&error];
         if (error) {
-            NSLog(@"Error generating receipt JSON: %@", error);
-        } else {
-            NSURL *requestURL = [NSURL URLWithString:PURCHASE_CONFIRMATION_URL];
-            NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:requestURL];
-            [req setHTTPMethod:@"POST"];
-            [req setHTTPBody:jsonData];
-            NSURLConnection *conn = [[NSURLConnection alloc] initWithRequest:req delegate:nil];
-            if (conn) {
-                NSLog(@"Posting App Store transaction receipt to %@", PURCHASE_CONFIRMATION_URL);
-            } else {
-                NSLog(@"Cannot connect to %@", PURCHASE_CONFIRMATION_URL);
-            }
-            [conn release];
-            [req release];
+            NSLog(@"Error sending purchase confirmation %@", error);
         }
     }
 }
 
 - (void)retrievePurchasesFor:(NSSet *)productIDs {
     NSError *error;
-    NSURLResponse *response = nil;
 
     NSString *jsonIDs = [[productIDs allObjects] JSONStringWithOptions:JKSerializeOptionNone error:&error];
-    NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
-                            @"com.bakerframework.Baker", @"app_id",
-                            [PurchasesManager UUID], @"user_id",
-                            jsonIDs, @"issues",
-                            nil];
+    NSDictionary *params = [NSDictionary dictionaryWithObject:jsonIDs forKey:@"issues"];
 
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:@"http://localhost/baker/index.php"] cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:REQUEST_TIMEOUT];
-    [request setHTTPMethod:@"POST"];
-    [request setFormPostParameters:params];
-    NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
+    NSData *data = [self postParams:params toURL:[NSURL URLWithString:@"http://localhost/baker/index.php"] error:&error];
     NSString *jsonResponse = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     NSLog(@"DATA %@", jsonResponse);
 
@@ -206,6 +184,19 @@
     [purchasesResponse enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
         [_purchases setObject:obj forKey:key];
     }];
+}
+
+- (NSData *)postParams:(NSDictionary *)params toURL:(NSURL *)url error:(NSError **)error {
+    NSMutableDictionary *postParams = [NSMutableDictionary dictionaryWithDictionary:params];
+    [postParams setObject:@"com.bakerframework.Baker" forKey:@"app_id"];
+    [postParams setObject:[PurchasesManager UUID] forKey:@"user_id"];
+
+    NSURLResponse *response = nil;
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:REQUEST_TIMEOUT];
+    [request setHTTPMethod:@"POST"];
+    [request setFormPostParameters:postParams];
+
+    return [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:error];
 }
 
 - (BOOL)isPurchased:(NSString *)productID {
