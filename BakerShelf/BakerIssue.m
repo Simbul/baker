@@ -199,7 +199,7 @@
     NKIssue *nkIssue = [nkLib issueWithName:self.ID];
     NSString *nkIssueStatus = [self nkIssueContentStatusToString:[nkIssue status]];
     if ([nkIssueStatus isEqualToString:@"remote"] && self.productID) {
-        if ([purchasesManager isMarkedAsPurchased:self.productID]) {
+        if ([purchasesManager isPurchased:self.productID]) {
             return @"purchased";
         } else if (self.price) {
             return @"purchasable";
