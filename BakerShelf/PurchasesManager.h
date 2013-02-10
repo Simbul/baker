@@ -40,6 +40,7 @@
 
 @property (retain, nonatomic) NSMutableDictionary *products;
 @property (retain, nonatomic) NSNumberFormatter *numberFormatter;
+@property (nonatomic) BOOL subscribed;
 
 #pragma mark - Singleton
 

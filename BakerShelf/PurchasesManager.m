@@ -40,12 +40,14 @@
 @implementation PurchasesManager
 
 @synthesize products;
+@synthesize subscribed;
 
 -(id)init {
     self = [super init];
 
     if (self) {
         self.products = [[NSMutableDictionary alloc] init];
+        self.subscribed = NO;
 
         _purchases = [[NSMutableDictionary alloc] init];
 
@@ -201,7 +203,9 @@
     NSLog(@"DATA %@", jsonResponse);
 
     NSDictionary *purchasesResponse = [jsonResponse objectFromJSONString];
-    [purchasesResponse enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+
+    self.subscribed = [[purchasesResponse objectForKey:@"subscribed"] boolValue];
+    [[purchasesResponse objectForKey:@"issues"] enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
         [_purchases setObject:obj forKey:key];
     }];
 }

@@ -347,30 +347,26 @@
 }
 
 - (UIActionSheet *)buildSubscriptionsActionSheet {
-    // TODO: this call is very inefficient, move it to refresh
-    NSMutableArray *subscriptions = [NSMutableArray arrayWithArray:SUBSCRIPTION_PRODUCT_IDS];
-    if ([PRODUCT_ID_FREE_SUBSCRIPTION length] > 0) {
-        [subscriptions addObject:PRODUCT_ID_FREE_SUBSCRIPTION];
-    }
-    [purchasesManager retrievePurchasesFor:[NSSet setWithArray:subscriptions]];
-
     UIActionSheet *sheet = [[UIActionSheet alloc]initWithTitle:NSLocalizedString(@"SUBSCRIBE_BUTTON_TEXT", nil)
                                                       delegate:self
                                              cancelButtonTitle:nil
                                         destructiveButtonTitle:nil
                                              otherButtonTitles: nil];
     NSMutableArray *actions = [NSMutableArray array];
-    if ([PRODUCT_ID_FREE_SUBSCRIPTION length] > 0 && ![purchasesManager isPurchased:PRODUCT_ID_FREE_SUBSCRIPTION]) {
-        [sheet addButtonWithTitle:NSLocalizedString(@"SUBSCRIPTIONS_SHEET_FREE", nil)];
-        [actions addObject:PRODUCT_ID_FREE_SUBSCRIPTION];
-    }
 
-    for (NSString *productId in SUBSCRIPTION_PRODUCT_IDS) {
-        NSString *title = NSLocalizedString(productId, nil);
-        NSString *price = [purchasesManager priceFor:productId];
-        if (price && ![purchasesManager isPurchased:productId]) {
-            [sheet addButtonWithTitle:[NSString stringWithFormat:@"%@ %@", title, price]];
-            [actions addObject:productId];
+    if (!purchasesManager.subscribed) {
+        if ([PRODUCT_ID_FREE_SUBSCRIPTION length] > 0) {
+            [sheet addButtonWithTitle:NSLocalizedString(@"SUBSCRIPTIONS_SHEET_FREE", nil)];
+            [actions addObject:PRODUCT_ID_FREE_SUBSCRIPTION];
+        }
+
+        for (NSString *productId in SUBSCRIPTION_PRODUCT_IDS) {
+            NSString *title = NSLocalizedString(productId, nil);
+            NSString *price = [purchasesManager priceFor:productId];
+            if (price) {
+                [sheet addButtonWithTitle:[NSString stringWithFormat:@"%@ %@", title, price]];
+                [actions addObject:productId];
+            }
         }
     }
 
