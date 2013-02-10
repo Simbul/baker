@@ -169,11 +169,11 @@
     [spinner startAnimating];
     [spinner release];
 
-    if ([PRODUCT_ID_FREE_SUBSCRIPTION length] > 0) {
+    if ([FREE_SUBSCRIPTION_PRODUCT_ID length] > 0) {
         self.subscribeButton.enabled = NO;
-        [purchasesManager retrievePriceFor:PRODUCT_ID_FREE_SUBSCRIPTION];
+        [purchasesManager retrievePriceFor:FREE_SUBSCRIPTION_PRODUCT_ID];
     }
-    for (NSString *subscriptionId in SUBSCRIPTION_PRODUCT_IDS) {
+    for (NSString *subscriptionId in AUTO_RENEWABLE_SUBSCRIPTION_PRODUCT_IDS) {
         [purchasesManager retrievePriceFor:subscriptionId];
     }
     #endif
@@ -355,12 +355,12 @@
     NSMutableArray *actions = [NSMutableArray array];
 
     if (!purchasesManager.subscribed) {
-        if ([PRODUCT_ID_FREE_SUBSCRIPTION length] > 0) {
+        if ([FREE_SUBSCRIPTION_PRODUCT_ID length] > 0) {
             [sheet addButtonWithTitle:NSLocalizedString(@"SUBSCRIPTIONS_SHEET_FREE", nil)];
-            [actions addObject:PRODUCT_ID_FREE_SUBSCRIPTION];
+            [actions addObject:FREE_SUBSCRIPTION_PRODUCT_ID];
         }
 
-        for (NSString *productId in SUBSCRIPTION_PRODUCT_IDS) {
+        for (NSString *productId in AUTO_RENEWABLE_SUBSCRIPTION_PRODUCT_IDS) {
             NSString *title = NSLocalizedString(productId, nil);
             NSString *price = [purchasesManager priceFor:productId];
             if (price) {
@@ -423,7 +423,7 @@
 // TODO: this can probably be removed
 - (void)handleSubscription:(NSNotification *)notification {
     [self setSubscribeButtonEnabled:NO];
-    [purchasesManager purchase:PRODUCT_ID_FREE_SUBSCRIPTION];
+    [purchasesManager purchase:FREE_SUBSCRIPTION_PRODUCT_ID];
 }
 
 - (void)handleSubscriptionPurchased:(NSNotification *)notification {
@@ -487,10 +487,10 @@
     BOOL issuesRetrieved = NO;
 
     for (NSString *productId in ids) {
-        if ([productId isEqualToString:PRODUCT_ID_FREE_SUBSCRIPTION]) {
+        if ([productId isEqualToString:FREE_SUBSCRIPTION_PRODUCT_ID]) {
             // ID is for a free subscription
             [self setSubscribeButtonEnabled:YES];
-        } else if ([SUBSCRIPTION_PRODUCT_IDS containsObject:productId]) {
+        } else if ([AUTO_RENEWABLE_SUBSCRIPTION_PRODUCT_IDS containsObject:productId]) {
             // ID is for an auto-renewable subscription
             [self setSubscribeButtonEnabled:YES];
         } else {

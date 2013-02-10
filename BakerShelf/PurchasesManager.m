@@ -183,9 +183,9 @@
 
 - (NSString *)transactionType:(SKPaymentTransaction *)transaction {
     NSString *productID = transaction.payment.productIdentifier;
-    if ([productID isEqualToString:PRODUCT_ID_FREE_SUBSCRIPTION]) {
+    if ([productID isEqualToString:FREE_SUBSCRIPTION_PRODUCT_ID]) {
         return @"free-subscription";
-    } else if ([SUBSCRIPTION_PRODUCT_IDS containsObject:productID]) {
+    } else if ([AUTO_RENEWABLE_SUBSCRIPTION_PRODUCT_IDS containsObject:productID]) {
         return @"auto-renewable-subscription";
     } else {
         return @"issue";
@@ -198,7 +198,7 @@
     NSString *jsonIDs = [[productIDs allObjects] JSONStringWithOptions:JKSerializeOptionNone error:&error];
     NSDictionary *params = [NSDictionary dictionaryWithObject:jsonIDs forKey:@"issues"];
 
-    NSData *data = [self postParams:params toURL:[NSURL URLWithString:@"http://localhost/baker/index.php"] error:&error];
+    NSData *data = [self postParams:params toURL:[NSURL URLWithString:PURCHASES_URL] error:&error];
     NSString *jsonResponse = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     NSLog(@"DATA %@", jsonResponse);
 
@@ -261,7 +261,7 @@
     NSDictionary *userInfo = [NSDictionary dictionaryWithObject:transaction forKey:@"transaction"];
     NSString *productId = transaction.payment.productIdentifier;
 
-    if ([productId isEqualToString:PRODUCT_ID_FREE_SUBSCRIPTION] || [SUBSCRIPTION_PRODUCT_IDS containsObject:productId]) {
+    if ([productId isEqualToString:FREE_SUBSCRIPTION_PRODUCT_ID] || [AUTO_RENEWABLE_SUBSCRIPTION_PRODUCT_IDS containsObject:productId]) {
         [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_subscription_purchased" object:self userInfo:userInfo];
     } else {
         [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_issue_purchased" object:self userInfo:userInfo];
@@ -272,7 +272,7 @@
     NSDictionary *userInfo = [NSDictionary dictionaryWithObject:transaction forKey:@"transaction"];
     NSString *productId = transaction.payment.productIdentifier;
 
-    if ([productId isEqualToString:PRODUCT_ID_FREE_SUBSCRIPTION] || [SUBSCRIPTION_PRODUCT_IDS containsObject:productId]) {
+    if ([productId isEqualToString:FREE_SUBSCRIPTION_PRODUCT_ID] || [AUTO_RENEWABLE_SUBSCRIPTION_PRODUCT_IDS containsObject:productId]) {
         [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_subscription_restored" object:self userInfo:userInfo];
     } else {
         [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_issue_restored" object:self userInfo:userInfo];
@@ -285,7 +285,7 @@
     NSDictionary *userInfo = [NSDictionary dictionaryWithObject:transaction forKey:@"transaction"];
     NSString *productId = transaction.payment.productIdentifier;
 
-    if ([productId isEqualToString:PRODUCT_ID_FREE_SUBSCRIPTION] || [SUBSCRIPTION_PRODUCT_IDS containsObject:productId]) {
+    if ([productId isEqualToString:FREE_SUBSCRIPTION_PRODUCT_ID] || [AUTO_RENEWABLE_SUBSCRIPTION_PRODUCT_IDS containsObject:productId]) {
         [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_subscription_failed" object:self userInfo:userInfo];
     } else {
         [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_issue_purchase_failed" object:self userInfo:userInfo];
@@ -319,7 +319,7 @@
 #pragma mark - Subscriptions
 
 - (BOOL)hasSubscriptions {
-    return [PRODUCT_ID_FREE_SUBSCRIPTION length] > 0;
+    return [FREE_SUBSCRIPTION_PRODUCT_ID length] > 0;
 }
 
 #pragma mark - User ID

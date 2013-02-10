@@ -35,7 +35,7 @@
 
     // ----------------------------------------------------------------------------------------------------
     // NEWSSTAND SUPPORT
-    // The following line, together with other settings, enables Newsstand code.
+    // The following line, together with other settings, enables Newsstand mode.
     // Remove this, remove the NewsstandKit.framework and the Newsstand entries in Baker-Info.plist to disable it.
     // See: https://github.com/Simbul/baker/wiki/Newsstand-vs-Bundled-publications-support-in-Baker-4.0
     #define BAKER_NEWSSTAND
@@ -52,30 +52,38 @@
         #define NEWSSTAND_MANIFEST_URL @""
 
         // ----------------------------------------------------------------------------------------------------
-        // Mandatory - This constant identifies the free subscription you set up in iTunesConnect.
-        // See: iTunes Connect -> Manage Your Application -> (Your application) -> Manage In App Purchases
-        // E.g. @"com.example.MyBook.subscription.free"
-        #define PRODUCT_ID_FREE_SUBSCRIPTION @""
-
-        // ----------------------------------------------------------------------------------------------------
-        #define PURCHASE_CONFIRMATION_URL @""
         // Optional - This constant specifies the URL to ping back when a user purchases an issue or a subscription.
+        // For more information, see: https://github.com/Simbul/baker/wiki/Baker-Server-API
         // E.g. @"http://example.com/purchased"
+        #define PURCHASE_CONFIRMATION_URL @""
 
         // ----------------------------------------------------------------------------------------------------
-        // Optional - This constant identifies the auto-renewable subscriptions you set up in iTunesConnect.
+        // Optional - This constant specifies a URL that will be used to retrieve the list of purchased issues.
+        // For more information, see: https://github.com/Simbul/baker/wiki/Baker-Server-API
+        // E.g. @"http://example.com/purchases"
+        #define PURCHASES_URL @""
+
+        // ----------------------------------------------------------------------------------------------------
+        // Mandatory - The following two constants identify the subscriptions you set up in iTunesConnect.
         // See: iTunes Connect -> Manage Your Application -> (Your application) -> Manage In App Purchases
+        // You *have* to set at least one among FREE_SUBSCRIPTION_PRODUCT_ID and AUTO_RENEWABLE_SUBSCRIPTION_PRODUCT_IDS.
+
+        // This constant identifies a free subscription.
+        // E.g. @"com.example.MyBook.subscription.free"
+        #define FREE_SUBSCRIPTION_PRODUCT_ID @""
+
+        // This constant identifies one or more auto-renewable subscriptions.
         // E.g.:
-        // #define SUBSCRIPTION_PRODUCT_IDS [NSArray arrayWithObjects: \
+        // #define AUTO_RENEWABLE_SUBSCRIPTION_PRODUCT_IDS [NSArray arrayWithObjects: \
         //     @"com.example.MyBook.subscription.3months", \
         //     @"com.example.MyBook.subscription.6months", \
         //     nil]
-        #define SUBSCRIPTION_PRODUCT_IDS [NSArray arrayWithObjects: \
+        #define AUTO_RENEWABLE_SUBSCRIPTION_PRODUCT_IDS [NSArray arrayWithObjects: \
             nil]
 
     #endif
 
     // Timeout for most network requests (in seconds)
-    #define REQUEST_TIMEOUT 5
+    #define REQUEST_TIMEOUT 15
 
 #endif
