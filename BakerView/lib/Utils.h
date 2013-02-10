@@ -47,5 +47,6 @@
 + (NSString *)stringFromInterfaceOrientation:(UIInterfaceOrientation)orientation;
 + (void)addSkipBackupAttributeToItemAtPath:(NSString *)path;
 + (BOOL)webViewShouldBePaged:(UIWebView*)webView;
++ (NSString *)appID;
 
 @end

@@ -35,6 +35,7 @@
 #import "NSData+Base64.h"
 #import "NSMutableURLRequest+WebServiceClient.h"
 #import "NSString+UUID.h"
+#import "Utils.h"
 
 #ifdef BAKER_NEWSSTAND
 @implementation PurchasesManager
@@ -212,7 +213,7 @@
 
 - (NSData *)postParams:(NSDictionary *)params toURL:(NSURL *)url error:(NSError **)error {
     NSMutableDictionary *postParams = [NSMutableDictionary dictionaryWithDictionary:params];
-    [postParams setObject:@"com.bakerframework.Baker" forKey:@"app_id"];
+    [postParams setObject:[Utils appID] forKey:@"app_id"];
     [postParams setObject:[PurchasesManager UUID] forKey:@"user_id"];
 
     NSURLResponse *response = nil;

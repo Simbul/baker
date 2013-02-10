@@ -97,5 +97,8 @@
 
     return shouldBePaged;
 }
++ (NSString *)appID {
+    return [[NSBundle mainBundle] bundleIdentifier];
+}
 
 @end
