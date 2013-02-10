@@ -201,14 +201,17 @@
 
     NSData *data = [self postParams:params toURL:[NSURL URLWithString:PURCHASES_URL] error:&error];
     NSString *jsonResponse = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-    NSLog(@"DATA %@", jsonResponse);
 
     NSDictionary *purchasesResponse = [jsonResponse objectFromJSONString];
 
-    self.subscribed = [[purchasesResponse objectForKey:@"subscribed"] boolValue];
-    [[purchasesResponse objectForKey:@"issues"] enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
-        [_purchases setObject:obj forKey:key];
-    }];
+    if (purchasesResponse) {
+        self.subscribed = [[purchasesResponse objectForKey:@"subscribed"] boolValue];
+        [[purchasesResponse objectForKey:@"issues"] enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+            [_purchases setObject:obj forKey:key];
+        }];
+    } else {
+        NSLog(@"ERROR: Could not parse response from purchases API call. Received: %@", jsonResponse);
+    }
 }
 
 - (NSData *)postParams:(NSDictionary *)params toURL:(NSURL *)url error:(NSError **)error {
