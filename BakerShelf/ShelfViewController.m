@@ -433,13 +433,17 @@
     [self setSubscribeButtonEnabled:YES];
 
     if ([purchasesManager finishTransaction:transaction]) {
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"SUBSCRIPTION_SUCCESSFUL_TITLE", nil)
-                                                        message:NSLocalizedString(@"SUBSCRIPTION_SUCCESSFUL_MESSAGE", nil)
-                                                       delegate:nil
-                                              cancelButtonTitle:NSLocalizedString(@"SUBSCRIPTION_SUCCESSFUL_CLOSE", nil)
-                                              otherButtonTitles:nil];
-        [alert show];
-        [alert release];
+        if (!purchasesManager.subscribed) {
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"SUBSCRIPTION_SUCCESSFUL_TITLE", nil)
+                                                            message:NSLocalizedString(@"SUBSCRIPTION_SUCCESSFUL_MESSAGE", nil)
+                                                           delegate:nil
+                                                  cancelButtonTitle:NSLocalizedString(@"SUBSCRIPTION_SUCCESSFUL_CLOSE", nil)
+                                                  otherButtonTitles:nil];
+            [alert show];
+            [alert release];
+
+            [self handleRefresh:nil];
+        }
     } else {
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"TRANSACTION_RECORDING_FAILED_TITLE", nil)
                                                         message:NSLocalizedString(@"TRANSACTION_RECORDING_FAILED_MESSAGE", nil)
