@@ -347,7 +347,13 @@
 }
 
 - (UIActionSheet *)buildSubscriptionsActionSheet {
-    UIActionSheet *sheet = [[UIActionSheet alloc]initWithTitle:NSLocalizedString(@"SUBSCRIBE_BUTTON_TEXT", nil)
+    NSString *title;
+    if (purchasesManager.subscribed) {
+        title = NSLocalizedString(@"SUBSCRIPTIONS_SHEET_SUBSCRIBED", nil);
+    } else {
+        title = NSLocalizedString(@"SUBSCRIPTIONS_SHEET_NOT_SUBSCRIBED", nil);
+    }
+    UIActionSheet *sheet = [[UIActionSheet alloc]initWithTitle:title
                                                       delegate:self
                                              cancelButtonTitle:nil
                                         destructiveButtonTitle:nil

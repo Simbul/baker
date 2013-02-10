@@ -15,6 +15,9 @@
 "SUBSCRIPTIONS_SHEET_RESTORE" = "Restore purchases";
 "SUBSCRIPTIONS_SHEET_CLOSE" = "Close";
 
+"SUBSCRIPTIONS_SHEET_SUBSCRIBED" = "You are subscribed";
+"SUBSCRIPTIONS_SHEET_NOT_SUBSCRIBED" = "You are not subscribed";
+
 // Subscription alerts
 "SUBSCRIPTION_SUCCESSFUL_TITLE" = "Subscribed successfully";
 "SUBSCRIPTION_SUCCESSFUL_MESSAGE" = "You have successfully subscribed";
