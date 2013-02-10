@@ -34,6 +34,7 @@
 #import "Utils.h"
 
 #import "JSONKit.h"
+#import "NSURL+Extensions.h"
 
 @implementation IssuesManager
 
@@ -104,8 +105,11 @@
     NSError *cachedShelfError = nil;
     NSString *json = nil;
 
+    NSString *queryString = [NSString stringWithFormat:@"app_id=%@&user_id=%@", [Utils appID], [PurchasesManager UUID]];
+    NSURL *shelfURL = [self.url URLByAppendingQueryString:queryString];
+
     NSURLResponse *response = nil;
-    NSURLRequest *request = [NSURLRequest requestWithURL:self.url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:REQUEST_TIMEOUT];
+    NSURLRequest *request = [NSURLRequest requestWithURL:shelfURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:REQUEST_TIMEOUT];
     NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&shelfError];
 
     if (shelfError) {
