@@ -31,6 +31,8 @@
 
 #import "BakerIssue.h"
 
+#import "SSZipArchive.h"
+
 @implementation BakerIssue
 
 @synthesize ID;
@@ -136,12 +138,40 @@
 }
 
 - (void)connectionDidFinishDownloading:(NSURLConnection *)connection destinationURL:(NSURL *)destinationURL {
-    NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-                              connection.newsstandAssetDownload, @"assetDownload",
-                              destinationURL, @"destinationURL",
-                              nil];
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_download_finished" object:self userInfo:userInfo];
+    #ifdef BAKER_NEWSSTAND
+    [self unpackAssetDownload:connection.newsstandAssetDownload toURL:destinationURL];
+
+    self.transientStatus = BakerIssueTransientStatusNone;
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_download_finished" object:self userInfo:nil];
+
+    [self updateNewsstandIcon];
+    #endif
 }
+
+#ifdef BAKER_NEWSSTAND
+- (void)unpackAssetDownload:(NKAssetDownload *)newsstandAssetDownload toURL:(NSURL *)destinationURL {
+    NKIssue *nkIssue = newsstandAssetDownload.issue;
+    NSString *destinationPath = [[nkIssue contentURL] path];
+
+    NSLog(@"File is being unzipped to %@", destinationPath);
+    [SSZipArchive unzipFileAtPath:[destinationURL path] toDestination:destinationPath];
+
+    NSLog(@"Removing temporary downloaded file %@", [destinationURL path]);
+    NSFileManager *fileMgr = [NSFileManager defaultManager];
+    NSError *error;
+    if ([fileMgr removeItemAtPath:[destinationURL path] error:&error] != YES){
+        NSLog(@"Unable to delete file: %@", [error localizedDescription]);
+    }
+}
+- (void)updateNewsstandIcon {
+    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:1];
+
+    UIImage *coverImage = [UIImage imageWithContentsOfFile:self.coverPath];
+    if (coverImage) {
+        [[UIApplication sharedApplication] setNewsstandIconImage:coverImage];
+    }
+}
+#endif
 
 - (void)connectionDidResumeDownloading:(NSURLConnection *)connection totalBytesWritten:(long long)totalBytesWritten expectedTotalBytes:(long long)expectedTotalBytes {
     // Nothing to do for now
