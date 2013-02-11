@@ -66,9 +66,9 @@
         purchasesManager = [PurchasesManager sharedInstance];
         [self addPurchaseObserver:@selector(handleIssueRestored:) name:@"notification_issue_restored"];
 
-        [self addIssueObserver:@selector(handleDownloadProgressing:) name:@"notification_download_progressing"];
-        [self addIssueObserver:@selector(handleDownloadFinished:) name:@"notification_download_finished"];
-        [self addIssueObserver:@selector(handleDownloadError:) name:@"notification_download_error"];
+        [self addIssueObserver:@selector(handleDownloadProgressing:) name:self.issue.notificationDownloadProgressingName];
+        [self addIssueObserver:@selector(handleDownloadFinished:) name:self.issue.notificationDownloadFinishedName];
+        [self addIssueObserver:@selector(handleDownloadError:) name:self.issue.notificationDownloadErrorName];
         #endif
     }
     return self;
@@ -546,34 +546,7 @@
     [self.progressBar setProgress:(bytesWritten / bytesExpected) animated:YES];
 }
 - (void)handleDownloadFinished:(NSNotification *)notification {
-    #ifdef BAKER_NEWSSTAND
-    NKAssetDownload *dnl = [notification.userInfo objectForKey:@"assetDownload"];
-    NSURL *destinationURL = [notification.userInfo objectForKey:@"destinationURL"];
-    NKIssue *nkIssue = dnl.issue;
-    NSString *destinationPath = [[nkIssue contentURL] path];
-
-    NSLog(@"File is being unzipped to %@", destinationPath);
-    [SSZipArchive unzipFileAtPath:[destinationURL path] toDestination:destinationPath];
-
-    NSLog(@"Removing temporary downloaded file %@", [destinationURL path]);
-    NSFileManager *fileMgr = [NSFileManager defaultManager];
-    NSError *error;
-    if ([fileMgr removeItemAtPath:[destinationURL path] error:&error] != YES){
-        NSLog(@"Unable to delete file: %@", [error localizedDescription]);
-    }
-    
-    self.issue.transientStatus = BakerIssueTransientStatusNone;
     [self refresh];
-
-    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:1];
-
-    BakerBook *book = [[BakerBook alloc]initWithBookPath:destinationPath bundled:NO];
-    UIImage *coverImage = [UIImage imageWithContentsOfFile:self.issue.coverPath];
-    if (coverImage) {
-        [[UIApplication sharedApplication] setNewsstandIconImage:coverImage];
-    }
-    [book release];
-    #endif
 }
 - (void)handleDownloadError:(NSNotification *)notification {
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"DOWNLOAD_FAILED_TITLE", nil)
