@@ -47,6 +47,10 @@
 @synthesize productID;
 @synthesize price;
 
+@synthesize notificationDownloadProgressingName;
+@synthesize notificationDownloadFinishedName;
+@synthesize notificationDownloadErrorName;
+
 -(id)initWithBakerBook:(BakerBook *)book {
     self = [super init];
     if (self) {
@@ -70,8 +74,16 @@
         }
 
         self.transientStatus = BakerIssueTransientStatusNone;
+
+        [self setNotificationDownloadNames];
     }
     return self;
+}
+
+- (void)setNotificationDownloadNames {
+    notificationDownloadProgressingName = [[NSString stringWithFormat:@"notification_download_progressing_%@", self.ID] retain];
+    notificationDownloadFinishedName = [[NSString stringWithFormat:@"notification_download_finished_%@", self.ID] retain];
+    notificationDownloadErrorName = [[NSString stringWithFormat:@"notification_download_error_%@", self.ID] retain];
 }
 
 #ifdef BAKER_NEWSSTAND
@@ -103,9 +115,12 @@
         self.bakerBook = nil;
 
         self.transientStatus = BakerIssueTransientStatusNone;
+
+        [self setNotificationDownloadNames];
     }
     return self;
 }
+
 -(NSString *)nkIssueContentStatusToString:(NKIssueContentStatus) contentStatus{
     if (contentStatus == NKIssueContentStatusNone) {
         return @"remote";
@@ -134,7 +149,7 @@
                               [NSNumber numberWithLongLong:totalBytesWritten], @"totalBytesWritten",
                               [NSNumber numberWithLongLong:expectedTotalBytes], @"expectedTotalBytes",
                               nil];
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_download_progressing" object:self userInfo:userInfo];
+    [[NSNotificationCenter defaultCenter] postNotificationName:notificationDownloadProgressingName object:self userInfo:userInfo];
 }
 
 - (void)connectionDidFinishDownloading:(NSURLConnection *)connection destinationURL:(NSURL *)destinationURL {
@@ -142,7 +157,7 @@
     [self unpackAssetDownload:connection.newsstandAssetDownload toURL:destinationURL];
 
     self.transientStatus = BakerIssueTransientStatusNone;
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_download_finished" object:self userInfo:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:notificationDownloadFinishedName object:self userInfo:nil];
 
     [self updateNewsstandIcon];
     #endif
@@ -183,7 +198,7 @@
     [connection cancel];
 
     NSDictionary *userInfo = [NSDictionary dictionaryWithObject:error forKey:@"error"];
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_download_error" object:self userInfo:userInfo];
+    [[NSNotificationCenter defaultCenter] postNotificationName:notificationDownloadErrorName object:self userInfo:userInfo];
 }
 
 #endif
@@ -254,6 +269,10 @@
     [bakerBook release];
     [coverPath release];
     [coverURL release];
+
+    [notificationDownloadErrorName release];
+    [notificationDownloadFinishedName release];
+    [notificationDownloadProgressingName release];
 
     [super dealloc];
 }

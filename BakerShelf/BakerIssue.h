@@ -72,6 +72,10 @@ typedef enum transientStates {
 
 @property (nonatomic, assign) BakerIssueTransientStatus transientStatus;
 
+@property (retain, nonatomic) NSString *notificationDownloadProgressingName;
+@property (retain, nonatomic) NSString *notificationDownloadFinishedName;
+@property (retain, nonatomic) NSString *notificationDownloadErrorName;
+
 -(id)initWithBakerBook:(BakerBook *)bakerBook;
 -(void)getCover:(void(^)(UIImage *img))completionBlock;
 -(NSString *)getStatus;

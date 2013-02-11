@@ -66,9 +66,9 @@
         purchasesManager = [PurchasesManager sharedInstance];
         [self addPurchaseObserver:@selector(handleIssueRestored:) name:@"notification_issue_restored"];
 
-        [self addIssueObserver:@selector(handleDownloadProgressing:) name:@"notification_download_progressing"];
-        [self addIssueObserver:@selector(handleDownloadFinished:) name:@"notification_download_finished"];
-        [self addIssueObserver:@selector(handleDownloadError:) name:@"notification_download_error"];
+        [self addIssueObserver:@selector(handleDownloadProgressing:) name:self.issue.notificationDownloadProgressingName];
+        [self addIssueObserver:@selector(handleDownloadFinished:) name:self.issue.notificationDownloadFinishedName];
+        [self addIssueObserver:@selector(handleDownloadError:) name:self.issue.notificationDownloadErrorName];
         #endif
     }
     return self;
