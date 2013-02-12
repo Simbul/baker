@@ -169,13 +169,11 @@
     [spinner startAnimating];
     [spinner release];
 
+    NSMutableSet *subscriptions = [NSMutableSet setWithArray:AUTO_RENEWABLE_SUBSCRIPTION_PRODUCT_IDS];
     if ([FREE_SUBSCRIPTION_PRODUCT_ID length] > 0) {
-        self.subscribeButton.enabled = NO;
-        [purchasesManager retrievePriceFor:FREE_SUBSCRIPTION_PRODUCT_ID];
+        [subscriptions addObject:FREE_SUBSCRIPTION_PRODUCT_ID];
     }
-    for (NSString *subscriptionId in AUTO_RENEWABLE_SUBSCRIPTION_PRODUCT_IDS) {
-        [purchasesManager retrievePriceFor:subscriptionId];
-    }
+    [purchasesManager retrievePricesFor:subscriptions];
     #endif
 }
 - (void)viewWillAppear:(BOOL)animated
