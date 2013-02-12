@@ -196,18 +196,17 @@
 - (void)retrievePurchasesFor:(NSSet *)productIDs {
     NSError *error;
 
-    NSString *jsonIDs = [[productIDs allObjects] JSONStringWithOptions:JKSerializeOptionNone error:&error];
-    NSDictionary *params = [NSDictionary dictionaryWithObject:jsonIDs forKey:@"issues"];
-
-    NSData *data = [self postParams:params toURL:[NSURL URLWithString:PURCHASES_URL] error:&error];
+    NSData *data = [self postToURL:[NSURL URLWithString:PURCHASES_URL] error:&error];
     NSString *jsonResponse = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
 
     NSDictionary *purchasesResponse = [jsonResponse objectFromJSONString];
 
     if (purchasesResponse) {
+        NSArray *purchasedIssues = [purchasesResponse objectForKey:@"issues"];
         self.subscribed = [[purchasesResponse objectForKey:@"subscribed"] boolValue];
-        [[purchasesResponse objectForKey:@"issues"] enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
-            [_purchases setObject:obj forKey:key];
+
+        [productIDs enumerateObjectsUsingBlock:^(id obj, BOOL *stop) {
+            [_purchases setObject:[NSNumber numberWithBool:[purchasedIssues containsObject:obj]] forKey:obj];
         }];
     } else {
         NSLog(@"ERROR: Could not parse response from purchases API call. Received: %@", jsonResponse);
@@ -225,6 +224,9 @@
     [request setFormPostParameters:postParams];
 
     return [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:error];
+}
+- (NSData *)postToURL:(NSURL *)url error:(NSError **)error {
+    return [self postParams:[NSDictionary dictionary] toURL:url error:error];
 }
 
 - (BOOL)isPurchased:(NSString *)productID {
