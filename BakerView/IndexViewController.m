@@ -192,6 +192,12 @@
     [self fadeIn];
 }
 
+- (void)viewDidLayoutSubviews {
+    [self setPageSizeForOrientation:[UIApplication sharedApplication].statusBarOrientation];
+    [self setActualSize];
+    [self setIndexViewHidden:self.isIndexViewHidden withAnimation:NO];
+}
+
 - (void)loadContent {
     NSString* path = [self indexPath];
 

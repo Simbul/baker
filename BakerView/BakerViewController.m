@@ -183,17 +183,11 @@
         // ****** LISTENER FOR CLOSING APPLICATION
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleApplicationWillResignActive:) name:@"applicationWillResignActiveNotification" object:nil];
         
-        // ****** LISTENER FOR APPLICATION ENTERING FOREGROUND
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleApplicationWillEnterForegroundNotification:) name:@"applicationWillEnterForegroundNotification" object:nil];
     }
 }
 - (void)handleApplicationWillResignActive:(NSNotification *)notification {
     NSLog(@"RESIGN, SAVING");
     [self saveBookStatusWithScrollIndex];
-}
-- (void)handleApplicationWillEnterForegroundNotification:(NSNotification *)notification {
-    NSLog(@"Entering foreground");
-    [self adjustScrollViewPosition];
 }
 - (void)viewDidAppear:(BOOL)animated {
 
@@ -209,6 +203,11 @@
 
     currentPageWillAppearUnderModal = NO;
 }
+
+- (void)viewDidLayoutSubviews {
+    [self adjustScrollViewPosition];
+}
+
 - (BOOL)loadBookWithBookPath:(NSString *)bookPath {
     NSLog(@"• LOAD BOOK WITH PATH: %@", bookPath);
 
