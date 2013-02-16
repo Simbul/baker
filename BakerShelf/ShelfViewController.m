@@ -497,12 +497,12 @@
     NSString *status = [issue getStatus];
 
     #ifdef BAKER_NEWSSTAND
-    if (status == @"opening") {
+    if ([status isEqual:@"opening"]) {
         book = [[[BakerBook alloc] initWithBookPath:issue.path bundled:NO] autorelease];
         [self pushViewControllerWithBook:book];
     }
     #else
-    if (status == @"bundled") {
+    if ([status isEqual:@"bundled"]) {
         book = [issue bakerBook];
         [self pushViewControllerWithBook:book];
     }

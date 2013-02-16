@@ -31,6 +31,8 @@
 
 #import "BakerIssue.h"
 
+#import "SSZipArchive.h"
+
 @implementation BakerIssue
 
 @synthesize ID;
@@ -44,6 +46,10 @@
 @synthesize coverURL;
 @synthesize productID;
 @synthesize price;
+
+@synthesize notificationDownloadProgressingName;
+@synthesize notificationDownloadFinishedName;
+@synthesize notificationDownloadErrorName;
 
 -(id)initWithBakerBook:(BakerBook *)book {
     self = [super init];
@@ -68,8 +74,16 @@
         }
 
         self.transientStatus = BakerIssueTransientStatusNone;
+
+        [self setNotificationDownloadNames];
     }
     return self;
+}
+
+- (void)setNotificationDownloadNames {
+    notificationDownloadProgressingName = [[NSString stringWithFormat:@"notification_download_progressing_%@", self.ID] retain];
+    notificationDownloadFinishedName = [[NSString stringWithFormat:@"notification_download_finished_%@", self.ID] retain];
+    notificationDownloadErrorName = [[NSString stringWithFormat:@"notification_download_error_%@", self.ID] retain];
 }
 
 #ifdef BAKER_NEWSSTAND
@@ -101,9 +115,12 @@
         self.bakerBook = nil;
 
         self.transientStatus = BakerIssueTransientStatusNone;
+
+        [self setNotificationDownloadNames];
     }
     return self;
 }
+
 -(NSString *)nkIssueContentStatusToString:(NKIssueContentStatus) contentStatus{
     if (contentStatus == NKIssueContentStatusNone) {
         return @"remote";
@@ -132,16 +149,44 @@
                               [NSNumber numberWithLongLong:totalBytesWritten], @"totalBytesWritten",
                               [NSNumber numberWithLongLong:expectedTotalBytes], @"expectedTotalBytes",
                               nil];
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_download_progressing" object:self userInfo:userInfo];
+    [[NSNotificationCenter defaultCenter] postNotificationName:notificationDownloadProgressingName object:self userInfo:userInfo];
 }
 
 - (void)connectionDidFinishDownloading:(NSURLConnection *)connection destinationURL:(NSURL *)destinationURL {
-    NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-                              connection.newsstandAssetDownload, @"assetDownload",
-                              destinationURL, @"destinationURL",
-                              nil];
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_download_finished" object:self userInfo:userInfo];
+    #ifdef BAKER_NEWSSTAND
+    [self unpackAssetDownload:connection.newsstandAssetDownload toURL:destinationURL];
+
+    self.transientStatus = BakerIssueTransientStatusNone;
+    [[NSNotificationCenter defaultCenter] postNotificationName:notificationDownloadFinishedName object:self userInfo:nil];
+
+    [self updateNewsstandIcon];
+    #endif
 }
+
+#ifdef BAKER_NEWSSTAND
+- (void)unpackAssetDownload:(NKAssetDownload *)newsstandAssetDownload toURL:(NSURL *)destinationURL {
+    NKIssue *nkIssue = newsstandAssetDownload.issue;
+    NSString *destinationPath = [[nkIssue contentURL] path];
+
+    NSLog(@"File is being unzipped to %@", destinationPath);
+    [SSZipArchive unzipFileAtPath:[destinationURL path] toDestination:destinationPath];
+
+    NSLog(@"Removing temporary downloaded file %@", [destinationURL path]);
+    NSFileManager *fileMgr = [NSFileManager defaultManager];
+    NSError *error;
+    if ([fileMgr removeItemAtPath:[destinationURL path] error:&error] != YES){
+        NSLog(@"Unable to delete file: %@", [error localizedDescription]);
+    }
+}
+- (void)updateNewsstandIcon {
+    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:1];
+
+    UIImage *coverImage = [UIImage imageWithContentsOfFile:self.coverPath];
+    if (coverImage) {
+        [[UIApplication sharedApplication] setNewsstandIconImage:coverImage];
+    }
+}
+#endif
 
 - (void)connectionDidResumeDownloading:(NSURLConnection *)connection totalBytesWritten:(long long)totalBytesWritten expectedTotalBytes:(long long)expectedTotalBytes {
     // Nothing to do for now
@@ -153,7 +198,7 @@
     [connection cancel];
 
     NSDictionary *userInfo = [NSDictionary dictionaryWithObject:error forKey:@"error"];
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_download_error" object:self userInfo:userInfo];
+    [[NSNotificationCenter defaultCenter] postNotificationName:notificationDownloadErrorName object:self userInfo:userInfo];
 }
 
 #endif
@@ -224,6 +269,10 @@
     [bakerBook release];
     [coverPath release];
     [coverURL release];
+
+    [notificationDownloadErrorName release];
+    [notificationDownloadFinishedName release];
+    [notificationDownloadProgressingName release];
 
     [super dealloc];
 }

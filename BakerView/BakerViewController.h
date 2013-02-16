@@ -146,7 +146,6 @@
 
 #pragma mark - SCROLLVIEW
 - (CGRect)frameForPage:(int)page;
-- (void)updateBookLayout;
 
 #pragma mark - WEBVIEW
 - (void)webView:(UIWebView *)webView hidden:(BOOL)status animating:(BOOL)animating;
