@@ -170,6 +170,12 @@
         backgroundPathPortrait  = [book.path stringByAppendingPathComponent:backgroundPathPortrait];
         backgroundImagePortrait = [[UIImage imageWithContentsOfFile:backgroundPathPortrait] retain];
     }
+    
+    // ****** LISTENER FOR INTERCEPTOR WINDOW NOTIFICATION
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleInterceptedTouch:) name:@"notification_touch_intercepted" object:nil];
+    
+    // ****** LISTENER FOR CLOSING APPLICATION
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleApplicationWillResignActive:) name:@"applicationWillResignActiveNotification" object:nil];
 }
 - (void)viewWillAppear:(BOOL)animated {
 
@@ -1831,6 +1837,9 @@
 }
 - (void)dealloc {
 
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"notification_touch_intercepted" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"applicationWillResignActiveNotification" object:nil];
+    
     [supportedOrientation release];
 
     [cachedScreenshotsPath release];
