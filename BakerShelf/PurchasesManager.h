@@ -34,7 +34,9 @@
 #import <StoreKit/StoreKit.h>
 
 #ifdef BAKER_NEWSSTAND
-@interface PurchasesManager : NSObject <SKProductsRequestDelegate, SKPaymentTransactionObserver>
+@interface PurchasesManager : NSObject <SKProductsRequestDelegate, SKPaymentTransactionObserver>{
+    BOOL _enableProductRequestFailureNotifications;
+}
 
 @property (retain, nonatomic) NSMutableDictionary *products;
 @property (retain, nonatomic) NSNumberFormatter *numberFormatter;
@@ -51,7 +53,11 @@
 #pragma mark - Prices
 
 - (void)retrievePricesFor:(NSSet *)productIDs;
+- (void)retrievePricesFor:(NSSet *)productIDs andEnableFailureNotifications:(BOOL)enable;
+
 - (void)retrievePriceFor:(NSString *)productID;
+- (void)retrievePriceFor:(NSString *)productID andEnableFailureNotification:(BOOL)enable;
+
 - (NSString *)priceFor:(NSString *)productID;
 
 #pragma mark - Purchases
