@@ -1785,11 +1785,11 @@
         // We need to run this only once to prevent looping in -viewWillAppear
         shouldForceOrientationUpdate = NO;
 
-        UIDeviceOrientation deviceOrientation = [[UIApplication sharedApplication] statusBarOrientation];
+        UIInterfaceOrientation interfaceOrientation = [[UIApplication sharedApplication] statusBarOrientation];
         
-        if ( (UIInterfaceOrientationIsLandscape(deviceOrientation) && [book.orientation isEqualToString:@"landscape"])
+        if ( (UIInterfaceOrientationIsLandscape(interfaceOrientation) && [book.orientation isEqualToString:@"landscape"])
             ||
-            (UIInterfaceOrientationIsPortrait(deviceOrientation) && [book.orientation isEqualToString:@"portrait"]) ) {
+            (UIInterfaceOrientationIsPortrait(interfaceOrientation) && [book.orientation isEqualToString:@"portrait"]) ) {
             
             NSLog(@"Device and book orientations are in sync");
             
