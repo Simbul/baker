@@ -124,8 +124,10 @@
 - (void)request:(SKRequest *)request didFailWithError:(NSError *)error {
     NSLog(@"App Store request failure: %@", error);
 
-    NSDictionary *userInfo = [NSDictionary dictionaryWithObject:error forKey:@"error"];
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_products_request_failed" object:self userInfo:userInfo];
+    if (_enableProductRequestFailureNotifications) {
+        NSDictionary *userInfo = [NSDictionary dictionaryWithObject:error forKey:@"error"];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_products_request_failed" object:self userInfo:userInfo];
+    }
 
     [request release];
 }

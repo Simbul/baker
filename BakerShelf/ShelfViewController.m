@@ -171,7 +171,7 @@
 
     if ([PRODUCT_ID_FREE_SUBSCRIPTION length] > 0) {
         self.subscribeButton.enabled = NO;
-        [purchasesManager retrievePriceFor:PRODUCT_ID_FREE_SUBSCRIPTION];
+        [purchasesManager retrievePriceFor:PRODUCT_ID_FREE_SUBSCRIPTION andEnableFailureNotification:NO];
     }
     #endif
 }
@@ -315,7 +315,7 @@
             }
         }];
 
-        [purchasesManager retrievePricesFor:issuesManager.productIDs];
+        [purchasesManager retrievePricesFor:issuesManager.productIDs andEnableFailureNotifications:NO];
     }
     else{
         UIAlertView *connAlert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"INTERNET_CONNECTION_UNAVAILABLE_TITLE", nil)
