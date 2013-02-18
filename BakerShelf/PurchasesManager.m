@@ -55,6 +55,8 @@
         _numberFormatter = [[NSNumberFormatter alloc] init];
         [_numberFormatter setFormatterBehavior:NSNumberFormatterBehavior10_4];
         [_numberFormatter setNumberStyle:NSNumberFormatterCurrencyStyle];
+
+        _enableProductRequestFailureNotifications = YES;
     }
 
     return self;
@@ -85,7 +87,12 @@
 #pragma mark - Prices
 
 - (void)retrievePricesFor:(NSSet *)productIDs {
+    [self retrievePricesFor:productIDs andEnableFailureNotifications:YES];
+}
+- (void)retrievePricesFor:(NSSet *)productIDs andEnableFailureNotifications:(BOOL)enable {
     if ([productIDs count] > 0) {
+        _enableProductRequestFailureNotifications = enable;
+
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void) {
             SKProductsRequest *productsRequest = [[SKProductsRequest alloc] initWithProductIdentifiers:productIDs];
             productsRequest.delegate = self;
@@ -95,8 +102,11 @@
 }
 
 - (void)retrievePriceFor:(NSString *)productID {
+    [self retrievePriceFor:productID andEnableFailureNotification:YES];
+}
+- (void)retrievePriceFor:(NSString *)productID andEnableFailureNotification:(BOOL)enable {
     NSSet *productIDs = [NSSet setWithObject:productID];
-    [self retrievePricesFor:productIDs];
+    [self retrievePricesFor:productIDs andEnableFailureNotifications:enable];
 }
 
 - (void)productsRequest:(SKProductsRequest *)request didReceiveResponse:(SKProductsResponse *)response {
@@ -121,8 +131,10 @@
 - (void)request:(SKRequest *)request didFailWithError:(NSError *)error {
     NSLog(@"App Store request failure: %@", error);
 
-    NSDictionary *userInfo = [NSDictionary dictionaryWithObject:error forKey:@"error"];
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_products_request_failed" object:self userInfo:userInfo];
+    if (_enableProductRequestFailureNotifications) {
+        NSDictionary *userInfo = [NSDictionary dictionaryWithObject:error forKey:@"error"];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_products_request_failed" object:self userInfo:userInfo];
+    }
 
     [request release];
 }

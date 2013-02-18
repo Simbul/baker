@@ -173,7 +173,7 @@
     if ([FREE_SUBSCRIPTION_PRODUCT_ID length] > 0) {
         [subscriptions addObject:FREE_SUBSCRIPTION_PRODUCT_ID];
     }
-    [purchasesManager retrievePricesFor:subscriptions];
+    [purchasesManager retrievePricesFor:subscriptions andEnableFailureNotifications:NO];
     #endif
 }
 - (void)viewWillAppear:(BOOL)animated
@@ -318,7 +318,7 @@
             }
         }];
 
-        [purchasesManager retrievePricesFor:issuesManager.productIDs];
+        [purchasesManager retrievePricesFor:issuesManager.productIDs andEnableFailureNotifications:NO];
     }
     else{
         UIAlertView *connAlert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"INTERNET_CONNECTION_UNAVAILABLE_TITLE", nil)
