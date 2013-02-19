@@ -155,7 +155,22 @@
     }
     #endif
 }
+- (void)applicationWillHandleNewsstandNotificationOfContent:(NSString *)contentName
+{
+    IssuesManager *issuesManager = [IssuesManager sharedInstance];
+    [issuesManager refresh];
 
+    if (contentName) {
+        for (BakerIssue *issue in issuesManager.issues) {
+            if ([issue.ID isEqualToString:contentName]) {
+                [issue download];
+            }
+        }
+    } else {
+        BakerIssue *targetIssue = [issuesManager.issues objectAtIndex:0];
+        [targetIssue download];
+    }
+}
 - (void)applicationWillResignActive:(UIApplication *)application
 {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
