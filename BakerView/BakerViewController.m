@@ -184,14 +184,6 @@
         [super viewWillAppear:animated];
         [self.navigationController.navigationBar setTranslucent:YES];
 
-        // Prevent duplicate observers
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:@"notification_touch_intercepted" object:nil];
-
-        // ****** LISTENER FOR INTERCEPTOR WINDOW NOTIFICATION
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleInterceptedTouch:) name:@"notification_touch_intercepted" object:nil];
-
-        // ****** LISTENER FOR CLOSING APPLICATION
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleApplicationWillResignActive:) name:@"applicationWillResignActiveNotification" object:nil];
     }
 }
 - (void)handleApplicationWillResignActive:(NSNotification *)notification {
