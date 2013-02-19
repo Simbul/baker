@@ -15,6 +15,7 @@
 "SUBSCRIPTIONS_SHEET_RESTORE" = "Restore purchases";
 "SUBSCRIPTIONS_SHEET_CLOSE" = "Close";
 
+"SUBSCRIPTIONS_SHEET_GENERIC" = "Subscription options";
 "SUBSCRIPTIONS_SHEET_SUBSCRIBED" = "You are subscribed";
 "SUBSCRIPTIONS_SHEET_NOT_SUBSCRIBED" = "You are not subscribed";
 

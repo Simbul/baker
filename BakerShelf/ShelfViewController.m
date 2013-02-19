@@ -346,11 +346,16 @@
 
 - (UIActionSheet *)buildSubscriptionsActionSheet {
     NSString *title;
-    if (purchasesManager.subscribed) {
-        title = NSLocalizedString(@"SUBSCRIPTIONS_SHEET_SUBSCRIBED", nil);
+    if ([PURCHASES_URL length] > 0) {
+        if (purchasesManager.subscribed) {
+            title = NSLocalizedString(@"SUBSCRIPTIONS_SHEET_SUBSCRIBED", nil);
+        } else {
+            title = NSLocalizedString(@"SUBSCRIPTIONS_SHEET_NOT_SUBSCRIBED", nil);
+        }
     } else {
-        title = NSLocalizedString(@"SUBSCRIPTIONS_SHEET_NOT_SUBSCRIBED", nil);
+        title = NSLocalizedString(@"SUBSCRIPTIONS_SHEET_GENERIC", nil);
     }
+
     UIActionSheet *sheet = [[UIActionSheet alloc]initWithTitle:title
                                                       delegate:self
                                              cancelButtonTitle:nil
