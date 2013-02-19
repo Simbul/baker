@@ -221,7 +221,7 @@
             [_purchases setObject:[NSNumber numberWithBool:[purchasedIssues containsObject:obj]] forKey:obj];
         }];
     } else {
-        NSLog(@"ERROR: Could not parse response from purchases API call. Received: %@", jsonResponse);
+        NSLog(@"ERROR: Could not parse response from purchases API call (endpoint: %@). Received: %@", PURCHASES_URL, jsonResponse);
     }
 }
 
@@ -281,8 +281,10 @@
 
     if ([productId isEqualToString:FREE_SUBSCRIPTION_PRODUCT_ID] || [AUTO_RENEWABLE_SUBSCRIPTION_PRODUCT_IDS containsObject:productId]) {
         [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_subscription_purchased" object:self userInfo:userInfo];
-    } else {
+    } else if ([self productFor:productId]) {
         [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_issue_purchased" object:self userInfo:userInfo];
+    } else {
+        NSLog(@"ERROR: Completed transaction for %@, which is not a Product ID this app recognises", productId);
     }
 }
 
@@ -292,8 +294,10 @@
 
     if ([productId isEqualToString:FREE_SUBSCRIPTION_PRODUCT_ID] || [AUTO_RENEWABLE_SUBSCRIPTION_PRODUCT_IDS containsObject:productId]) {
         [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_subscription_restored" object:self userInfo:userInfo];
-    } else {
+    } else if ([self productFor:productId]) {
         [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_issue_restored" object:self userInfo:userInfo];
+    } else {
+        NSLog(@"ERROR: Trying to restore %@, which is not a Product ID this app recognises", productId);
     }
 }
 
