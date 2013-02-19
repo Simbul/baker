@@ -401,7 +401,16 @@
         } else {
             NSLog(@"Action sheet: %@", action);
             [self setSubscribeButtonEnabled:NO];
-            [purchasesManager purchase:action];
+            if (![purchasesManager purchase:action]){
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"SUBSCRIPTION_FAILED_TITLE", nil)
+                                                                message:nil
+                                                               delegate:nil
+                                                      cancelButtonTitle:NSLocalizedString(@"SUBSCRIPTION_FAILED_CLOSE", nil)
+                                                      otherButtonTitles:nil];
+                [alert show];
+                [alert release];
+                [self setSubscribeButtonEnabled:YES];
+            }
         }
     }
 }
