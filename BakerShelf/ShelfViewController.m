@@ -68,10 +68,10 @@
                              name:@"notification_subscription_failed"];
         [self addPurchaseObserver:@selector(handleSubscriptionRestored:)
                              name:@"notification_subscription_restored"];
-        [self addPurchaseObserver:@selector(handleRestoreFinished:)
-                             name:@"notification_restore_finished"];
         [self addPurchaseObserver:@selector(handleRestoreFailed:)
                              name:@"notification_restore_failed"];
+        [self addPurchaseObserver:@selector(handleMultipleRestores:)
+                             name:@"notification_multiple_restores"];
 
         [[SKPaymentQueue defaultQueue] addTransactionObserver:purchasesManager];
         #endif
@@ -420,10 +420,6 @@
     }
 }
 
-- (void)handleRestoreFinished:(NSNotification *)notification {
-    [self.blockingProgressView dismissWithClickedButtonIndex:0 animated:YES];
-}
-
 - (void)handleRestoreFailed:(NSNotification *)notification {
     NSError *error = [notification.userInfo objectForKey:@"error"];
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"RESTORE_FAILED_TITLE", nil)
@@ -436,6 +432,11 @@
 
     [self.blockingProgressView dismissWithClickedButtonIndex:0 animated:YES];
 
+}
+
+- (void)handleMultipleRestores:(NSNotification *)notification {
+    [self handleRefresh:nil];
+    [self.blockingProgressView dismissWithClickedButtonIndex:0 animated:YES];
 }
 
 // TODO: this can probably be removed

@@ -257,6 +257,7 @@
 - (void)paymentQueue:(SKPaymentQueue *)queue updatedTransactions:(NSArray *)transactions {
     NSLog(@"############ UPDATED TRANSACTIONS %@", transactions);
     
+    BOOL isRestoring = NO;
     for(SKPaymentTransaction *transaction in transactions) {
         switch (transaction.transactionState) {
             case SKPaymentTransactionStatePurchasing:
@@ -269,11 +270,16 @@
                 [self failedTransaction:transaction];
                 break;
             case SKPaymentTransactionStateRestored:
+                isRestoring = YES;
                 [self restoreTransaction:transaction];
                 break;
             default:
                 break;
         }
+    }
+
+    if (isRestoring) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_multiple_restores" object:self userInfo:nil];
     }
 }
 
