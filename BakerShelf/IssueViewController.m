@@ -605,7 +605,7 @@
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:notificationSelector
                                                  name:notificationName
-                                               object:self.issue];
+                                               object:nil];
     #endif
 }
 
