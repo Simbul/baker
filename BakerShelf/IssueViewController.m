@@ -529,8 +529,7 @@
     float bytesWritten = [[notification.userInfo objectForKey:@"totalBytesWritten"] floatValue];
     float bytesExpected = [[notification.userInfo objectForKey:@"expectedTotalBytes"] floatValue];
 
-    // TODO: use a better check (ideally check that status is "connecting" instead of relying on a UI property)
-    if (self.progressBar.hidden) {
+    if ([currentStatus isEqualToString:@"connecting"]) {
         self.issue.transientStatus = BakerIssueTransientStatusDownloading;
         [self refresh];
     }
