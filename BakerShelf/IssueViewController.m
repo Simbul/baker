@@ -474,6 +474,7 @@
         }
 
         self.issue.transientStatus = BakerIssueTransientStatusNone;
+        [purchasesManager retrievePurchasesFor:[NSSet setWithObject:self.issue.productID]];
         [self refresh];
     }
 }
