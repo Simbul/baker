@@ -533,6 +533,7 @@
     [self.progressBar setProgress:(bytesWritten / bytesExpected) animated:YES];
 }
 - (void)handleDownloadFinished:(NSNotification *)notification {
+    self.issue.transientStatus = BakerIssueTransientStatusNone;
     [self refresh];
 }
 - (void)handleDownloadError:(NSNotification *)notification {

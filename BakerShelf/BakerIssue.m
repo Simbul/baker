@@ -156,7 +156,6 @@
     #ifdef BAKER_NEWSSTAND
     [self unpackAssetDownload:connection.newsstandAssetDownload toURL:destinationURL];
 
-    self.transientStatus = BakerIssueTransientStatusNone;
     [[NSNotificationCenter defaultCenter] postNotificationName:notificationDownloadFinishedName object:self userInfo:nil];
 
     [self updateNewsstandIcon];
