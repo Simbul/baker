@@ -170,7 +170,7 @@
     [spinner release];
 
     NSMutableSet *subscriptions = [NSMutableSet setWithArray:AUTO_RENEWABLE_SUBSCRIPTION_PRODUCT_IDS];
-    if ([FREE_SUBSCRIPTION_PRODUCT_ID length] > 0) {
+    if ([FREE_SUBSCRIPTION_PRODUCT_ID length] > 0 && ![purchasesManager isPurchased:FREE_SUBSCRIPTION_PRODUCT_ID]) {
         [subscriptions addObject:FREE_SUBSCRIPTION_PRODUCT_ID];
     }
     [purchasesManager retrievePricesFor:subscriptions andEnableFailureNotifications:NO];
@@ -359,7 +359,7 @@
     NSMutableArray *actions = [NSMutableArray array];
 
     if (!purchasesManager.subscribed) {
-        if ([FREE_SUBSCRIPTION_PRODUCT_ID length] > 0) {
+        if ([FREE_SUBSCRIPTION_PRODUCT_ID length] > 0 && ![purchasesManager isPurchased:FREE_SUBSCRIPTION_PRODUCT_ID]) {
             [sheet addButtonWithTitle:NSLocalizedString(@"SUBSCRIPTIONS_SHEET_FREE", nil)];
             [actions addObject:FREE_SUBSCRIPTION_PRODUCT_ID];
         }
