@@ -48,8 +48,8 @@
         // ----------------------------------------------------------------------------------------------------
         // Mandatory - This constant defines where the JSON file containing all the publications is located.
         // For more information on this file, see: https://github.com/Simbul/baker/wiki/Newsstand-shelf-JSON
-        // E.g. @"http://example.com/books.json"
-        #define NEWSSTAND_MANIFEST_URL @""
+        // E.g. @"http://example.com/shelf.json"
+        #define NEWSSTAND_MANIFEST_URL @"http://bakerframework.com/demo/shelf.json"
 
         // ----------------------------------------------------------------------------------------------------
         // Mandatory - This constant identifies the subscription you set up in iTunesConnect.
