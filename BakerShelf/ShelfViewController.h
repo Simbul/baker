@@ -69,7 +69,6 @@
 #pragma mark - Shelf data source
 - (NSUInteger)numberOfItemsInGridView:(AQGridView *)aGridView;
 #ifdef BAKER_NEWSSTAND
-- (void)didReceiveRefreshAndDownloadNotification:(NSNotification *)notification;
 - (void)handleRefresh:(NSNotification *)notification;
 
 #pragma mark - Store Kit

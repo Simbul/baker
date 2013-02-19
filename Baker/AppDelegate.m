@@ -143,15 +143,8 @@
 {
     #ifdef BAKER_NEWSSTAND
     NSDictionary *aps = [userInfo objectForKey:@"aps"];
-    if (aps) {
-        NSString *contentAvailable = [aps objectForKey:@"content-available"];
-        NSString *contentName = [aps objectForKey:@"content-name"];
-
-        if (contentAvailable && contentName && [contentAvailable caseInsensitiveCompare:@"1"] == NSOrderedSame) {
-            [[NSNotificationCenter defaultCenter] postNotificationName:[NSString stringWithFormat:@"notification_shelf_refresh_and_download"]
-                                                                object:nil
-                                                              userInfo:[NSDictionary dictionaryWithObject:contentName forKey:@"content-name"]];
-        }
+    if (aps && [aps objectForKey:@"content-available"]) {
+        [self applicationWillHandleNewsstandNotificationOfContent:[userInfo objectForKey:@"content-name"]];
     }
     #endif
 }

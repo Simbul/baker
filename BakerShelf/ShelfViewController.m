@@ -74,10 +74,6 @@
                              name:@"notification_restore_failed"];
 
         [[SKPaymentQueue defaultQueue] addTransactionObserver:purchasesManager];
-
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveRefreshAndDownloadNotification:)
-                                                     name:@"notification_refresh_and_download"
-                                                   object:nil];
         #endif
 
         issuesManager = [[IssuesManager sharedInstance] retain];
@@ -292,19 +288,6 @@
 }
 
 #ifdef BAKER_NEWSSTAND
--(void)didReceiveRefreshAndDownloadNotification:(NSNotification *)notification {
-    [self handleRefresh:nil];
-
-    NSString *contentName = [notification.userInfo objectForKey:@"content-name"];
-    if (contentName) {
-        for (IssueViewController *controller in issueViewControllers) {
-            if ([controller.issue.ID isEqualToString:contentName]) {
-                [controller download];
-                break;
-            }
-        }
-    }
-}
 - (void)handleRefresh:(NSNotification *)notification {
     [self setrefreshButtonEnabled:NO];
 
