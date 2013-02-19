@@ -75,29 +75,18 @@
     NSDictionary *payload = [launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
     if (payload) {
         NSDictionary *aps = [payload objectForKey:@"aps"];
-        if (aps) {
-            NSString *contentAvailable = [aps objectForKey:@"content-available"];
-            NSString *contentName = [aps objectForKey:@"content-name"];
+        if (aps && [aps objectForKey:@"content-available"]) {
 
-            if (contentAvailable && contentName && [contentAvailable caseInsensitiveCompare:@"1"] == NSOrderedSame) {
-
-                __block UIBackgroundTaskIdentifier backgroundTask = [application beginBackgroundTaskWithExpirationHandler:^{
-                    backgroundTask = UIBackgroundTaskInvalid;
-                }];
-
-                IssuesManager *issuesManager = [[[IssuesManager alloc] initWithURL:NEWSSTAND_MANIFEST_URL] autorelease];
-                [issuesManager refresh];
-
-                for (BakerIssue *issue in issuesManager.issues) {
-                    if ([issue.ID isEqualToString:contentName]) {
-                        IssueViewController *issueViewController = [[[IssueViewController alloc] initWithBakerIssue:issue] autorelease];
-                        [issue downloadWithDelegate:issueViewController];
-                        break;
-                    }
-                }
-
+            __block UIBackgroundTaskIdentifier backgroundTask = [application beginBackgroundTaskWithExpirationHandler:^{
                 [application endBackgroundTask:backgroundTask];
-            }
+                backgroundTask = UIBackgroundTaskInvalid;
+            }];
+
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+                [self applicationWillHandleNewsstandNotificationOfContent:[payload objectForKey:@"content-name"]];
+                [application endBackgroundTask:backgroundTask];
+                backgroundTask = UIBackgroundTaskInvalid;
+            });
         }
     }
 
