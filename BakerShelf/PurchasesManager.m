@@ -175,7 +175,7 @@
 
 - (BOOL)recordTransaction:(SKPaymentTransaction *)transaction {
     [[NSUserDefaults standardUserDefaults] setObject:transaction.transactionIdentifier forKey:@"receipt"];
-    
+
     if ([PURCHASE_CONFIRMATION_URL length] > 0) {
         NSError *error = nil;
 
@@ -206,22 +206,24 @@
 }
 
 - (void)retrievePurchasesFor:(NSSet *)productIDs {
-    NSError *error;
+    if ([PURCHASES_URL length] > 0) {
+        NSError *error;
 
-    NSData *data = [self postToURL:[NSURL URLWithString:PURCHASES_URL] error:&error];
-    NSString *jsonResponse = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+        NSData *data = [self postToURL:[NSURL URLWithString:PURCHASES_URL] error:&error];
+        NSString *jsonResponse = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
 
-    NSDictionary *purchasesResponse = [jsonResponse objectFromJSONString];
+        NSDictionary *purchasesResponse = [jsonResponse objectFromJSONString];
 
-    if (purchasesResponse) {
-        NSArray *purchasedIssues = [purchasesResponse objectForKey:@"issues"];
-        self.subscribed = [[purchasesResponse objectForKey:@"subscribed"] boolValue];
+        if (purchasesResponse) {
+            NSArray *purchasedIssues = [purchasesResponse objectForKey:@"issues"];
+            self.subscribed = [[purchasesResponse objectForKey:@"subscribed"] boolValue];
 
-        [productIDs enumerateObjectsUsingBlock:^(id obj, BOOL *stop) {
-            [_purchases setObject:[NSNumber numberWithBool:[purchasedIssues containsObject:obj]] forKey:obj];
-        }];
-    } else {
-        NSLog(@"ERROR: Could not parse response from purchases API call (endpoint: %@). Received: %@", PURCHASES_URL, jsonResponse);
+            [productIDs enumerateObjectsUsingBlock:^(id obj, BOOL *stop) {
+                [_purchases setObject:[NSNumber numberWithBool:[purchasedIssues containsObject:obj]] forKey:obj];
+            }];
+        } else {
+            NSLog(@"ERROR: Could not parse response from purchases API call (endpoint: %@). Received: %@", PURCHASES_URL, jsonResponse);
+        }
     }
 }
 
