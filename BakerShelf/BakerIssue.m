@@ -96,7 +96,9 @@
         self.date = [issueData objectForKey:@"date"];
         self.coverURL = [NSURL URLWithString:[issueData objectForKey:@"cover"]];
         self.url = [NSURL URLWithString:[issueData objectForKey:@"url"]];
-        self.productID = [issueData objectForKey:@"product_id"];
+        if ([issueData objectForKey:@"product_id"] != [NSNull null]) {
+            self.productID = [issueData objectForKey:@"product_id"];
+        }
         self.price = nil;
 
         purchasesManager = [PurchasesManager sharedInstance];
