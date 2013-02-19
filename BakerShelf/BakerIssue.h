@@ -70,7 +70,7 @@ typedef enum transientStates {
 
 @property (retain, nonatomic) BakerBook *bakerBook;
 
-@property (nonatomic, assign) BakerIssueTransientStatus transientStatus;
+@property (assign, nonatomic) BakerIssueTransientStatus transientStatus;
 
 @property (copy, nonatomic) NSString *notificationDownloadStartedName;
 @property (copy, nonatomic) NSString *notificationDownloadProgressingName;

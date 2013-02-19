@@ -46,6 +46,7 @@
 @synthesize coverURL;
 @synthesize productID;
 @synthesize price;
+@synthesize transientStatus;
 
 @synthesize notificationDownloadStartedName;
 @synthesize notificationDownloadProgressingName;
