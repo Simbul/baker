@@ -417,9 +417,7 @@
     }
 }
 #ifdef BAKER_NEWSSTAND
-- (void)download
-{
-    [self refresh:@"connecting"];
+- (void)download {
     [self.issue download];
 }
 - (void)buy {
