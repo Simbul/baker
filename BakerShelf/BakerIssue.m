@@ -47,6 +47,7 @@
 @synthesize productID;
 @synthesize price;
 
+@synthesize notificationDownloadStartedName;
 @synthesize notificationDownloadProgressingName;
 @synthesize notificationDownloadFinishedName;
 @synthesize notificationDownloadErrorName;
@@ -81,9 +82,10 @@
 }
 
 - (void)setNotificationDownloadNames {
-    notificationDownloadProgressingName = [[NSString stringWithFormat:@"notification_download_progressing_%@", self.ID] retain];
-    notificationDownloadFinishedName = [[NSString stringWithFormat:@"notification_download_finished_%@", self.ID] retain];
-    notificationDownloadErrorName = [[NSString stringWithFormat:@"notification_download_error_%@", self.ID] retain];
+    self.notificationDownloadStartedName = [NSString stringWithFormat:@"notification_download_started_%@", self.ID];
+    self.notificationDownloadProgressingName = [NSString stringWithFormat:@"notification_download_progressing_%@", self.ID];
+    self.notificationDownloadFinishedName = [NSString stringWithFormat:@"notification_download_finished_%@", self.ID];
+    self.notificationDownloadErrorName = [NSString stringWithFormat:@"notification_download_error_%@", self.ID];
 }
 
 #ifdef BAKER_NEWSSTAND
@@ -140,6 +142,7 @@
 }
 - (void)downloadWithAsset:(NKAssetDownload *)asset {
     [asset downloadWithDelegate:self];
+    [[NSNotificationCenter defaultCenter] postNotificationName:notificationDownloadStartedName object:self userInfo:nil];
 }
 
 #pragma mark - Newsstand download management
