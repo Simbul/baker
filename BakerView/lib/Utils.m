@@ -98,4 +98,17 @@
     return shouldBePaged;
 }
 
++ (NSDate *)dateWithFormattedString:(NSString *)string {
+    static NSDateFormatter *dateFormat = nil;
+    if (dateFormat == nil) {
+        NSLog(@"alloc a new date formatter");
+        dateFormat = [[NSDateFormatter alloc] init];
+        NSLocale *enUSPOSIXLocale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"];
+        [dateFormat setLocale:enUSPOSIXLocale];
+        [dateFormat setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+        [dateFormat setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
+    }
+    return [dateFormat dateFromString:string];
+}
+
 @end
