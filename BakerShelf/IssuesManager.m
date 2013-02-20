@@ -85,7 +85,10 @@
 
         // Issues are sorted from the most recent to the least recent
         NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
+        NSLocale *enUSPOSIXLocale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"];
+        [dateFormat setLocale:enUSPOSIXLocale];
         [dateFormat setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+        [dateFormat setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
         self.issues = [tmpIssues sortedArrayUsingComparator:^NSComparisonResult(id a, id b) {
             NSDate *first = [dateFormat dateFromString:[(BakerIssue*)a date]];
             NSDate *second = [dateFormat dateFromString:[(BakerIssue*)b date]];
@@ -141,7 +144,10 @@
 
     for (NSDictionary *issue in issuesList) {
         NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
+        NSLocale *enUSPOSIXLocale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"];
+        [dateFormat setLocale:enUSPOSIXLocale];
         [dateFormat setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+        [dateFormat setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
         NSDate *date = [dateFormat dateFromString:[issue objectForKey:@"date"]];
         NSString *name = [issue objectForKey:@"name"];
 
