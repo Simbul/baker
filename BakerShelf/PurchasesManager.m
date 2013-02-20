@@ -36,6 +36,7 @@
 #import "NSMutableURLRequest+WebServiceClient.h"
 #import "NSString+UUID.h"
 #import "Utils.h"
+#import "NSURL+Extensions.h"
 
 #ifdef BAKER_NEWSSTAND
 @implementation PurchasesManager
@@ -209,20 +210,31 @@
     if ([PURCHASES_URL length] > 0) {
         NSError *error;
 
-        NSData *data = [self postToURL:[NSURL URLWithString:PURCHASES_URL] error:&error];
-        NSString *jsonResponse = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+        NSString *queryString = [NSString stringWithFormat:@"app_id=%@&user_id=%@", [Utils appID], [PurchasesManager UUID]];
+        NSURL *shelfURL = [[NSURL URLWithString:PURCHASES_URL] URLByAppendingQueryString:queryString];
 
-        NSDictionary *purchasesResponse = [jsonResponse objectFromJSONString];
+        NSURLResponse *response = nil;
+        NSURLRequest *request = [NSURLRequest requestWithURL:shelfURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:REQUEST_TIMEOUT];
 
-        if (purchasesResponse) {
-            NSArray *purchasedIssues = [purchasesResponse objectForKey:@"issues"];
-            self.subscribed = [[purchasesResponse objectForKey:@"subscribed"] boolValue];
+        NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
 
-            [productIDs enumerateObjectsUsingBlock:^(id obj, BOOL *stop) {
-                [_purchases setObject:[NSNumber numberWithBool:[purchasedIssues containsObject:obj]] forKey:obj];
-            }];
+        if (error) {
+            NSLog(@"ERROR: Cannot connect to %@: %@", PURCHASES_URL, [error localizedDescription]);
         } else {
-            NSLog(@"ERROR: Could not parse response from purchases API call (endpoint: %@). Received: %@", PURCHASES_URL, jsonResponse);
+            NSString *jsonResponse = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+
+            NSDictionary *purchasesResponse = [jsonResponse objectFromJSONString];
+
+            if (purchasesResponse) {
+                NSArray *purchasedIssues = [purchasesResponse objectForKey:@"issues"];
+                self.subscribed = [[purchasesResponse objectForKey:@"subscribed"] boolValue];
+
+                [productIDs enumerateObjectsUsingBlock:^(id obj, BOOL *stop) {
+                    [_purchases setObject:[NSNumber numberWithBool:[purchasedIssues containsObject:obj]] forKey:obj];
+                }];
+            } else {
+                NSLog(@"ERROR: Could not parse response from purchases API call (endpoint: %@). Received: %@", PURCHASES_URL, jsonResponse);
+            }
         }
     }
 }
