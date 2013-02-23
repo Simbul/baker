@@ -1195,7 +1195,7 @@
                             NSString *newURL = [replacerRegexp stringByReplacingMatchesInString:oldURL options:0 range:NSMakeRange(0, [oldURL length]) withTemplate:@""];
 
                             NSLog(@"    Opening with updated URL: %@", newURL);
-                            [self loadModalWebView:url];
+                            [self loadModalWebView:[NSURL URLWithString:newURL]];
 
                             return NO;
                         }
