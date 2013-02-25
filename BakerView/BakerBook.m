@@ -124,7 +124,7 @@
 }
 - (NSString *)sanitizeForPath:(NSString *)string
 {
-    NSError *error;
+    NSError *error = nil;
     NSString *newString;
     NSRegularExpression *regex;
 

@@ -208,7 +208,7 @@
 
 - (void)retrievePurchasesFor:(NSSet *)productIDs {
     if ([PURCHASES_URL length] > 0) {
-        NSError *error;
+        NSError *error = nil;
 
         NSString *queryString = [NSString stringWithFormat:@"app_id=%@&user_id=%@", [Utils appID], [PurchasesManager UUID]];
         NSURL *shelfURL = [[NSURL URLWithString:PURCHASES_URL] URLByAppendingQueryString:queryString];

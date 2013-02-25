@@ -175,7 +175,7 @@
 
     NSLog(@"Removing temporary downloaded file %@", [destinationURL path]);
     NSFileManager *fileMgr = [NSFileManager defaultManager];
-    NSError *error;
+    NSError *error = nil;
     if ([fileMgr removeItemAtPath:[destinationURL path] error:&error] != YES){
         NSLog(@"Unable to delete file: %@", [error localizedDescription]);
     }
