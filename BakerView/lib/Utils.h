@@ -48,5 +48,6 @@
 + (void)addSkipBackupAttributeToItemAtPath:(NSString *)path;
 + (BOOL)webViewShouldBePaged:(UIWebView*)webView;
 + (NSString *)appID;
++ (NSDate *)dateWithFormattedString:(NSString *)string;
 
 @end

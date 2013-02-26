@@ -84,15 +84,11 @@
             [tmpIssues addObject:issue];
         }];
 
-        // Issues are sorted from the most recent to the least recent
-        NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
-        [dateFormat setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
         self.issues = [tmpIssues sortedArrayUsingComparator:^NSComparisonResult(id a, id b) {
-            NSDate *first = [dateFormat dateFromString:[(BakerIssue*)a date]];
-            NSDate *second = [dateFormat dateFromString:[(BakerIssue*)b date]];
+            NSDate *first = [Utils dateWithFormattedString:[(BakerIssue*)a date]];
+            NSDate *second = [Utils dateWithFormattedString:[(BakerIssue*)b date]];
             return [second compare:first];
         }];
-        [dateFormat release];
 
         return YES;
     } else {
@@ -144,9 +140,7 @@
     NKLibrary *nkLib = [NKLibrary sharedLibrary];
 
     for (NSDictionary *issue in issuesList) {
-        NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
-        [dateFormat setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
-        NSDate *date = [dateFormat dateFromString:[issue objectForKey:@"date"]];
+        NSDate *date = [Utils dateWithFormattedString:[issue objectForKey:@"date"]];
         NSString *name = [issue objectForKey:@"name"];
 
         NKIssue *nkIssue = [nkLib issueWithName:name];
@@ -159,7 +153,6 @@
             }
 
         }
-        [dateFormat release];
     }
 }
 
