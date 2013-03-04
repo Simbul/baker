@@ -72,6 +72,7 @@
     BOOL currentPageHasChanged;
     BOOL currentPageIsLocked;
     BOOL currentPageWillAppearUnderModal;
+    BOOL currentPageWillAppearAfterMailto;
 
     BOOL userIsScrolling;
     BOOL shouldPropagateInterceptedTouch;

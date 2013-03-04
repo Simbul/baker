@@ -170,6 +170,12 @@
         backgroundPathPortrait  = [book.path stringByAppendingPathComponent:backgroundPathPortrait];
         backgroundImagePortrait = [[UIImage imageWithContentsOfFile:backgroundPathPortrait] retain];
     }
+    
+    // ****** LISTENER FOR INTERCEPTOR WINDOW NOTIFICATION
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleInterceptedTouch:) name:@"notification_touch_intercepted" object:nil];
+    
+    // ****** LISTENER FOR CLOSING APPLICATION
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleApplicationWillResignActive:) name:@"applicationWillResignActiveNotification" object:nil];
 }
 - (void)viewWillAppear:(BOOL)animated {
 
@@ -178,14 +184,6 @@
         [super viewWillAppear:animated];
         [self.navigationController.navigationBar setTranslucent:YES];
 
-        // Prevent duplicate observers
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:@"notification_touch_intercepted" object:nil];
-
-        // ****** LISTENER FOR INTERCEPTOR WINDOW NOTIFICATION
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleInterceptedTouch:) name:@"notification_touch_intercepted" object:nil];
-
-        // ****** LISTENER FOR CLOSING APPLICATION
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleApplicationWillResignActive:) name:@"applicationWillResignActiveNotification" object:nil];
     }
 }
 - (void)handleApplicationWillResignActive:(NSNotification *)notification {
@@ -1125,6 +1123,7 @@
                             [self presentModalViewController:mailer animated:YES];
                         }
                         [mailer release];
+                        currentPageWillAppearAfterMailto = YES;
                     }
                     else
                     {
@@ -1284,19 +1283,26 @@
         // If is the first time i load something in the currPage web view...
         if (currentPageFirstLoading)
         {
-            // ... check if there is a saved starting scroll index and set it
-            NSLog(@"   Handle last scroll index if necessary");
-            NSString *currPageScrollIndex = bookStatus.scrollIndex;
-            if (currPageScrollIndex != nil) {
-                [self scrollDownCurrentPage:[currPageScrollIndex intValue] animating:YES];
-            }
+            [self restoreScrollIndex];
             currentPageFirstLoading = NO;
         }
         else
         {
             NSLog(@"   Handle saved hash reference if necessary");
             [self handleAnchor:YES];
+            if (currentPageWillAppearAfterMailto) {
+                [self restoreScrollIndex];
+                currentPageWillAppearAfterMailto = NO;
+            }
         }
+    }
+}
+- (void)restoreScrollIndex {
+    // ... check if there is a saved starting scroll index and set it
+    NSLog(@"   Handle last scroll index if necessary");
+    NSString *currPageScrollIndex = bookStatus.scrollIndex;
+    if (currPageScrollIndex != nil) {
+        [self scrollDownCurrentPage:[currPageScrollIndex intValue] animating:YES];
     }
 }
 - (void)webView:(UIWebView *)webView dispatchHTMLEvent:(NSString *)event {
@@ -1837,6 +1843,9 @@
 }
 - (void)dealloc {
 
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"notification_touch_intercepted" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"applicationWillResignActiveNotification" object:nil];
+    
     [supportedOrientation release];
 
     [cachedScreenshotsPath release];
