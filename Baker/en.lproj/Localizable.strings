@@ -15,6 +15,10 @@
 "SUBSCRIPTIONS_SHEET_RESTORE" = "Restore purchases";
 "SUBSCRIPTIONS_SHEET_CLOSE" = "Close";
 
+"SUBSCRIPTIONS_SHEET_GENERIC" = "Subscription options";
+"SUBSCRIPTIONS_SHEET_SUBSCRIBED" = "You are subscribed";
+"SUBSCRIPTIONS_SHEET_NOT_SUBSCRIBED" = "You are not subscribed";
+
 // Subscription alerts
 "SUBSCRIPTION_SUCCESSFUL_TITLE" = "Subscribed successfully";
 "SUBSCRIPTION_SUCCESSFUL_MESSAGE" = "You have successfully subscribed";
@@ -68,3 +72,13 @@
 // Modal web view
 "WEB_MODAL_FAILURE_MESSAGE" = "Unable to connect.";
 "WEB_MODAL_CLOSE_BUTTON_TEXT" = "Back";
+
+// Transaction recording alert
+"TRANSACTION_RECORDING_FAILED_TITLE" = "Could not confirm purchase with remote server";
+"TRANSACTION_RECORDING_FAILED_MESSAGE" = "The operation will be retried until it is successful";
+"TRANSACTION_RECORDING_FAILED_CLOSE" = "Close";
+
+// Subscriptions
+// (These are just examples: you'll need to provide your own product IDs and names)
+//"com.example.MyBook.subscription.3months" = "3 Months Subscription";
+//"com.example.MyBook.subscription.6months" = "Half Year Subscription";

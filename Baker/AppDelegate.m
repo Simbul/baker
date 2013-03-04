@@ -35,6 +35,7 @@
 #import "UICustomNavigationController.h"
 #import "UICustomNavigationBar.h"
 #import "IssuesManager.h"
+#import "PurchasesManager.h"
 
 #import "BakerViewController.h"
 
@@ -70,7 +71,9 @@
 
     #ifdef BAKER_NEWSSTAND
 
-    NSLog(@"====== Newsstand is enabled ======");
+    NSLog(@"====== Newsstand is enabled ======");    
+    [PurchasesManager generateUUIDOnce];
+
     // Check if the app is runnig in response to a notification
     NSDictionary *payload = [launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
     if (payload) {

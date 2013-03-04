@@ -123,6 +123,7 @@
 
         userIsScrolling = NO;
         shouldPropagateInterceptedTouch = YES;
+        shouldForceOrientationUpdate = YES;
 
         webViewBackground = nil;
 
@@ -177,6 +178,9 @@
         [super viewWillAppear:animated];
         [self.navigationController.navigationBar setTranslucent:YES];
 
+        // Prevent duplicate observers
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:@"notification_touch_intercepted" object:nil];
+
         // ****** LISTENER FOR INTERCEPTOR WINDOW NOTIFICATION
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleInterceptedTouch:) name:@"notification_touch_intercepted" object:nil];
 
@@ -194,6 +198,7 @@
 
         [super viewDidAppear:animated];
 
+        [self forceOrientationUpdate];
         [self willRotateToInterfaceOrientation:self.interfaceOrientation duration:0];
         [self performSelector:@selector(hideBars:) withObject:[NSNumber numberWithBool:YES] afterDelay:0.5];
 
@@ -1771,6 +1776,32 @@
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
     [indexViewController rotateFromOrientation:fromInterfaceOrientation toOrientation:self.interfaceOrientation];
     [self setCurrentPageHeight];
+}
+
+- (void)forceOrientationUpdate {
+    
+    if (shouldForceOrientationUpdate) {
+        
+        // We need to run this only once to prevent looping in -viewWillAppear
+        shouldForceOrientationUpdate = NO;
+
+        UIInterfaceOrientation interfaceOrientation = [[UIApplication sharedApplication] statusBarOrientation];
+        
+        if ( (UIInterfaceOrientationIsLandscape(interfaceOrientation) && [book.orientation isEqualToString:@"landscape"])
+            ||
+            (UIInterfaceOrientationIsPortrait(interfaceOrientation) && [book.orientation isEqualToString:@"portrait"]) ) {
+            
+            NSLog(@"Device and book orientations are in sync");
+            
+        } else {
+            
+            NSLog(@"Device and book orientations are out of sync, force orientation update");
+            
+            // Present and dismiss a vanilla view controller to trigger the orientation update
+            [self presentViewController:[UIViewController new] animated:NO completion:^{ [self dismissViewControllerAnimated:NO completion:nil]; }];
+            
+        }
+    }
 }
 
 #pragma mark - MEMORY

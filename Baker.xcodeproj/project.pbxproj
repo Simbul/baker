@@ -38,6 +38,7 @@
 		9FF795A215B4C4F600899E51 /* UIColor+AQGridView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF7959615B4C4F600899E51 /* UIColor+AQGridView.m */; };
 		9FF795A715B4C57E00899E51 /* ShelfViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF795A615B4C57E00899E51 /* ShelfViewController.m */; };
 		AB2317D4169F808000BE3BE7 /* PurchasesManager.m in Sources */ = {isa = PBXBuildFile; fileRef = AB2317D3169F808000BE3BE7 /* PurchasesManager.m */; };
+		AB246A3116C5BC6E00715E25 /* NSMutableURLRequest+WebServiceClient.m in Sources */ = {isa = PBXBuildFile; fileRef = AB246A3016C5BC6E00715E25 /* NSMutableURLRequest+WebServiceClient.m */; };
 		AB26005116011D9D00E9AA66 /* BakerBookStatus.m in Sources */ = {isa = PBXBuildFile; fileRef = AB26005016011D9D00E9AA66 /* BakerBookStatus.m */; };
 		AB40045315B4B83000D87E2A /* BakerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40042B15B4B83000D87E2A /* BakerViewController.m */; };
 		AB40045715B4B83000D87E2A /* back.png in Resources */ = {isa = PBXBuildFile; fileRef = AB40042F15B4B83000D87E2A /* back.png */; };
@@ -62,11 +63,13 @@
 		AB5CEB5A161E4081008B4943 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = AB5CEB59161E4081008B4943 /* Default-568h@2x.png */; };
 		AB5D48D01609178900828D16 /* NewsstandKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB5D48CD1609176A00828D16 /* NewsstandKit.framework */; };
 		ABABF1A81646C06100A75E67 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABABF1A51646C04D00A75E67 /* StoreKit.framework */; };
+		ABADF3F916C7BAD900F52F3C /* NSURL+Extensions.m in Sources */ = {isa = PBXBuildFile; fileRef = ABADF3F816C7BAD900F52F3C /* NSURL+Extensions.m */; };
 		ABAFB58C15AB9A2E002FA498 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABAFB58B15AB9A2E002FA498 /* UIKit.framework */; };
 		ABAFB58E15AB9A2E002FA498 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABAFB58D15AB9A2E002FA498 /* Foundation.framework */; };
 		ABAFB59015AB9A2E002FA498 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABAFB58F15AB9A2E002FA498 /* CoreGraphics.framework */; };
 		ABAFB59815AB9A2E002FA498 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = ABAFB59715AB9A2E002FA498 /* main.m */; };
 		ABAFB59C15AB9A2E002FA498 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = ABAFB59B15AB9A2E002FA498 /* AppDelegate.m */; };
+		ABBFD8F216C6614300BA64A4 /* NSString+UUID.m in Sources */ = {isa = PBXBuildFile; fileRef = ABBFD8F116C6614300BA64A4 /* NSString+UUID.m */; };
 		ABC270D11616F3CB00AD97E9 /* IssuesManager.m in Sources */ = {isa = PBXBuildFile; fileRef = ABC270D01616F3CB00AD97E9 /* IssuesManager.m */; };
 		ABD245531639E3650080F056 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABD245521639E3650080F056 /* AVFoundation.framework */; };
 		ABD24C1E1620309B0042E49C /* IssueViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = ABD24C1D1620309B0042E49C /* IssueViewController.m */; };
@@ -132,6 +135,8 @@
 		9FF795A615B4C57E00899E51 /* ShelfViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShelfViewController.m; sourceTree = "<group>"; };
 		AB2317D2169F808000BE3BE7 /* PurchasesManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PurchasesManager.h; sourceTree = "<group>"; };
 		AB2317D3169F808000BE3BE7 /* PurchasesManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PurchasesManager.m; sourceTree = "<group>"; };
+		AB246A2F16C5BC6E00715E25 /* NSMutableURLRequest+WebServiceClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMutableURLRequest+WebServiceClient.h"; sourceTree = "<group>"; };
+		AB246A3016C5BC6E00715E25 /* NSMutableURLRequest+WebServiceClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableURLRequest+WebServiceClient.m"; sourceTree = "<group>"; };
 		AB26004F16011D9D00E9AA66 /* BakerBookStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BakerBookStatus.h; sourceTree = "<group>"; };
 		AB26005016011D9D00E9AA66 /* BakerBookStatus.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BakerBookStatus.m; sourceTree = "<group>"; };
 		AB3496BB1661472A00AEB508 /* UIConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UIConstants.h; sourceTree = "<group>"; };
@@ -175,6 +180,8 @@
 		AB5D48CD1609176A00828D16 /* NewsstandKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NewsstandKit.framework; path = System/Library/Frameworks/NewsstandKit.framework; sourceTree = SDKROOT; };
 		ABABF1A51646C04D00A75E67 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		ABAFB58715AB9A2E002FA498 /* Baker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Baker.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		ABADF3F716C7BAD900F52F3C /* NSURL+Extensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+Extensions.h"; sourceTree = "<group>"; };
+		ABADF3F816C7BAD900F52F3C /* NSURL+Extensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+Extensions.m"; sourceTree = "<group>"; };
 		ABAFB58B15AB9A2E002FA498 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		ABAFB58D15AB9A2E002FA498 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		ABAFB58F15AB9A2E002FA498 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -183,6 +190,8 @@
 		ABAFB59915AB9A2E002FA498 /* Baker-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Baker-Prefix.pch"; sourceTree = "<group>"; };
 		ABAFB59A15AB9A2E002FA498 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		ABAFB59B15AB9A2E002FA498 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		ABBFD8F016C6614300BA64A4 /* NSString+UUID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+UUID.h"; sourceTree = "<group>"; };
+		ABBFD8F116C6614300BA64A4 /* NSString+UUID.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+UUID.m"; sourceTree = "<group>"; };
 		ABC270CF1616F3CB00AD97E9 /* IssuesManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IssuesManager.h; sourceTree = "<group>"; };
 		ABC270D01616F3CB00AD97E9 /* IssuesManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IssuesManager.m; sourceTree = "<group>"; };
 		ABD245521639E3650080F056 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
@@ -251,6 +260,12 @@
 				9F5EB3BC15FCA3A100E13796 /* NSString+Extensions.m */,
 				9FAB40D8162B13CF0088E9C1 /* UIColor+Extensions.h */,
 				9FAB40D9162B13CF0088E9C1 /* UIColor+Extensions.m */,
+				AB246A2F16C5BC6E00715E25 /* NSMutableURLRequest+WebServiceClient.h */,
+				AB246A3016C5BC6E00715E25 /* NSMutableURLRequest+WebServiceClient.m */,
+				ABBFD8F016C6614300BA64A4 /* NSString+UUID.h */,
+				ABBFD8F116C6614300BA64A4 /* NSString+UUID.m */,
+				ABADF3F716C7BAD900F52F3C /* NSURL+Extensions.h */,
+				ABADF3F816C7BAD900F52F3C /* NSURL+Extensions.m */,
 			);
 			path = lib;
 			sourceTree = "<group>";
@@ -589,6 +604,9 @@
 				AB2317D4169F808000BE3BE7 /* PurchasesManager.m in Sources */,
 				ABDC05AF16A4C42A00F6B63D /* JSONStatus.m in Sources */,
 				ABDC05B216A4CB3900F6B63D /* ShelfStatus.m in Sources */,
+				AB246A3116C5BC6E00715E25 /* NSMutableURLRequest+WebServiceClient.m in Sources */,
+				ABBFD8F216C6614300BA64A4 /* NSString+UUID.m in Sources */,
+				ABADF3F916C7BAD900F52F3C /* NSURL+Extensions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

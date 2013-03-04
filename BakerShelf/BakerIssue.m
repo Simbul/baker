@@ -99,7 +99,9 @@
         self.date = [issueData objectForKey:@"date"];
         self.coverURL = [NSURL URLWithString:[issueData objectForKey:@"cover"]];
         self.url = [NSURL URLWithString:[issueData objectForKey:@"url"]];
-        self.productID = [issueData objectForKey:@"product_id"];
+        if ([issueData objectForKey:@"product_id"] != [NSNull null]) {
+            self.productID = [issueData objectForKey:@"product_id"];
+        }
         self.price = nil;
 
         purchasesManager = [PurchasesManager sharedInstance];
@@ -247,7 +249,7 @@
     NKIssue *nkIssue = [nkLib issueWithName:self.ID];
     NSString *nkIssueStatus = [self nkIssueContentStatusToString:[nkIssue status]];
     if ([nkIssueStatus isEqualToString:@"remote"] && self.productID) {
-        if ([purchasesManager isMarkedAsPurchased:self.productID]) {
+        if ([purchasesManager isPurchased:self.productID]) {
             return @"purchased";
         } else if (self.price) {
             return @"purchasable";

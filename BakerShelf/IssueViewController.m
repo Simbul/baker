@@ -444,25 +444,36 @@
     SKPaymentTransaction *transaction = [notification.userInfo objectForKey:@"transaction"];
 
     if ([transaction.payment.productIdentifier isEqualToString:issue.productID]) {
-        if (!transaction.originalTransaction) {
-            // Do not show alert on restoring a transaction
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"ISSUE_PURCHASE_SUCCESSFUL_TITLE", nil)
-                                                            message:[NSString stringWithFormat:
-                                                                     NSLocalizedString(@"ISSUE_PURCHASE_SUCCESSFUL_MESSAGE", nil), self.issue.title]
-                                                           delegate:nil
-                                                  cancelButtonTitle:NSLocalizedString(@"ISSUE_PURCHASE_SUCCESSFUL_CLOSE", nil)
-                                                  otherButtonTitles:nil];
-            [alert show];
-            [alert release];
-        }
 
         [self removePurchaseObserver:@"notification_issue_purchased"];
         [self removePurchaseObserver:@"notification_issue_purchase_failed"];
 
         [purchasesManager markAsPurchased:transaction.payment.productIdentifier];
-        [purchasesManager finishTransaction:transaction];
+
+        if ([purchasesManager finishTransaction:transaction]) {
+            if (!transaction.originalTransaction) {
+                // Do not show alert on restoring a transaction
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"ISSUE_PURCHASE_SUCCESSFUL_TITLE", nil)
+                                                                message:[NSString stringWithFormat:
+                                                                         NSLocalizedString(@"ISSUE_PURCHASE_SUCCESSFUL_MESSAGE", nil), self.issue.title]
+                                                               delegate:nil
+                                                      cancelButtonTitle:NSLocalizedString(@"ISSUE_PURCHASE_SUCCESSFUL_CLOSE", nil)
+                                                      otherButtonTitles:nil];
+                [alert show];
+                [alert release];
+            }
+        } else {
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"TRANSACTION_RECORDING_FAILED_TITLE", nil)
+                                                            message:NSLocalizedString(@"TRANSACTION_RECORDING_FAILED_MESSAGE", nil)
+                                                           delegate:nil
+                                                  cancelButtonTitle:NSLocalizedString(@"TRANSACTION_RECORDING_FAILED_CLOSE", nil)
+                                                  otherButtonTitles:nil];
+            [alert show];
+            [alert release];
+        }
 
         self.issue.transientStatus = BakerIssueTransientStatusNone;
+        [purchasesManager retrievePurchasesFor:[NSSet setWithObject:self.issue.productID]];
         [self refresh];
     }
 }
@@ -494,7 +505,10 @@
 
     if ([transaction.payment.productIdentifier isEqualToString:issue.productID]) {
         [purchasesManager markAsPurchased:transaction.payment.productIdentifier];
-        [purchasesManager finishTransaction:transaction];
+
+        if (![purchasesManager finishTransaction:transaction]) {
+            NSLog(@"Could not confirm purchase restore with remote server for %@", transaction.payment.productIdentifier);
+        }
 
         self.issue.transientStatus = BakerIssueTransientStatusNone;
         [self refresh];
