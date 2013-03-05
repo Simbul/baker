@@ -1118,6 +1118,9 @@
                             // iOS 4
                             [self presentModalViewController:mailer animated:YES];
                         }
+
+                        currentPageWillAppearUnderModal = YES;
+
                         [mailer release];
                     }
                     else
