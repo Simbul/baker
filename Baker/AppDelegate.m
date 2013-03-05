@@ -142,6 +142,7 @@
 }
 - (void)applicationWillHandleNewsstandNotificationOfContent:(NSString *)contentName
 {
+    #ifdef BAKER_NEWSSTAND
     IssuesManager *issuesManager = [IssuesManager sharedInstance];
     [issuesManager refresh];
 
@@ -155,6 +156,7 @@
         BakerIssue *targetIssue = [issuesManager.issues objectAtIndex:0];
         [targetIssue download];
     }
+    #endif
 }
 - (void)applicationWillResignActive:(UIApplication *)application
 {
