@@ -917,13 +917,13 @@
         // iOS 4
         [self presentModalViewController:myModalViewController animated:YES];
     }
+
+    currentPageWillAppearUnderModal = YES;
 }
 - (void)closeModalWebView {
     /****************************************************************************************************
      * This function is called from inside the modal view to close itself (delegate).
      */
-
-    currentPageWillAppearUnderModal = YES;
 
     // Check if iOS5+ method is supported
     if ([self respondsToSelector:@selector(dismissViewControllerAnimated:completion:)]) {
