@@ -186,6 +186,13 @@
 
         // ****** LISTENER FOR CLOSING APPLICATION
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleApplicationWillResignActive:) name:@"applicationWillResignActiveNotification" object:nil];
+
+    } else {
+
+        // In case the orientation changed while being in modal view, restore the
+        // webview and stuff to the current orientation
+        [self willRotateToInterfaceOrientation:self.interfaceOrientation duration:0];
+        [self didRotateFromInterfaceOrientation:self.interfaceOrientation];
     }
 }
 - (void)handleApplicationWillResignActive:(NSNotification *)notification {
@@ -933,11 +940,6 @@
         // iOS 4
         [self dismissModalViewControllerAnimated:YES];
     }
-
-    // In case the orientation changed while being in modal view, restore the
-    // webview and stuff to the current orientation
-    [self willRotateToInterfaceOrientation:self.interfaceOrientation duration:0];
-    [self didRotateFromInterfaceOrientation:self.interfaceOrientation];
 }
 
 #pragma mark - SCROLLVIEW
