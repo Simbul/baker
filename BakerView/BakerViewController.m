@@ -209,7 +209,13 @@
         [self willRotateToInterfaceOrientation:self.interfaceOrientation duration:0];
         [self performSelector:@selector(hideBars:) withObject:[NSNumber numberWithBool:YES] afterDelay:0.5];
 
-        [self startReading];
+        // Condition to make sure we only call startReading the first time this callback is invoked
+        // Fixes page reload on coming back from fullscreen video (#611)
+        if (currPage == nil) {
+            [self startReading];
+        }
+
+        [self didRotateFromInterfaceOrientation:self.interfaceOrientation];
     }
 
     currentPageWillAppearUnderModal = NO;
@@ -1200,7 +1206,7 @@
                             NSString *newURL = [replacerRegexp stringByReplacingMatchesInString:oldURL options:0 range:NSMakeRange(0, [oldURL length]) withTemplate:@""];
 
                             NSLog(@"    Opening with updated URL: %@", newURL);
-                            [self loadModalWebView:url];
+                            [self loadModalWebView:[NSURL URLWithString:newURL]];
 
                             return NO;
                         }
