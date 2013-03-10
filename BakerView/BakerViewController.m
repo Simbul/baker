@@ -124,6 +124,8 @@
         userIsScrolling = NO;
         shouldPropagateInterceptedTouch = YES;
         shouldForceOrientationUpdate = YES;
+        
+        adjustScrollViewOnAppDidBecomeActive = NO;
 
         webViewBackground = nil;
 
@@ -198,6 +200,7 @@
 - (void)handleApplicationWillResignActive:(NSNotification *)notification {
     NSLog(@"RESIGN, SAVING");
     [self saveBookStatusWithScrollIndex];
+    adjustScrollViewOnAppDidBecomeActive = YES;
 }
 - (void)viewDidAppear:(BOOL)animated {
 
@@ -222,7 +225,13 @@
 }
 
 - (void)viewDidLayoutSubviews {
-    [self adjustScrollViewPosition];
+    // UINavigationController likes to mess with subviews when app becomes active
+    // viewDidLayoutSubviews is called after UINavigationController is already done,
+    // so we can adjust the scrollView
+    if (adjustScrollViewOnAppDidBecomeActive) {
+        [self adjustScrollViewPosition];
+        adjustScrollViewOnAppDidBecomeActive = NO;
+    }
 }
 
 - (BOOL)loadBookWithBookPath:(NSString *)bookPath {
