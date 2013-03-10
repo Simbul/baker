@@ -186,9 +186,6 @@
 
         // ****** LISTENER FOR CLOSING APPLICATION
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleApplicationWillResignActive:) name:@"applicationWillResignActiveNotification" object:nil];
-<<<<<<< HEAD
-        
-=======
 
     } else {
 
@@ -196,7 +193,6 @@
         // webview and stuff to the current orientation
         [self willRotateToInterfaceOrientation:self.interfaceOrientation duration:0];
         [self didRotateFromInterfaceOrientation:self.interfaceOrientation];
->>>>>>> upstream/master
     }
 }
 - (void)handleApplicationWillResignActive:(NSNotification *)notification {
