@@ -75,6 +75,7 @@
 
     BOOL userIsScrolling;
     BOOL shouldPropagateInterceptedTouch;
+    BOOL shouldForceOrientationUpdate;
 
     UIScrollView *scrollView;
     UIWebView *prevPage;

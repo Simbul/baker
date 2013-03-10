@@ -52,7 +52,7 @@
   <key>CFBundleSignature</key>
   <string>????</string>
   <key>CFBundleVersion</key>
-  <string>Baker-40</string>
+  <string>Baker40</string>
   <key>LSRequiresIPhoneOS</key>
   <true/>
   <key>UIRequiredDeviceCapabilities</key>

@@ -46,7 +46,9 @@
 @synthesize coverURL;
 @synthesize productID;
 @synthesize price;
+@synthesize transientStatus;
 
+@synthesize notificationDownloadStartedName;
 @synthesize notificationDownloadProgressingName;
 @synthesize notificationDownloadFinishedName;
 @synthesize notificationDownloadErrorName;
@@ -81,9 +83,10 @@
 }
 
 - (void)setNotificationDownloadNames {
-    notificationDownloadProgressingName = [[NSString stringWithFormat:@"notification_download_progressing_%@", self.ID] retain];
-    notificationDownloadFinishedName = [[NSString stringWithFormat:@"notification_download_finished_%@", self.ID] retain];
-    notificationDownloadErrorName = [[NSString stringWithFormat:@"notification_download_error_%@", self.ID] retain];
+    self.notificationDownloadStartedName = [NSString stringWithFormat:@"notification_download_started_%@", self.ID];
+    self.notificationDownloadProgressingName = [NSString stringWithFormat:@"notification_download_progressing_%@", self.ID];
+    self.notificationDownloadFinishedName = [NSString stringWithFormat:@"notification_download_finished_%@", self.ID];
+    self.notificationDownloadErrorName = [NSString stringWithFormat:@"notification_download_error_%@", self.ID];
 }
 
 #ifdef BAKER_NEWSSTAND
@@ -96,7 +99,9 @@
         self.date = [issueData objectForKey:@"date"];
         self.coverURL = [NSURL URLWithString:[issueData objectForKey:@"cover"]];
         self.url = [NSURL URLWithString:[issueData objectForKey:@"url"]];
-        self.productID = [issueData objectForKey:@"product_id"];
+        if ([issueData objectForKey:@"product_id"] != [NSNull null]) {
+            self.productID = [issueData objectForKey:@"product_id"];
+        }
         self.price = nil;
 
         purchasesManager = [PurchasesManager sharedInstance];
@@ -140,6 +145,7 @@
 }
 - (void)downloadWithAsset:(NKAssetDownload *)asset {
     [asset downloadWithDelegate:self];
+    [[NSNotificationCenter defaultCenter] postNotificationName:notificationDownloadStartedName object:self userInfo:nil];
 }
 
 #pragma mark - Newsstand download management
@@ -156,7 +162,6 @@
     #ifdef BAKER_NEWSSTAND
     [self unpackAssetDownload:connection.newsstandAssetDownload toURL:destinationURL];
 
-    self.transientStatus = BakerIssueTransientStatusNone;
     [[NSNotificationCenter defaultCenter] postNotificationName:notificationDownloadFinishedName object:self userInfo:nil];
 
     [self updateNewsstandIcon];
@@ -244,7 +249,7 @@
     NKIssue *nkIssue = [nkLib issueWithName:self.ID];
     NSString *nkIssueStatus = [self nkIssueContentStatusToString:[nkIssue status]];
     if ([nkIssueStatus isEqualToString:@"remote"] && self.productID) {
-        if ([purchasesManager isMarkedAsPurchased:self.productID]) {
+        if ([purchasesManager isPurchased:self.productID]) {
             return @"purchased";
         } else if (self.price) {
             return @"purchasable";

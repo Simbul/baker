@@ -35,6 +35,7 @@
 #import "UICustomNavigationController.h"
 #import "UICustomNavigationBar.h"
 #import "IssuesManager.h"
+#import "PurchasesManager.h"
 
 #import "BakerViewController.h"
 
@@ -63,12 +64,35 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    self.window = [[[InterceptorWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]] autorelease];
-    self.window.backgroundColor = [UIColor whiteColor];
+    NSLog(@"application didFinishLaunchingWithOptions");
+
+    // Let the device know we want to handle Newsstand push notifications
+    [application registerForRemoteNotificationTypes:UIRemoteNotificationTypeNewsstandContentAvailability];
 
     #ifdef BAKER_NEWSSTAND
 
-    NSLog(@"====== Newsstand is enabled ======");
+    NSLog(@"====== Newsstand is enabled ======");    
+    [PurchasesManager generateUUIDOnce];
+
+    // Check if the app is runnig in response to a notification
+    NSDictionary *payload = [launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
+    if (payload) {
+        NSDictionary *aps = [payload objectForKey:@"aps"];
+        if (aps && [aps objectForKey:@"content-available"]) {
+
+            __block UIBackgroundTaskIdentifier backgroundTask = [application beginBackgroundTaskWithExpirationHandler:^{
+                [application endBackgroundTask:backgroundTask];
+                backgroundTask = UIBackgroundTaskInvalid;
+            }];
+
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+                [self applicationWillHandleNewsstandNotificationOfContent:[payload objectForKey:@"content-name"]];
+                [application endBackgroundTask:backgroundTask];
+                backgroundTask = UIBackgroundTaskInvalid;
+            });
+        }
+    }
+
     self.rootViewController = [[[ShelfViewController alloc] init] autorelease];
 
     #else
@@ -88,12 +112,52 @@
     [navigationBar setBackgroundImage:[UIImage imageNamed:@"navigation-bar-bg.png"] forBarMetrics:UIBarMetricsDefault];
     [navigationBar setTintColor:[UIColor clearColor]];
 
+    self.window = [[[InterceptorWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]] autorelease];
+    self.window.backgroundColor = [UIColor whiteColor];
+
     self.window.rootViewController = self.rootNavigationController;
     [self.window makeKeyAndVisible];
 
     return YES;
 }
 
+- (void)application:(UIApplication*)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)deviceToken
+{
+	NSLog(@"My token is: %@", deviceToken);
+}
+
+- (void)application:(UIApplication*)application didFailToRegisterForRemoteNotificationsWithError:(NSError*)error
+{
+	NSLog(@"Failed to get token, error: %@", error);
+}
+
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo
+{
+    #ifdef BAKER_NEWSSTAND
+    NSDictionary *aps = [userInfo objectForKey:@"aps"];
+    if (aps && [aps objectForKey:@"content-available"]) {
+        [self applicationWillHandleNewsstandNotificationOfContent:[userInfo objectForKey:@"content-name"]];
+    }
+    #endif
+}
+- (void)applicationWillHandleNewsstandNotificationOfContent:(NSString *)contentName
+{
+    #ifdef BAKER_NEWSSTAND
+    IssuesManager *issuesManager = [IssuesManager sharedInstance];
+    [issuesManager refresh];
+
+    if (contentName) {
+        for (BakerIssue *issue in issuesManager.issues) {
+            if ([issue.ID isEqualToString:contentName]) {
+                [issue download];
+            }
+        }
+    } else {
+        BakerIssue *targetIssue = [issuesManager.issues objectAtIndex:0];
+        [targetIssue download];
+    }
+    #endif
+}
 - (void)applicationWillResignActive:(UIApplication *)application
 {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.

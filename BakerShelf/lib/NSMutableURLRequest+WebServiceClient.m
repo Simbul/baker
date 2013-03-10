@@ -1,6 +1,7 @@
 //
-//  PurchasesManager.h
+//  NSMutableURLRequest+WebServiceClient.m
 //  Baker
+//  See: http://stackoverflow.com/a/1289735/551557
 //
 //  ==========================================================================================
 //
@@ -29,59 +30,38 @@
 //  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-#import "Constants.h"
-#import <Foundation/Foundation.h>
-#import <StoreKit/StoreKit.h>
+#import "NSMutableURLRequest+WebServiceClient.h"
 
-#ifdef BAKER_NEWSSTAND
-@interface PurchasesManager : NSObject <SKProductsRequestDelegate, SKPaymentTransactionObserver> {
-    NSMutableDictionary *_purchases;
-    BOOL _enableProductRequestFailureNotifications;
+@implementation NSMutableURLRequest (WebServiceClient)
+
++ (NSString *) encodeFormPostParameters: (NSDictionary *) parameters {
+    NSMutableString *formPostParams = [[[NSMutableString alloc] init] autorelease];
+
+    NSEnumerator *keys = [parameters keyEnumerator];
+
+    NSString *name = [keys nextObject];
+    while (nil != name) {
+        NSString *encodedValue = [((NSString *) CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef) [parameters objectForKey: name], NULL, CFSTR("=/:"), kCFStringEncodingUTF8)) autorelease];
+
+        [formPostParams appendString: name];
+        [formPostParams appendString: @"="];
+        [formPostParams appendString: encodedValue];
+
+        name = [keys nextObject];
+
+        if (nil != name) {
+            [formPostParams appendString: @"&"];
+        }
+    }
+
+    return formPostParams;
 }
 
-@property (retain, nonatomic) NSMutableDictionary *products;
-@property (retain, nonatomic) NSNumberFormatter *numberFormatter;
-@property (nonatomic) BOOL subscribed;
+- (void) setFormPostParameters: (NSDictionary *) parameters {
+    NSString *formPostParams = [NSMutableURLRequest encodeFormPostParameters: parameters];
 
-#pragma mark - Singleton
-
-+ (PurchasesManager *)sharedInstance;
-
-#pragma mark - Purchased flag
-
-- (BOOL)isMarkedAsPurchased:(NSString *)productID;
-- (void)markAsPurchased:(NSString *)productID;
-
-#pragma mark - Prices
-
-- (void)retrievePricesFor:(NSSet *)productIDs;
-- (void)retrievePricesFor:(NSSet *)productIDs andEnableFailureNotifications:(BOOL)enable;
-
-- (void)retrievePriceFor:(NSString *)productID;
-- (void)retrievePriceFor:(NSString *)productID andEnableFailureNotification:(BOOL)enable;
-
-- (NSString *)priceFor:(NSString *)productID;
-
-#pragma mark - Purchases
-
-- (BOOL)purchase:(NSString *)productID;
-- (BOOL)finishTransaction:(SKPaymentTransaction *)transaction;
-- (void)restore;
-- (void)retrievePurchasesFor:(NSSet *)productIDs;
-- (BOOL)isPurchased:(NSString *)productID;
-
-#pragma mark - Products
-
-- (SKProduct *)productFor:(NSString *)productID;
-
-#pragma mark - Subscriptions
-
-- (BOOL)hasSubscriptions;
-
-#pragma mark - User ID
-
-+ (BOOL)generateUUIDOnce;
-+ (NSString *)UUID;
+    [self setHTTPBody: [formPostParams dataUsingEncoding: NSUTF8StringEncoding]];
+    [self setValue: @"application/x-www-form-urlencoded; charset=utf-8" forHTTPHeaderField: @"Content-Type"];
+}
 
 @end
-#endif

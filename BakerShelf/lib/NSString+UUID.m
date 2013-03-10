@@ -1,6 +1,7 @@
 //
-//  PurchasesManager.h
+//  NSString+UUID.m
 //  Baker
+//  See: http://oleb.net/blog/2011/09/how-to-replace-the-udid/
 //
 //  ==========================================================================================
 //
@@ -29,59 +30,19 @@
 //  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-#import "Constants.h"
-#import <Foundation/Foundation.h>
-#import <StoreKit/StoreKit.h>
+#import "NSString+UUID.h"
 
-#ifdef BAKER_NEWSSTAND
-@interface PurchasesManager : NSObject <SKProductsRequestDelegate, SKPaymentTransactionObserver> {
-    NSMutableDictionary *_purchases;
-    BOOL _enableProductRequestFailureNotifications;
+@implementation NSString (UUID)
+
++ (NSString *)uuid
+{
+    NSString *uuidString = nil;
+    CFUUIDRef uuid = CFUUIDCreate(NULL);
+    if (uuid) {
+        uuidString = (NSString *)CFUUIDCreateString(NULL, uuid);
+        CFRelease(uuid);
+    }
+    return [uuidString autorelease];
 }
 
-@property (retain, nonatomic) NSMutableDictionary *products;
-@property (retain, nonatomic) NSNumberFormatter *numberFormatter;
-@property (nonatomic) BOOL subscribed;
-
-#pragma mark - Singleton
-
-+ (PurchasesManager *)sharedInstance;
-
-#pragma mark - Purchased flag
-
-- (BOOL)isMarkedAsPurchased:(NSString *)productID;
-- (void)markAsPurchased:(NSString *)productID;
-
-#pragma mark - Prices
-
-- (void)retrievePricesFor:(NSSet *)productIDs;
-- (void)retrievePricesFor:(NSSet *)productIDs andEnableFailureNotifications:(BOOL)enable;
-
-- (void)retrievePriceFor:(NSString *)productID;
-- (void)retrievePriceFor:(NSString *)productID andEnableFailureNotification:(BOOL)enable;
-
-- (NSString *)priceFor:(NSString *)productID;
-
-#pragma mark - Purchases
-
-- (BOOL)purchase:(NSString *)productID;
-- (BOOL)finishTransaction:(SKPaymentTransaction *)transaction;
-- (void)restore;
-- (void)retrievePurchasesFor:(NSSet *)productIDs;
-- (BOOL)isPurchased:(NSString *)productID;
-
-#pragma mark - Products
-
-- (SKProduct *)productFor:(NSString *)productID;
-
-#pragma mark - Subscriptions
-
-- (BOOL)hasSubscriptions;
-
-#pragma mark - User ID
-
-+ (BOOL)generateUUIDOnce;
-+ (NSString *)UUID;
-
 @end
-#endif

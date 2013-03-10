@@ -159,6 +159,7 @@
 - (void)dealloc {
 
     [self.webView stopLoading];
+    [self.webView removeFromSuperview];
     self.webView.delegate = nil;
 
     [btnGoBack release];

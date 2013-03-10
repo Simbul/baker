@@ -66,6 +66,7 @@
         purchasesManager = [PurchasesManager sharedInstance];
         [self addPurchaseObserver:@selector(handleIssueRestored:) name:@"notification_issue_restored"];
 
+        [self addIssueObserver:@selector(handleDownloadStarted:) name:self.issue.notificationDownloadStartedName];
         [self addIssueObserver:@selector(handleDownloadProgressing:) name:self.issue.notificationDownloadProgressingName];
         [self addIssueObserver:@selector(handleDownloadFinished:) name:self.issue.notificationDownloadFinishedName];
         [self addIssueObserver:@selector(handleDownloadError:) name:self.issue.notificationDownloadErrorName];
@@ -416,9 +417,7 @@
     }
 }
 #ifdef BAKER_NEWSSTAND
-- (void)download
-{
-    [self refresh:@"connecting"];
+- (void)download {
     [self.issue download];
 }
 - (void)buy {
@@ -445,25 +444,36 @@
     SKPaymentTransaction *transaction = [notification.userInfo objectForKey:@"transaction"];
 
     if ([transaction.payment.productIdentifier isEqualToString:issue.productID]) {
-        if (!transaction.originalTransaction) {
-            // Do not show alert on restoring a transaction
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"ISSUE_PURCHASE_SUCCESSFUL_TITLE", nil)
-                                                            message:[NSString stringWithFormat:
-                                                                     NSLocalizedString(@"ISSUE_PURCHASE_SUCCESSFUL_MESSAGE", nil), self.issue.title]
-                                                           delegate:nil
-                                                  cancelButtonTitle:NSLocalizedString(@"ISSUE_PURCHASE_SUCCESSFUL_CLOSE", nil)
-                                                  otherButtonTitles:nil];
-            [alert show];
-            [alert release];
-        }
 
         [self removePurchaseObserver:@"notification_issue_purchased"];
         [self removePurchaseObserver:@"notification_issue_purchase_failed"];
 
         [purchasesManager markAsPurchased:transaction.payment.productIdentifier];
-        [purchasesManager finishTransaction:transaction];
+
+        if ([purchasesManager finishTransaction:transaction]) {
+            if (!transaction.originalTransaction) {
+                // Do not show alert on restoring a transaction
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"ISSUE_PURCHASE_SUCCESSFUL_TITLE", nil)
+                                                                message:[NSString stringWithFormat:
+                                                                         NSLocalizedString(@"ISSUE_PURCHASE_SUCCESSFUL_MESSAGE", nil), self.issue.title]
+                                                               delegate:nil
+                                                      cancelButtonTitle:NSLocalizedString(@"ISSUE_PURCHASE_SUCCESSFUL_CLOSE", nil)
+                                                      otherButtonTitles:nil];
+                [alert show];
+                [alert release];
+            }
+        } else {
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"TRANSACTION_RECORDING_FAILED_TITLE", nil)
+                                                            message:NSLocalizedString(@"TRANSACTION_RECORDING_FAILED_MESSAGE", nil)
+                                                           delegate:nil
+                                                  cancelButtonTitle:NSLocalizedString(@"TRANSACTION_RECORDING_FAILED_CLOSE", nil)
+                                                  otherButtonTitles:nil];
+            [alert show];
+            [alert release];
+        }
 
         self.issue.transientStatus = BakerIssueTransientStatusNone;
+        [purchasesManager retrievePurchasesFor:[NSSet setWithObject:self.issue.productID]];
         [self refresh];
     }
 }
@@ -495,7 +505,10 @@
 
     if ([transaction.payment.productIdentifier isEqualToString:issue.productID]) {
         [purchasesManager markAsPurchased:transaction.payment.productIdentifier];
-        [purchasesManager finishTransaction:transaction];
+
+        if (![purchasesManager finishTransaction:transaction]) {
+            NSLog(@"Could not confirm purchase restore with remote server for %@", transaction.payment.productIdentifier);
+        }
 
         self.issue.transientStatus = BakerIssueTransientStatusNone;
         [self refresh];
@@ -521,18 +534,21 @@
 
 #pragma mark - Newsstand download management
 
+- (void)handleDownloadStarted:(NSNotification *)notification {
+    [self refresh];
+}
 - (void)handleDownloadProgressing:(NSNotification *)notification {
     float bytesWritten = [[notification.userInfo objectForKey:@"totalBytesWritten"] floatValue];
     float bytesExpected = [[notification.userInfo objectForKey:@"expectedTotalBytes"] floatValue];
 
-    // TODO: use a better check (ideally check that status is "connecting" instead of relying on a UI property)
-    if (self.progressBar.hidden) {
+    if ([currentStatus isEqualToString:@"connecting"]) {
         self.issue.transientStatus = BakerIssueTransientStatusDownloading;
         [self refresh];
     }
     [self.progressBar setProgress:(bytesWritten / bytesExpected) animated:YES];
 }
 - (void)handleDownloadFinished:(NSNotification *)notification {
+    self.issue.transientStatus = BakerIssueTransientStatusNone;
     [self refresh];
 }
 - (void)handleDownloadError:(NSNotification *)notification {
@@ -605,7 +621,7 @@
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:notificationSelector
                                                  name:notificationName
-                                               object:self.issue];
+                                               object:nil];
     #endif
 }
 
