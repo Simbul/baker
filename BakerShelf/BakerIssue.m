@@ -32,6 +32,7 @@
 #import "BakerIssue.h"
 
 #import "SSZipArchive.h"
+#import "Reachability.h"
 
 @implementation BakerIssue
 
@@ -137,11 +138,16 @@
     return @"";
 }
 - (void)download {
-    NKLibrary *nkLib = [NKLibrary sharedLibrary];
-    NKIssue *nkIssue = [nkLib issueWithName:self.ID];
-    NSURLRequest *req = [NSURLRequest requestWithURL:self.url];
-    NKAssetDownload *assetDownload = [nkIssue addAssetWithRequest:req];
-    [self downloadWithAsset:assetDownload];
+    Reachability* reach = [Reachability reachabilityWithHostname:@"www.google.com"];
+    if ([reach isReachable]) {
+        NKLibrary *nkLib = [NKLibrary sharedLibrary];
+        NKIssue *nkIssue = [nkLib issueWithName:self.ID];
+        NSURLRequest *req = [NSURLRequest requestWithURL:self.url];
+        NKAssetDownload *assetDownload = [nkIssue addAssetWithRequest:req];
+        [self downloadWithAsset:assetDownload];
+    } else {
+        [[NSNotificationCenter defaultCenter] postNotificationName:notificationDownloadErrorName object:self userInfo:nil];
+    }
 }
 - (void)downloadWithAsset:(NKAssetDownload *)asset {
     [asset downloadWithDelegate:self];
