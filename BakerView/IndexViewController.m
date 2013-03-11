@@ -192,6 +192,15 @@
     [self fadeIn];
 }
 
+- (void)viewDidLayoutSubviews {
+    // UINavigationController likes to mess with subviews when app becomes active
+    // viewDidLayoutSubviews is called after UINavigationController is already done,
+    // so we can adjust the indexView
+    [self setPageSizeForOrientation:[UIApplication sharedApplication].statusBarOrientation];
+    [self setActualSize];
+    [self setIndexViewHidden:self.isIndexViewHidden withAnimation:NO];
+}
+
 - (void)loadContent {
     NSString* path = [self indexPath];
 
