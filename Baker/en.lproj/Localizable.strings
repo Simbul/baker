@@ -37,6 +37,10 @@
 "RESTORE_FAILED_TITLE" = "Restore failure";
 "RESTORE_FAILED_CLOSE" = "Close";
 
+"RESTORED_ISSUE_NOT_RECOGNISED_TITLE" = "Some issues could not be restored";
+"RESTORED_ISSUE_NOT_RECOGNISED_MESSAGE" = "The following product IDs are not defined and the corresponding issues could not be restored:\n%@.\n\nContact the app creator for more info.";
+"RESTORED_ISSUE_NOT_RECOGNISED_CLOSE" = "Close";
+
 // Download alert
 "DOWNLOAD_FAILED_TITLE" = "Download failed";
 "DOWNLOAD_FAILED_MESSAGE" = "The issue could not be downloaded";

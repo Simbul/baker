@@ -318,6 +318,7 @@
         [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_issue_restored" object:self userInfo:userInfo];
     } else {
         NSLog(@"ERROR: Trying to restore %@, which is not a Product ID this app recognises", productId);
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_restored_issue_not_recognised" object:self userInfo:userInfo];
     }
 }
 

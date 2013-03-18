@@ -72,6 +72,8 @@
                              name:@"notification_restore_failed"];
         [self addPurchaseObserver:@selector(handleMultipleRestores:)
                              name:@"notification_multiple_restores"];
+        [self addPurchaseObserver:@selector(handleRestoredIssueNotRecognised:)
+                             name:@"notification_restored_issue_not_recognised"];
 
         [[SKPaymentQueue defaultQueue] addTransactionObserver:purchasesManager];
         #endif
@@ -81,6 +83,8 @@
         self.shelfStatus = [[[ShelfStatus alloc] init] retain];
         self.issueViewControllers = [[NSMutableArray alloc] init];
         self.supportedOrientation = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"UISupportedInterfaceOrientations"];
+
+        notRecognisedTransactions = [[NSMutableArray alloc] init];
     }
     return self;
 }
@@ -115,6 +119,7 @@
     [supportedOrientation release];
     [self.blockingProgressView release];
     [issuesManager release];
+    [notRecognisedTransactions release];
     #ifdef BAKER_NEWSSTAND
     [purchasesManager release];
     #endif
@@ -435,8 +440,33 @@
 }
 
 - (void)handleMultipleRestores:(NSNotification *)notification {
+    #ifdef BAKER_NEWSSTAND
+    if ([notRecognisedTransactions count] > 0) {
+        NSSet *productIDs = [NSSet setWithArray:[[notRecognisedTransactions valueForKey:@"payment"] valueForKey:@"productIdentifier"]];
+        NSString *productsList = [[productIDs allObjects] componentsJoinedByString:@", "];
+
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"RESTORED_ISSUE_NOT_RECOGNISED_TITLE", nil)
+                                                        message:[NSString stringWithFormat:NSLocalizedString(@"RESTORED_ISSUE_NOT_RECOGNISED_MESSAGE", nil), productsList]
+                                                       delegate:self
+                                              cancelButtonTitle:NSLocalizedString(@"RESTORED_ISSUE_NOT_RECOGNISED_CLOSE", nil)
+                                              otherButtonTitles:nil];
+        [alert show];
+        [alert release];
+
+        for (SKPaymentTransaction *transaction in notRecognisedTransactions) {
+            [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+        }
+        [notRecognisedTransactions removeAllObjects];
+    }
+    #endif
+
     [self handleRefresh:nil];
     [self.blockingProgressView dismissWithClickedButtonIndex:0 animated:YES];
+}
+
+- (void)handleRestoredIssueNotRecognised:(NSNotification *)notification {
+    SKPaymentTransaction *transaction = [notification.userInfo objectForKey:@"transaction"];
+    [notRecognisedTransactions addObject:transaction];
 }
 
 // TODO: this can probably be removed

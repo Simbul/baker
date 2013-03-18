@@ -45,6 +45,7 @@
     PurchasesManager *purchasesManager;
     #endif
     IssuesManager *issuesManager;
+    NSMutableArray *notRecognisedTransactions;
 }
 
 @property (copy, nonatomic) NSArray *issues;
