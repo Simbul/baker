@@ -156,7 +156,7 @@
 
     if ([[bookData objectForKey:@"creator"] isKindOfClass:[NSArray class]]) {
         self.creator = [bookData objectForKey:@"creator"];
-    } else {
+    } else if([[bookData objectForKey:@"creator"] isKindOfClass:[NSString class]]) {
         self.creator = [NSArray arrayWithObject:[bookData objectForKey:@"creator"]];
     }
 
