@@ -362,7 +362,7 @@
     NSDictionary *params = [NSDictionary dictionaryWithObject:apnsToken forKey:@"apns_token"];
     NSError *error = nil;
 
-    [self postParams:params toURL:POST_APNS_TOKEN_URL error:&error];
+    [self postParams:params toURL:[NSURL URLWithString:POST_APNS_TOKEN_URL] error:&error];
     if (error) {
         NSLog(@"Error sending APNS device token %@", error);
         return NO;
