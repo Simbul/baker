@@ -359,15 +359,18 @@
 #pragma mark - APNS
 
 - (BOOL)postAPNSToken:(NSString *)apnsToken {
-    NSDictionary *params = [NSDictionary dictionaryWithObject:apnsToken forKey:@"apns_token"];
-    NSError *error = nil;
+    if ([POST_APNS_TOKEN_URL length] > 0) {
+        NSDictionary *params = [NSDictionary dictionaryWithObject:apnsToken forKey:@"apns_token"];
+        NSError *error = nil;
 
-    [self postParams:params toURL:[NSURL URLWithString:POST_APNS_TOKEN_URL] error:&error];
-    if (error) {
-        NSLog(@"Error sending APNS device token %@", error);
-        return NO;
+        [self postParams:params toURL:[NSURL URLWithString:POST_APNS_TOKEN_URL] error:&error];
+        if (error) {
+            NSLog(@"Error sending APNS device token %@", error);
+            return NO;
+        }
+        return YES;
     }
-    return YES;
+    return NO;
 }
 
 #pragma mark - Subscriptions
