@@ -68,6 +68,7 @@
 - (BOOL)stickToLeft;
 - (CGSize)sizeFromContentOf:(UIView *)view;
 - (void)setActualSize;
+- (void)adjustIndexView;
 - (void)setViewFrame:(CGRect)frame;
 - (NSString *)indexPath;
 
