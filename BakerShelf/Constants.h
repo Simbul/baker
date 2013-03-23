@@ -64,6 +64,12 @@
         #define PURCHASES_URL @""
 
         // ----------------------------------------------------------------------------------------------------
+        // Optional - This constant specifies the URL to ping back when a user enables push notifications.
+        // For more information, see: https://github.com/Simbul/baker/wiki/Baker-Server-API
+        // E.g. @"http://example.com/post_apns_token"
+        #define POST_APNS_TOKEN_URL @""
+
+        // ----------------------------------------------------------------------------------------------------
         // Mandatory - The following two constants identify the subscriptions you set up in iTunesConnect.
         // See: iTunes Connect -> Manage Your Application -> (Your application) -> Manage In App Purchases
         // You *have* to set at least one among FREE_SUBSCRIPTION_PRODUCT_ID and AUTO_RENEWABLE_SUBSCRIPTION_PRODUCT_IDS.
