@@ -251,9 +251,6 @@
 
     return [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:error];
 }
-- (NSData *)postToURL:(NSURL *)url error:(NSError **)error {
-    return [self postParams:[NSDictionary dictionary] toURL:url error:error];
-}
 
 - (BOOL)isPurchased:(NSString *)productID {
     id purchased = [_purchases objectForKey:productID];
