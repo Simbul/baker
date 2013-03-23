@@ -74,6 +74,10 @@
 
 - (SKProduct *)productFor:(NSString *)productID;
 
+#pragma mark - APNS
+
+- (BOOL)postAPNSToken:(NSString *)apnsToken;
+
 #pragma mark - Subscriptions
 
 - (BOOL)hasSubscriptions;

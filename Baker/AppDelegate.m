@@ -123,7 +123,16 @@
 
 - (void)application:(UIApplication*)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)deviceToken
 {
-	NSLog(@"My token is: %@", deviceToken);
+    NSString *apnsToken = [[NSString alloc] initWithData:deviceToken encoding:NSUTF8StringEncoding];
+
+    NSLog(@"My token (as NSData) is: %@", deviceToken);
+    NSLog(@"My token (as NSString) is: %@", apnsToken);
+
+    [[NSUserDefaults standardUserDefaults] setObject:apnsToken forKey:@"apns_token"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+
+    PurchasesManager *purchaseManager = [PurchasesManager sharedInstance];
+    [purchaseManager postAPNSToken:apnsToken];
 }
 
 - (void)application:(UIApplication*)application didFailToRegisterForRemoteNotificationsWithError:(NSError*)error
