@@ -33,6 +33,8 @@
 
 #import "SSZipArchive.h"
 #import "Reachability.h"
+#import "Utils.h"
+#import "NSURL+Extensions.h"
 
 @implementation BakerIssue
 
@@ -142,7 +144,11 @@
     if ([reach isReachable]) {
         NKLibrary *nkLib = [NKLibrary sharedLibrary];
         NKIssue *nkIssue = [nkLib issueWithName:self.ID];
-        NSURLRequest *req = [NSURLRequest requestWithURL:self.url];
+
+        NSString *queryString = [NSString stringWithFormat:@"app_id=%@&user_id=%@", [Utils appID], [PurchasesManager UUID]];
+        NSURL *issueURL = [self.url URLByAppendingQueryString:queryString];
+
+        NSURLRequest *req = [NSURLRequest requestWithURL:issueURL];
         NKAssetDownload *assetDownload = [nkIssue addAssetWithRequest:req];
         [self downloadWithAsset:assetDownload];
     } else {
