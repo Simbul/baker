@@ -66,13 +66,13 @@
 {
     NSLog(@"application didFinishLaunchingWithOptions");
 
-    // Let the device know we want to handle Newsstand push notifications
-    [application registerForRemoteNotificationTypes:UIRemoteNotificationTypeNewsstandContentAvailability];
-
     #ifdef BAKER_NEWSSTAND
 
     NSLog(@"====== Newsstand is enabled ======");    
     [PurchasesManager generateUUIDOnce];
+
+    // Let the device know we want to handle Newsstand push notifications
+    [application registerForRemoteNotificationTypes:UIRemoteNotificationTypeNewsstandContentAvailability];
 
     // Check if the app is runnig in response to a notification
     NSDictionary *payload = [launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
@@ -121,6 +121,7 @@
     return YES;
 }
 
+#ifdef BAKER_NEWSSTAND
 - (void)application:(UIApplication*)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)deviceToken
 {
     NSString *apnsToken = [[NSString alloc] initWithData:deviceToken encoding:NSUTF8StringEncoding];
@@ -134,6 +135,7 @@
     PurchasesManager *purchaseManager = [PurchasesManager sharedInstance];
     [purchaseManager postAPNSToken:apnsToken];
 }
+#endif
 
 - (void)application:(UIApplication*)application didFailToRegisterForRemoteNotificationsWithError:(NSError*)error
 {
