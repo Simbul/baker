@@ -124,7 +124,8 @@
 #ifdef BAKER_NEWSSTAND
 - (void)application:(UIApplication*)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)deviceToken
 {
-    NSString *apnsToken = [[NSString alloc] initWithData:deviceToken encoding:NSUTF8StringEncoding];
+    NSString *apnsToken = [[deviceToken description] stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"<>"]];
+    apnsToken = [apnsToken stringByReplacingOccurrencesOfString:@" " withString:@""];
 
     NSLog(@"My token (as NSData) is: %@", deviceToken);
     NSLog(@"My token (as NSString) is: %@", apnsToken);
