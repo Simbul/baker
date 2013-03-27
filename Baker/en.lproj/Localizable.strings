@@ -82,6 +82,11 @@
 "TRANSACTION_RECORDING_FAILED_MESSAGE" = "The operation will be retried until it is successful";
 "TRANSACTION_RECORDING_FAILED_CLOSE" = "Close";
 
+// Issue opening failure alert
+"ISSUE_OPENING_FAILED_TITLE" = "Could not open issue";
+"ISSUE_OPENING_FAILED_MESSAGE" = "There was an error opening this issue. Try downloading it again or contact the publisher.";
+"ISSUE_OPENING_FAILED_CLOSE" = "Close";
+
 // Subscriptions
 // (These are just examples: you'll need to provide your own product IDs and names)
 //"com.example.MyBook.subscription.3months" = "3 Months Subscription";

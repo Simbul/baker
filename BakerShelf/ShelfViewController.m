@@ -589,7 +589,23 @@
     #ifdef BAKER_NEWSSTAND
     if ([status isEqual:@"opening"]) {
         book = [[[BakerBook alloc] initWithBookPath:issue.path bundled:NO] autorelease];
-        [self pushViewControllerWithBook:book];
+        if (book) {
+            [self pushViewControllerWithBook:book];
+        } else {
+            NSLog(@"[ERROR] Book %@ could not be initialized", issue.ID);
+            issue.transientStatus = BakerIssueTransientStatusNone;
+            // Let's refresh everything as it's easier. This is an edge case anyway ;)
+            for (IssueViewController *controller in issueViewControllers) {
+                [controller refresh];
+            }
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"ISSUE_OPENING_FAILED_TITLE", nil)
+                                                            message:NSLocalizedString(@"ISSUE_OPENING_FAILED_MESSAGE", nil)
+                                                           delegate:nil
+                                                  cancelButtonTitle:NSLocalizedString(@"ISSUE_OPENING_FAILED_CLOSE", nil)
+                                                  otherButtonTitles:nil];
+            [alert show];
+            [alert release];
+        }
     }
     #else
     if ([status isEqual:@"bundled"]) {
