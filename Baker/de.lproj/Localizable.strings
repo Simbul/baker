@@ -1,0 +1,88 @@
+
+// Shelf Navigation Title at the top of the main Issues List
+"SHELF_NAVIGATION_TITLE" = "Baker Kiosk";
+
+// Products alert
+"PRODUCTS_REQUEST_FAILED_TITLE" = "Verbindung zum App Store fehlgeschlagen";
+"PRODUCTS_REQUEST_FAILED_CLOSE" = "Schließen";
+
+// Subscription button
+"SUBSCRIBE_BUTTON_TEXT" = "Abonnieren";
+"SUBSCRIBE_BUTTON_DISABLED_TEXT" = "Abonnieren...";
+"SUBSCRIBE_BUTTON_SUBSCRIBED_TEXT" = "Abonnieren";
+
+"SUBSCRIPTIONS_SHEET_FREE" = "Kostenfrei abonnieren";
+"SUBSCRIPTIONS_SHEET_RESTORE" = "Einkäufe Wiederherstellen";
+"SUBSCRIPTIONS_SHEET_CLOSE" = "Schließen";
+
+"SUBSCRIPTIONS_SHEET_GENERIC" = "Abo Optionen";
+"SUBSCRIPTIONS_SHEET_SUBSCRIBED" = "Abonnement läuft";
+"SUBSCRIPTIONS_SHEET_NOT_SUBSCRIBED" = "Sie haben derzeit kein Abo abgeschlossen";
+
+// Subscription alerts
+"SUBSCRIPTION_SUCCESSFUL_TITLE" = "Abonnement erfolgreich";
+"SUBSCRIPTION_SUCCESSFUL_MESSAGE" = "Abonnement erfolgreich abgeschlossen";
+"SUBSCRIPTION_SUCCESSFUL_CLOSE" = "Schließen";
+"SUBSCRIPTION_FAILED_TITLE" = "Abonnement fehlgeschlagen";
+"SUBSCRIPTION_FAILED_CLOSE" = "Schließen";
+
+// Issue purchase alerts
+"ISSUE_PURCHASE_SUCCESSFUL_TITLE" = "Einkauf erfolgreich";
+"ISSUE_PURCHASE_SUCCESSFUL_MESSAGE" = "Ihr Einkauf war erfolgreich %@";
+"ISSUE_PURCHASE_SUCCESSFUL_CLOSE" = "Schließen";
+"ISSUE_PURCHASE_FAILED_TITLE" = "Einkauf fehlgeschlagen";
+"ISSUE_PURCHASE_FAILED_CLOSE" = "Schließen";
+
+// Restore alerts
+"RESTORE_FAILED_TITLE" = "Wiederherstellung Fehlgeschlagen";
+"RESTORE_FAILED_CLOSE" = "Schließen";
+
+"RESTORED_ISSUE_NOT_RECOGNISED_TITLE" = "Einige Ausgaben konnte nicht wiederhergestellt werden";
+"RESTORED_ISSUE_NOT_RECOGNISED_MESSAGE" = "Folgende Ausgaben IDs konnten nicht wiederhergestellt werden:\n%@.\n\nBenachrichtigen Sie den Entwickler dieser App für weitere Informationen.";
+"RESTORED_ISSUE_NOT_RECOGNISED_CLOSE" = "Schließen";
+
+// Download alert
+"DOWNLOAD_FAILED_TITLE" = "herunterladen fehlgeschlagen";
+"DOWNLOAD_FAILED_MESSAGE" = "Die Ausgabe konnte nicht geladen werden";
+"DOWNLOAD_FAILED_CLOSE" = "Schließen";
+
+// Connection alert
+"INTERNET_CONNECTION_UNAVAILABLE_TITLE" = "Keine Internetverbindung";
+"INTERNET_CONNECTION_UNAVAILABLE_MESSAGE" = "Es besteht keine Verdingung ins Internet. Einige Funktionen benötigen diese. Bitte stellen Sie eine Verbindung her.";
+"INTERNET_CONNECTION_UNAVAILABLE_CLOSE" = "OK";
+
+// Issue buttons
+"ACTION_REMOTE_TEXT" = "LADEN";
+"ACTION_DOWNLOADED_TEXT" = "ÖFFNEN";
+"ACTION_BUY_TEXT" = "KAUFEN";
+"ARCHIVE_TEXT" = "ARCHIVIEREN";
+"CONNECTING_TEXT" = "VERBINDUNGSAUFBAU...";
+"DOWNLOADING_TEXT" = "LADEN ...";
+"OPENING_TEXT" = "LADEND...";
+"BUYING_TEXT" = "KAUFEN...";
+"RETRIEVING_TEXT" = "PREIS AKTUALISIEREN...";
+
+// Archiving alert
+"ARCHIVE_ALERT_TITLE" = "Wollen Sie diese Ausgabe wirklich archivieren?";
+"ARCHIVE_ALERT_MESSAGE" = "Die Ausgabe wird vom Gerät gelöscht. Sie können diese Ausgabe jederzeit kostenfrei erneut herunterladen.";
+"ARCHIVE_ALERT_BUTTON_CANCEL" = "Abbrechen";
+"ARCHIVE_ALERT_BUTTON_OK" = "Archive";
+
+// Mail alert
+"MAILTO_ALERT_TITLE" = "Fehler";
+"MAILTO_ALERT_MESSAGE" = "Auf diesem Gerät ist kein Email Account konfiguriert!";
+"MAILTO_ALERT_CLOSE" = "OK";
+
+// Modal web view
+"WEB_MODAL_FAILURE_MESSAGE" = "Verbindung fehlgeschlagen.";
+"WEB_MODAL_CLOSE_BUTTON_TEXT" = "Zurück";
+
+// Transaction recording alert
+"TRANSACTION_RECORDING_FAILED_TITLE" = "Ihr Einkauf konnte nicht abgeschlossen werden";
+"TRANSACTION_RECORDING_FAILED_MESSAGE" = "Sobald möglich wird der Vorgang erneut versucht";
+"TRANSACTION_RECORDING_FAILED_CLOSE" = "Schließen";
+
+// Subscriptions
+// (These are just examples: you'll need to provide your own product IDs and names)
+//"com.example.MyBook.subscription.3months" = "3 Monate";
+//"com.example.MyBook.subscription.6months" = "Halbes Jahr";
