@@ -185,8 +185,12 @@
         NSString *manifestFile = [booksDir stringByAppendingPathComponent:[file stringByAppendingPathComponent:@"book.json"]];
         if ([localFileManager fileExistsAtPath:manifestFile]) {
             BakerBook *book = [[[BakerBook alloc] initWithBookPath:[booksDir stringByAppendingPathComponent:file] bundled:YES] autorelease];
-            BakerIssue *issue = [[[BakerIssue alloc] initWithBakerBook:book] autorelease];
-            [booksList addObject:issue];
+            if (book) {
+                BakerIssue *issue = [[[BakerIssue alloc] initWithBakerBook:book] autorelease];
+                [booksList addObject:issue];
+            } else {
+                NSLog(@"[ERROR] Book %@ could not be initialized", file);
+            }
         } else {
             NSLog(@"CANNOT FIND MANIFEST %@", manifestFile);
         }
