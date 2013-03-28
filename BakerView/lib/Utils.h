@@ -49,5 +49,6 @@
 + (BOOL)webViewShouldBePaged:(UIWebView*)webView;
 + (NSString *)appID;
 + (NSDate *)dateWithFormattedString:(NSString *)string;
++ (void)showAlertWithTitle:(NSString *)title message:(NSString *)message buttonTitle:(NSString *)buttonTitle;
 
 @end

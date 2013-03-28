@@ -39,6 +39,7 @@
 #endif
 
 #import "UIColor+Extensions.h"
+#import "Utils.h"
 
 @implementation IssueViewController
 
@@ -453,23 +454,14 @@
         if ([purchasesManager finishTransaction:transaction]) {
             if (!transaction.originalTransaction) {
                 // Do not show alert on restoring a transaction
-                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"ISSUE_PURCHASE_SUCCESSFUL_TITLE", nil)
-                                                                message:[NSString stringWithFormat:
-                                                                         NSLocalizedString(@"ISSUE_PURCHASE_SUCCESSFUL_MESSAGE", nil), self.issue.title]
-                                                               delegate:nil
-                                                      cancelButtonTitle:NSLocalizedString(@"ISSUE_PURCHASE_SUCCESSFUL_CLOSE", nil)
-                                                      otherButtonTitles:nil];
-                [alert show];
-                [alert release];
+                [Utils showAlertWithTitle:NSLocalizedString(@"ISSUE_PURCHASE_SUCCESSFUL_TITLE", nil)
+                                  message:[NSString stringWithFormat:NSLocalizedString(@"ISSUE_PURCHASE_SUCCESSFUL_MESSAGE", nil), self.issue.title]
+                              buttonTitle:NSLocalizedString(@"ISSUE_PURCHASE_SUCCESSFUL_CLOSE", nil)];
             }
         } else {
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"TRANSACTION_RECORDING_FAILED_TITLE", nil)
-                                                            message:NSLocalizedString(@"TRANSACTION_RECORDING_FAILED_MESSAGE", nil)
-                                                           delegate:nil
-                                                  cancelButtonTitle:NSLocalizedString(@"TRANSACTION_RECORDING_FAILED_CLOSE", nil)
-                                                  otherButtonTitles:nil];
-            [alert show];
-            [alert release];
+            [Utils showAlertWithTitle:NSLocalizedString(@"TRANSACTION_RECORDING_FAILED_TITLE", nil)
+                              message:NSLocalizedString(@"TRANSACTION_RECORDING_FAILED_MESSAGE", nil)
+                          buttonTitle:NSLocalizedString(@"TRANSACTION_RECORDING_FAILED_CLOSE", nil)];
         }
 
         self.issue.transientStatus = BakerIssueTransientStatusNone;
@@ -483,13 +475,9 @@
     if ([transaction.payment.productIdentifier isEqualToString:issue.productID]) {
         // Show an error, unless it was the user who cancelled the transaction
         if (transaction.error.code != SKErrorPaymentCancelled) {
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"ISSUE_PURCHASE_FAILED_TITLE", nil)
-                                                            message:[transaction.error localizedDescription]
-                                                           delegate:nil
-                                                  cancelButtonTitle:NSLocalizedString(@"ISSUE_PURCHASE_FAILED_CLOSE", nil)
-                                                  otherButtonTitles:nil];
-            [alert show];
-            [alert release];
+            [Utils showAlertWithTitle:NSLocalizedString(@"ISSUE_PURCHASE_FAILED_TITLE", nil)
+                              message:[transaction.error localizedDescription]
+                          buttonTitle:NSLocalizedString(@"ISSUE_PURCHASE_FAILED_CLOSE", nil)];
         }
 
         [self removePurchaseObserver:@"notification_issue_purchased"];
@@ -552,13 +540,9 @@
     [self refresh];
 }
 - (void)handleDownloadError:(NSNotification *)notification {
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"DOWNLOAD_FAILED_TITLE", nil)
-                                                    message:NSLocalizedString(@"DOWNLOAD_FAILED_MESSAGE", nil)
-                                                   delegate:nil
-                                          cancelButtonTitle:NSLocalizedString(@"DOWNLOAD_FAILED_CLOSE", nil)
-                                          otherButtonTitles:nil];
-    [alert show];
-    [alert release];
+    [Utils showAlertWithTitle:NSLocalizedString(@"DOWNLOAD_FAILED_TITLE", nil)
+                      message:NSLocalizedString(@"DOWNLOAD_FAILED_MESSAGE", nil)
+                  buttonTitle:NSLocalizedString(@"DOWNLOAD_FAILED_CLOSE", nil)];
 
     self.issue.transientStatus = BakerIssueTransientStatusNone;
     [self refresh];

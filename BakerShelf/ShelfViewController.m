@@ -39,6 +39,7 @@
 #import "JSONKit.h"
 #import "NSData+Base64.h"
 #import "NSString+Extensions.h"
+#import "Utils.h"
 
 @implementation ShelfViewController
 
@@ -326,13 +327,9 @@
         [purchasesManager retrievePricesFor:issuesManager.productIDs andEnableFailureNotifications:NO];
     }
     else{
-        UIAlertView *connAlert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"INTERNET_CONNECTION_UNAVAILABLE_TITLE", nil)
-                                                            message:NSLocalizedString(@"INTERNET_CONNECTION_UNAVAILABLE_MESSAGE", nil)
-                                                           delegate:self
-                                                  cancelButtonTitle:NSLocalizedString(@"INTERNET_CONNECTION_UNAVAILABLE_CLOSE", nil)
-                                                  otherButtonTitles:nil];
-        [connAlert show];
-        [connAlert release];
+        [Utils showAlertWithTitle:NSLocalizedString(@"INTERNET_CONNECTION_UNAVAILABLE_TITLE", nil)
+                          message:NSLocalizedString(@"INTERNET_CONNECTION_UNAVAILABLE_MESSAGE", nil)
+                      buttonTitle:NSLocalizedString(@"INTERNET_CONNECTION_UNAVAILABLE_CLOSE", nil)];
     }
     [self setrefreshButtonEnabled:YES];
 }
@@ -412,13 +409,9 @@
             NSLog(@"Action sheet: %@", action);
             [self setSubscribeButtonEnabled:NO];
             if (![purchasesManager purchase:action]){
-                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"SUBSCRIPTION_FAILED_TITLE", nil)
-                                                                message:nil
-                                                               delegate:nil
-                                                      cancelButtonTitle:NSLocalizedString(@"SUBSCRIPTION_FAILED_CLOSE", nil)
-                                                      otherButtonTitles:nil];
-                [alert show];
-                [alert release];
+                [Utils showAlertWithTitle:NSLocalizedString(@"SUBSCRIPTION_FAILED_TITLE", nil)
+                                  message:nil
+                              buttonTitle:NSLocalizedString(@"SUBSCRIPTION_FAILED_CLOSE", nil)];
                 [self setSubscribeButtonEnabled:YES];
             }
         }
@@ -427,13 +420,9 @@
 
 - (void)handleRestoreFailed:(NSNotification *)notification {
     NSError *error = [notification.userInfo objectForKey:@"error"];
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"RESTORE_FAILED_TITLE", nil)
-                                                    message:[error localizedDescription]
-                                                   delegate:self
-                                          cancelButtonTitle:NSLocalizedString(@"RESTORE_FAILED_CLOSE", nil)
-                                          otherButtonTitles:nil];
-    [alert show];
-    [alert release];
+    [Utils showAlertWithTitle:NSLocalizedString(@"RESTORE_FAILED_TITLE", nil)
+                      message:[error localizedDescription]
+                  buttonTitle:NSLocalizedString(@"RESTORE_FAILED_CLOSE", nil)];
 
     [self.blockingProgressView dismissWithClickedButtonIndex:0 animated:YES];
 
@@ -445,13 +434,9 @@
         NSSet *productIDs = [NSSet setWithArray:[[notRecognisedTransactions valueForKey:@"payment"] valueForKey:@"productIdentifier"]];
         NSString *productsList = [[productIDs allObjects] componentsJoinedByString:@", "];
 
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"RESTORED_ISSUE_NOT_RECOGNISED_TITLE", nil)
-                                                        message:[NSString stringWithFormat:NSLocalizedString(@"RESTORED_ISSUE_NOT_RECOGNISED_MESSAGE", nil), productsList]
-                                                       delegate:self
-                                              cancelButtonTitle:NSLocalizedString(@"RESTORED_ISSUE_NOT_RECOGNISED_CLOSE", nil)
-                                              otherButtonTitles:nil];
-        [alert show];
-        [alert release];
+        [Utils showAlertWithTitle:NSLocalizedString(@"RESTORED_ISSUE_NOT_RECOGNISED_TITLE", nil)
+                          message:[NSString stringWithFormat:NSLocalizedString(@"RESTORED_ISSUE_NOT_RECOGNISED_MESSAGE", nil), productsList]
+                      buttonTitle:NSLocalizedString(@"RESTORED_ISSUE_NOT_RECOGNISED_CLOSE", nil)];
 
         for (SKPaymentTransaction *transaction in notRecognisedTransactions) {
             [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
@@ -483,24 +468,16 @@
 
     if ([purchasesManager finishTransaction:transaction]) {
         if (!purchasesManager.subscribed) {
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"SUBSCRIPTION_SUCCESSFUL_TITLE", nil)
-                                                            message:NSLocalizedString(@"SUBSCRIPTION_SUCCESSFUL_MESSAGE", nil)
-                                                           delegate:nil
-                                                  cancelButtonTitle:NSLocalizedString(@"SUBSCRIPTION_SUCCESSFUL_CLOSE", nil)
-                                                  otherButtonTitles:nil];
-            [alert show];
-            [alert release];
+            [Utils showAlertWithTitle:NSLocalizedString(@"SUBSCRIPTION_SUCCESSFUL_TITLE", nil)
+                              message:NSLocalizedString(@"SUBSCRIPTION_SUCCESSFUL_MESSAGE", nil)
+                          buttonTitle:NSLocalizedString(@"SUBSCRIPTION_SUCCESSFUL_CLOSE", nil)];
 
             [self handleRefresh:nil];
         }
     } else {
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"TRANSACTION_RECORDING_FAILED_TITLE", nil)
-                                                        message:NSLocalizedString(@"TRANSACTION_RECORDING_FAILED_MESSAGE", nil)
-                                                       delegate:nil
-                                              cancelButtonTitle:NSLocalizedString(@"TRANSACTION_RECORDING_FAILED_CLOSE", nil)
-                                              otherButtonTitles:nil];
-        [alert show];
-        [alert release];
+        [Utils showAlertWithTitle:NSLocalizedString(@"TRANSACTION_RECORDING_FAILED_TITLE", nil)
+                          message:NSLocalizedString(@"TRANSACTION_RECORDING_FAILED_MESSAGE", nil)
+                      buttonTitle:NSLocalizedString(@"TRANSACTION_RECORDING_FAILED_CLOSE", nil)];
     }
 }
 
@@ -509,13 +486,9 @@
 
     // Show an error, unless it was the user who cancelled the transaction
     if (transaction.error.code != SKErrorPaymentCancelled) {
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"SUBSCRIPTION_FAILED_TITLE", nil)
-                                                        message:[transaction.error localizedDescription]
-                                                       delegate:nil
-                                              cancelButtonTitle:NSLocalizedString(@"SUBSCRIPTION_FAILED_CLOSE", nil)
-                                              otherButtonTitles:nil];
-        [alert show];
-        [alert release];
+        [Utils showAlertWithTitle:NSLocalizedString(@"SUBSCRIPTION_FAILED_TITLE", nil)
+                          message:[transaction.error localizedDescription]
+                      buttonTitle:NSLocalizedString(@"SUBSCRIPTION_FAILED_CLOSE", nil)];
     }
 
     [self setSubscribeButtonEnabled:YES];
@@ -564,13 +537,9 @@
 - (void)handleProductsRequestFailed:(NSNotification *)notification {
     NSError *error = [notification.userInfo objectForKey:@"error"];
 
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"PRODUCTS_REQUEST_FAILED_TITLE", nil)
-                                                    message:[error localizedDescription]
-                                                   delegate:nil
-                                          cancelButtonTitle:NSLocalizedString(@"PRODUCTS_REQUEST_FAILED_CLOSE", nil)
-                                          otherButtonTitles:nil];
-    [alert show];
-    [alert release];
+    [Utils showAlertWithTitle:NSLocalizedString(@"PRODUCTS_REQUEST_FAILED_TITLE", nil)
+                      message:[error localizedDescription]
+                  buttonTitle:NSLocalizedString(@"PRODUCTS_REQUEST_FAILED_CLOSE", nil)];
 }
 
 #endif
@@ -598,13 +567,9 @@
             for (IssueViewController *controller in issueViewControllers) {
                 [controller refresh];
             }
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"ISSUE_OPENING_FAILED_TITLE", nil)
-                                                            message:NSLocalizedString(@"ISSUE_OPENING_FAILED_MESSAGE", nil)
-                                                           delegate:nil
-                                                  cancelButtonTitle:NSLocalizedString(@"ISSUE_OPENING_FAILED_CLOSE", nil)
-                                                  otherButtonTitles:nil];
-            [alert show];
-            [alert release];
+            [Utils showAlertWithTitle:NSLocalizedString(@"ISSUE_OPENING_FAILED_TITLE", nil)
+                              message:NSLocalizedString(@"ISSUE_OPENING_FAILED_MESSAGE", nil)
+                          buttonTitle:NSLocalizedString(@"ISSUE_OPENING_FAILED_CLOSE", nil)];
         }
     }
     #else

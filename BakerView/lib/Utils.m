@@ -114,4 +114,14 @@
     return [dateFormat dateFromString:string];
 }
 
++ (void)showAlertWithTitle:(NSString *)title message:(NSString *)message buttonTitle:(NSString *)buttonTitle {
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title
+                                                    message:message
+                                                   delegate:nil
+                                          cancelButtonTitle:buttonTitle
+                                          otherButtonTitles:nil];
+    [alert show];
+    [alert release];
+}
+
 @end
