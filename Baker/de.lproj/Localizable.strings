@@ -54,7 +54,7 @@
 
 // Connection alert
 "INTERNET_CONNECTION_UNAVAILABLE_TITLE" = "Keine Internetverbindung";
-"INTERNET_CONNECTION_UNAVAILABLE_MESSAGE" = "Es besteht keine Verdingung ins Internet. Einige Funktionen benötigen diese. Bitte stellen Sie eine Verbindung her.";
+"INTERNET_CONNECTION_UNAVAILABLE_MESSAGE" = "Es besteht keine Verbindung ins Internet. Einige Funktionen benötigen diese. Bitte stellen Sie eine Verbindung her.";
 "INTERNET_CONNECTION_UNAVAILABLE_CLOSE" = "OK";
 
 // Issue buttons
