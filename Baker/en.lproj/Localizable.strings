@@ -62,6 +62,10 @@
 "BUYING_TEXT" = "BUYING...";
 "RETRIEVING_TEXT" = "UPDATING PRICE...";
 
+// Issue states
+"FREE_TEXT" = "FREE";
+"PURCHASED_TEXT" = "PURCHASED";
+
 // Archiving alert
 "ARCHIVE_ALERT_TITLE" = "Are you sure you want to archive this issue?";
 "ARCHIVE_ALERT_MESSAGE" = "This issue will be removed from your device. You may download it at anytime for free.";

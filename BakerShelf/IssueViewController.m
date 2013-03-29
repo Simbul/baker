@@ -255,7 +255,7 @@
     NSLog(@"Refreshing %@ view with status %@ -> %@", self.issue.ID, currentStatus, status);
     if ([status isEqualToString:@"remote"])
     {
-        [self.priceLabel setText:@"FREE"];
+        [self.priceLabel setText:NSLocalizedString(@"FREE_TEXT", nil)];
 
         [self.actionButton setTitle:NSLocalizedString(@"ACTION_REMOTE_TEXT", nil) forState:UIControlStateNormal];
         [self.spinner stopAnimating];
@@ -356,7 +356,7 @@
     }
     else if ([status isEqualToString:@"purchased"])
     {
-        [self.priceLabel setText:@"PURCHASED"];
+        [self.priceLabel setText:NSLocalizedString(@"PURCHASED_TEXT", nil)];
 
         [self.actionButton setTitle:NSLocalizedString(@"ACTION_REMOTE_TEXT", nil) forState:UIControlStateNormal];
         [self.spinner stopAnimating];
