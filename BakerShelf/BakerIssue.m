@@ -221,26 +221,20 @@
 #endif
 
 -(void)getCover:(void(^)(UIImage *img))completionBlock {
-    UIImage *image = [UIImage imageWithContentsOfFile:self.coverPath];
-    if (image) {
-        completionBlock(image);
-    } else {
-        NSLog(@"Cover not found for %@ at path '%@'", self.ID, self.coverPath);
-        if (self.coverURL) {
-            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void) {
-                NSLog(@"Downloading cover from %@ to %@", self.coverURL, self.coverPath);
-                NSData *imageData = [NSData dataWithContentsOfURL:self.coverURL];
-                UIImage *image = [UIImage imageWithData:imageData];
-                if (image) {
-                    [imageData writeToFile:self.coverPath atomically:YES];
-                    dispatch_async(dispatch_get_main_queue(), ^(void) {
-                        completionBlock(image);
-                    });
-                }
-            });
-        }
+    if (self.coverURL) {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void) {
+            NSData *imageData = [NSData dataWithContentsOfURL:self.coverURL];
+            UIImage *image = [UIImage imageWithData:imageData];
+            if (image) {
+                [imageData writeToFile:self.coverPath atomically:YES];
+                dispatch_async(dispatch_get_main_queue(), ^(void) {
+                    completionBlock(image);
+                });
+            }
+        });
     }
 }
+
 -(NSString *)getStatus {
 #ifdef BAKER_NEWSSTAND
     switch (self.transientStatus) {
