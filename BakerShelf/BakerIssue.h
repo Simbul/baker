@@ -78,7 +78,7 @@ typedef enum transientStates {
 @property (copy, nonatomic) NSString *notificationDownloadErrorName;
 
 -(id)initWithBakerBook:(BakerBook *)bakerBook;
--(void)getCover:(void(^)(UIImage *img))completionBlock;
+-(void)getCoverWithCache:(bool)cache andBlock:(void(^)(UIImage *img))completionBlock;
 -(NSString *)getStatus;
 
 #ifdef BAKER_NEWSSTAND

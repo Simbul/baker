@@ -72,7 +72,7 @@ typedef struct {
 #pragma mark - View Lifecycle
 - (void)refresh;
 - (void)refresh:(NSString *)status;
-- (void)refreshContent;
+- (void)refreshContentWithCache:(bool)cache;
 
 #pragma mark - Issue management
 - (void)actionButtonPressed:(UIButton *)sender;

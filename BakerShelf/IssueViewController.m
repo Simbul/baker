@@ -204,15 +204,15 @@
     }
     #endif
 
-    [self refreshContent];
+    [self refreshContentWithCache:NO];
 }
-- (void)refreshContent {
+- (void)refreshContentWithCache:(bool)cache {
     UI ui = [IssueViewController getIssueContentMeasures];
     int heightOffset = ui.cellPadding;
     uint textLineheight = [@"The brown fox jumps over the lazy dog" sizeWithFont:infoFont constrainedToSize:CGSizeMake(MAXFLOAT, MAXFLOAT)].height;
 
     // SETUP COVER IMAGE
-    [self.issue getCover:^(UIImage *image) {
+    [self.issue getCoverWithCache:cache andBlock:^(UIImage *image) {
         [issueCover setBackgroundImage:image forState:UIControlStateNormal];
     }];
 
@@ -397,7 +397,7 @@
         self.priceLabel.hidden = YES;
     }
 
-    [self refreshContent];
+    [self refreshContentWithCache:YES];
 
     currentStatus = status;
 }

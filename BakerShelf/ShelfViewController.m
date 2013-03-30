@@ -323,7 +323,7 @@
                 [self.gridView insertItemsAtIndices:[NSIndexSet indexSetWithIndex:idx] withAnimation:AQGridViewItemAnimationNone];
             } else {
                 existingIvc.issue = issue;
-                [existingIvc refreshContent];
+                [existingIvc refreshContentWithCache:NO];
             }
         }];
 

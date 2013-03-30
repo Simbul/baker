@@ -220,18 +220,23 @@
 
 #endif
 
--(void)getCover:(void(^)(UIImage *img))completionBlock {
-    if (self.coverURL) {
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void) {
-            NSData *imageData = [NSData dataWithContentsOfURL:self.coverURL];
-            UIImage *image = [UIImage imageWithData:imageData];
-            if (image) {
-                [imageData writeToFile:self.coverPath atomically:YES];
-                dispatch_async(dispatch_get_main_queue(), ^(void) {
-                    completionBlock(image);
-                });
-            }
-        });
+-(void)getCoverWithCache:(bool)cache andBlock:(void(^)(UIImage *img))completionBlock {
+    UIImage *image = [UIImage imageWithContentsOfFile:self.coverPath];
+    if (cache && image) {
+        completionBlock(image);
+    } else {
+        if (self.coverURL) {
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void) {
+                NSData *imageData = [NSData dataWithContentsOfURL:self.coverURL];
+                UIImage *image = [UIImage imageWithData:imageData];
+                if (image) {
+                    [imageData writeToFile:self.coverPath atomically:YES];
+                    dispatch_async(dispatch_get_main_queue(), ^(void) {
+                        completionBlock(image);
+                    });
+                }
+            });
+        }
     }
 }
 
