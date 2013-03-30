@@ -52,6 +52,12 @@
 @property (strong, nonatomic) UILabel *loadingLabel;
 @property (strong, nonatomic) UILabel *priceLabel;
 
+@property (strong, nonatomic) UIButton *issueCover;
+@property (strong, nonatomic) UIFont *titleFont;
+@property (strong, nonatomic) UIFont *infoFont;
+@property (strong, nonatomic) UILabel *titleLabel;
+@property (strong, nonatomic) UILabel *infoLabel;
+
 #pragma mark - Structs
 typedef struct {
     int cellPadding;
@@ -66,6 +72,7 @@ typedef struct {
 #pragma mark - View Lifecycle
 - (void)refresh;
 - (void)refresh:(NSString *)status;
+- (void)refreshContent;
 
 #pragma mark - Issue management
 - (void)actionButtonPressed:(UIButton *)sender;

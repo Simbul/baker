@@ -53,6 +53,12 @@
 @synthesize loadingLabel;
 @synthesize priceLabel;
 
+@synthesize issueCover;
+@synthesize titleFont;
+@synthesize infoFont;
+@synthesize titleLabel;
+@synthesize infoLabel;
+
 #pragma mark - Init
 
 - (id)initWithBakerIssue:(BakerIssue *)bakerIssue
@@ -90,7 +96,7 @@
 
     UI ui = [IssueViewController getIssueContentMeasures];
 
-    UIButton *issueCover = [UIButton buttonWithType:UIButtonTypeCustom];
+    self.issueCover = [UIButton buttonWithType:UIButtonTypeCustom];
     issueCover.frame = CGRectMake(ui.cellPadding, ui.cellPadding, ui.thumbWidth, ui.thumbHeight);
     
     issueCover.backgroundColor = [UIColor colorWithHexString:ISSUES_COVER_BACKGROUND_COLOR];
@@ -104,63 +110,35 @@
     
     [issueCover addTarget:self action:@selector(actionButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:issueCover];
-    
-    
-    // SETUP COVER IMAGE
-    [self.issue getCover:^(UIImage *image) {
-        [issueCover setBackgroundImage:image forState:UIControlStateNormal];
-    }];
-
-    int heightOffset = ui.cellPadding;
 
     // SETUP USED FONTS
-    UIFont *titleFont = [UIFont fontWithName:ISSUES_TITLE_FONT size:ISSUES_TITLE_FONT_SIZE];
-    UIFont *infoFont = [UIFont fontWithName:ISSUES_INFO_FONT size:ISSUES_INFO_FONT_SIZE];
-    uint textLineheight = [@"The brown fox jumps over the lazy dog" sizeWithFont:infoFont constrainedToSize:CGSizeMake(MAXFLOAT, MAXFLOAT)].height;
+    self.titleFont = [UIFont fontWithName:ISSUES_TITLE_FONT size:ISSUES_TITLE_FONT_SIZE];
+    self.infoFont = [UIFont fontWithName:ISSUES_INFO_FONT size:ISSUES_INFO_FONT_SIZE];
     UIFont *actionFont = [UIFont fontWithName:ISSUES_ACTION_BUTTON_FONT size:ISSUES_ACTION_BUTTON_FONT_SIZE];
     UIFont *archiveFont = [UIFont fontWithName:ISSUES_ARCHIVE_BUTTON_FONT size:ISSUES_ARCHIVE_BUTTON_FONT_SIZE];
 
-
     // SETUP TITLE LABEL
-    CGSize titleSize = [self.issue.title sizeWithFont:titleFont constrainedToSize:CGSizeMake(170, MAXFLOAT) lineBreakMode:UILineBreakModeWordWrap];
-    uint titleLines = MIN(4, titleSize.height / textLineheight);
-
-    UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(ui.contentOffset, heightOffset, 170, textLineheight * titleLines)];
+    self.titleLabel = [[[UILabel alloc] init] autorelease];
     titleLabel.textColor = [UIColor colorWithHexString:ISSUES_TITLE_COLOR];
     titleLabel.backgroundColor = [UIColor clearColor];
     titleLabel.lineBreakMode = UILineBreakModeTailTruncation;
     titleLabel.textAlignment = UITextAlignmentLeft;
-    titleLabel.numberOfLines = titleLines;
-    titleLabel.text = self.issue.title;
     titleLabel.font = titleFont;
 
     [self.view addSubview:titleLabel];
-    [titleLabel release];
-
-    heightOffset = heightOffset + titleLabel.frame.size.height + 5;
-
 
     // SETUP INFO LABEL
-    CGSize infoSize = [self.issue.info sizeWithFont:infoFont constrainedToSize:CGSizeMake(170, MAXFLOAT) lineBreakMode:UILineBreakModeWordWrap];
-    uint infoLines = MIN(4, infoSize.height / textLineheight);
-
-    UILabel *infoLabel = [[UILabel alloc] initWithFrame:CGRectMake(ui.contentOffset, heightOffset, 170, textLineheight * infoLines)];
+    self.infoLabel = [[[UILabel alloc] init] autorelease];
     infoLabel.textColor = [UIColor colorWithHexString:ISSUES_INFO_COLOR];
     infoLabel.backgroundColor = [UIColor clearColor];
     infoLabel.lineBreakMode = UILineBreakModeTailTruncation;
     infoLabel.textAlignment = UITextAlignmentLeft;
-    infoLabel.numberOfLines = infoLines;
-    infoLabel.text = self.issue.info;
     infoLabel.font = infoFont;
 
     [self.view addSubview:infoLabel];
-    [infoLabel release];
-
-    heightOffset = heightOffset + infoLabel.frame.size.height + 5;
-
 
     // SETUP PRICE LABEL
-    self.priceLabel = [[UILabel alloc] initWithFrame:CGRectMake(ui.contentOffset, heightOffset, 170, textLineheight)];
+    self.priceLabel = [[[UILabel alloc] init] autorelease];
     priceLabel.textColor = [UIColor colorWithHexString:ISSUES_PRICE_COLOR];
     priceLabel.backgroundColor = [UIColor clearColor];
     priceLabel.lineBreakMode = UILineBreakModeTailTruncation;
@@ -168,14 +146,9 @@
     priceLabel.font = titleFont;
 
     [self.view addSubview:priceLabel];
-    [priceLabel release];
-
-    heightOffset = heightOffset + priceLabel.frame.size.height + 10;
-
 
     // SETUP ACTION BUTTON
     self.actionButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    actionButton.frame = CGRectMake(ui.contentOffset, heightOffset, 80, 30);
     actionButton.backgroundColor = [UIColor colorWithHexString:ISSUES_ACTION_BUTTON_BACKGROUND_COLOR];
     actionButton.titleLabel.font = actionFont;
 
@@ -185,10 +158,8 @@
 
     [self.view addSubview:actionButton];
 
-
     // SETUP ARCHIVE BUTTON
     self.archiveButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    archiveButton.frame = CGRectMake(ui.contentOffset + self.actionButton.frame.size.width + 10, heightOffset, 80, 30);
     archiveButton.backgroundColor = [UIColor colorWithHexString:ISSUES_ARCHIVE_BUTTON_BACKGROUND_COLOR];
     archiveButton.titleLabel.font = archiveFont;
 
@@ -200,15 +171,13 @@
     [self.view addSubview:archiveButton];
     #endif
 
-
     // SETUP DOWN/LOADING SPINNER AND LABEL
     self.spinner = [[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray] autorelease];
     spinner.color = [UIColor colorWithHexString:ISSUES_LOADING_SPINNER_COLOR];
-    spinner.frame = CGRectMake(ui.contentOffset, heightOffset, 30, 30);
     spinner.backgroundColor = [UIColor clearColor];
     spinner.hidesWhenStopped = YES;
 
-    self.loadingLabel = [[UILabel alloc] initWithFrame:CGRectMake(ui.contentOffset + self.spinner.frame.size.width + 10, heightOffset, 135, 30)];
+    self.loadingLabel = [[[UILabel alloc] init] autorelease];
     loadingLabel.textColor = [UIColor colorWithHexString:ISSUES_LOADING_LABEL_COLOR];
     loadingLabel.backgroundColor = [UIColor clearColor];
     loadingLabel.textAlignment = UITextAlignmentLeft;
@@ -218,12 +187,8 @@
     [self.view addSubview:spinner];
     [self.view addSubview:loadingLabel];
 
-    heightOffset = heightOffset + self.loadingLabel.frame.size.height + 5;
-
-
     // SETUP PROGRESS BAR
     self.progressBar = [[[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleDefault] autorelease];
-    self.progressBar.frame = CGRectMake(ui.contentOffset, heightOffset, 170, 30);
     self.progressBar.progressTintColor = [UIColor colorWithHexString:ISSUES_PROGRESSBAR_TINT_COLOR];
 
     [self.view addSubview:progressBar];
@@ -238,7 +203,65 @@
         }
     }
     #endif
+
+    [self refreshContent];
 }
+- (void)refreshContent {
+    UI ui = [IssueViewController getIssueContentMeasures];
+    int heightOffset = ui.cellPadding;
+    uint textLineheight = [@"The brown fox jumps over the lazy dog" sizeWithFont:infoFont constrainedToSize:CGSizeMake(MAXFLOAT, MAXFLOAT)].height;
+
+    // SETUP COVER IMAGE
+    [self.issue getCover:^(UIImage *image) {
+        [issueCover setBackgroundImage:image forState:UIControlStateNormal];
+    }];
+
+    // SETUP TITLE LABEL
+    CGSize titleSize = [self.issue.title sizeWithFont:titleFont constrainedToSize:CGSizeMake(170, MAXFLOAT) lineBreakMode:UILineBreakModeWordWrap];
+    uint titleLines = MIN(4, titleSize.height / textLineheight);
+
+    titleLabel.frame = CGRectMake(ui.contentOffset, heightOffset, 170, textLineheight * titleLines);
+    titleLabel.numberOfLines = titleLines;
+    titleLabel.text = self.issue.title;
+
+    heightOffset = heightOffset + titleLabel.frame.size.height + 5;
+
+    // SETUP INFO LABEL
+    CGSize infoSize = [self.issue.info sizeWithFont:infoFont constrainedToSize:CGSizeMake(170, MAXFLOAT) lineBreakMode:UILineBreakModeWordWrap];
+    uint infoLines = MIN(4, infoSize.height / textLineheight);
+
+    infoLabel.frame = CGRectMake(ui.contentOffset, heightOffset, 170, textLineheight * infoLines);
+    infoLabel.numberOfLines = infoLines;
+    infoLabel.text = self.issue.info;
+
+    heightOffset = heightOffset + infoLabel.frame.size.height + 5;
+
+    // SETUP PRICE LABEL
+    self.priceLabel.frame = CGRectMake(ui.contentOffset, heightOffset, 170, textLineheight);
+
+    heightOffset = heightOffset + priceLabel.frame.size.height + 10;
+
+    // SETUP ACTION BUTTON
+    NSString *status = [self.issue getStatus];
+    if ([status isEqualToString:@"remote"] || [status isEqualToString:@"purchasable"] || [status isEqualToString:@"purchased"]) {
+        actionButton.frame = CGRectMake(ui.contentOffset, heightOffset, 110, 30);
+    } else if ([status isEqualToString:@"downloaded"] || [status isEqualToString:@"bundled"]) {
+        actionButton.frame = CGRectMake(ui.contentOffset, heightOffset, 80, 30);
+    }
+
+    // SETUP ARCHIVE BUTTON
+    archiveButton.frame = CGRectMake(ui.contentOffset + 80 + 10, heightOffset, 80, 30);
+
+    // SETUP DOWN/LOADING SPINNER AND LABEL
+    spinner.frame = CGRectMake(ui.contentOffset, heightOffset, 30, 30);
+    self.loadingLabel.frame = CGRectMake(ui.contentOffset + self.spinner.frame.size.width + 10, heightOffset, 135, 30);
+
+    heightOffset = heightOffset + self.loadingLabel.frame.size.height + 5;
+
+    // SETUP PROGRESS BAR
+    self.progressBar.frame = CGRectMake(ui.contentOffset, heightOffset, 170, 30);
+}
+
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
@@ -250,8 +273,6 @@
 }
 - (void)refresh:(NSString *)status
 {
-    UI ui = [IssueViewController getIssueContentMeasures];
-
     NSLog(@"Refreshing %@ view with status %@ -> %@", self.issue.ID, currentStatus, status);
     if ([status isEqualToString:@"remote"])
     {
@@ -260,7 +281,6 @@
         [self.actionButton setTitle:NSLocalizedString(@"ACTION_REMOTE_TEXT", nil) forState:UIControlStateNormal];
         [self.spinner stopAnimating];
 
-        self.actionButton.frame = CGRectMake(ui.contentOffset, self.actionButton.frame.origin.y, 110, 30);
         self.actionButton.hidden = NO;
         self.archiveButton.hidden = YES;
         self.progressBar.hidden = YES;
@@ -296,7 +316,6 @@
         [self.actionButton setTitle:NSLocalizedString(@"ACTION_DOWNLOADED_TEXT", nil) forState:UIControlStateNormal];
         [self.spinner stopAnimating];
 
-        self.actionButton.frame = CGRectMake(ui.contentOffset, self.actionButton.frame.origin.y, 80, 30);
         self.actionButton.hidden = NO;
         self.archiveButton.hidden = NO;
         self.loadingLabel.hidden = YES;
@@ -308,7 +327,6 @@
         [self.actionButton setTitle:NSLocalizedString(@"ACTION_DOWNLOADED_TEXT", nil) forState:UIControlStateNormal];
         [self.spinner stopAnimating];
 
-        self.actionButton.frame = CGRectMake(ui.contentOffset, self.actionButton.frame.origin.y, 80, 30);
         self.actionButton.hidden = NO;
         self.archiveButton.hidden = YES;
         self.loadingLabel.hidden = YES;
@@ -335,7 +353,6 @@
             [self.priceLabel setText:self.issue.price];
         }
 
-        self.actionButton.frame = CGRectMake(ui.contentOffset, self.actionButton.frame.origin.y, 110, 30);
         self.actionButton.hidden = NO;
         self.archiveButton.hidden = YES;
         self.progressBar.hidden = YES;
@@ -361,7 +378,6 @@
         [self.actionButton setTitle:NSLocalizedString(@"ACTION_REMOTE_TEXT", nil) forState:UIControlStateNormal];
         [self.spinner stopAnimating];
 
-        self.actionButton.frame = CGRectMake(ui.contentOffset, self.actionButton.frame.origin.y, 110, 30);
         self.actionButton.hidden = NO;
         self.archiveButton.hidden = YES;
         self.progressBar.hidden = YES;
@@ -381,6 +397,8 @@
         self.priceLabel.hidden = YES;
     }
 
+    [self refreshContent];
+
     currentStatus = status;
 }
 
@@ -394,6 +412,12 @@
     [progressBar release];
     [spinner release];
     [loadingLabel release];
+    [priceLabel release];
+    [issueCover release];
+    [titleFont release];
+    [infoFont release];
+    [titleLabel release];
+    [infoLabel release];
 
     [super dealloc];
 }

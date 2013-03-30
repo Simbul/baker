@@ -105,7 +105,7 @@
     NSURL *shelfURL = [self.url URLByAppendingQueryString:queryString];
 
     NSURLResponse *response = nil;
-    NSURLRequest *request = [NSURLRequest requestWithURL:shelfURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:REQUEST_TIMEOUT];
+    NSURLRequest *request = [NSURLRequest requestWithURL:shelfURL cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:REQUEST_TIMEOUT];
     NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&shelfError];
 
     if (shelfError) {

@@ -321,6 +321,9 @@
                 IssueViewController *ivc = [self createIssueViewControllerWithIssue:issue];
                 [self.issueViewControllers insertObject:ivc atIndex:idx];
                 [self.gridView insertItemsAtIndices:[NSIndexSet indexSetWithIndex:idx] withAnimation:AQGridViewItemAnimationNone];
+            } else {
+                existingIvc.issue = issue;
+                [existingIvc refreshContent];
             }
         }];
 
