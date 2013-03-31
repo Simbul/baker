@@ -62,11 +62,14 @@
     NSError *error = nil;
     NSData *data = [self getFromURL:[NSURL URLWithString:NEWSSTAND_MANIFEST_URL] cachePolicy:NSURLRequestReloadIgnoringLocalCacheData error:&error];
 
-    if (error) {
+    if (data) {
+        return [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    } else if (error) {
         NSLog(@"[ERROR] Cannot get shelf JSON from %@: %@", NEWSSTAND_MANIFEST_URL, [error localizedDescription]);
         return nil;
     } else {
-        return [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+        NSLog(@"[ERROR] Cannot get shelf JSON from %@: no data was returned", NEWSSTAND_MANIFEST_URL);
+        return nil;
     }
 }
 
@@ -80,11 +83,14 @@
         NSError *error = nil;
         NSData *data = [self getFromURL:[NSURL URLWithString:PURCHASES_URL] cachePolicy:NSURLRequestUseProtocolCachePolicy error:&error];
 
-        if (error) {
+        if (data) {
+            return [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+        } else if (error) {
             NSLog(@"[ERROR] Cannot get purchases from %@: %@", PURCHASES_URL, [error localizedDescription]);
             return nil;
         } else {
-            return [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+            NSLog(@"[ERROR] Cannot get purchases from %@: no data was returned", PURCHASES_URL);
+            return nil;
         }
     }
 
@@ -172,10 +178,15 @@
 }
 
 - (NSData *)getFromURL:(NSURL *)url cachePolicy:(NSURLRequestCachePolicy)cachePolicy error:(NSError **)error {
-    NSURLResponse *response = nil;
+    NSHTTPURLResponse *response = nil;
     NSURLRequest *request = [self getRequestForURL:url cachePolicy:cachePolicy];
 
-    return [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:error];
+    NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:error];
+    if ([response statusCode] == 200) {
+        return data;
+    } else {
+        return nil;
+    }
 }
 
 @end
