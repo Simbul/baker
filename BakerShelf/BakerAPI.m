@@ -59,7 +59,7 @@
 }
 - (NSString *)getShelfJSON {
     NSError *error = nil;
-    NSData *data = [self getFromURL:[NSURL URLWithString:NEWSSTAND_MANIFEST_URL] error:&error];
+    NSData *data = [self getFromURL:[NSURL URLWithString:NEWSSTAND_MANIFEST_URL] cachePolicy:NSURLRequestReloadIgnoringLocalCacheData error:&error];
 
     if (error) {
         NSLog(@"[ERROR] Cannot get shelf JSON from %@: %@", NEWSSTAND_MANIFEST_URL, [error localizedDescription]);
@@ -77,7 +77,7 @@
 - (NSString *)getPurchasesJSON {
     if ([self canGetPurchasesJSON]) {
         NSError *error = nil;
-        NSData *data = [self getFromURL:[NSURL URLWithString:PURCHASES_URL] error:&error];
+        NSData *data = [self getFromURL:[NSURL URLWithString:PURCHASES_URL] cachePolicy:NSURLRequestUseProtocolCachePolicy error:&error];
 
         if (error) {
             NSLog(@"[ERROR] Cannot get purchases from %@: %@", PURCHASES_URL, [error localizedDescription]);
@@ -151,7 +151,7 @@
     return [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:error];
 }
 
-- (NSData *)getFromURL:(NSURL *)url error:(NSError **)error {
+- (NSData *)getFromURL:(NSURL *)url cachePolicy:(NSURLRequestCachePolicy)cachePolicy error:(NSError **)error {
     NSString *queryString = [NSString stringWithFormat:@"app_id=%@", [Utils appID]];
 
     #ifdef BAKER_NEWSSTAND
@@ -161,7 +161,7 @@
     NSURL *requestURL = [url URLByAppendingQueryString:queryString];
 
     NSURLResponse *response = nil;
-    NSURLRequest *request = [NSURLRequest requestWithURL:requestURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:REQUEST_TIMEOUT];
+    NSURLRequest *request = [NSURLRequest requestWithURL:requestURL cachePolicy:cachePolicy timeoutInterval:REQUEST_TIMEOUT];
 
     return [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:error];
 }
