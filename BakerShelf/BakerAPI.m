@@ -159,8 +159,13 @@
 #pragma mark - Helpers
 
 - (NSURLRequest *)getRequestForURL:(NSURL *)url cachePolicy:(NSURLRequestCachePolicy)cachePolicy {
-    NSString *queryString = [NSString stringWithFormat:@"app_id=%@&user_id=%@", [Utils appID], [BakerAPI UUID]];
-    NSURL *requestURL = [url URLByAppendingQueryString:queryString];
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                       [Utils appID], @"app_id",
+                                       [BakerAPI UUID], @"user_id",
+                                       nil];
+    NSURL *requestURL = [self replaceParameters:parameters inURL:url];
+    NSString *queryString = [self queryStringFromParameters:parameters];
+    requestURL = [requestURL URLByAppendingQueryString:queryString];
     return [NSURLRequest requestWithURL:requestURL cachePolicy:cachePolicy timeoutInterval:REQUEST_TIMEOUT];
 }
 
@@ -169,8 +174,10 @@
     [postParams setObject:[Utils appID] forKey:@"app_id"];
     [postParams setObject:[BakerAPI UUID] forKey:@"user_id"];
 
+    NSURL *requestURL = [self replaceParameters:postParams inURL:url];
+
     NSURLResponse *response = nil;
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:REQUEST_TIMEOUT];
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:requestURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:REQUEST_TIMEOUT];
     [request setHTTPMethod:@"POST"];
     [request setFormPostParameters:postParams];
 
@@ -187,6 +194,33 @@
     } else {
         return nil;
     }
+}
+
+- (NSURL *)replaceParameters:(NSMutableDictionary *)parameters inURL:(NSURL *)url {
+    __block NSMutableString *urlString = [NSMutableString stringWithString:[url absoluteString]];
+    NSDictionary *allParameters = [NSDictionary dictionaryWithDictionary:parameters];
+    [allParameters enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+        NSString *keyToReplace = [@":" stringByAppendingString:key];
+        NSRange range = [urlString rangeOfString:keyToReplace options:NSCaseInsensitiveSearch];
+        if (range.location != NSNotFound) {
+            [urlString replaceCharactersInRange:range withString:obj];
+            [parameters removeObjectForKey:key];
+        }
+    }];
+    return [NSURL URLWithString:urlString];
+}
+
+- (NSString *)queryStringFromParameters:(NSDictionary *)parameters {
+    __block NSMutableString *queryString = [NSMutableString stringWithString:@""];
+    if ([parameters count] > 0) {
+        [parameters enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+            NSString *queryParameter = [NSString stringWithFormat:@"%@=%@&", key, obj];
+            [queryString appendString:queryParameter];
+        }];
+        // Remove the last "&"
+        [queryString deleteCharactersInRange:NSMakeRange([queryString length] - 1, 1)];
+    }
+    return queryString;
 }
 
 @end
