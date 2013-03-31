@@ -110,6 +110,28 @@
     return nil;
 }
 
+- (bool)canPostPurchaseReceipt {
+    return [PURCHASE_CONFIRMATION_URL length] > 0;
+}
+- (bool)postPurchaseReceipt:(NSString *)receipt ofType:(NSString *)type {
+    if ([self canPostPurchaseReceipt]) {
+        NSError *error = nil;
+
+        NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
+                                type, @"type",
+                                receipt, @"receipt_data",
+                                nil];
+
+        [self postParams:params toURL:[NSURL URLWithString:PURCHASE_CONFIRMATION_URL] error:&error];
+        if (error) {
+            NSLog(@"Error sending purchase confirmation %@", error);
+            return NO;
+        }
+        return YES;
+    }
+    return NO;
+}
+
 #pragma mark - APNS
 
 - (BOOL)postAPNSToken:(NSString *)apnsToken {

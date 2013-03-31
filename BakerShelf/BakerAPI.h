@@ -46,6 +46,9 @@
 - (bool)canGetPurchasesJSON;
 - (NSString *)getPurchasesJSON;
 
+- (bool)canPostPurchaseReceipt;
+- (bool)postPurchaseReceipt:(NSString *)receipt ofType:(NSString *)type;
+
 #pragma mark - APNS
 
 - (BOOL)postAPNSToken:(NSString *)apnsToken;

@@ -178,21 +178,14 @@
 - (BOOL)recordTransaction:(SKPaymentTransaction *)transaction {
     [[NSUserDefaults standardUserDefaults] setObject:transaction.transactionIdentifier forKey:@"receipt"];
 
-    if ([PURCHASE_CONFIRMATION_URL length] > 0) {
-        NSError *error = nil;
+    BakerAPI *api = [BakerAPI sharedInstance];
+    if ([api canPostPurchaseReceipt]) {
+        NSString *receipt = [transaction.transactionReceipt base64EncodedString];
+        NSString *type = [self transactionType:transaction];
 
-        NSString *receiptData = [transaction.transactionReceipt base64EncodedString];
-        NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
-                                [self transactionType:transaction], @"type",
-                                receiptData, @"receipt_data",
-                                nil];
-
-        [self postParams:params toURL:[NSURL URLWithString:PURCHASE_CONFIRMATION_URL] error:&error];
-        if (error) {
-            NSLog(@"Error sending purchase confirmation %@", error);
-            return NO;
-        }
+        return [api postPurchaseReceipt:receipt ofType:type];
     }
+
     return YES;
 }
 
@@ -228,19 +221,6 @@
             }
         }
     }
-}
-
-- (NSData *)postParams:(NSDictionary *)params toURL:(NSURL *)url error:(NSError **)error {
-    NSMutableDictionary *postParams = [NSMutableDictionary dictionaryWithDictionary:params];
-    [postParams setObject:[Utils appID] forKey:@"app_id"];
-    [postParams setObject:[PurchasesManager UUID] forKey:@"user_id"];
-
-    NSURLResponse *response = nil;
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:REQUEST_TIMEOUT];
-    [request setHTTPMethod:@"POST"];
-    [request setFormPostParameters:postParams];
-
-    return [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:error];
 }
 
 - (BOOL)isPurchased:(NSString *)productID {
