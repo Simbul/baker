@@ -60,4 +60,8 @@
 + (BOOL)generateUUIDOnce;
 + (NSString *)UUID;
 
+#pragma mark - Helpers
+
+- (NSURLRequest *)getRequestForURL:(NSURL *)url cachePolicy:(NSURLRequestCachePolicy)cachePolicy;
+
 @end

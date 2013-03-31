@@ -152,13 +152,16 @@
 
 #pragma mark - Helpers
 
+- (NSURLRequest *)getRequestForURL:(NSURL *)url cachePolicy:(NSURLRequestCachePolicy)cachePolicy {
+    NSString *queryString = [NSString stringWithFormat:@"app_id=%@&user_id=%@", [Utils appID], [BakerAPI UUID]];
+    NSURL *requestURL = [url URLByAppendingQueryString:queryString];
+    return [NSURLRequest requestWithURL:requestURL cachePolicy:cachePolicy timeoutInterval:REQUEST_TIMEOUT];
+}
+
 - (NSData *)postParams:(NSDictionary *)params toURL:(NSURL *)url error:(NSError **)error {
     NSMutableDictionary *postParams = [NSMutableDictionary dictionaryWithDictionary:params];
     [postParams setObject:[Utils appID] forKey:@"app_id"];
-
-    #ifdef BAKER_NEWSSTAND
     [postParams setObject:[BakerAPI UUID] forKey:@"user_id"];
-    #endif
 
     NSURLResponse *response = nil;
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:REQUEST_TIMEOUT];
@@ -169,16 +172,8 @@
 }
 
 - (NSData *)getFromURL:(NSURL *)url cachePolicy:(NSURLRequestCachePolicy)cachePolicy error:(NSError **)error {
-    NSString *queryString = [NSString stringWithFormat:@"app_id=%@", [Utils appID]];
-
-    #ifdef BAKER_NEWSSTAND
-    queryString = [NSString stringWithFormat:@"%@&user_id=%@", queryString, [BakerAPI UUID]];
-    #endif
-
-    NSURL *requestURL = [url URLByAppendingQueryString:queryString];
-
     NSURLResponse *response = nil;
-    NSURLRequest *request = [NSURLRequest requestWithURL:requestURL cachePolicy:cachePolicy timeoutInterval:REQUEST_TIMEOUT];
+    NSURLRequest *request = [self getRequestForURL:url cachePolicy:cachePolicy];
 
     return [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:error];
 }

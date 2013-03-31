@@ -143,13 +143,12 @@
 - (void)download {
     Reachability* reach = [Reachability reachabilityWithHostname:@"www.google.com"];
     if ([reach isReachable]) {
+        BakerAPI *api = [BakerAPI sharedInstance];
+        NSURLRequest *req = [api getRequestForURL:self.url cachePolicy:NSURLRequestUseProtocolCachePolicy];
+
         NKLibrary *nkLib = [NKLibrary sharedLibrary];
         NKIssue *nkIssue = [nkLib issueWithName:self.ID];
 
-        NSString *queryString = [NSString stringWithFormat:@"app_id=%@&user_id=%@", [Utils appID], [BakerAPI UUID]];
-        NSURL *issueURL = [self.url URLByAppendingQueryString:queryString];
-
-        NSURLRequest *req = [NSURLRequest requestWithURL:issueURL];
         NKAssetDownload *assetDownload = [nkIssue addAssetWithRequest:req];
         [self downloadWithAsset:assetDownload];
     } else {
