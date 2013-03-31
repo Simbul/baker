@@ -1,5 +1,5 @@
 //
-//  PurchasesManager.h
+//  BakerAPI.m
 //  Baker
 //
 //  ==========================================================================================
@@ -29,59 +29,61 @@
 //  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
+#import "BakerAPI.h"
 #import "Constants.h"
-#import <Foundation/Foundation.h>
-#import <StoreKit/StoreKit.h>
+#import "NSMutableURLRequest+WebServiceClient.h"
 
+#import "Utils.h"
 #ifdef BAKER_NEWSSTAND
-@interface PurchasesManager : NSObject <SKProductsRequestDelegate, SKPaymentTransactionObserver> {
-    NSMutableDictionary *_purchases;
-    BOOL _enableProductRequestFailureNotifications;
-}
+#import "PurchasesManager.h"
+#endif
 
-@property (retain, nonatomic) NSMutableDictionary *products;
-@property (retain, nonatomic) NSNumberFormatter *numberFormatter;
-@property (nonatomic) BOOL subscribed;
+@implementation BakerAPI
 
 #pragma mark - Singleton
 
-+ (PurchasesManager *)sharedInstance;
++ (BakerAPI *)sharedInstance {
+    static dispatch_once_t once;
+    static BakerAPI *sharedInstance;
+    dispatch_once(&once, ^{
+        sharedInstance = [[self alloc] init];
+    });
+    return sharedInstance;
+}
 
-#pragma mark - Purchased flag
+#pragma mark - APNS
 
-- (BOOL)isMarkedAsPurchased:(NSString *)productID;
-- (void)markAsPurchased:(NSString *)productID;
+- (BOOL)postAPNSToken:(NSString *)apnsToken {
+    if ([POST_APNS_TOKEN_URL length] > 0) {
+        NSDictionary *params = [NSDictionary dictionaryWithObject:apnsToken forKey:@"apns_token"];
+        NSError *error = nil;
+        
+        [self postParams:params toURL:[NSURL URLWithString:POST_APNS_TOKEN_URL] error:&error];
+        if (error) {
+            NSLog(@"Error sending APNS device token %@", error);
+            return NO;
+        }
+        return YES;
+    }
+    return NO;
+}
 
-#pragma mark - Prices
+#pragma mark - Helpers
 
-- (void)retrievePricesFor:(NSSet *)productIDs;
-- (void)retrievePricesFor:(NSSet *)productIDs andEnableFailureNotifications:(BOOL)enable;
-
-- (void)retrievePriceFor:(NSString *)productID;
-- (void)retrievePriceFor:(NSString *)productID andEnableFailureNotification:(BOOL)enable;
-
-- (NSString *)priceFor:(NSString *)productID;
-
-#pragma mark - Purchases
-
-- (BOOL)purchase:(NSString *)productID;
-- (BOOL)finishTransaction:(SKPaymentTransaction *)transaction;
-- (void)restore;
-- (void)retrievePurchasesFor:(NSSet *)productIDs;
-- (BOOL)isPurchased:(NSString *)productID;
-
-#pragma mark - Products
-
-- (SKProduct *)productFor:(NSString *)productID;
-
-#pragma mark - Subscriptions
-
-- (BOOL)hasSubscriptions;
-
-#pragma mark - User ID
-
-+ (BOOL)generateUUIDOnce;
-+ (NSString *)UUID;
+- (NSData *)postParams:(NSDictionary *)params toURL:(NSURL *)url error:(NSError **)error {
+    NSMutableDictionary *postParams = [NSMutableDictionary dictionaryWithDictionary:params];
+    [postParams setObject:[Utils appID] forKey:@"app_id"];
+    
+    #ifdef BAKER_NEWSSTAND
+    [postParams setObject:[PurchasesManager UUID] forKey:@"user_id"];
+    #endif
+    
+    NSURLResponse *response = nil;
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:REQUEST_TIMEOUT];
+    [request setHTTPMethod:@"POST"];
+    [request setFormPostParameters:postParams];
+    
+    return [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:error];
+}
 
 @end
-#endif

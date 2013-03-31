@@ -35,7 +35,7 @@
 #import "UICustomNavigationController.h"
 #import "UICustomNavigationBar.h"
 #import "IssuesManager.h"
-#import "PurchasesManager.h"
+#import "BakerAPI.h"
 
 #import "BakerViewController.h"
 
@@ -133,8 +133,8 @@
     [[NSUserDefaults standardUserDefaults] setObject:apnsToken forKey:@"apns_token"];
     [[NSUserDefaults standardUserDefaults] synchronize];
 
-    PurchasesManager *purchaseManager = [PurchasesManager sharedInstance];
-    [purchaseManager postAPNSToken:apnsToken];
+    BakerAPI *api = [BakerAPI sharedInstance];
+    [api postAPNSToken:apnsToken];
 }
 #endif
 

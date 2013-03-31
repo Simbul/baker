@@ -1,5 +1,5 @@
 //
-//  PurchasesManager.h
+//  BakerAPI.h
 //  Baker
 //
 //  ==========================================================================================
@@ -29,59 +29,16 @@
 //  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-#import "Constants.h"
 #import <Foundation/Foundation.h>
-#import <StoreKit/StoreKit.h>
 
-#ifdef BAKER_NEWSSTAND
-@interface PurchasesManager : NSObject <SKProductsRequestDelegate, SKPaymentTransactionObserver> {
-    NSMutableDictionary *_purchases;
-    BOOL _enableProductRequestFailureNotifications;
-}
-
-@property (retain, nonatomic) NSMutableDictionary *products;
-@property (retain, nonatomic) NSNumberFormatter *numberFormatter;
-@property (nonatomic) BOOL subscribed;
+@interface BakerAPI : NSObject
 
 #pragma mark - Singleton
 
-+ (PurchasesManager *)sharedInstance;
++ (BakerAPI *)sharedInstance;
 
-#pragma mark - Purchased flag
+#pragma mark - APNS
 
-- (BOOL)isMarkedAsPurchased:(NSString *)productID;
-- (void)markAsPurchased:(NSString *)productID;
-
-#pragma mark - Prices
-
-- (void)retrievePricesFor:(NSSet *)productIDs;
-- (void)retrievePricesFor:(NSSet *)productIDs andEnableFailureNotifications:(BOOL)enable;
-
-- (void)retrievePriceFor:(NSString *)productID;
-- (void)retrievePriceFor:(NSString *)productID andEnableFailureNotification:(BOOL)enable;
-
-- (NSString *)priceFor:(NSString *)productID;
-
-#pragma mark - Purchases
-
-- (BOOL)purchase:(NSString *)productID;
-- (BOOL)finishTransaction:(SKPaymentTransaction *)transaction;
-- (void)restore;
-- (void)retrievePurchasesFor:(NSSet *)productIDs;
-- (BOOL)isPurchased:(NSString *)productID;
-
-#pragma mark - Products
-
-- (SKProduct *)productFor:(NSString *)productID;
-
-#pragma mark - Subscriptions
-
-- (BOOL)hasSubscriptions;
-
-#pragma mark - User ID
-
-+ (BOOL)generateUUIDOnce;
-+ (NSString *)UUID;
+- (BOOL)postAPNSToken:(NSString *)apnsToken;
 
 @end
-#endif
