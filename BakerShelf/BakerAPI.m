@@ -58,9 +58,11 @@
     NSError *shelfError = nil;
 
     NSString *queryString = [NSString stringWithFormat:@"app_id=%@", [Utils appID]];
+
     #ifdef BAKER_NEWSSTAND
-        queryString = [NSString stringWithFormat:@"%@&user_id=%@", queryString, [PurchasesManager UUID]];
+    queryString = [NSString stringWithFormat:@"%@&user_id=%@", queryString, [PurchasesManager UUID]];
     #endif
+
     NSURL *shelfURL = [[NSURL URLWithString:NEWSSTAND_MANIFEST_URL] URLByAppendingQueryString:queryString];
 
     NSURLResponse *response = nil;
@@ -73,6 +75,39 @@
     } else {
         return [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     }
+}
+
+#pragma mark - Purchases
+
+- (bool)canGetPurchasesJSON {
+    return [PURCHASES_URL length] > 0;
+}
+- (NSString *)getPurchasesJSON {
+    if ([self canGetPurchasesJSON]) {
+        NSError *error = nil;
+
+        NSString *queryString = [NSString stringWithFormat:@"app_id=%@", [Utils appID]];
+
+        #ifdef BAKER_NEWSSTAND
+        queryString = [NSString stringWithFormat:@"%@&user_id=%@", queryString, [PurchasesManager UUID]];
+        #endif
+
+        NSURL *shelfURL = [[NSURL URLWithString:PURCHASES_URL] URLByAppendingQueryString:queryString];
+
+        NSURLResponse *response = nil;
+        NSURLRequest *request = [NSURLRequest requestWithURL:shelfURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:REQUEST_TIMEOUT];
+
+        NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
+
+        if (error) {
+            NSLog(@"ERROR: Cannot connect to %@: %@", PURCHASES_URL, [error localizedDescription]);
+            return nil;
+        } else {
+            return [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+        }
+    }
+
+    return nil;
 }
 
 #pragma mark - APNS

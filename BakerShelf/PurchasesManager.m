@@ -30,6 +30,7 @@
 //
 
 #import "PurchasesManager.h"
+#import "BakerAPI.h"
 
 #import "JSONKit.h"
 #import "NSData+Base64.h"
@@ -207,22 +208,12 @@
 }
 
 - (void)retrievePurchasesFor:(NSSet *)productIDs {
-    if ([PURCHASES_URL length] > 0) {
-        NSError *error = nil;
+    BakerAPI *api = [BakerAPI sharedInstance];
 
-        NSString *queryString = [NSString stringWithFormat:@"app_id=%@&user_id=%@", [Utils appID], [PurchasesManager UUID]];
-        NSURL *shelfURL = [[NSURL URLWithString:PURCHASES_URL] URLByAppendingQueryString:queryString];
+    if ([api canGetPurchasesJSON]) {
+        NSString *jsonResponse = [api getPurchasesJSON];
 
-        NSURLResponse *response = nil;
-        NSURLRequest *request = [NSURLRequest requestWithURL:shelfURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:REQUEST_TIMEOUT];
-
-        NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
-
-        if (error) {
-            NSLog(@"ERROR: Cannot connect to %@: %@", PURCHASES_URL, [error localizedDescription]);
-        } else {
-            NSString *jsonResponse = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-
+        if (jsonResponse) {
             NSDictionary *purchasesResponse = [jsonResponse objectFromJSONString];
 
             if (purchasesResponse) {

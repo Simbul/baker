@@ -41,6 +41,11 @@
 
 - (NSString *)getShelfJSON;
 
+#pragma mark - Purchases
+
+- (bool)canGetPurchasesJSON;
+- (NSString *)getPurchasesJSON;
+
 #pragma mark - APNS
 
 - (BOOL)postAPNSToken:(NSString *)apnsToken;
