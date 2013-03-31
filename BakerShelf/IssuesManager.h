@@ -35,7 +35,6 @@
 
 @interface IssuesManager : NSObject
 
-@property (copy, nonatomic) NSURL *url;
 @property (copy, nonatomic) NSArray *issues;
 @property (retain, nonatomic) NSString *shelfManifestPath;
 

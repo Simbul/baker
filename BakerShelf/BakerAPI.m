@@ -32,6 +32,7 @@
 #import "BakerAPI.h"
 #import "Constants.h"
 #import "NSMutableURLRequest+WebServiceClient.h"
+#import "NSURL+Extensions.h"
 
 #import "Utils.h"
 #ifdef BAKER_NEWSSTAND
@@ -49,6 +50,29 @@
         sharedInstance = [[self alloc] init];
     });
     return sharedInstance;
+}
+
+#pragma mark - Shelf
+
+- (NSString *)getShelfJSON {
+    NSError *shelfError = nil;
+
+    NSString *queryString = [NSString stringWithFormat:@"app_id=%@", [Utils appID]];
+    #ifdef BAKER_NEWSSTAND
+        queryString = [NSString stringWithFormat:@"%@&user_id=%@", queryString, [PurchasesManager UUID]];
+    #endif
+    NSURL *shelfURL = [[NSURL URLWithString:NEWSSTAND_MANIFEST_URL] URLByAppendingQueryString:queryString];
+
+    NSURLResponse *response = nil;
+    NSURLRequest *request = [NSURLRequest requestWithURL:shelfURL cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:REQUEST_TIMEOUT];
+    NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&shelfError];
+
+    if (shelfError) {
+        NSLog(@"Error loading Shelf manifest: %@", shelfError);
+        return nil;
+    } else {
+        return [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    }
 }
 
 #pragma mark - APNS

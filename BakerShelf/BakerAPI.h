@@ -37,6 +37,10 @@
 
 + (BakerAPI *)sharedInstance;
 
+#pragma mark - Shelf
+
+- (NSString *)getShelfJSON;
+
 #pragma mark - APNS
 
 - (BOOL)postAPNSToken:(NSString *)apnsToken;
