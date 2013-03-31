@@ -54,23 +54,15 @@
 
 #pragma mark - Shelf
 
+- (BOOL)canGetShelfJSON {
+    return [NEWSSTAND_MANIFEST_URL length] > 0;
+}
 - (NSString *)getShelfJSON {
-    NSError *shelfError = nil;
+    NSError *error = nil;
+    NSData *data = [self getFromURL:[NSURL URLWithString:NEWSSTAND_MANIFEST_URL] error:&error];
 
-    NSString *queryString = [NSString stringWithFormat:@"app_id=%@", [Utils appID]];
-
-    #ifdef BAKER_NEWSSTAND
-    queryString = [NSString stringWithFormat:@"%@&user_id=%@", queryString, [PurchasesManager UUID]];
-    #endif
-
-    NSURL *shelfURL = [[NSURL URLWithString:NEWSSTAND_MANIFEST_URL] URLByAppendingQueryString:queryString];
-
-    NSURLResponse *response = nil;
-    NSURLRequest *request = [NSURLRequest requestWithURL:shelfURL cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:REQUEST_TIMEOUT];
-    NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&shelfError];
-
-    if (shelfError) {
-        NSLog(@"Error loading Shelf manifest: %@", shelfError);
+    if (error) {
+        NSLog(@"[ERROR] Cannot get shelf JSON from %@: %@", NEWSSTAND_MANIFEST_URL, [error localizedDescription]);
         return nil;
     } else {
         return [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
@@ -79,28 +71,16 @@
 
 #pragma mark - Purchases
 
-- (bool)canGetPurchasesJSON {
+- (BOOL)canGetPurchasesJSON {
     return [PURCHASES_URL length] > 0;
 }
 - (NSString *)getPurchasesJSON {
     if ([self canGetPurchasesJSON]) {
         NSError *error = nil;
-
-        NSString *queryString = [NSString stringWithFormat:@"app_id=%@", [Utils appID]];
-
-        #ifdef BAKER_NEWSSTAND
-        queryString = [NSString stringWithFormat:@"%@&user_id=%@", queryString, [PurchasesManager UUID]];
-        #endif
-
-        NSURL *shelfURL = [[NSURL URLWithString:PURCHASES_URL] URLByAppendingQueryString:queryString];
-
-        NSURLResponse *response = nil;
-        NSURLRequest *request = [NSURLRequest requestWithURL:shelfURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:REQUEST_TIMEOUT];
-
-        NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
+        NSData *data = [self getFromURL:[NSURL URLWithString:PURCHASES_URL] error:&error];
 
         if (error) {
-            NSLog(@"ERROR: Cannot connect to %@: %@", PURCHASES_URL, [error localizedDescription]);
+            NSLog(@"[ERROR] Cannot get purchases from %@: %@", PURCHASES_URL, [error localizedDescription]);
             return nil;
         } else {
             return [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
@@ -110,21 +90,21 @@
     return nil;
 }
 
-- (bool)canPostPurchaseReceipt {
+- (BOOL)canPostPurchaseReceipt {
     return [PURCHASE_CONFIRMATION_URL length] > 0;
 }
-- (bool)postPurchaseReceipt:(NSString *)receipt ofType:(NSString *)type {
+- (BOOL)postPurchaseReceipt:(NSString *)receipt ofType:(NSString *)type {
     if ([self canPostPurchaseReceipt]) {
         NSError *error = nil;
-
         NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
                                 type, @"type",
                                 receipt, @"receipt_data",
                                 nil];
 
         [self postParams:params toURL:[NSURL URLWithString:PURCHASE_CONFIRMATION_URL] error:&error];
+
         if (error) {
-            NSLog(@"Error sending purchase confirmation %@", error);
+            NSLog(@"[ERROR] Cannot post purchase confirmation to %@: %@", PURCHASE_CONFIRMATION_URL, [error localizedDescription]);
             return NO;
         }
         return YES;
@@ -134,14 +114,18 @@
 
 #pragma mark - APNS
 
+- (BOOL)canPostAPNSToken {
+    return [POST_APNS_TOKEN_URL length] > 0;
+}
 - (BOOL)postAPNSToken:(NSString *)apnsToken {
-    if ([POST_APNS_TOKEN_URL length] > 0) {
+    if ([self canPostAPNSToken]) {
         NSDictionary *params = [NSDictionary dictionaryWithObject:apnsToken forKey:@"apns_token"];
         NSError *error = nil;
         
         [self postParams:params toURL:[NSURL URLWithString:POST_APNS_TOKEN_URL] error:&error];
+
         if (error) {
-            NSLog(@"Error sending APNS device token %@", error);
+            NSLog(@"[ERROR] Cannot post APNS token to %@: %@", POST_APNS_TOKEN_URL, [error localizedDescription]);
             return NO;
         }
         return YES;
@@ -154,16 +138,31 @@
 - (NSData *)postParams:(NSDictionary *)params toURL:(NSURL *)url error:(NSError **)error {
     NSMutableDictionary *postParams = [NSMutableDictionary dictionaryWithDictionary:params];
     [postParams setObject:[Utils appID] forKey:@"app_id"];
-    
+
     #ifdef BAKER_NEWSSTAND
     [postParams setObject:[PurchasesManager UUID] forKey:@"user_id"];
     #endif
-    
+
     NSURLResponse *response = nil;
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:REQUEST_TIMEOUT];
     [request setHTTPMethod:@"POST"];
     [request setFormPostParameters:postParams];
-    
+
+    return [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:error];
+}
+
+- (NSData *)getFromURL:(NSURL *)url error:(NSError **)error {
+    NSString *queryString = [NSString stringWithFormat:@"app_id=%@", [Utils appID]];
+
+    #ifdef BAKER_NEWSSTAND
+    queryString = [NSString stringWithFormat:@"%@&user_id=%@", queryString, [PurchasesManager UUID]];
+    #endif
+
+    NSURL *requestURL = [url URLByAppendingQueryString:queryString];
+
+    NSURLResponse *response = nil;
+    NSURLRequest *request = [NSURLRequest requestWithURL:requestURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:REQUEST_TIMEOUT];
+
     return [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:error];
 }
 

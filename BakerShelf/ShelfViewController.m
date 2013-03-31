@@ -79,6 +79,7 @@
         [[SKPaymentQueue defaultQueue] addTransactionObserver:purchasesManager];
         #endif
 
+        api = [BakerAPI sharedInstance];
         issuesManager = [[IssuesManager sharedInstance] retain];
 
         self.shelfStatus = [[[ShelfStatus alloc] init] retain];
@@ -351,7 +352,7 @@
 
 - (UIActionSheet *)buildSubscriptionsActionSheet {
     NSString *title;
-    if ([PURCHASES_URL length] > 0) {
+    if ([api canGetPurchasesJSON]) {
         if (purchasesManager.subscribed) {
             title = NSLocalizedString(@"SUBSCRIPTIONS_SHEET_SUBSCRIBED", nil);
         } else {

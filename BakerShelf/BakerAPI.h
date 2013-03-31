@@ -39,18 +39,20 @@
 
 #pragma mark - Shelf
 
+- (BOOL)canGetShelfJSON;
 - (NSString *)getShelfJSON;
 
 #pragma mark - Purchases
 
-- (bool)canGetPurchasesJSON;
+- (BOOL)canGetPurchasesJSON;
 - (NSString *)getPurchasesJSON;
 
-- (bool)canPostPurchaseReceipt;
-- (bool)postPurchaseReceipt:(NSString *)receipt ofType:(NSString *)type;
+- (BOOL)canPostPurchaseReceipt;
+- (BOOL)postPurchaseReceipt:(NSString *)receipt ofType:(NSString *)type;
 
 #pragma mark - APNS
 
+- (BOOL)canPostAPNSToken;
 - (BOOL)postAPNSToken:(NSString *)apnsToken;
 
 @end

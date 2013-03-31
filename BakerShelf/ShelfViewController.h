@@ -36,6 +36,7 @@
 #import "BakerIssue.h"
 #import "IssuesManager.h"
 #import "ShelfStatus.h"
+#import "BakerAPI.h"
 #ifdef BAKER_NEWSSTAND
 #import "PurchasesManager.h"
 #endif
@@ -44,6 +45,7 @@
     #ifdef BAKER_NEWSSTAND
     PurchasesManager *purchasesManager;
     #endif
+    BakerAPI *api;
     IssuesManager *issuesManager;
     NSMutableArray *notRecognisedTransactions;
 }

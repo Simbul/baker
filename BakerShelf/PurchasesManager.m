@@ -217,7 +217,7 @@
                     [_purchases setObject:[NSNumber numberWithBool:[purchasedIssues containsObject:obj]] forKey:obj];
                 }];
             } else {
-                NSLog(@"ERROR: Could not parse response from purchases API call (endpoint: %@). Received: %@", PURCHASES_URL, jsonResponse);
+                NSLog(@"ERROR: Could not parse response from purchases API call. Received: %@", jsonResponse);
             }
         }
     }
