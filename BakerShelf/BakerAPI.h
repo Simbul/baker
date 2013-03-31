@@ -55,4 +55,9 @@
 - (BOOL)canPostAPNSToken;
 - (BOOL)postAPNSToken:(NSString *)apnsToken;
 
+#pragma mark - User ID
+
++ (BOOL)generateUUIDOnce;
++ (NSString *)UUID;
+
 @end

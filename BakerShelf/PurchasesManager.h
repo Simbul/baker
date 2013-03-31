@@ -78,10 +78,5 @@
 
 - (BOOL)hasSubscriptions;
 
-#pragma mark - User ID
-
-+ (BOOL)generateUUIDOnce;
-+ (NSString *)UUID;
-
 @end
 #endif

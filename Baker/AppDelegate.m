@@ -69,7 +69,7 @@
     #ifdef BAKER_NEWSSTAND
 
     NSLog(@"====== Newsstand is enabled ======");    
-    [PurchasesManager generateUUIDOnce];
+    [BakerAPI generateUUIDOnce];
 
     // Let the device know we want to handle Newsstand push notifications
     [application registerForRemoteNotificationTypes:UIRemoteNotificationTypeNewsstandContentAvailability];

@@ -35,7 +35,6 @@
 #import "JSONKit.h"
 #import "NSData+Base64.h"
 #import "NSMutableURLRequest+WebServiceClient.h"
-#import "NSString+UUID.h"
 #import "Utils.h"
 #import "NSURL+Extensions.h"
 
@@ -331,22 +330,6 @@
 
 - (BOOL)hasSubscriptions {
     return [FREE_SUBSCRIPTION_PRODUCT_ID length] > 0;
-}
-
-#pragma mark - User ID
-
-+ (BOOL)generateUUIDOnce {
-    if (![self UUID]) {
-        [[NSUserDefaults standardUserDefaults] setObject:[NSString uuid] forKey:@"UUID"];
-        [[NSUserDefaults standardUserDefaults] synchronize];
-        return YES;
-    } else {
-        return NO;
-    }
-}
-
-+ (NSString *)UUID {
-    return [[NSUserDefaults standardUserDefaults] stringForKey:@"UUID"];
 }
 
 #pragma mark - Memory management

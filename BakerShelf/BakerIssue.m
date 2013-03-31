@@ -30,6 +30,7 @@
 //
 
 #import "BakerIssue.h"
+#import "BakerAPI.h"
 
 #import "SSZipArchive.h"
 #import "Reachability.h"
@@ -145,7 +146,7 @@
         NKLibrary *nkLib = [NKLibrary sharedLibrary];
         NKIssue *nkIssue = [nkLib issueWithName:self.ID];
 
-        NSString *queryString = [NSString stringWithFormat:@"app_id=%@&user_id=%@", [Utils appID], [PurchasesManager UUID]];
+        NSString *queryString = [NSString stringWithFormat:@"app_id=%@&user_id=%@", [Utils appID], [BakerAPI UUID]];
         NSURL *issueURL = [self.url URLByAppendingQueryString:queryString];
 
         NSURLRequest *req = [NSURLRequest requestWithURL:issueURL];

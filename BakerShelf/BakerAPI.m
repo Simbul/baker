@@ -31,13 +31,14 @@
 
 #import "BakerAPI.h"
 #import "Constants.h"
-#import "NSMutableURLRequest+WebServiceClient.h"
-#import "NSURL+Extensions.h"
-
 #import "Utils.h"
 #ifdef BAKER_NEWSSTAND
 #import "PurchasesManager.h"
 #endif
+
+#import "NSMutableURLRequest+WebServiceClient.h"
+#import "NSURL+Extensions.h"
+#import "NSString+UUID.h"
 
 @implementation BakerAPI
 
@@ -133,6 +134,22 @@
     return NO;
 }
 
+#pragma mark - User ID
+
++ (BOOL)generateUUIDOnce {
+    if (![self UUID]) {
+        [[NSUserDefaults standardUserDefaults] setObject:[NSString uuid] forKey:@"UUID"];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+        return YES;
+    } else {
+        return NO;
+    }
+}
+
++ (NSString *)UUID {
+    return [[NSUserDefaults standardUserDefaults] stringForKey:@"UUID"];
+}
+
 #pragma mark - Helpers
 
 - (NSData *)postParams:(NSDictionary *)params toURL:(NSURL *)url error:(NSError **)error {
@@ -140,7 +157,7 @@
     [postParams setObject:[Utils appID] forKey:@"app_id"];
 
     #ifdef BAKER_NEWSSTAND
-    [postParams setObject:[PurchasesManager UUID] forKey:@"user_id"];
+    [postParams setObject:[BakerAPI UUID] forKey:@"user_id"];
     #endif
 
     NSURLResponse *response = nil;
@@ -155,7 +172,7 @@
     NSString *queryString = [NSString stringWithFormat:@"app_id=%@", [Utils appID]];
 
     #ifdef BAKER_NEWSSTAND
-    queryString = [NSString stringWithFormat:@"%@&user_id=%@", queryString, [PurchasesManager UUID]];
+    queryString = [NSString stringWithFormat:@"%@&user_id=%@", queryString, [BakerAPI UUID]];
     #endif
 
     NSURL *requestURL = [url URLByAppendingQueryString:queryString];
