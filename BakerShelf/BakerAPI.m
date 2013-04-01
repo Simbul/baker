@@ -56,16 +56,11 @@
     return [NEWSSTAND_MANIFEST_URL length] > 0;
 }
 - (NSString *)getShelfJSON {
-    NSError *error = nil;
-    NSData *data = [self getFromURL:[NSURL URLWithString:NEWSSTAND_MANIFEST_URL] cachePolicy:NSURLRequestReloadIgnoringLocalCacheData error:&error];
+    NSData *data = [self getFromURL:[NSURL URLWithString:NEWSSTAND_MANIFEST_URL] cachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
 
     if (data) {
         return [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-    } else if (error) {
-        NSLog(@"[ERROR] Cannot get shelf JSON from %@: %@", NEWSSTAND_MANIFEST_URL, [error localizedDescription]);
-        return nil;
     } else {
-        NSLog(@"[ERROR] Cannot get shelf JSON from %@: no data was returned", NEWSSTAND_MANIFEST_URL);
         return nil;
     }
 }
@@ -77,16 +72,11 @@
 }
 - (NSString *)getPurchasesJSON {
     if ([self canGetPurchasesJSON]) {
-        NSError *error = nil;
-        NSData *data = [self getFromURL:[NSURL URLWithString:PURCHASES_URL] cachePolicy:NSURLRequestUseProtocolCachePolicy error:&error];
+        NSData *data = [self getFromURL:[NSURL URLWithString:PURCHASES_URL] cachePolicy:NSURLRequestUseProtocolCachePolicy];
 
         if (data) {
             return [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-        } else if (error) {
-            NSLog(@"[ERROR] Cannot get purchases from %@: %@", PURCHASES_URL, [error localizedDescription]);
-            return nil;
         } else {
-            NSLog(@"[ERROR] Cannot get purchases from %@: no data was returned", PURCHASES_URL);
             return nil;
         }
     }
@@ -99,19 +89,12 @@
 }
 - (BOOL)postPurchaseReceipt:(NSString *)receipt ofType:(NSString *)type {
     if ([self canPostPurchaseReceipt]) {
-        NSError *error = nil;
         NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
                                 type, @"type",
                                 receipt, @"receipt_data",
                                 nil];
 
-        [self postParams:params toURL:[NSURL URLWithString:PURCHASE_CONFIRMATION_URL] error:&error];
-
-        if (error) {
-            NSLog(@"[ERROR] Cannot post purchase confirmation to %@: %@", PURCHASE_CONFIRMATION_URL, [error localizedDescription]);
-            return NO;
-        }
-        return YES;
+        return [self postParams:params toURL:[NSURL URLWithString:PURCHASE_CONFIRMATION_URL]];
     }
     return NO;
 }
@@ -124,15 +107,8 @@
 - (BOOL)postAPNSToken:(NSString *)apnsToken {
     if ([self canPostAPNSToken]) {
         NSDictionary *params = [NSDictionary dictionaryWithObject:apnsToken forKey:@"apns_token"];
-        NSError *error = nil;
         
-        [self postParams:params toURL:[NSURL URLWithString:POST_APNS_TOKEN_URL] error:&error];
-
-        if (error) {
-            NSLog(@"[ERROR] Cannot post APNS token to %@: %@", POST_APNS_TOKEN_URL, [error localizedDescription]);
-            return NO;
-        }
-        return YES;
+        return [self postParams:params toURL:[NSURL URLWithString:POST_APNS_TOKEN_URL]];
     }
     return NO;
 }
@@ -179,21 +155,44 @@
     return request;
 }
 
-- (NSData *)postParams:(NSDictionary *)params toURL:(NSURL *)url error:(NSError **)error {
+- (BOOL)postParams:(NSDictionary *)params toURL:(NSURL *)url {
+    NSError *error = nil;
     NSHTTPURLResponse *response = nil;
     NSURLRequest *request = [self requestForURL:url parameters:params method:@"POST" cachePolicy:NSURLRequestUseProtocolCachePolicy];
 
-    return [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:error];
+    [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
+
+    if (error) {
+        NSLog(@"[ERROR] Failed POST request to %@: %@", [request URL], [error localizedDescription]);
+        return NO;
+    } else if ([response statusCode] == 200) {
+        return YES;
+    } else {
+        NSLog(@"[ERROR] Failed POST request to %@: response was %d %@",
+              [request URL],
+              [response statusCode],
+              [NSHTTPURLResponse localizedStringForStatusCode:[response statusCode]]);
+        return NO;
+    }
 }
 
-- (NSData *)getFromURL:(NSURL *)url cachePolicy:(NSURLRequestCachePolicy)cachePolicy error:(NSError **)error {
+- (NSData *)getFromURL:(NSURL *)url cachePolicy:(NSURLRequestCachePolicy)cachePolicy {
+    NSError *error = nil;
     NSHTTPURLResponse *response = nil;
     NSURLRequest *request = [self requestForURL:url parameters:[NSDictionary dictionary] method:@"GET" cachePolicy:cachePolicy];
 
-    NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:error];
-    if ([response statusCode] == 200) {
+    NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
+
+    if (error) {
+        NSLog(@"[ERROR] Failed GET request to %@: %@", [request URL], [error localizedDescription]);
+        return nil;
+    } else if ([response statusCode] == 200) {
         return data;
     } else {
+        NSLog(@"[ERROR] Failed GET request to %@: response was %d %@",
+              [request URL],
+              [response statusCode],
+              [NSHTTPURLResponse localizedStringForStatusCode:[response statusCode]]);
         return nil;
     }
 }
