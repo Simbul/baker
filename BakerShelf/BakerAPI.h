@@ -62,6 +62,7 @@
 
 #pragma mark - Helpers
 
-- (NSURLRequest *)getRequestForURL:(NSURL *)url cachePolicy:(NSURLRequestCachePolicy)cachePolicy;
+- (NSURLRequest *)requestForURL:(NSURL *)url method:(NSString *)method;
+- (NSURLRequest *)requestForURL:(NSURL *)url parameters:(NSDictionary *)parameters method:(NSString *)method cachePolicy:(NSURLRequestCachePolicy)cachePolicy;
 
 @end

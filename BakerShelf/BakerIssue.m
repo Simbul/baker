@@ -144,7 +144,7 @@
     Reachability* reach = [Reachability reachabilityWithHostname:@"www.google.com"];
     if ([reach isReachable]) {
         BakerAPI *api = [BakerAPI sharedInstance];
-        NSURLRequest *req = [api getRequestForURL:self.url cachePolicy:NSURLRequestUseProtocolCachePolicy];
+        NSURLRequest *req = [api requestForURL:self.url method:@"GET"];
 
         NKLibrary *nkLib = [NKLibrary sharedLibrary];
         NKIssue *nkIssue = [nkLib issueWithName:self.ID];

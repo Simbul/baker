@@ -32,9 +32,6 @@
 #import "BakerAPI.h"
 #import "Constants.h"
 #import "Utils.h"
-#ifdef BAKER_NEWSSTAND
-#import "PurchasesManager.h"
-#endif
 
 #import "NSMutableURLRequest+WebServiceClient.h"
 #import "NSURL+Extensions.h"
@@ -158,35 +155,40 @@
 
 #pragma mark - Helpers
 
-- (NSURLRequest *)getRequestForURL:(NSURL *)url cachePolicy:(NSURLRequestCachePolicy)cachePolicy {
-    NSMutableDictionary *parameters = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-                                       [Utils appID], @"app_id",
-                                       [BakerAPI UUID], @"user_id",
-                                       nil];
-    NSURL *requestURL = [self replaceParameters:parameters inURL:url];
-    NSString *queryString = [self queryStringFromParameters:parameters];
-    requestURL = [requestURL URLByAppendingQueryString:queryString];
-    return [NSURLRequest requestWithURL:requestURL cachePolicy:cachePolicy timeoutInterval:REQUEST_TIMEOUT];
+- (NSURLRequest *)requestForURL:(NSURL *)url method:(NSString *)method {
+    return [self requestForURL:url parameters:[NSDictionary dictionary] method:method cachePolicy:NSURLRequestUseProtocolCachePolicy];
+}
+- (NSURLRequest *)requestForURL:(NSURL *)url parameters:(NSDictionary *)parameters method:(NSString *)method cachePolicy:(NSURLRequestCachePolicy)cachePolicy {
+    NSMutableDictionary *requestParams = [NSMutableDictionary dictionaryWithDictionary:parameters];
+    [requestParams setObject:[Utils appID] forKey:@"app_id"];
+    [requestParams setObject:[BakerAPI UUID] forKey:@"user_id"];
+
+    NSURL *requestURL = [self replaceParameters:requestParams inURL:url];
+    NSMutableURLRequest *request = nil;
+
+    if ([method isEqualToString:@"GET"]) {
+        NSString *queryString = [self queryStringFromParameters:requestParams];
+        requestURL = [requestURL URLByAppendingQueryString:queryString];
+        request = [NSURLRequest requestWithURL:requestURL cachePolicy:cachePolicy timeoutInterval:REQUEST_TIMEOUT];
+    } else if ([method isEqualToString:@"POST"]) {
+        request = [[NSMutableURLRequest alloc] initWithURL:requestURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:REQUEST_TIMEOUT];
+        [request setHTTPMethod:@"POST"];
+        [request setFormPostParameters:requestParams];
+    }
+
+    return request;
 }
 
 - (NSData *)postParams:(NSDictionary *)params toURL:(NSURL *)url error:(NSError **)error {
-    NSMutableDictionary *postParams = [NSMutableDictionary dictionaryWithDictionary:params];
-    [postParams setObject:[Utils appID] forKey:@"app_id"];
-    [postParams setObject:[BakerAPI UUID] forKey:@"user_id"];
-
-    NSURL *requestURL = [self replaceParameters:postParams inURL:url];
-
-    NSURLResponse *response = nil;
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:requestURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:REQUEST_TIMEOUT];
-    [request setHTTPMethod:@"POST"];
-    [request setFormPostParameters:postParams];
+    NSHTTPURLResponse *response = nil;
+    NSURLRequest *request = [self requestForURL:url parameters:params method:@"POST" cachePolicy:NSURLRequestUseProtocolCachePolicy];
 
     return [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:error];
 }
 
 - (NSData *)getFromURL:(NSURL *)url cachePolicy:(NSURLRequestCachePolicy)cachePolicy error:(NSError **)error {
     NSHTTPURLResponse *response = nil;
-    NSURLRequest *request = [self getRequestForURL:url cachePolicy:cachePolicy];
+    NSURLRequest *request = [self requestForURL:url parameters:[NSDictionary dictionary] method:@"GET" cachePolicy:cachePolicy];
 
     NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:error];
     if ([response statusCode] == 200) {
