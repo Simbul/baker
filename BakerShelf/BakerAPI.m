@@ -149,6 +149,7 @@
     } else if ([method isEqualToString:@"POST"]) {
         request = [[NSMutableURLRequest alloc] initWithURL:requestURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:REQUEST_TIMEOUT];
         [request setHTTPMethod:@"POST"];
+        [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
         [request setFormPostParameters:requestParams];
     }
 
