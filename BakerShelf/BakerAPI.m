@@ -53,10 +53,10 @@
 #pragma mark - Shelf
 
 - (BOOL)canGetShelfJSON {
-    return [NEWSSTAND_MANIFEST_URL length] > 0;
+    return ([self manifestURL] != nil);
 }
 - (NSString *)getShelfJSON {
-    NSData *data = [self getFromURL:[NSURL URLWithString:NEWSSTAND_MANIFEST_URL] cachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
+    NSData *data = [self getFromURL:[self manifestURL] cachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
 
     if (data) {
         return [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
@@ -68,11 +68,11 @@
 #pragma mark - Purchases
 
 - (BOOL)canGetPurchasesJSON {
-    return [PURCHASES_URL length] > 0;
+    return ([self purchasesURL] != nil);
 }
 - (NSString *)getPurchasesJSON {
     if ([self canGetPurchasesJSON]) {
-        NSData *data = [self getFromURL:[NSURL URLWithString:PURCHASES_URL] cachePolicy:NSURLRequestUseProtocolCachePolicy];
+        NSData *data = [self getFromURL:[self purchasesURL] cachePolicy:NSURLRequestUseProtocolCachePolicy];
 
         if (data) {
             return [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
@@ -85,7 +85,7 @@
 }
 
 - (BOOL)canPostPurchaseReceipt {
-    return [PURCHASE_CONFIRMATION_URL length] > 0;
+    return ([self purchaseConfirmationURL] != nil);
 }
 - (BOOL)postPurchaseReceipt:(NSString *)receipt ofType:(NSString *)type {
     if ([self canPostPurchaseReceipt]) {
@@ -94,7 +94,7 @@
                                 receipt, @"receipt_data",
                                 nil];
 
-        return [self postParams:params toURL:[NSURL URLWithString:PURCHASE_CONFIRMATION_URL]];
+        return [self postParams:params toURL:[self purchaseConfirmationURL]];
     }
     return NO;
 }
@@ -102,13 +102,13 @@
 #pragma mark - APNS
 
 - (BOOL)canPostAPNSToken {
-    return [POST_APNS_TOKEN_URL length] > 0;
+    return ([self postAPNSTokenURL] != nil);
 }
 - (BOOL)postAPNSToken:(NSString *)apnsToken {
     if ([self canPostAPNSToken]) {
         NSDictionary *params = [NSDictionary dictionaryWithObject:apnsToken forKey:@"apns_token"];
         
-        return [self postParams:params toURL:[NSURL URLWithString:POST_APNS_TOKEN_URL]];
+        return [self postParams:params toURL:[self postAPNSTokenURL]];
     }
     return NO;
 }
@@ -223,6 +223,39 @@
         [queryString deleteCharactersInRange:NSMakeRange([queryString length] - 1, 1)];
     }
     return queryString;
+}
+
+- (NSURL *)manifestURL {
+    #ifdef BAKER_NEWSSTAND
+    if ([NEWSSTAND_MANIFEST_URL length] > 0) {
+        return [NSURL URLWithString:NEWSSTAND_MANIFEST_URL];
+    }
+    #endif
+    return nil;
+}
+- (NSURL *)purchasesURL {
+    #ifdef BAKER_NEWSSTAND
+    if ([PURCHASES_URL length] > 0) {
+        return [NSURL URLWithString:PURCHASES_URL];
+    }
+    #endif
+    return nil;
+}
+- (NSURL *)purchaseConfirmationURL {
+    #ifdef BAKER_NEWSSTAND
+    if ([PURCHASE_CONFIRMATION_URL length] > 0) {
+        return [NSURL URLWithString:PURCHASE_CONFIRMATION_URL];
+    }
+    #endif
+    return nil;
+}
+- (NSURL *)postAPNSTokenURL {
+    #ifdef BAKER_NEWSSTAND
+    if ([POST_APNS_TOKEN_URL length] > 0) {
+        return [NSURL URLWithString:POST_APNS_TOKEN_URL];
+    }
+    #endif
+    return nil;
 }
 
 @end
