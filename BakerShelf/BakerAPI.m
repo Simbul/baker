@@ -55,14 +55,10 @@
 - (BOOL)canGetShelfJSON {
     return ([self manifestURL] != nil);
 }
-- (NSString *)getShelfJSON {
+- (NSData *)getShelfJSON {
     NSData *data = [self getFromURL:[self manifestURL] cachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
 
-    if (data) {
-        return [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-    } else {
-        return nil;
-    }
+    return data;
 }
 
 #pragma mark - Purchases
@@ -70,15 +66,10 @@
 - (BOOL)canGetPurchasesJSON {
     return ([self purchasesURL] != nil);
 }
-- (NSString *)getPurchasesJSON {
+- (NSData *)getPurchasesJSON {
     if ([self canGetPurchasesJSON]) {
         NSData *data = [self getFromURL:[self purchasesURL] cachePolicy:NSURLRequestUseProtocolCachePolicy];
-
-        if (data) {
-            return [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-        } else {
-            return nil;
-        }
+        return data;
     }
 
     return nil;

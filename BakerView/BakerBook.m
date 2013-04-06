@@ -30,7 +30,6 @@
 //
 
 #import "BakerBook.h"
-#import "JSONKit.h"
 #import "NSString+Extensions.h"
 
 @implementation BakerBook
@@ -106,8 +105,15 @@
         return nil;
     }
 
-    NSString *bookJSON = [NSString stringWithContentsOfFile:bookJSONPath encoding:NSUTF8StringEncoding error:nil];
-    return [self initWithBookData:[bookJSON objectFromJSONString]];
+    NSError* error = nil;
+    NSData* bookJSON = [NSData dataWithContentsOfFile:bookJSONPath options:0 error:&error];
+    // TODO: errror handling
+    NSDictionary* bookData = [NSJSONSerialization JSONObjectWithData:bookJSON
+                                                             options:0
+                                                               error:&error];
+    // TODO: deal with error
+    
+    return [self initWithBookData:bookData];
 }
 - (id)initWithBookData:(NSDictionary *)bookData
 {

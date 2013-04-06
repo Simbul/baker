@@ -32,7 +32,6 @@
 #import "PurchasesManager.h"
 #import "BakerAPI.h"
 
-#import "JSONKit.h"
 #import "NSData+Base64.h"
 #import "NSMutableURLRequest+WebServiceClient.h"
 #import "Utils.h"
@@ -203,10 +202,14 @@
     BakerAPI *api = [BakerAPI sharedInstance];
 
     if ([api canGetPurchasesJSON]) {
-        NSString *jsonResponse = [api getPurchasesJSON];
+        NSData* jsonResponse = [api getPurchasesJSON];
 
         if (jsonResponse) {
-            NSDictionary *purchasesResponse = [jsonResponse objectFromJSONString];
+            NSError* error = nil;
+            NSDictionary *purchasesResponse = [NSJSONSerialization JSONObjectWithData:jsonResponse
+                                                                              options:0
+                                                                                error:&error];
+            // TODO: handle error
 
             if (purchasesResponse) {
                 NSArray *purchasedIssues = [purchasesResponse objectForKey:@"issues"];
