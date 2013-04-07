@@ -666,9 +666,9 @@
 {
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
-        return CGSizeMake((screenRect.size.width - 2) / 2, [IssueViewController getIssueCellHeight]);
+        return CGSizeMake((screenRect.size.width - 10) / 2, [IssueViewController getIssueCellHeight]);
     } else {
-        return CGSizeMake(screenRect.size.width - 2, [IssueViewController getIssueCellHeight]);
+        return CGSizeMake(screenRect.size.width - 10, [IssueViewController getIssueCellHeight]);
     }
 }
 
