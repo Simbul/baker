@@ -36,7 +36,6 @@
 #import "BakerViewController.h"
 #import "IssueViewController.h"
 
-#import "JSONKit.h"
 #import "NSData+Base64.h"
 #import "NSString+Extensions.h"
 #import "Utils.h"

@@ -31,7 +31,6 @@
 
 #import "JSONStatus.h"
 #import "Utils.h"
-#import "JSONKit.h"
 
 @implementation JSONStatus
 
@@ -52,18 +51,26 @@
 
 - (NSDictionary *)load {
     NSError *error = nil;
-    NSString *json = [NSString stringWithContentsOfFile:self.path encoding:NSUTF8StringEncoding error:&error];
+    NSData* json = [NSData dataWithContentsOfFile:self.path options:0 error:&error];
     if (error) {
         NSLog(@"Error when loading JSON status: %@", error);
     }
-    return [json objectFromJSONString];
+    NSDictionary* retv = [NSJSONSerialization JSONObjectWithData:json
+                                                         options:0
+                                                           error:&error];
+    // TODO: deal with error
+    return retv;
 }
 
 - (void)save:(NSDictionary *)status {
-    NSString *json = [status JSONString];
-    NSError *error = nil;
+    NSError* error = nil;
+    NSData* json = [NSJSONSerialization dataWithJSONObject:status
+                                                   options:0
+                                                     error:&error];
+    // TODO: deal with error
+
+    [json writeToFile:path options:NSDataWritingAtomic error:&error];
     
-    [json writeToFile:path atomically:YES encoding:NSUTF8StringEncoding error:&error];
     if (error) {
         NSLog(@"Error when saving JSON status: %@", error);
     }
