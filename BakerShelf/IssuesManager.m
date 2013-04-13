@@ -64,7 +64,7 @@
 }
 
 #ifdef BAKER_NEWSSTAND
--(BOOL)refresh {
+-(void)refresh:(void (^)(BOOL)) callback {
     NSData *json = [self getShelfJSON];
 
     if (json) {
@@ -87,10 +87,14 @@
             return [second compare:first];
         }];
 
-        return YES;
-    } else {
-        NSLog(@"[BakerShelf] ERROR: 'shelf.json' is missing. Add URL to 'NEWSSTAND_MANIFEST_URL' in Constants.h");
-        return NO;
+        if (callback) {
+            callback(YES);
+        }
+    }
+    else {
+        if (callback) {
+            callback(NO);
+        }
     }
 }
 
