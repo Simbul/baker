@@ -65,40 +65,39 @@
 
 #ifdef BAKER_NEWSSTAND
 -(void)refresh:(void (^)(BOOL)) callback {
-    NSData *json = [self getShelfJSON];
-
-    if (json) {
-        NSError* error = nil;
-        NSArray* jsonArr = [NSJSONSerialization JSONObjectWithData:json
-                                                           options:0
-                                                             error:&error];
-
-        [self updateNewsstandIssuesList:jsonArr];
-
-        NSMutableArray *tmpIssues = [NSMutableArray array];
-        [jsonArr enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-            BakerIssue *issue = [[[BakerIssue alloc] initWithIssueData:obj] autorelease];
-            [tmpIssues addObject:issue];
-        }];
-
-        self.issues = [tmpIssues sortedArrayUsingComparator:^NSComparisonResult(id a, id b) {
-            NSDate *first = [Utils dateWithFormattedString:[(BakerIssue*)a date]];
-            NSDate *second = [Utils dateWithFormattedString:[(BakerIssue*)b date]];
-            return [second compare:first];
-        }];
-
-        if (callback) {
-            callback(YES);
+    [self getShelfJSON:^(NSData* json) {
+        if (json) {
+            NSArray* jsonArr = [NSJSONSerialization JSONObjectWithData:json
+                                                               options:0
+                                                                 error:&error];
+            
+            [self updateNewsstandIssuesList:jsonArr];
+            
+            NSMutableArray *tmpIssues = [NSMutableArray array];
+            [jsonArr enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+                BakerIssue *issue = [[[BakerIssue alloc] initWithIssueData:obj] autorelease];
+                [tmpIssues addObject:issue];
+            }];
+            
+            self.issues = [tmpIssues sortedArrayUsingComparator:^NSComparisonResult(id a, id b) {
+                NSDate *first = [Utils dateWithFormattedString:[(BakerIssue*)a date]];
+                NSDate *second = [Utils dateWithFormattedString:[(BakerIssue*)b date]];
+                return [second compare:first];
+            }];
+            
+            if (callback) {
+                callback(YES);
+            }
         }
-    }
-    else {
-        if (callback) {
-            callback(NO);
+        else {
+            if (callback) {
+                callback(NO);
+            }
         }
-    }
+    }];
 }
 
--(NSData *)getShelfJSON {
+-(void)getShelfJSON:(void (^)(NSData**)) callback {
     BakerAPI *api = [BakerAPI sharedInstance];
     NSData *json = [api getShelfJSON];
 
@@ -128,7 +127,9 @@
         }
     }
 
-    return json;
+    if (callback) {
+        callback(json);
+    };
 }
 
 -(void)updateNewsstandIssuesList:(NSArray *)issuesList {
