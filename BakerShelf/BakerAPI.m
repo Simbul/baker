@@ -57,11 +57,10 @@
 }
 
 - (void)getShelfJSON:(void (^)(NSData*)) callback {
-    dispatch_queue_t currentQueue = dispatch_get_current_queue();
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         NSData *data = [self getFromURL:[self manifestURL] cachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
         if (callback) {
-            dispatch_sync(currentQueue, ^{
+            dispatch_sync(dispatch_get_main_queue(), ^{
                 callback(data);
             });
         }
@@ -76,11 +75,10 @@
 
 - (void)getPurchasesJSON:(void (^)(NSData*)) callback  {
     if ([self canGetPurchasesJSON]) {
-        dispatch_queue_t currentQueue = dispatch_get_current_queue();
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             NSData *data = [self getFromURL:[self purchasesURL] cachePolicy:NSURLRequestUseProtocolCachePolicy];
             if (callback) {
-                dispatch_sync(currentQueue, ^{
+                dispatch_sync(dispatch_get_main_queue(), ^{
                     callback(data);
                 });
             }
