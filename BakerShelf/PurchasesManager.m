@@ -202,26 +202,26 @@
     BakerAPI *api = [BakerAPI sharedInstance];
 
     if ([api canGetPurchasesJSON]) {
-        NSData* jsonResponse = [api getPurchasesJSON];
-
-        if (jsonResponse) {
-            NSError* error = nil;
-            NSDictionary *purchasesResponse = [NSJSONSerialization JSONObjectWithData:jsonResponse
-                                                                              options:0
-                                                                                error:&error];
-            // TODO: handle error
-
-            if (purchasesResponse) {
-                NSArray *purchasedIssues = [purchasesResponse objectForKey:@"issues"];
-                self.subscribed = [[purchasesResponse objectForKey:@"subscribed"] boolValue];
-
-                [productIDs enumerateObjectsUsingBlock:^(id obj, BOOL *stop) {
-                    [_purchases setObject:[NSNumber numberWithBool:[purchasedIssues containsObject:obj]] forKey:obj];
-                }];
-            } else {
-                NSLog(@"ERROR: Could not parse response from purchases API call. Received: %@", jsonResponse);
+        [api getPurchasesJSON:^(NSData* jsonResponse) {
+            if (jsonResponse) {
+                NSError* error = nil;
+                NSDictionary *purchasesResponse = [NSJSONSerialization JSONObjectWithData:jsonResponse
+                                                                                  options:0
+                                                                                    error:&error];
+                // TODO: handle error
+                
+                if (purchasesResponse) {
+                    NSArray *purchasedIssues = [purchasesResponse objectForKey:@"issues"];
+                    self.subscribed = [[purchasesResponse objectForKey:@"subscribed"] boolValue];
+                    
+                    [productIDs enumerateObjectsUsingBlock:^(id obj, BOOL *stop) {
+                        [_purchases setObject:[NSNumber numberWithBool:[purchasedIssues containsObject:obj]] forKey:obj];
+                    }];
+                } else {
+                    NSLog(@"ERROR: Could not parse response from purchases API call. Received: %@", jsonResponse);
+                }
             }
-        }
+        }];
     }
 }
 
