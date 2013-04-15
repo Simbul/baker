@@ -40,12 +40,12 @@
 #pragma mark - Shelf
 
 - (BOOL)canGetShelfJSON;
-- (NSString *)getShelfJSON;
+- (NSData *)getShelfJSON;
 
 #pragma mark - Purchases
 
 - (BOOL)canGetPurchasesJSON;
-- (NSString *)getPurchasesJSON;
+- (NSData *)getPurchasesJSON;
 
 - (BOOL)canPostPurchaseReceipt;
 - (BOOL)postPurchaseReceipt:(NSString *)receipt ofType:(NSString *)type;
