@@ -1421,7 +1421,6 @@
 
     if (![[NSFileManager defaultManager] fileExistsAtPath:cachedScreenshotsPath]) {
         [[NSFileManager defaultManager] createDirectoryAtPath:cachedScreenshotsPath withIntermediateDirectories:YES attributes:nil error:nil];
-        [Utils addSkipBackupAttributeToItemAtPath:cachedScreenshotsPath];
     }
 
     NSString *screenshotFile = [cachedScreenshotsPath stringByAppendingPathComponent:[NSString stringWithFormat:@"screenshot-%@-%i.jpg", interfaceOrientation, pageNumber]];

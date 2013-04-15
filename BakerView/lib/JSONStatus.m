@@ -85,13 +85,10 @@
         if (error) {
             NSLog(@"Error when creating JSON status folder: %@", error);
         }
-        [Utils addSkipBackupAttributeToItemAtPath:dirPath];
     }
     
     if (![[NSFileManager defaultManager] fileExistsAtPath:path]) {
-        if ([[NSFileManager defaultManager] createFileAtPath:path contents:nil attributes:nil]) {
-            [Utils addSkipBackupAttributeToItemAtPath:path];
-        } else {
+        if (![[NSFileManager defaultManager] createFileAtPath:path contents:nil attributes:nil]) {
             NSLog(@"JSON status file could not be created at %@", path);
         }
     

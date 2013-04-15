@@ -107,8 +107,6 @@
                     error:&cachedShelfError];
         if (cachedShelfError) {
             NSLog(@"Error caching Shelf manifest: %@", cachedShelfError);
-        } else {
-            [Utils addSkipBackupAttributeToItemAtPath:self.shelfManifestPath];
         }
     } else {
         if ([[NSFileManager defaultManager] fileExistsAtPath:self.shelfManifestPath]) {
