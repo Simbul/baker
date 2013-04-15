@@ -56,7 +56,10 @@
     return ([self manifestURL] != nil);
 }
 - (NSData *)getShelfJSON {
-    return [self getFromURL:[self manifestURL] cachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
+    if ([self canGetShelfJSON]) {
+        return [self getFromURL:[self manifestURL] cachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
+    }
+    return nil;
 }
 
 #pragma mark - Purchases
