@@ -107,7 +107,9 @@
             // Cache the shelf manifest
             [[NSFileManager defaultManager] createFileAtPath:self.shelfManifestPath contents:nil attributes:nil];
             NSError* error = nil;
-            [json writeToFile:self.shelfManifestPath options:NSAtomicWrite error:&error];
+            [json writeToFile:self.shelfManifestPath
+                      options:NSDataWritingAtomic
+                        error:&error];
             if (cachedShelfError) {
                 NSLog(@"[BakerShelf] ERROR: Unable to cache 'shelf.json' manifest: %@", cachedShelfError);
             }
