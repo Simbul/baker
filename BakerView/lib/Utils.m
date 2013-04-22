@@ -77,7 +77,7 @@
     } else {
         shouldBePaged = [book.bakerVerticalPagination boolValue];
     }
-    NSLog(@"• Paging for current page is enabled = %d", shouldBePaged);
+    //NSLog(@"[Utils] Current page Pagination Mode status = %d", shouldBePaged);
 
     return shouldBePaged;
 }

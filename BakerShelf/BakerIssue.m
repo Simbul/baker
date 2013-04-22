@@ -185,14 +185,14 @@
     NKIssue *nkIssue = newsstandAssetDownload.issue;
     NSString *destinationPath = [[nkIssue contentURL] path];
 
-    NSLog(@"File is being unzipped to %@", destinationPath);
+    NSLog(@"[BakerShelf] Newsstand - File is being unzipped to %@", destinationPath);
     [SSZipArchive unzipFileAtPath:[destinationURL path] toDestination:destinationPath];
 
-    NSLog(@"Removing temporary downloaded file %@", [destinationURL path]);
+    //NSLog(@"[BakerShelf] Newsstand - Removing temporary downloaded file %@", [destinationURL path]);
     NSFileManager *fileMgr = [NSFileManager defaultManager];
     NSError *error;
     if ([fileMgr removeItemAtPath:[destinationURL path] error:&error] != YES){
-        NSLog(@"Unable to delete file: %@", [error localizedDescription]);
+        NSLog(@"[BakerShelf] Newsstand - Unable to delete file: %@", [error localizedDescription]);
     }
 }
 - (void)updateNewsstandIcon {

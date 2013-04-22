@@ -53,7 +53,7 @@
     NSError *error = nil;
     NSData* json = [NSData dataWithContentsOfFile:self.path options:0 error:&error];
     if (error) {
-        NSLog(@"Error when loading JSON status: %@", error);
+        NSLog(@"[JSONStatus] Error when loading JSON status: %@", error);
     }
     NSDictionary* retv = [NSJSONSerialization JSONObjectWithData:json
                                                          options:0
@@ -72,7 +72,7 @@
     [json writeToFile:path options:NSDataWritingAtomic error:&error];
     
     if (error) {
-        NSLog(@"Error when saving JSON status: %@", error);
+        NSLog(@"[JSONStatus] Error when saving JSON status: %@", error);
     }
 }
 
@@ -83,13 +83,13 @@
     if (![[NSFileManager defaultManager] fileExistsAtPath:dirPath]) {
         [[NSFileManager defaultManager] createDirectoryAtPath:dirPath withIntermediateDirectories:YES attributes:nil error:&error];
         if (error) {
-            NSLog(@"Error when creating JSON status folder: %@", error);
+            NSLog(@"[JSONStatus] Error when creating JSON status folder: %@", error);
         }
     }
     
     if (![[NSFileManager defaultManager] fileExistsAtPath:path]) {
         if (![[NSFileManager defaultManager] createFileAtPath:path contents:nil attributes:nil]) {
-            NSLog(@"JSON status file could not be created at %@", path);
+            NSLog(@"[JSONStatus] JSON status file could not be created at %@", path);
         }
     
     }

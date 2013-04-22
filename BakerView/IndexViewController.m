@@ -101,7 +101,7 @@
         pageHeight = screenBounds.size.height;
     }
 
-    NSLog(@"Set IndexView size to %dx%d", pageWidth, pageHeight);
+    NSLog(@"[IndexView] Set IndexView size to %dx%d", pageWidth, pageHeight);
 }
 
 - (void)setActualSize {
@@ -211,12 +211,12 @@
     webView.mediaPlaybackRequiresUserAction = ![book.bakerMediaAutoplay boolValue];
     [self setBounceForWebView:webView bounces:[book.bakerIndexBounce boolValue]];
 
-    NSLog(@"Path to index view is %@", path);
+    //NSLog(@"[IndexView] Path to index view is %@", path);
     if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
         disabled = NO;
         [(UIWebView *)self.view loadRequest:[NSURLRequest requestWithURL:[NSURL fileURLWithPath:path]]];
     } else {
-        NSLog(@"Could not find index view at that path");
+        NSLog(@"[IndexView] Index HTML not found at %@", path);
         disabled = YES;
     }
 }
@@ -242,7 +242,7 @@
     }
     [self setActualSize];
 
-    NSLog(@"Set size for IndexView to %dx%d (constrained from %dx%d)", actualIndexWidth, actualIndexHeight, indexWidth, indexHeight);
+    NSLog(@"[IndexView] Set size for IndexView to %dx%d (constrained from %dx%d)", actualIndexWidth, actualIndexHeight, indexWidth, indexHeight);
 
     // After the first load, point the delegate to the main view controller
     webView.delegate = webViewDelegate;

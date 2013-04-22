@@ -64,11 +64,10 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    NSLog(@"application didFinishLaunchingWithOptions");
 
     #ifdef BAKER_NEWSSTAND
 
-    NSLog(@"====== Newsstand is enabled ======");    
+    NSLog(@"====== Baker Newsstand Mode enabled ======");    
     [BakerAPI generateUUIDOnce];
 
     // Let the device know we want to handle Newsstand push notifications
@@ -97,7 +96,7 @@
 
     #else
 
-    NSLog(@"====== Newsstand is not enabled ======");
+    NSLog(@"====== Baker Standalone Mode enabled ======");
     NSArray *books = [IssuesManager localBooksList];
     if ([books count] == 1) {
         self.rootViewController = [[[BakerViewController alloc] initWithBook:[[books objectAtIndex:0] bakerBook]] autorelease];
@@ -127,8 +126,8 @@
     NSString *apnsToken = [[deviceToken description] stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"<>"]];
     apnsToken = [apnsToken stringByReplacingOccurrencesOfString:@" " withString:@""];
 
-    NSLog(@"My token (as NSData) is: %@", deviceToken);
-    NSLog(@"My token (as NSString) is: %@", apnsToken);
+    NSLog(@"[AppDelegate] My token (as NSData) is: %@", deviceToken);
+    NSLog(@"[AppDelegate] My token (as NSString) is: %@", apnsToken);
 
     [[NSUserDefaults standardUserDefaults] setObject:apnsToken forKey:@"apns_token"];
     [[NSUserDefaults standardUserDefaults] synchronize];
@@ -140,7 +139,7 @@
 
 - (void)application:(UIApplication*)application didFailToRegisterForRemoteNotificationsWithError:(NSError*)error
 {
-	NSLog(@"Failed to get token, error: %@", error);
+	NSLog(@"[AppDelegate] Push Notification - Device Token, review: %@", error);
 }
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo
