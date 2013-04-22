@@ -50,6 +50,7 @@
 @synthesize shelfStatus;
 @synthesize subscriptionsActionSheet;
 @synthesize supportedOrientation;
+@synthesize blockingProgressView;
 @synthesize bookToBeProcessed;
 
 #pragma mark - Init
@@ -86,13 +87,13 @@
 
         api = [BakerAPI sharedInstance];
         issuesManager = [[IssuesManager sharedInstance] retain];
+        notRecognisedTransactions = [[NSMutableArray alloc] init];
 
         self.shelfStatus = [[[ShelfStatus alloc] init] retain];
         self.issueViewControllers = [[NSMutableArray alloc] init];
         self.supportedOrientation = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"UISupportedInterfaceOrientations"];
         self.bookToBeProcessed = nil;
 
-        notRecognisedTransactions = [[NSMutableArray alloc] init];
         #ifdef BAKER_NEWSSTAND
         [self handleRefresh:nil];
         #endif
@@ -128,9 +129,11 @@
     [shelfStatus release];
     [subscriptionsActionSheet release];
     [supportedOrientation release];
-    [self.blockingProgressView release];
+    [blockingProgressView release];
     [issuesManager release];
     [notRecognisedTransactions release];
+    [bookToBeProcessed release];
+
     #ifdef BAKER_NEWSSTAND
     [purchasesManager release];
     #endif

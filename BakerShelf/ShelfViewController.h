@@ -42,12 +42,13 @@
 #endif
 
 @interface ShelfViewController : UIViewController <AQGridViewDataSource, AQGridViewDelegate, UIActionSheetDelegate> {
-    #ifdef BAKER_NEWSSTAND
-    PurchasesManager *purchasesManager;
-    #endif
     BakerAPI *api;
     IssuesManager *issuesManager;
     NSMutableArray *notRecognisedTransactions;
+
+    #ifdef BAKER_NEWSSTAND
+    PurchasesManager *purchasesManager;
+    #endif
 }
 
 @property (copy, nonatomic) NSArray *issues;
