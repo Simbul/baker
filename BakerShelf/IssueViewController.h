@@ -37,7 +37,6 @@
 
 @interface IssueViewController : UIViewController {
     NSString *currentAction;
-    NSString *currentStatus;
     BOOL purchaseDelayed;
     #ifdef BAKER_NEWSSTAND
     PurchasesManager *purchasesManager;
@@ -57,6 +56,8 @@
 @property (strong, nonatomic) UIFont *infoFont;
 @property (strong, nonatomic) UILabel *titleLabel;
 @property (strong, nonatomic) UILabel *infoLabel;
+
+@property (copy, nonatomic) NSString *currentStatus;
 
 #pragma mark - Structs
 typedef struct {

@@ -59,6 +59,8 @@
 @synthesize titleLabel;
 @synthesize infoLabel;
 
+@synthesize currentStatus;
+
 #pragma mark - Init
 
 - (id)initWithBakerIssue:(BakerIssue *)bakerIssue
@@ -66,7 +68,8 @@
     self = [super init];
     if (self) {
         self.issue = bakerIssue;
-        currentStatus = nil;
+        self.currentStatus = nil;
+
         purchaseDelayed = NO;
 
         #ifdef BAKER_NEWSSTAND
@@ -273,7 +276,7 @@
 }
 - (void)refresh:(NSString *)status
 {
-    NSLog(@"Refreshing %@ view with status %@ -> %@", self.issue.ID, currentStatus, status);
+    NSLog(@"Refreshing %@ view with status %@ -> %@", self.issue.ID, self.currentStatus, status);
     if ([status isEqualToString:@"remote"])
     {
         [self.priceLabel setText:NSLocalizedString(@"FREE_TEXT", nil)];
@@ -399,7 +402,7 @@
 
     [self refreshContentWithCache:YES];
 
-    currentStatus = status;
+    self.currentStatus = status;
 }
 
 #pragma mark - Memory management
@@ -418,6 +421,7 @@
     [infoFont release];
     [titleLabel release];
     [infoLabel release];
+    [currentStatus release];
 
     [super dealloc];
 }
@@ -553,7 +557,7 @@
     float bytesWritten = [[notification.userInfo objectForKey:@"totalBytesWritten"] floatValue];
     float bytesExpected = [[notification.userInfo objectForKey:@"expectedTotalBytes"] floatValue];
 
-    if ([currentStatus isEqualToString:@"connecting"]) {
+    if ([self.currentStatus isEqualToString:@"connecting"]) {
         self.issue.transientStatus = BakerIssueTransientStatusDownloading;
         [self refresh];
     }
