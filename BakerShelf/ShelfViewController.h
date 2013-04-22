@@ -65,6 +65,8 @@
 @property (strong, nonatomic) NSArray *subscriptionsActionSheetActions;
 @property (strong, nonatomic) UIAlertView *blockingProgressView;
 
+@property (copy, nonatomic) NSString *bookToBeProcessed;
+
 #pragma mark - Init
 - (id)init;
 - (id)initWithBooks:(NSArray *)currentBooks;
@@ -82,7 +84,9 @@
 - (void)gridView:(AQGridView *)myGridView didSelectItemAtIndex:(NSUInteger)index;
 - (void)readIssue:(BakerIssue *)issue;
 - (void)handleReadIssue:(NSNotification *)notification;
--(void)pushViewControllerWithBook:(BakerBook *)book;
+- (void)receiveBookProtocolNotification:(NSNotification *)notification;
+- (void)handleBookToBeProcessed;
+- (void)pushViewControllerWithBook:(BakerBook *)book;
 
 #pragma mark - Buttons management
 -(void)setrefreshButtonEnabled:(BOOL)enabled;

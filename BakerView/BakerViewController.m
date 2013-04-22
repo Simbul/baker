@@ -38,7 +38,6 @@
 #import "PageTitleLabel.h"
 #import "Utils.h"
 
-
 #define INDEX_FILE_NAME         @"index.html"
 
 #define URL_OPEN_MODALLY        @"referrer=Baker"
@@ -1072,29 +1071,8 @@
                 }
                 else if ([[url scheme] isEqualToString:@"book"])
                 {
-                    // ****** Handle: book://
-                    NSLog(@"    Page is a link with scheme book:// --> download new book");
-
-                    if ([[url host] isEqualToString:@"local"]) {
-                        // TODO: BACK TO THE SHELF (IF ANY)
-                    } else {
-
-                        if ([[url pathExtension] isEqualToString:@"html"]) {
-                            anchorFromURL = [[url fragment] retain];
-                            pageNameFromURL = [[[url lastPathComponent] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding] retain];
-                            NSString *tmpUrl = [[url URLByDeletingLastPathComponent] absoluteString];
-                            url = [NSURL URLWithString:[tmpUrl stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"/"]]];
-                        }
-
-                        // ****** Download book url
-                        URLDownload = [[@"http:" stringByAppendingString:[url resourceSpecifier]] retain];
-
-                        if ([[[NSURL URLWithString:URLDownload] pathExtension] isEqualToString:@""]) {
-                            URLDownload = [[URLDownload stringByAppendingString:@".hpub"] retain];
-                        }
-
-                        // TODO: download book
-                    }
+                    [self toggleBars];
+                    [self performSelector:@selector(handleBookProtocol:) withObject:url afterDelay:0.4];
                 }
                 else if ([[url scheme] isEqualToString:@"mailto"])
                 {
@@ -1688,7 +1666,6 @@
     // if modal view is up, don't toggle.
     if (!self.modalViewController) {
         NSLog(@"• Toggle bars visibility");
-
         UIApplication *sharedApplication = [UIApplication sharedApplication];
         BOOL hidden = sharedApplication.statusBarHidden;
 
@@ -1746,6 +1723,21 @@
     if(![indexViewController isDisabled]) {
         [indexViewController setIndexViewHidden:YES withAnimation:YES];
     }
+}
+- (void)handleBookProtocol:(NSURL *)url
+{
+    // ****** Handle: book://
+    NSLog(@"    Page is a link with scheme book:// --> download new book");
+    if ([[url pathExtension] isEqualToString:@"html"]) {
+        // page   --> [[url lastPathComponent] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
+        // anchor --> [url fragment];
+
+        url = [url URLByDeletingLastPathComponent];
+    }
+    NSString *bookName = [[url lastPathComponent] stringByReplacingOccurrencesOfString:@".hpub" withString:@""];
+    NSDictionary *userInfo = [NSDictionary dictionaryWithObject:bookName forKey:@"ID"];
+
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_book_protocol" object:nil userInfo:userInfo];
 }
 
 #pragma mark - ORIENTATION
@@ -1922,6 +1914,5 @@
         return NO;
     }
 }
-
 
 @end

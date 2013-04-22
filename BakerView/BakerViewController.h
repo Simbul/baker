@@ -181,6 +181,7 @@
 - (void)toggleBars;
 - (void)showNavigationBar;
 - (void)hideBars:(NSNumber *)animated;
+- (void)handleBookProtocol:(NSURL *)url;
 
 #pragma mark - ORIENTATION
 - (NSString *)getCurrentInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation;
