@@ -162,6 +162,7 @@
         for (BakerIssue *issue in issuesManager.issues) {
             if ([issue.ID isEqualToString:contentName]) {
                 [issue download];
+                break;
             }
         }
     } else {
