@@ -600,6 +600,21 @@
             ((UIScrollView *)subview).bounces = verticalBounce;
         }
     }
+
+    if (!webView.scalesPageToFit) {
+        [self removeWebViewDoubleTapGestureRecognizer:webView];
+    }
+}
+- (void)removeWebViewDoubleTapGestureRecognizer:(UIView *)view
+{
+    for (UIGestureRecognizer *recognizer in [view gestureRecognizers]) {
+        if ([recognizer isKindOfClass:[UITapGestureRecognizer class]] && [(UITapGestureRecognizer *)recognizer numberOfTapsRequired] == 2) {
+            [view removeGestureRecognizer:recognizer];
+        }
+    }
+    for (UIView *subview in view.subviews) {
+        [self removeWebViewDoubleTapGestureRecognizer:subview];
+    }
 }
 
 #pragma mark - LOADING

@@ -132,6 +132,7 @@
 - (void)showPageDetails;
 - (void)setFrame:(CGRect)frame forPage:(UIWebView *)page;
 - (void)setupWebView:(UIWebView *)webView;
+- (void)removeWebViewDoubleTapGestureRecognizer:(UIView *)view;
 
 #pragma mark - LOADING
 - (BOOL)changePage:(int)page;
