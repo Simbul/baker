@@ -30,6 +30,7 @@
 //  
 
 #import <Foundation/Foundation.h>
+#import "BakerBook.h"
 
 // IOS VERSION COMPARISON MACROS
 #define SYSTEM_VERSION_EQUAL_TO(version)                  ([[[UIDevice currentDevice] systemVersion] compare:version options:NSNumericSearch] == NSOrderedSame)
@@ -45,7 +46,7 @@
 + (UIColor *)colorWithRGBHex:(UInt32)hex;
 + (UIColor *)colorWithHexString:(NSString *)stringToConvert;
 + (NSString *)stringFromInterfaceOrientation:(UIInterfaceOrientation)orientation;
-+ (BOOL)webViewShouldBePaged:(UIWebView*)webView;
++ (BOOL)webViewShouldBePaged:(UIWebView*)webView forBook:(BakerBook *)book;
 + (NSString *)appID;
 + (NSDate *)dateWithFormattedString:(NSString *)string;
 + (void)showAlertWithTitle:(NSString *)title message:(NSString *)message buttonTitle:(NSString *)buttonTitle;

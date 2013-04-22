@@ -68,8 +68,15 @@
 	}
 	return nil;
 }
-+ (BOOL)webViewShouldBePaged:(UIWebView*)webView {
-    BOOL shouldBePaged = [[webView stringByEvaluatingJavaScriptFromString:ISPAGED_JS_SNIPPET] boolValue];
++ (BOOL)webViewShouldBePaged:(UIWebView*)webView forBook:(BakerBook *)book {
+    BOOL shouldBePaged = NO;
+
+    NSString *pagePagination = [webView stringByEvaluatingJavaScriptFromString:ISPAGED_JS_SNIPPET];
+    if ([pagePagination length] > 0) {
+        shouldBePaged = [pagePagination boolValue];
+    } else {
+        shouldBePaged = [book.bakerVerticalPagination boolValue];
+    }
     NSLog(@"• Paging for current page is enabled = %d", shouldBePaged);
 
     return shouldBePaged;
