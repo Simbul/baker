@@ -101,14 +101,7 @@
         pageHeight = screenBounds.size.height;
     }
 
-    UIApplication *sharedApplication = [UIApplication sharedApplication];
-    if (sharedApplication.statusBarHidden) {
-        pageY = 0;
-    } else {
-        pageY = -20;
-    }
-
-    NSLog(@"Set IndexView size to %dx%d, with pageY set to %d", pageWidth, pageHeight, pageY);
+    NSLog(@"Set IndexView size to %dx%d", pageWidth, pageHeight);
 }
 
 - (void)setActualSize {
@@ -128,15 +121,15 @@
     CGRect frame;
     if (hidden) {
         if ([self stickToLeft]) {
-            frame = CGRectMake(-actualIndexWidth, pageHeight - actualIndexHeight, actualIndexWidth, actualIndexHeight);
+            frame = CGRectMake(-actualIndexWidth, [self trueY] + pageHeight - actualIndexHeight, actualIndexWidth, actualIndexHeight);
         } else {
-            frame = CGRectMake(0, pageHeight + pageY, actualIndexWidth, actualIndexHeight);
+            frame = CGRectMake(0, [self trueY] + pageHeight, actualIndexWidth, actualIndexHeight);
         }
     } else {
         if ([self stickToLeft]) {
-            frame = CGRectMake(0, pageHeight - actualIndexHeight, actualIndexWidth, actualIndexHeight);
+            frame = CGRectMake(0, [self trueY] + pageHeight - actualIndexHeight, actualIndexWidth, actualIndexHeight);
         } else {
-            frame = CGRectMake(0, pageHeight + pageY - indexHeight, actualIndexWidth, actualIndexHeight);
+            frame = CGRectMake(0, [self trueY] + pageHeight - indexHeight, actualIndexWidth, actualIndexHeight);
         }
 
     }
@@ -150,6 +143,19 @@
         [UIView commitAnimations];
     } else {
         [self setViewFrame:frame];
+    }
+}
+
+- (int)trueY {
+    // Sometimes the origin (0,0) is not where it should be: this compensates for the glitch,
+    // exploiting the fact that the parent will not have its expected height when the origin has been moved.
+    int height = self.view.superview.frame.size.height;
+    if (height > 1000) {
+        // Portrait
+        return height - 1024;
+    } else {
+        // Landscape
+        return height - 768;
     }
 }
 
