@@ -147,15 +147,15 @@
 }
 
 - (int)trueY {
-    // Sometimes the origin (0,0) is not where it should be: this compensates for the glitch,
-    // exploiting the fact that the parent will not have its expected height when the origin has been moved.
+    // Sometimes the origin (0,0) is not where it should be: this horrible hack
+    // compensates for it, by exploiting the fact that the superview height is
+    // slightly smaller then the viewport height when the origin's y needs to be adjusted.
     int height = self.view.superview.frame.size.height;
-    if (height > 1000) {
-        // Portrait
-        return height - 1024;
+
+    if (height == 320 || height == 480 || height == 568 || height == 768 || height == 1024) {
+        return 0;
     } else {
-        // Landscape
-        return height - 768;
+        return -20;
     }
 }
 
