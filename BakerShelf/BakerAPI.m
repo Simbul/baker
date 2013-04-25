@@ -97,7 +97,7 @@
 - (BOOL)postAPNSToken:(NSString *)apnsToken {
     if ([self canPostAPNSToken]) {
         NSDictionary *params = [NSDictionary dictionaryWithObject:apnsToken forKey:@"apns_token"];
-        
+
         return [self postParams:params toURL:[self postAPNSTokenURL]];
     }
     return NO;

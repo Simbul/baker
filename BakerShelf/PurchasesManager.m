@@ -111,17 +111,17 @@
 
 - (void)productsRequest:(SKProductsRequest *)request didReceiveResponse:(SKProductsResponse *)response {
     NSLog(@"############ REQUEST RECEIVED RESPONSE %@", response.products);
-    
+
     for (NSString *productID in response.invalidProductIdentifiers) {
         NSLog(@"Invalid product identifier: %@", productID);
     }
-    
+
     NSMutableSet *ids = [NSMutableSet setWithCapacity:response.products.count];
     for (SKProduct *skProduct in response.products) {
         [self.products setObject:skProduct forKey:skProduct.productIdentifier];
         [ids addObject:skProduct.productIdentifier];
     }
-    
+
     NSDictionary *userInfo = [NSDictionary dictionaryWithObject:ids forKey:@"ids"];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_products_retrieved" object:self userInfo:userInfo];
 
@@ -238,7 +238,7 @@
 
 - (void)paymentQueue:(SKPaymentQueue *)queue updatedTransactions:(NSArray *)transactions {
     NSLog(@"############ UPDATED TRANSACTIONS %@", transactions);
-    
+
     BOOL isRestoring = NO;
     for(SKPaymentTransaction *transaction in transactions) {
         switch (transaction.transactionState) {

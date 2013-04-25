@@ -101,16 +101,16 @@
 
     self.issueCover = [UIButton buttonWithType:UIButtonTypeCustom];
     issueCover.frame = CGRectMake(ui.cellPadding, ui.cellPadding, ui.thumbWidth, ui.thumbHeight);
-    
+
     issueCover.backgroundColor = [UIColor colorWithHexString:ISSUES_COVER_BACKGROUND_COLOR];
     issueCover.adjustsImageWhenHighlighted = NO;
     issueCover.adjustsImageWhenDisabled = NO;
-        
+
     issueCover.layer.shadowOpacity = 0.5;
     issueCover.layer.shadowOffset = CGSizeMake(0, 2);
     issueCover.layer.shouldRasterize = YES;
     issueCover.layer.rasterizationScale = [UIScreen mainScreen].scale;
-    
+
     [issueCover addTarget:self action:@selector(actionButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:issueCover];
 
@@ -603,12 +603,12 @@
         NKIssue *nkIssue = [nkLib issueWithName:self.issue.ID];
         NSString *name = nkIssue.name;
         NSDate *date = nkIssue.date;
-        
+
         [nkLib removeIssue:nkIssue];
-        
+
         nkIssue = [nkLib addIssueWithName:name date:date];
         self.issue.path = [[nkIssue contentURL] path];
-        
+
         [self refresh];
     }
 }

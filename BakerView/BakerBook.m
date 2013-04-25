@@ -112,7 +112,7 @@
                                                              options:0
                                                                error:&error];
     // TODO: deal with error
-    
+
     return [self initWithBookData:bookData];
 }
 - (id)initWithBookData:(NSDictionary *)bookData
@@ -373,7 +373,7 @@
             return YES;
         }
     }
-    
+
     NSLog(@"[BakerBook] ERROR: param '%@' type is wrong. Check it in 'book.json'.", param);
     return NO;
 }

@@ -1,8 +1,8 @@
 Project Baker
 =============
 
-**The HTML5 ebook framework to publish interactive books & magazines on iPad & iPhone using simply open web standards**  
-<http://bakerframework.com>  
+**The HTML5 ebook framework to publish interactive books & magazines on iPad & iPhone using simply open web standards**
+<http://bakerframework.com>
 
 
 
@@ -18,7 +18,7 @@ to create books with real typography, real layouts and high-quality design.
 HOW TO USE BAKER
 ----------------
 
-Creating an ebook in HTML5 to be used with Baker is a three-steps operation. 
+Creating an ebook in HTML5 to be used with Baker is a three-steps operation.
 It's easier done than said! ;)
 
 1. DESIGN

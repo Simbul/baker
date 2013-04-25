@@ -98,7 +98,7 @@ typedef struct {
 
 #ifdef BAKER_NEWSSTAND
 @interface alertView: UIAlertView <UIActionSheetDelegate> {
-    
+
 }
 @end
 #endif

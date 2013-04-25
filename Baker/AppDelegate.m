@@ -67,7 +67,7 @@
 
     #ifdef BAKER_NEWSSTAND
 
-    NSLog(@"====== Baker Newsstand Mode enabled ======");    
+    NSLog(@"====== Baker Newsstand Mode enabled ======");
     [BakerAPI generateUUIDOnce];
 
     // Let the device know we want to handle Newsstand push notifications

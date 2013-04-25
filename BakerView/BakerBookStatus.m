@@ -54,7 +54,7 @@
 
 - (void)save {
     NSDictionary *jsonDict = [NSDictionary dictionaryWithObjectsAndKeys:page, @"page", scrollIndex, @"scroll-index", nil];
-    
+
     [super save:jsonDict];
 }
 

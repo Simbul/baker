@@ -120,7 +120,7 @@
         userIsScrolling = NO;
         shouldPropagateInterceptedTouch = YES;
         shouldForceOrientationUpdate = YES;
-        
+
         adjustViewsOnAppDidBecomeActive = NO;
 
         webViewBackground = nil;
@@ -1259,7 +1259,7 @@
 
         [self handlePageLoading];
     }
-    
+
     /** CHECK IF META TAG SAYS HTML FILE SHOULD BE PAGED **/
     [webView.scrollView setPagingEnabled:[Utils webViewShouldBePaged:webView forBook:book]];
 }
@@ -1805,27 +1805,27 @@
 }
 
 - (void)forceOrientationUpdate {
-    
+
     if (shouldForceOrientationUpdate) {
-        
+
         // We need to run this only once to prevent looping in -viewWillAppear
         shouldForceOrientationUpdate = NO;
 
         UIInterfaceOrientation interfaceOrientation = [[UIApplication sharedApplication] statusBarOrientation];
-        
+
         if ( (UIInterfaceOrientationIsLandscape(interfaceOrientation) && [book.orientation isEqualToString:@"landscape"])
             ||
             (UIInterfaceOrientationIsPortrait(interfaceOrientation) && [book.orientation isEqualToString:@"portrait"]) ) {
-            
+
             //NSLog(@"[BakerView] Device and book orientations are in sync");
-            
+
         } else {
-            
+
             //NSLog(@"[BakerView] Device and book orientations are out of sync, force orientation update");
-            
+
             // Present and dismiss a vanilla view controller to trigger the orientation update
             [self presentViewController:[UIViewController new] animated:NO completion:^{ [self dismissViewControllerAnimated:NO completion:nil]; }];
-            
+
         }
     }
 }
