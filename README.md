@@ -215,7 +215,7 @@ CHANGELOG
 LICENSE
 -------
 
-  _Copyright (C) 2010-2012, Davide Casali, Marco Colombo, Alessandro Morandi_  
+  _Copyright (C) 2010-2013, Davide Casali, Marco Colombo, Alessandro Morandi_
   _Licensed under **BSD Opensource License** (free for personal and commercial use)_
 
 
