@@ -1186,7 +1186,8 @@
 
                             // Generate new URL without
                             // We are regexp-ing three things: the string alone, the string first with other content, the string with other content in any other position
-                            NSRegularExpression *replacerRegexp = [NSRegularExpression regularExpressionWithPattern:[[NSString alloc] initWithFormat:@"\\?%@$|(?<=\\?)%@&?|()&?%@", URL_OPEN_EXTERNAL, URL_OPEN_EXTERNAL, URL_OPEN_EXTERNAL] options:NSRegularExpressionCaseInsensitive error:NULL];
+                            NSString *pattern = [[[NSString alloc] initWithFormat:@"\\?%@$|(?<=\\?)%@&?|()&?%@", URL_OPEN_EXTERNAL, URL_OPEN_EXTERNAL, URL_OPEN_EXTERNAL] autorelease];
+                            NSRegularExpression *replacerRegexp = [NSRegularExpression regularExpressionWithPattern:pattern options:NSRegularExpressionCaseInsensitive error:NULL];
                             NSString *oldURL = [url absoluteString];
                             //NSLog(@"[BakerView]     replacement pattern: %@", [replacerRegexp pattern]);
                             NSString *newURL = [replacerRegexp stringByReplacingMatchesInString:oldURL options:0 range:NSMakeRange(0, [oldURL length]) withTemplate:@""];
@@ -1202,7 +1203,8 @@
 
                             // Generate new URL without
                             // We are regexp-ing three things: the string alone, the string first with other content, the string with other content in any other position
-                            NSRegularExpression *replacerRegexp = [NSRegularExpression regularExpressionWithPattern:[[NSString alloc] initWithFormat:@"\\?%@$|(?<=\\?)%@&?|()&?%@", URL_OPEN_MODALLY, URL_OPEN_MODALLY, URL_OPEN_MODALLY] options:NSRegularExpressionCaseInsensitive error:NULL];
+                            NSString *pattern = [[[NSString alloc] initWithFormat:@"\\?%@$|(?<=\\?)%@&?|()&?%@", URL_OPEN_MODALLY, URL_OPEN_MODALLY, URL_OPEN_MODALLY] autorelease];
+                            NSRegularExpression *replacerRegexp = [NSRegularExpression regularExpressionWithPattern:pattern options:NSRegularExpressionCaseInsensitive error:NULL];
                             NSString *oldURL = [url absoluteString];
                             //NSLog(@"[BakerView]     replacement pattern: %@", [replacerRegexp pattern]);
                             NSString *newURL = [replacerRegexp stringByReplacingMatchesInString:oldURL options:0 range:NSMakeRange(0, [oldURL length]) withTemplate:@""];

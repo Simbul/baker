@@ -47,7 +47,7 @@
     self = [super init];
 
     if (self) {
-        self.products = [[NSMutableDictionary alloc] init];
+        self.products = [[[NSMutableDictionary alloc] init] autorelease];
         self.subscribed = NO;
 
         _purchases = [[NSMutableDictionary alloc] init];

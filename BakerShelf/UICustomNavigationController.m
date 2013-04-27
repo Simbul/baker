@@ -37,7 +37,7 @@
 - (id)init
 {
     self = [super init];
-    return [self updateNavigationBar];
+    return [[self updateNavigationBar] retain];
 }
 - (id)updateNavigationBar
 {

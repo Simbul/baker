@@ -89,8 +89,8 @@
         issuesManager = [[IssuesManager sharedInstance] retain];
         notRecognisedTransactions = [[NSMutableArray alloc] init];
 
-        self.shelfStatus = [[[ShelfStatus alloc] init] retain];
-        self.issueViewControllers = [[NSMutableArray alloc] init];
+        self.shelfStatus = [[[ShelfStatus alloc] init] autorelease];
+        self.issueViewControllers = [[[NSMutableArray alloc] init] autorelease];
         self.supportedOrientation = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"UISupportedInterfaceOrientations"];
         self.bookToBeProcessed = nil;
 
@@ -149,9 +149,9 @@
 
     self.navigationItem.title = NSLocalizedString(@"SHELF_NAVIGATION_TITLE", nil);
 
-    self.background = [[UIImageView alloc] init];
+    self.background = [[[UIImageView alloc] init] autorelease];
 
-    self.gridView = [[AQGridView alloc] init];
+    self.gridView = [[[AQGridView alloc] init] autorelease];
     self.gridView.dataSource = self;
     self.gridView.delegate = self;
     self.gridView.backgroundColor = [UIColor clearColor];
@@ -358,7 +358,6 @@
     if (subscriptionsActionSheet.visible) {
         [subscriptionsActionSheet dismissWithClickedButtonIndex:(subscriptionsActionSheet.numberOfButtons - 1) animated:YES];
     } else {
-        [self.subscriptionsActionSheet release];
         self.subscriptionsActionSheet = [self buildSubscriptionsActionSheet];
         [subscriptionsActionSheet showFromBarButtonItem:self.subscribeButton animated:YES];
     }

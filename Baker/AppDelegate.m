@@ -106,7 +106,7 @@
 
     #endif
 
-    self.rootNavigationController = [[UICustomNavigationController alloc] initWithRootViewController:self.rootViewController];
+    self.rootNavigationController = [[[UICustomNavigationController alloc] initWithRootViewController:self.rootViewController] autorelease];
     UICustomNavigationBar *navigationBar = (UICustomNavigationBar *)self.rootNavigationController.navigationBar;
     [navigationBar setBackgroundImage:[UIImage imageNamed:@"navigation-bar-bg.png"] forBarMetrics:UIBarMetricsDefault];
     [navigationBar setTintColor:[UIColor clearColor]];

@@ -41,7 +41,7 @@
 
     self = [super initWithJSONPath:statusPath];
     if (self) {
-        self.prices = [[[NSMutableDictionary alloc] init] retain];
+        self.prices = [[[NSMutableDictionary alloc] init] autorelease];
     }
     return self;
 }

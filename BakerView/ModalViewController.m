@@ -138,7 +138,7 @@
 
 
     // ****** View
-    self.view = [UIView new];
+    self.view = [[UIView new] autorelease];
 
 
     // ****** Attach
