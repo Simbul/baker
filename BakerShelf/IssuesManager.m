@@ -78,7 +78,9 @@
         NSMutableArray *tmpIssues = [NSMutableArray array];
         [jsonArr enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
             BakerIssue *issue = [[[BakerIssue alloc] initWithIssueData:obj] autorelease];
-            [tmpIssues addObject:issue];
+            NSDate *issueDate = [Utils dateWithFormattedString[issue date]];
+            if ([issueDate compare:[NSDate date]] == NSOrderedAscending)    // Don't add issues with future release date
+                [tmpIssues addObject:issue];
         }];
 
         self.issues = [tmpIssues sortedArrayUsingComparator:^NSComparisonResult(id a, id b) {
@@ -134,15 +136,17 @@
         NSDate *date = [Utils dateWithFormattedString:[issue objectForKey:@"date"]];
         NSString *name = [issue objectForKey:@"name"];
 
-        NKIssue *nkIssue = [nkLib issueWithName:name];
-        if(!nkIssue) {
-            @try {
-                nkIssue = [nkLib addIssueWithName:name date:date];
-                NSLog(@"[BakerShelf] Newsstand - Added %@ %@", name, date);
-            } @catch (NSException *exception) {
-                NSLog(@"[BakerShelf] ERROR: Exception %@", exception);
+        // Only add issue if the publish date has already passed (ignore issues from the future)
+        if ([date compare:[NSDate date]] == NSOrderedAscending) {
+            NKIssue *nkIssue = [nkLib issueWithName:name];
+            if(!nkIssue) {
+                @try {
+                    nkIssue = [nkLib addIssueWithName:name date:date];
+                    NSLog(@"[BakerShelf] Newsstand - Added %@ %@", name, date);
+                } @catch (NSException *exception) {
+                    NSLog(@"[BakerShelf] ERROR: Exception %@", exception);
+                }
             }
-
         }
     }
 }
