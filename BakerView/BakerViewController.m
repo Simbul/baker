@@ -1159,7 +1159,12 @@
                 }
                 else if (![[url scheme] isEqualToString:@""] && ![[url scheme] isEqualToString:@"http"] && ![[url scheme] isEqualToString:@"https"])
                 {
-                    [[UIApplication sharedApplication] openURL:url];
+                    if ([[UIApplication sharedApplication] canOpenURL:url]) {
+                        [[UIApplication sharedApplication] openURL:url];
+                    } else {
+                        NSLog(@"[BakerView] ERROR: No installed application to open '%@'. An application to handle the '%@' URL scheme is required.", url, [url scheme]);
+                    }
+
                     return NO;
                 }
                 else
