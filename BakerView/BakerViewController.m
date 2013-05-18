@@ -1163,6 +1163,7 @@
                         [[UIApplication sharedApplication] openURL:url];
                     } else {
                         NSLog(@"[BakerView] ERROR: No installed application to open '%@'. An application to handle the '%@' URL scheme is required.", url, [url scheme]);
+                        [self webView:currPage dispatchHTMLEvent:@"urlnothandled" withParams:[NSDictionary dictionaryWithObject:url forKey:@"url"]];
                     }
 
                     return NO;
@@ -1314,9 +1315,17 @@
     }
 }
 - (void)webView:(UIWebView *)webView dispatchHTMLEvent:(NSString *)event {
-    NSString *jsDispatchEvent = [NSString stringWithFormat:@"var bakerDispatchedEvent = document.createEvent('Events');\
-                                 bakerDispatchedEvent.initEvent('%@', false, false);\
-                                 window.dispatchEvent(bakerDispatchedEvent);", event];
+    [self webView:webView dispatchHTMLEvent:event withParams:[NSDictionary dictionary]];
+}
+- (void)webView:(UIWebView *)webView dispatchHTMLEvent:(NSString *)event withParams:(NSDictionary *)params {
+    __block NSMutableString *jsDispatchEvent = [NSMutableString stringWithFormat:
+                                                @"var bakerDispatchedEvent = document.createEvent('Events');\
+                                                bakerDispatchedEvent.initEvent('%@', false, false);", event];
+    [params enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+        NSString *jsParamSet = [NSString stringWithFormat:@"bakerDispatchedEvent.%@='%@';\n", key, obj];
+        [jsDispatchEvent appendString:jsParamSet];
+    }];
+    [jsDispatchEvent appendString:@"window.dispatchEvent(bakerDispatchedEvent);"];
 
     [webView stringByEvaluatingJavaScriptFromString:jsDispatchEvent];
 }
