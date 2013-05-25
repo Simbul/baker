@@ -312,26 +312,35 @@
             issue.price = [shelfStatus priceFor:issue.productID];
         }
 
-        [self.gridView performBatchUpdates:^{
-        [self.issues enumerateObjectsUsingBlock:^(id object, NSUInteger idx, BOOL *stop) {
-            // NOTE: this block changes the issueViewController array while looping
-
-            IssueViewController *existingIvc = nil;
-            if (idx < [self.issueViewControllers count]) {
-                existingIvc = [self.issueViewControllers objectAtIndex:idx];
-            }
-
-            BakerIssue *issue = (BakerIssue*)object;
-            if (!existingIvc || ![[existingIvc issue].ID isEqualToString:issue.ID]) {
-                IssueViewController *ivc = [self createIssueViewControllerWithIssue:issue];
-                [self.issueViewControllers insertObject:ivc atIndex:idx];
-                [self.gridView insertItemsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForItem:idx inSection:0] ] ];
-            } else {
-                existingIvc.issue = issue;
-                [existingIvc refreshContentWithCache:NO];
-            }
-        }];}
-        completion:nil];
+        void (^updateIssues)() = ^{
+            [self.issues enumerateObjectsUsingBlock:^(id object, NSUInteger idx, BOOL *stop) {
+                // NOTE: this block changes the issueViewController array while looping
+                
+                IssueViewController *existingIvc = nil;
+                if (idx < [self.issueViewControllers count]) {
+                    existingIvc = [self.issueViewControllers objectAtIndex:idx];
+                }
+                
+                BakerIssue *issue = (BakerIssue*)object;
+                if (!existingIvc || ![[existingIvc issue].ID isEqualToString:issue.ID]) {
+                    IssueViewController *ivc = [self createIssueViewControllerWithIssue:issue];
+                    [self.issueViewControllers insertObject:ivc atIndex:idx];
+                    [self.gridView insertItemsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForItem:idx inSection:0] ] ];
+                } else {
+                    existingIvc.issue = issue;
+                    [existingIvc refreshContentWithCache:NO];
+                }
+            }];
+        };
+        
+        // When first launched, the grid is not initialised, so we can't
+        // call in the "batch update" method of the grid view
+        if (self.gridView) {
+            [self.gridView performBatchUpdates:updateIssues completion:nil];
+        }
+        else {
+            updateIssues();
+        }
 
         [purchasesManager retrievePricesFor:issuesManager.productIDs andEnableFailureNotifications:NO];
     }
