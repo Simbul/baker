@@ -4,7 +4,7 @@
 //
 //  ==========================================================================================
 //
-//  Copyright (c) 2010-2012, Davide Casali, Marco Colombo, Alessandro Morandi
+//  Copyright (c) 2010-2013, Davide Casali, Marco Colombo, Alessandro Morandi
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without modification, are
@@ -32,7 +32,6 @@
 #import "PurchasesManager.h"
 #import "BakerAPI.h"
 
-#import "JSONKit.h"
 #import "NSData+Base64.h"
 #import "NSMutableURLRequest+WebServiceClient.h"
 #import "Utils.h"
@@ -48,7 +47,7 @@
     self = [super init];
 
     if (self) {
-        self.products = [[NSMutableDictionary alloc] init];
+        self.products = [[[NSMutableDictionary alloc] init] autorelease];
         self.subscribed = NO;
 
         _purchases = [[NSMutableDictionary alloc] init];
@@ -112,17 +111,17 @@
 
 - (void)productsRequest:(SKProductsRequest *)request didReceiveResponse:(SKProductsResponse *)response {
     NSLog(@"############ REQUEST RECEIVED RESPONSE %@", response.products);
-    
+
     for (NSString *productID in response.invalidProductIdentifiers) {
         NSLog(@"Invalid product identifier: %@", productID);
     }
-    
+
     NSMutableSet *ids = [NSMutableSet setWithCapacity:response.products.count];
     for (SKProduct *skProduct in response.products) {
         [self.products setObject:skProduct forKey:skProduct.productIdentifier];
         [ids addObject:skProduct.productIdentifier];
     }
-    
+
     NSDictionary *userInfo = [NSDictionary dictionaryWithObject:ids forKey:@"ids"];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_products_retrieved" object:self userInfo:userInfo];
 
@@ -203,10 +202,14 @@
     BakerAPI *api = [BakerAPI sharedInstance];
 
     if ([api canGetPurchasesJSON]) {
-        NSString *jsonResponse = [api getPurchasesJSON];
+        NSData* jsonResponse = [api getPurchasesJSON];
 
         if (jsonResponse) {
-            NSDictionary *purchasesResponse = [jsonResponse objectFromJSONString];
+            NSError* error = nil;
+            NSDictionary *purchasesResponse = [NSJSONSerialization JSONObjectWithData:jsonResponse
+                                                                              options:0
+                                                                                error:&error];
+            // TODO: handle error
 
             if (purchasesResponse) {
                 NSArray *purchasedIssues = [purchasesResponse objectForKey:@"issues"];
@@ -235,7 +238,7 @@
 
 - (void)paymentQueue:(SKPaymentQueue *)queue updatedTransactions:(NSArray *)transactions {
     NSLog(@"############ UPDATED TRANSACTIONS %@", transactions);
-    
+
     BOOL isRestoring = NO;
     for(SKPaymentTransaction *transaction in transactions) {
         switch (transaction.transactionState) {

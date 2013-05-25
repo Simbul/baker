@@ -38,7 +38,6 @@
 		AB40045F15B4B83000D87E2A /* IndexViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40043415B4B83000D87E2A /* IndexViewController.m */; };
 		AB40046115B4B83000D87E2A /* InterceptorWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40043615B4B83000D87E2A /* InterceptorWindow.m */; };
 		AB40046315B4B83000D87E2A /* GTMNSString+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40043A15B4B83000D87E2A /* GTMNSString+HTML.m */; };
-		AB40046515B4B83000D87E2A /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40043D15B4B83000D87E2A /* JSONKit.m */; };
 		AB40046715B4B83000D87E2A /* ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = AB40044015B4B83000D87E2A /* ioapi.c */; };
 		AB40046915B4B83000D87E2A /* mztools.c in Sources */ = {isa = PBXBuildFile; fileRef = AB40044215B4B83000D87E2A /* mztools.c */; };
 		AB40046B15B4B83000D87E2A /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = AB40044415B4B83000D87E2A /* unzip.c */; };
@@ -124,8 +123,6 @@
 		AB40043815B4B83000D87E2A /* GTMDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTMDefines.h; sourceTree = "<group>"; };
 		AB40043915B4B83000D87E2A /* GTMNSString+HTML.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "GTMNSString+HTML.h"; sourceTree = "<group>"; };
 		AB40043A15B4B83000D87E2A /* GTMNSString+HTML.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "GTMNSString+HTML.m"; sourceTree = "<group>"; };
-		AB40043C15B4B83000D87E2A /* JSONKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSONKit.h; sourceTree = "<group>"; };
-		AB40043D15B4B83000D87E2A /* JSONKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSONKit.m; sourceTree = "<group>"; };
 		AB40043F15B4B83000D87E2A /* crypt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypt.h; sourceTree = "<group>"; };
 		AB40044015B4B83000D87E2A /* ioapi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ioapi.c; sourceTree = "<group>"; };
 		AB40044115B4B83000D87E2A /* ioapi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ioapi.h; sourceTree = "<group>"; };
@@ -283,7 +280,6 @@
 		AB40043715B4B83000D87E2A /* lib */ = {
 			isa = PBXGroup;
 			children = (
-				AB40043B15B4B83000D87E2A /* JSONKit */,
 				AB40043E15B4B83000D87E2A /* minizip */,
 				AB40043815B4B83000D87E2A /* GTMDefines.h */,
 				AB40043915B4B83000D87E2A /* GTMNSString+HTML.h */,
@@ -296,15 +292,6 @@
 				ABDC05AE16A4C42A00F6B63D /* JSONStatus.m */,
 			);
 			path = lib;
-			sourceTree = "<group>";
-		};
-		AB40043B15B4B83000D87E2A /* JSONKit */ = {
-			isa = PBXGroup;
-			children = (
-				AB40043C15B4B83000D87E2A /* JSONKit.h */,
-				AB40043D15B4B83000D87E2A /* JSONKit.m */,
-			);
-			path = JSONKit;
 			sourceTree = "<group>";
 		};
 		AB40043E15B4B83000D87E2A /* minizip */ = {
@@ -521,7 +508,6 @@
 				AB40045F15B4B83000D87E2A /* IndexViewController.m in Sources */,
 				AB40046115B4B83000D87E2A /* InterceptorWindow.m in Sources */,
 				AB40046315B4B83000D87E2A /* GTMNSString+HTML.m in Sources */,
-				AB40046515B4B83000D87E2A /* JSONKit.m in Sources */,
 				AB40046715B4B83000D87E2A /* ioapi.c in Sources */,
 				AB40046915B4B83000D87E2A /* mztools.c in Sources */,
 				AB40046B15B4B83000D87E2A /* unzip.c in Sources */,

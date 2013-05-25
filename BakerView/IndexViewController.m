@@ -4,7 +4,7 @@
 //
 //  ==========================================================================================
 //
-//  Copyright (c) 2010-2012, Davide Casali, Marco Colombo, Alessandro Morandi
+//  Copyright (c) 2010-2013, Davide Casali, Marco Colombo, Alessandro Morandi
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without modification, are
@@ -101,14 +101,7 @@
         pageHeight = screenBounds.size.height;
     }
 
-    UIApplication *sharedApplication = [UIApplication sharedApplication];
-    if (sharedApplication.statusBarHidden) {
-        pageY = 0;
-    } else {
-        pageY = -20;
-    }
-
-    NSLog(@"Set IndexView size to %dx%d, with pageY set to %d", pageWidth, pageHeight, pageY);
+    NSLog(@"[IndexView] Set IndexView size to %dx%d", pageWidth, pageHeight);
 }
 
 - (void)setActualSize {
@@ -128,15 +121,15 @@
     CGRect frame;
     if (hidden) {
         if ([self stickToLeft]) {
-            frame = CGRectMake(-actualIndexWidth, pageHeight - actualIndexHeight, actualIndexWidth, actualIndexHeight);
+            frame = CGRectMake(-actualIndexWidth, [self trueY] + pageHeight - actualIndexHeight, actualIndexWidth, actualIndexHeight);
         } else {
-            frame = CGRectMake(0, pageHeight + pageY, actualIndexWidth, actualIndexHeight);
+            frame = CGRectMake(0, [self trueY] + pageHeight, actualIndexWidth, actualIndexHeight);
         }
     } else {
         if ([self stickToLeft]) {
-            frame = CGRectMake(0, pageHeight - actualIndexHeight, actualIndexWidth, actualIndexHeight);
+            frame = CGRectMake(0, [self trueY] + pageHeight - actualIndexHeight, actualIndexWidth, actualIndexHeight);
         } else {
-            frame = CGRectMake(0, pageHeight + pageY - indexHeight, actualIndexWidth, actualIndexHeight);
+            frame = CGRectMake(0, [self trueY] + pageHeight - indexHeight, actualIndexWidth, actualIndexHeight);
         }
 
     }
@@ -150,6 +143,19 @@
         [UIView commitAnimations];
     } else {
         [self setViewFrame:frame];
+    }
+}
+
+- (int)trueY {
+    // Sometimes the origin (0,0) is not where it should be: this horrible hack
+    // compensates for it, by exploiting the fact that the superview height is
+    // slightly smaller then the viewport height when the origin's y needs to be adjusted.
+    int height = self.view.superview.frame.size.height;
+
+    if (height == 320 || height == 480 || height == 568 || height == 768 || height == 1024) {
+        return 0;
+    } else {
+        return -20;
     }
 }
 
@@ -205,12 +211,12 @@
     webView.mediaPlaybackRequiresUserAction = ![book.bakerMediaAutoplay boolValue];
     [self setBounceForWebView:webView bounces:[book.bakerIndexBounce boolValue]];
 
-    NSLog(@"Path to index view is %@", path);
+    //NSLog(@"[IndexView] Path to index view is %@", path);
     if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
         disabled = NO;
         [(UIWebView *)self.view loadRequest:[NSURLRequest requestWithURL:[NSURL fileURLWithPath:path]]];
     } else {
-        NSLog(@"Could not find index view at that path");
+        NSLog(@"[IndexView] Index HTML not found at %@", path);
         disabled = YES;
     }
 }
@@ -236,7 +242,7 @@
     }
     [self setActualSize];
 
-    NSLog(@"Set size for IndexView to %dx%d (constrained from %dx%d)", actualIndexWidth, actualIndexHeight, indexWidth, indexHeight);
+    NSLog(@"[IndexView] Set size for IndexView to %dx%d (constrained from %dx%d)", actualIndexWidth, actualIndexHeight, indexWidth, indexHeight);
 
     // After the first load, point the delegate to the main view controller
     webView.delegate = webViewDelegate;

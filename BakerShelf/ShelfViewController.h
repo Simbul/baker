@@ -4,7 +4,7 @@
 //
 //  ==========================================================================================
 //
-//  Copyright (c) 2010-2012, Davide Casali, Marco Colombo, Alessandro Morandi
+//  Copyright (c) 2010-2013, Davide Casali, Marco Colombo, Alessandro Morandi
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without modification, are
@@ -41,12 +41,13 @@
 #endif
 
 @interface ShelfViewController : UIViewController <UICollectionViewDataSource, UICollectionViewDelegate, UIActionSheetDelegate> {
-    #ifdef BAKER_NEWSSTAND
-    PurchasesManager *purchasesManager;
-    #endif
     BakerAPI *api;
     IssuesManager *issuesManager;
     NSMutableArray *notRecognisedTransactions;
+
+    #ifdef BAKER_NEWSSTAND
+    PurchasesManager *purchasesManager;
+    #endif
 }
 
 @property (copy, nonatomic) NSArray *issues;
@@ -64,6 +65,8 @@
 @property (strong, nonatomic) NSArray *subscriptionsActionSheetActions;
 @property (strong, nonatomic) UIAlertView *blockingProgressView;
 
+@property (copy, nonatomic) NSString *bookToBeProcessed;
+
 #pragma mark - Init
 - (id)init;
 - (id)initWithBooks:(NSArray *)currentBooks;
@@ -79,7 +82,9 @@
 #pragma mark - Navigation management
 - (void)readIssue:(BakerIssue *)issue;
 - (void)handleReadIssue:(NSNotification *)notification;
--(void)pushViewControllerWithBook:(BakerBook *)book;
+- (void)receiveBookProtocolNotification:(NSNotification *)notification;
+- (void)handleBookToBeProcessed;
+- (void)pushViewControllerWithBook:(BakerBook *)book;
 
 #pragma mark - Buttons management
 -(void)setrefreshButtonEnabled:(BOOL)enabled;

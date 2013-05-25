@@ -1,8 +1,8 @@
 Project Baker
 =============
 
-**The HTML5 ebook framework to publish interactive books & magazines on iPad & iPhone using simply open web standards**  
-<http://bakerframework.com>  
+**The HTML5 ebook framework to publish interactive books & magazines on iPad & iPhone using simply open web standards**
+<http://bakerframework.com>
 
 
 
@@ -18,7 +18,7 @@ to create books with real typography, real layouts and high-quality design.
 HOW TO USE BAKER
 ----------------
 
-Creating an ebook in HTML5 to be used with Baker is a three-steps operation. 
+Creating an ebook in HTML5 to be used with Baker is a three-steps operation.
 It's easier done than said! ;)
 
 1. DESIGN
@@ -35,12 +35,12 @@ It's easier done than said! ;)
    * Create a Hpub book.json file: title, author, pages, etc. (see below)
    * All the assets must be contained within the publication folder or its subfolders
    * Check the example book from the website for an hands-on example
-   * See either [Standalone tutorial](https://github.com/Simbul/baker/wiki/4.0-tutorial-for-Standalone) or [Newsstand tutorial](https://github.com/Simbul/baker/wiki/4.0-tutorial-for-Newsstand) for more info
+   * See either [Standalone tutorial](https://github.com/Simbul/baker/wiki/Tutorial-for-Standalone-App) or [Newsstand tutorial](https://github.com/Simbul/baker/wiki/Tutorial-for-Newsstand-with-Free-issues) for more info
 
 3. PUBLISH
    * Download the Baker Framework Xcode project from http://bakerframework.com (or GitHub).
    * Download Xcode from the Mac App Store or from the Apple Developer website.
-   * Decide if you want to release using the [Standalone tutorial](https://github.com/Simbul/baker/wiki/4.0-tutorial-for-Standalone) or [Newsstand tutorial](https://github.com/Simbul/baker/wiki/4.0-tutorial-for-Newsstand) mode and follow the tutorial accordingly.
+   * Decide if you want to release using the [Standalone tutorial](https://github.com/Simbul/baker/wiki/Tutorial-for-Standalone-App) or [Newsstand tutorial](https://github.com/Simbul/baker/wiki/Tutorial-for-Newsstand-with-Free-issues) mode and follow the tutorial accordingly.
    * Select the Baker Scheme (Simulator or Device) from the toolbar dropdown.
    * Run and check that everything works correctly _both_ on simulator and device.
    * Check [this page](https://github.com/Simbul/baker/wiki/Problems-and-Debugging) if you encounter any problem.
@@ -123,6 +123,20 @@ BUGS AND FEEDBACK
 
 CHANGELOG
 ---------
+
+* **4.1** (06/05/2012)
+  * In-App Purchases for your magazine issues (server required)
+  * Paid Subscriptions support (server required)
+  * Push notifications capabilit (server required)
+  * Baker API defined to allow third-party servers
+  * Vertical pagination flexibility with `<meta name="paged" content="YES">`
+  * Issue data can now be refreshed
+  * book: protocol now works within the issues on the shelf
+  * Index handling improvements
+  * Removed JSONKit, using iOS5+ parser
+  * Memory enhancements
+  * Cleaned up the debug console log and error messages
+  * Bugs and fixes
 
 * **4.0** (22/12/2012)
   * Full Newsstand support
@@ -215,7 +229,7 @@ CHANGELOG
 LICENSE
 -------
 
-  _Copyright (C) 2010-2012, Davide Casali, Marco Colombo, Alessandro Morandi_  
+  _Copyright (C) 2010-2013, Davide Casali, Marco Colombo, Alessandro Morandi_
   _Licensed under **BSD Opensource License** (free for personal and commercial use)_
 
 

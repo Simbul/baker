@@ -4,7 +4,7 @@
 //
 //  ==========================================================================================
 //
-//  Copyright (c) 2010-2012, Davide Casali, Marco Colombo, Alessandro Morandi
+//  Copyright (c) 2010-2013, Davide Casali, Marco Colombo, Alessandro Morandi
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without modification, are
@@ -138,7 +138,7 @@
 
 
     // ****** View
-    self.view = [UIView new];
+    self.view = [[UIView new] autorelease];
 
 
     // ****** Attach
@@ -179,7 +179,7 @@
      * Start loading a new page in the UIWebView.
      */
 
-    NSLog(@"[Modal] Loading \"%@\"", [webViewIn.request.URL absoluteString]);
+    // NSLog(@"[Modal] Loading '%@'", [webViewIn.request.URL absoluteString]); <-- this isn't returning the URL correctly, check
     [spinner startAnimating];
 }
 - (void)webViewDidFinishLoad:(UIWebView *)webViewIn {
@@ -188,7 +188,7 @@
      * We reset the button status here.
      */
 
-    NSLog(@"[Modal] Finish loading.");
+    //NSLog(@"[Modal] Finish loading.");
     [[self delegate] webView:webViewIn setCorrectOrientation:self.interfaceOrientation];
 
     // ****** Stop spinner
@@ -199,7 +199,7 @@
     btnGoForward.enabled = [webViewIn canGoForward];
 }
 - (void)webView:(UIWebView *)webViewIn didFailLoadWithError:(NSError *)error {
-    NSLog(@"[Modal] Failed to load \"%@\", error code %i", [webViewIn.request.URL absoluteString], [error code]);
+    NSLog(@"[Modal] Failed to load '%@', error code %i", [webViewIn.request.URL absoluteString], [error code]);
     if ([error code] == -1009) {
         UILabel *errorLabel = [[[UILabel alloc] initWithFrame:self.webView.frame] autorelease];
         errorLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;

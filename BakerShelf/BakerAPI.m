@@ -4,7 +4,7 @@
 //
 //  ==========================================================================================
 //
-//  Copyright (c) 2010-2012, Davide Casali, Marco Colombo, Alessandro Morandi
+//  Copyright (c) 2010-2013, Davide Casali, Marco Colombo, Alessandro Morandi
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without modification, are
@@ -55,14 +55,11 @@
 - (BOOL)canGetShelfJSON {
     return ([self manifestURL] != nil);
 }
-- (NSString *)getShelfJSON {
-    NSData *data = [self getFromURL:[self manifestURL] cachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
-
-    if (data) {
-        return [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-    } else {
-        return nil;
+- (NSData *)getShelfJSON {
+    if ([self canGetShelfJSON]) {
+        return [self getFromURL:[self manifestURL] cachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
     }
+    return nil;
 }
 
 #pragma mark - Purchases
@@ -70,17 +67,10 @@
 - (BOOL)canGetPurchasesJSON {
     return ([self purchasesURL] != nil);
 }
-- (NSString *)getPurchasesJSON {
+- (NSData *)getPurchasesJSON {
     if ([self canGetPurchasesJSON]) {
-        NSData *data = [self getFromURL:[self purchasesURL] cachePolicy:NSURLRequestUseProtocolCachePolicy];
-
-        if (data) {
-            return [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-        } else {
-            return nil;
-        }
+        return [self getFromURL:[self purchasesURL] cachePolicy:NSURLRequestUseProtocolCachePolicy];
     }
-
     return nil;
 }
 
@@ -107,7 +97,7 @@
 - (BOOL)postAPNSToken:(NSString *)apnsToken {
     if ([self canPostAPNSToken]) {
         NSDictionary *params = [NSDictionary dictionaryWithObject:apnsToken forKey:@"apns_token"];
-        
+
         return [self postParams:params toURL:[self postAPNSTokenURL]];
     }
     return NO;
@@ -147,7 +137,7 @@
         requestURL = [requestURL URLByAppendingQueryString:queryString];
         request = [NSURLRequest requestWithURL:requestURL cachePolicy:cachePolicy timeoutInterval:REQUEST_TIMEOUT];
     } else if ([method isEqualToString:@"POST"]) {
-        request = [[NSMutableURLRequest alloc] initWithURL:requestURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:REQUEST_TIMEOUT];
+        request = [[[NSMutableURLRequest alloc] initWithURL:requestURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:REQUEST_TIMEOUT] autorelease];
         [request setHTTPMethod:@"POST"];
         [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
         [request setFormPostParameters:requestParams];

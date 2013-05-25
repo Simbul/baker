@@ -4,7 +4,7 @@
 //
 //  ==========================================================================================
 //
-//  Copyright (c) 2010-2012, Davide Casali, Marco Colombo, Alessandro Morandi
+//  Copyright (c) 2010-2013, Davide Casali, Marco Colombo, Alessandro Morandi
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without modification, are
@@ -173,27 +173,32 @@
 - (void)connectionDidFinishDownloading:(NSURLConnection *)connection destinationURL:(NSURL *)destinationURL {
     #ifdef BAKER_NEWSSTAND
     [self unpackAssetDownload:connection.newsstandAssetDownload toURL:destinationURL];
-
-    [[NSNotificationCenter defaultCenter] postNotificationName:notificationDownloadFinishedName object:self userInfo:nil];
-
-    [self updateNewsstandIcon];
     #endif
 }
 
 #ifdef BAKER_NEWSSTAND
 - (void)unpackAssetDownload:(NKAssetDownload *)newsstandAssetDownload toURL:(NSURL *)destinationURL {
+
     NKIssue *nkIssue = newsstandAssetDownload.issue;
     NSString *destinationPath = [[nkIssue contentURL] path];
 
-    NSLog(@"File is being unzipped to %@", destinationPath);
-    [SSZipArchive unzipFileAtPath:[destinationURL path] toDestination:destinationPath];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+        NSLog(@"[BakerShelf] Newsstand - File is being unzipped to %@", destinationPath);
+        [SSZipArchive unzipFileAtPath:[destinationURL path] toDestination:destinationPath];
 
-    NSLog(@"Removing temporary downloaded file %@", [destinationURL path]);
-    NSFileManager *fileMgr = [NSFileManager defaultManager];
-    NSError *error;
-    if ([fileMgr removeItemAtPath:[destinationURL path] error:&error] != YES){
-        NSLog(@"Unable to delete file: %@", [error localizedDescription]);
-    }
+        NSLog(@"[BakerShelf] Newsstand - Removing temporary downloaded file %@", [destinationURL path]);
+        NSFileManager *fileMgr = [NSFileManager defaultManager];
+        NSError *error;
+        if ([fileMgr removeItemAtPath:[destinationURL path] error:&error] != YES){
+            NSLog(@"[BakerShelf] Newsstand - Unable to delete file: %@", [error localizedDescription]);
+        }
+
+        // Notification and UI update have to be handled on the main thread
+        dispatch_async(dispatch_get_main_queue(), ^(void) {
+            [[NSNotificationCenter defaultCenter] postNotificationName:notificationDownloadFinishedName object:self userInfo:nil];
+            [self updateNewsstandIcon];
+        });
+    });
 }
 - (void)updateNewsstandIcon {
     [[UIApplication sharedApplication] setApplicationIconBadgeNumber:1];

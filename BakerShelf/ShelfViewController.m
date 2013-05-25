@@ -4,7 +4,7 @@
 //
 //  ==========================================================================================
 //
-//  Copyright (c) 2010-2012, Davide Casali, Marco Colombo, Alessandro Morandi
+//  Copyright (c) 2010-2013, Davide Casali, Marco Colombo, Alessandro Morandi
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without modification, are
@@ -36,7 +36,6 @@
 #import "BakerViewController.h"
 #import "IssueViewController.h"
 
-#import "JSONKit.h"
 #import "NSData+Base64.h"
 #import "NSString+Extensions.h"
 #import "Utils.h"
@@ -51,6 +50,8 @@
 @synthesize shelfStatus;
 @synthesize subscriptionsActionSheet;
 @synthesize supportedOrientation;
+@synthesize blockingProgressView;
+@synthesize bookToBeProcessed;
 
 #pragma mark - Init
 
@@ -76,17 +77,26 @@
         [self addPurchaseObserver:@selector(handleRestoredIssueNotRecognised:)
                              name:@"notification_restored_issue_not_recognised"];
 
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(receiveBookProtocolNotification:)
+                                                     name:@"notification_book_protocol"
+                                                   object:nil];
+
         [[SKPaymentQueue defaultQueue] addTransactionObserver:purchasesManager];
         #endif
 
         api = [BakerAPI sharedInstance];
         issuesManager = [[IssuesManager sharedInstance] retain];
-
-        self.shelfStatus = [[[ShelfStatus alloc] init] retain];
-        self.issueViewControllers = [[NSMutableArray alloc] init];
-        self.supportedOrientation = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"UISupportedInterfaceOrientations"];
-
         notRecognisedTransactions = [[NSMutableArray alloc] init];
+
+        self.shelfStatus = [[[ShelfStatus alloc] init] autorelease];
+        self.issueViewControllers = [[[NSMutableArray alloc] init] autorelease];
+        self.supportedOrientation = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"UISupportedInterfaceOrientations"];
+        self.bookToBeProcessed = nil;
+
+        #ifdef BAKER_NEWSSTAND
+        [self handleRefresh:nil];
+        #endif
     }
     return self;
 }
@@ -119,9 +129,11 @@
     [shelfStatus release];
     [subscriptionsActionSheet release];
     [supportedOrientation release];
-    [self.blockingProgressView release];
+    [blockingProgressView release];
     [issuesManager release];
     [notRecognisedTransactions release];
+    [bookToBeProcessed release];
+
     #ifdef BAKER_NEWSSTAND
     [purchasesManager release];
     #endif
@@ -137,7 +149,7 @@
 
     self.navigationItem.title = NSLocalizedString(@"SHELF_NAVIGATION_TITLE", nil);
 
-    self.background = [[UIImageView alloc] init];
+    self.background = [[[UIImageView alloc] init] autorelease];
 
     self.gridView = [[UICollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:[[[UICollectionViewFlowLayout alloc] init] autorelease]];
     self.gridView.dataSource = self;
@@ -190,10 +202,6 @@
     [self.navigationController.navigationBar setTranslucent:NO];
     [self willRotateToInterfaceOrientation:self.interfaceOrientation duration:0];
 
-    #ifdef BAKER_NEWSSTAND
-    [self handleRefresh:nil];
-    #endif
-
     for (IssueViewController *controller in self.issueViewControllers) {
         controller.issue.transientStatus = BakerIssueTransientStatusNone;
         [controller refresh];
@@ -206,6 +214,12 @@
     }
     self.navigationItem.leftBarButtonItems = buttonItems;
     #endif
+}
+- (void)viewDidAppear:(BOOL)animated
+{
+    if (self.bookToBeProcessed) {
+        [self handleBookToBeProcessed];
+    }
 }
 - (NSInteger)supportedInterfaceOrientations
 {
@@ -358,7 +372,6 @@
     if (subscriptionsActionSheet.visible) {
         [subscriptionsActionSheet dismissWithClickedButtonIndex:(subscriptionsActionSheet.numberOfButtons - 1) animated:YES];
     } else {
-        [self.subscriptionsActionSheet release];
         self.subscriptionsActionSheet = [self buildSubscriptionsActionSheet];
         [subscriptionsActionSheet showFromBarButtonItem:self.subscribeButton animated:YES];
     }
@@ -602,7 +615,23 @@
     IssueViewController *controller = notification.object;
     [self readIssue:controller.issue];
 }
--(void)pushViewControllerWithBook:(BakerBook *)book
+- (void)receiveBookProtocolNotification:(NSNotification *)notification
+{
+    self.bookToBeProcessed = [notification.userInfo objectForKey:@"ID"];
+    [self.navigationController popToRootViewControllerAnimated:YES];
+}
+- (void)handleBookToBeProcessed
+{
+    for (IssueViewController *issueViewController in self.issueViewControllers) {
+        if ([issueViewController.issue.ID isEqualToString:self.bookToBeProcessed]) {
+            [issueViewController actionButtonPressed:nil];
+            break;
+        }
+    }
+
+    self.bookToBeProcessed = nil;
+}
+- (void)pushViewControllerWithBook:(BakerBook *)book
 {
     BakerViewController *bakerViewController = [[BakerViewController alloc] initWithBook:book];
     [self.navigationController pushViewController:bakerViewController animated:YES];

@@ -4,7 +4,7 @@
 //
 //  ==========================================================================================
 //
-//  Copyright (c) 2010-2012, Davide Casali, Marco Colombo, Alessandro Morandi
+//  Copyright (c) 2010-2013, Davide Casali, Marco Colombo, Alessandro Morandi
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without modification, are
@@ -37,7 +37,6 @@
 
 @interface IssueViewController : UIViewController {
     NSString *currentAction;
-    NSString *currentStatus;
     BOOL purchaseDelayed;
     #ifdef BAKER_NEWSSTAND
     PurchasesManager *purchasesManager;
@@ -57,6 +56,8 @@
 @property (strong, nonatomic) UIFont *infoFont;
 @property (strong, nonatomic) UILabel *titleLabel;
 @property (strong, nonatomic) UILabel *infoLabel;
+
+@property (copy, nonatomic) NSString *currentStatus;
 
 #pragma mark - Structs
 typedef struct {
@@ -97,7 +98,7 @@ typedef struct {
 
 #ifdef BAKER_NEWSSTAND
 @interface alertView: UIAlertView <UIActionSheetDelegate> {
-    
+
 }
 @end
 #endif

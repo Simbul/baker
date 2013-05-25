@@ -4,7 +4,7 @@
 //
 //  ==========================================================================================
 //
-//  Copyright (c) 2010-2012, Davide Casali, Marco Colombo, Alessandro Morandi
+//  Copyright (c) 2010-2013, Davide Casali, Marco Colombo, Alessandro Morandi
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without modification, are
@@ -33,8 +33,6 @@
 #import "BakerIssue.h"
 #import "Utils.h"
 #import "BakerAPI.h"
-
-#import "JSONKit.h"
 
 @implementation IssuesManager
 
@@ -67,10 +65,13 @@
 
 #ifdef BAKER_NEWSSTAND
 -(BOOL)refresh {
-    NSString *json = [self getShelfJSON];
+    NSData *json = [self getShelfJSON];
 
     if (json) {
-        NSArray *jsonArr = [json objectFromJSONString];
+        NSError* error = nil;
+        NSArray* jsonArr = [NSJSONSerialization JSONObjectWithData:json
+                                                           options:0
+                                                             error:&error];
 
         [self updateNewsstandIssuesList:jsonArr];
 
@@ -88,34 +89,37 @@
 
         return YES;
     } else {
+        NSLog(@"[BakerShelf] ERROR: 'shelf.json' is missing. Add URL to 'NEWSSTAND_MANIFEST_URL' in Constants.h");
         return NO;
     }
 }
 
--(NSString *)getShelfJSON {
+-(NSData *)getShelfJSON {
     BakerAPI *api = [BakerAPI sharedInstance];
-    NSString *json = [api getShelfJSON];
+    NSData *json = [api getShelfJSON];
 
     NSError *cachedShelfError = nil;
 
     if (json) {
         // Cache the shelf manifest
         [[NSFileManager defaultManager] createFileAtPath:self.shelfManifestPath contents:nil attributes:nil];
-        [json writeToFile:self.shelfManifestPath atomically:YES encoding:NSUTF8StringEncoding error:&cachedShelfError];
+        [json writeToFile:self.shelfManifestPath
+                  options:NSDataWritingAtomic
+                    error:&cachedShelfError];
         if (cachedShelfError) {
-            NSLog(@"Error caching Shelf manifest: %@", cachedShelfError);
-        } else {
-            [Utils addSkipBackupAttributeToItemAtPath:self.shelfManifestPath];
+            NSLog(@"[BakerShelf] ERROR: Unable to cache 'shelf.json' manifest: %@", cachedShelfError);
         }
     } else {
+        // Can't download it... Let's try to load it from previously cached version...
         if ([[NSFileManager defaultManager] fileExistsAtPath:self.shelfManifestPath]) {
-            NSLog(@"Loading cached Shelf manifest from %@", self.shelfManifestPath);
-            json = [NSString stringWithContentsOfFile:self.shelfManifestPath encoding:NSUTF8StringEncoding error:&cachedShelfError];
+            NSLog(@"[BakerShelf] Loading cached Shelf manifest from %@", self.shelfManifestPath);
+            json = [NSData dataWithContentsOfFile:self.shelfManifestPath options:NSDataReadingMappedIfSafe error:&cachedShelfError];
             if (cachedShelfError) {
-                NSLog(@"Error loading cached Shelf manifest: %@", cachedShelfError);
+                NSLog(@"[BakerShelf] Error loading cached copy of 'shelf.json': %@", cachedShelfError);
             }
         } else {
-            NSLog(@"No cached Shelf manifest found at %@", self.shelfManifestPath);
+            // Not even in cache. Bad luck.
+            NSLog(@"[BakerShelf] No cached 'shelf.json' manifest found at %@", self.shelfManifestPath);
             json = nil;
         }
     }
@@ -134,9 +138,9 @@
         if(!nkIssue) {
             @try {
                 nkIssue = [nkLib addIssueWithName:name date:date];
-                NSLog(@"added %@ %@", name, date);
+                NSLog(@"[BakerShelf] Newsstand - Added %@ %@", name, date);
             } @catch (NSException *exception) {
-                NSLog(@"EXCEPTION %@", exception);
+                NSLog(@"[BakerShelf] ERROR: Exception %@", exception);
             }
 
         }
@@ -176,10 +180,10 @@
                 BakerIssue *issue = [[[BakerIssue alloc] initWithBakerBook:book] autorelease];
                 [booksList addObject:issue];
             } else {
-                NSLog(@"[ERROR] Book %@ could not be initialized", file);
+                NSLog(@"[BakerShelf] ERROR: Book %@ could not be initialized. Is 'book.json' correct and valid?", file);
             }
         } else {
-            NSLog(@"CANNOT FIND MANIFEST %@", manifestFile);
+            NSLog(@"[BakerShelf] ERROR: Cannot find 'book.json'. Is it present? Should be here: %@", manifestFile);
         }
     }
 

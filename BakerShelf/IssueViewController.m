@@ -4,7 +4,7 @@
 //
 //  ==========================================================================================
 //
-//  Copyright (c) 2010-2012, Davide Casali, Marco Colombo, Alessandro Morandi
+//  Copyright (c) 2010-2013, Davide Casali, Marco Colombo, Alessandro Morandi
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without modification, are
@@ -59,6 +59,8 @@
 @synthesize titleLabel;
 @synthesize infoLabel;
 
+@synthesize currentStatus;
+
 #pragma mark - Init
 
 - (id)initWithBakerIssue:(BakerIssue *)bakerIssue
@@ -66,7 +68,8 @@
     self = [super init];
     if (self) {
         self.issue = bakerIssue;
-        currentStatus = nil;
+        self.currentStatus = nil;
+
         purchaseDelayed = NO;
 
         #ifdef BAKER_NEWSSTAND
@@ -98,16 +101,16 @@
 
     self.issueCover = [UIButton buttonWithType:UIButtonTypeCustom];
     issueCover.frame = CGRectMake(ui.cellPadding, ui.cellPadding, ui.thumbWidth, ui.thumbHeight);
-    
+
     issueCover.backgroundColor = [UIColor colorWithHexString:ISSUES_COVER_BACKGROUND_COLOR];
     issueCover.adjustsImageWhenHighlighted = NO;
     issueCover.adjustsImageWhenDisabled = NO;
-        
+
     issueCover.layer.shadowOpacity = 0.5;
     issueCover.layer.shadowOffset = CGSizeMake(0, 2);
     issueCover.layer.shouldRasterize = YES;
     issueCover.layer.rasterizationScale = [UIScreen mainScreen].scale;
-    
+
     [issueCover addTarget:self action:@selector(actionButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:issueCover];
 
@@ -198,7 +201,7 @@
     NKLibrary *nkLib = [NKLibrary sharedLibrary];
     for (NKAssetDownload *asset in [nkLib downloadingAssets]) {
         if ([asset.issue.name isEqualToString:self.issue.ID]) {
-            NSLog(@"Resuming abandoned Newsstand download: %@", asset.issue.name);
+            NSLog(@"[BakerShelf] Resuming abandoned Newsstand download: %@", asset.issue.name);
             [self.issue downloadWithAsset:asset];
         }
     }
@@ -273,7 +276,7 @@
 }
 - (void)refresh:(NSString *)status
 {
-    NSLog(@"Refreshing %@ view with status %@ -> %@", self.issue.ID, currentStatus, status);
+    //NSLog(@"[BakerShelf] Shelf UI - Refreshing %@ item with status from <%@> to <%@>", self.issue.ID, self.currentStatus, status);
     if ([status isEqualToString:@"remote"])
     {
         [self.priceLabel setText:NSLocalizedString(@"FREE_TEXT", nil)];
@@ -289,6 +292,7 @@
     }
     else if ([status isEqualToString:@"connecting"])
     {
+        NSLog(@"[BakerShelf] '%@' is Connecting...", self.issue.ID);
         [self.spinner startAnimating];
 
         self.actionButton.hidden = YES;
@@ -301,6 +305,7 @@
     }
     else if ([status isEqualToString:@"downloading"])
     {
+        NSLog(@"[BakerShelf] '%@' is Downloading...", self.issue.ID);
         [self.spinner startAnimating];
 
         self.actionButton.hidden = YES;
@@ -313,6 +318,7 @@
     }
     else if ([status isEqualToString:@"downloaded"])
     {
+        NSLog(@"[BakerShelf] '%@' is Ready to be Read.", self.issue.ID);
         [self.actionButton setTitle:NSLocalizedString(@"ACTION_DOWNLOADED_TEXT", nil) forState:UIControlStateNormal];
         [self.spinner stopAnimating];
 
@@ -361,6 +367,7 @@
     }
     else if ([status isEqualToString:@"purchasing"])
     {
+        NSLog(@"[BakerShelf] '%@' is being Purchased...", self.issue.ID);
         [self.spinner startAnimating];
 
         self.loadingLabel.text = NSLocalizedString(@"BUYING_TEXT", nil);
@@ -373,6 +380,7 @@
     }
     else if ([status isEqualToString:@"purchased"])
     {
+        NSLog(@"[BakerShelf] '%@' is Purchased.", self.issue.ID);
         [self.priceLabel setText:NSLocalizedString(@"PURCHASED_TEXT", nil)];
 
         [self.actionButton setTitle:NSLocalizedString(@"ACTION_REMOTE_TEXT", nil) forState:UIControlStateNormal];
@@ -399,7 +407,7 @@
 
     [self refreshContentWithCache:YES];
 
-    currentStatus = status;
+    self.currentStatus = status;
 }
 
 #pragma mark - Memory management
@@ -418,6 +426,7 @@
     [infoFont release];
     [titleLabel release];
     [infoLabel release];
+    [currentStatus release];
 
     [super dealloc];
 }
@@ -519,7 +528,7 @@
         [purchasesManager markAsPurchased:transaction.payment.productIdentifier];
 
         if (![purchasesManager finishTransaction:transaction]) {
-            NSLog(@"Could not confirm purchase restore with remote server for %@", transaction.payment.productIdentifier);
+            NSLog(@"[BakerShelf] Could not confirm purchase restore with remote server for %@", transaction.payment.productIdentifier);
         }
 
         self.issue.transientStatus = BakerIssueTransientStatusNone;
@@ -553,7 +562,7 @@
     float bytesWritten = [[notification.userInfo objectForKey:@"totalBytesWritten"] floatValue];
     float bytesExpected = [[notification.userInfo objectForKey:@"expectedTotalBytes"] floatValue];
 
-    if ([currentStatus isEqualToString:@"connecting"]) {
+    if ([self.currentStatus isEqualToString:@"connecting"]) {
         self.issue.transientStatus = BakerIssueTransientStatusDownloading;
         [self refresh];
     }
@@ -594,12 +603,12 @@
         NKIssue *nkIssue = [nkLib issueWithName:self.issue.ID];
         NSString *name = nkIssue.name;
         NSDate *date = nkIssue.date;
-        
+
         [nkLib removeIssue:nkIssue];
-        
+
         nkIssue = [nkLib addIssueWithName:name date:date];
         self.issue.path = [[nkIssue contentURL] path];
-        
+
         [self refresh];
     }
 }
@@ -659,7 +668,7 @@
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
         return 240;
     } else {
-        return 156;
+        return 190;
     }
 }
 + (CGSize)getIssueCellSize
