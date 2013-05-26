@@ -280,6 +280,7 @@
 
 
     if (![self matchParam:param againstParamsArray:shouldBeArray]) {
+        NSLog(@"[BakerBook] ERROR: param '%@' should not be an Array. Check it in 'book.json'.", param);
         return NO;
     }
 
@@ -324,6 +325,7 @@
 
 
     if (![self matchParam:param againstParamsArray:shouldBeString]) {
+        NSLog(@"[BakerBook] ERROR: param '%@' should not be a String. Check it in 'book.json'.", param);
         return NO;
     }
 
@@ -361,6 +363,7 @@
 
 
     if (![self matchParam:param againstParamsArray:shouldBeNumber]) {
+        NSLog(@"[BakerBook] ERROR: param '%@' should not be a Number. Check it in 'book.json'.", param);
         return NO;
     }
 
@@ -374,7 +377,6 @@
         }
     }
 
-    NSLog(@"[BakerBook] ERROR: param '%@' type is wrong. Check it in 'book.json'.", param);
     return NO;
 }
 
