@@ -107,11 +107,18 @@
 
     NSError* error = nil;
     NSData* bookJSON = [NSData dataWithContentsOfFile:bookJSONPath options:0 error:&error];
-    // TODO: errror handling
+    if (error) {
+        NSLog(@"[BakerBook] ERROR reading 'book.json': %@", error.localizedDescription);
+        return nil;
+    }
+
     NSDictionary* bookData = [NSJSONSerialization JSONObjectWithData:bookJSON
                                                              options:0
                                                                error:&error];
-    // TODO: deal with error
+    if (error) {
+        NSLog(@"[BakerBook] ERROR parsing 'book.json': %@", error.localizedDescription);
+        return nil;
+    }
 
     return [self initWithBookData:bookData];
 }
