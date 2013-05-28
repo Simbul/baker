@@ -240,6 +240,7 @@
 
     NSString *image = @"";
     CGSize size = [UIScreen mainScreen].bounds.size;
+    int landscapePadding = 0;
 
     if (UIInterfaceOrientationIsPortrait(toInterfaceOrientation)) {
         width  = size.width;
@@ -252,6 +253,8 @@
             height = height + 12;
         }
         image  = @"shelf-bg-landscape";
+        CGFloat cellWidth = [IssueViewController getIssueCellSize].width;
+        landscapePadding = width / 4 - cellWidth / 2;
     }
 
     if (size.height == 568) {
@@ -265,7 +268,7 @@
     self.background.frame = CGRectMake(0, 0, width, height);
     self.background.image = [UIImage imageNamed:image];
 
-    self.gridView.frame = CGRectMake(0, bannerHeight, width, height - bannerHeight);
+    self.gridView.frame = CGRectMake(landscapePadding, bannerHeight, width - 2 * landscapePadding, height - bannerHeight);
 }
 - (IssueViewController *)createIssueViewControllerWithIssue:(BakerIssue *)issue
 {
