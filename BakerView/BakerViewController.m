@@ -409,7 +409,7 @@
         number.backgroundColor = [UIColor clearColor];
         number.font = [UIFont fontWithName:@"Helvetica" size:40.0];
         number.textColor = foregroundColor;
-        number.textAlignment = UITextAlignmentCenter;
+        number.textAlignment = NSTextAlignmentCenter;
         number.alpha = [book.bakerPageNumbersAlpha floatValue];
 
         number.text = [NSString stringWithFormat:@"%d", i + 1];
@@ -951,14 +951,7 @@
     // Hide the IndexView before opening modal web view
     [self hideBars:[NSNumber numberWithBool:YES]];
 
-    // Check if iOS5+ method is supported
-    if ([self respondsToSelector:@selector(presentViewController:animated:completion:)]) {
-        // iOS 5+
-        [self presentViewController:myModalViewController animated:YES completion:nil];
-    } else {
-        // iOS 4
-        [self presentModalViewController:myModalViewController animated:YES];
-    }
+    [self presentViewController:myModalViewController animated:YES completion:nil];
 
     currentPageWillAppearUnderModal = YES;
 }
@@ -967,14 +960,7 @@
      * This function is called from inside the modal view to close itself (delegate).
      */
 
-    // Check if iOS5+ method is supported
-    if ([self respondsToSelector:@selector(dismissViewControllerAnimated:completion:)]) {
-        // iOS 5+
-        [self dismissViewControllerAnimated:YES completion:nil];
-    } else {
-        // iOS 4
-        [self dismissModalViewControllerAnimated:YES];
-    }
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 #pragma mark - SCROLLVIEW
@@ -1125,14 +1111,7 @@
                         [mailer setMessageBody:[body stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding] isHTML:NO];
 
                         // Show the view
-                        // Check if iOS5+ method is supported
-                        if ([self respondsToSelector:@selector(presentViewController:animated:completion:)]) {
-                            // iOS 5+
-                            [self presentViewController:mailer animated:YES completion:nil];
-                        } else {
-                            // iOS 4
-                            [self presentModalViewController:mailer animated:YES];
-                        }
+                        [self presentViewController:mailer animated:YES completion:nil];
 
                         currentPageWillAppearUnderModal = YES;
 
@@ -1691,7 +1670,7 @@
 }
 - (void)toggleBars {
     // if modal view is up, don't toggle.
-    if (!self.modalViewController) {
+    if (!self.presentedViewController) {
         NSLog(@"[BakerView] Toggle bars visibility");
         UIApplication *sharedApplication = [UIApplication sharedApplication];
         BOOL hidden = sharedApplication.statusBarHidden;
@@ -1923,14 +1902,7 @@
     }
 
     // Remove the mail view
-    // Check if iOS5+ method is supported
-    if ([self respondsToSelector:@selector(dismissViewControllerAnimated:completion:)]) {
-        // iOS 5+
-        [self dismissViewControllerAnimated:YES completion:nil];
-    } else {
-        // iOS 4
-        [self dismissModalViewControllerAnimated:YES];
-    }
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 #pragma mark - INDEX VIEW
