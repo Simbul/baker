@@ -32,7 +32,6 @@
 #import <UIKit/UIKit.h>
 #import <StoreKit/StoreKit.h>
 
-#import "AQGridView.h"
 #import "BakerIssue.h"
 #import "IssuesManager.h"
 #import "ShelfStatus.h"
@@ -41,7 +40,7 @@
 #import "PurchasesManager.h"
 #endif
 
-@interface ShelfViewController : UIViewController <AQGridViewDataSource, AQGridViewDelegate, UIActionSheetDelegate> {
+@interface ShelfViewController : UIViewController <UICollectionViewDataSource, UICollectionViewDelegate, UIActionSheetDelegate> {
     BakerAPI *api;
     IssuesManager *issuesManager;
     NSMutableArray *notRecognisedTransactions;
@@ -57,7 +56,7 @@
 @property (retain, nonatomic) NSMutableArray *issueViewControllers;
 @property (retain, nonatomic) ShelfStatus *shelfStatus;
 
-@property (strong, nonatomic) AQGridView *gridView;
+@property (strong, nonatomic) UICollectionView *gridView;
 @property (strong, nonatomic) UIImageView *background;
 @property (strong, nonatomic) UIBarButtonItem *refreshButton;
 @property (strong, nonatomic) UIBarButtonItem *subscribeButton;
@@ -73,7 +72,6 @@
 - (id)initWithBooks:(NSArray *)currentBooks;
 
 #pragma mark - Shelf data source
-- (NSUInteger)numberOfItemsInGridView:(AQGridView *)aGridView;
 #ifdef BAKER_NEWSSTAND
 - (void)handleRefresh:(NSNotification *)notification;
 
@@ -82,7 +80,6 @@
 #endif
 
 #pragma mark - Navigation management
-- (void)gridView:(AQGridView *)myGridView didSelectItemAtIndex:(NSUInteger)index;
 - (void)readIssue:(BakerIssue *)issue;
 - (void)handleReadIssue:(NSNotification *)notification;
 - (void)receiveBookProtocolNotification:(NSNotification *)notification;
