@@ -4,7 +4,7 @@
 //
 //  ==========================================================================================
 //
-//  Copyright (c) 2010-2012, Davide Casali, Marco Colombo, Alessandro Morandi
+//  Copyright (c) 2010-2013, Davide Casali, Marco Colombo, Alessandro Morandi
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without modification, are
@@ -89,8 +89,8 @@
         issuesManager = [[IssuesManager sharedInstance] retain];
         notRecognisedTransactions = [[NSMutableArray alloc] init];
 
-        self.shelfStatus = [[[ShelfStatus alloc] init] retain];
-        self.issueViewControllers = [[NSMutableArray alloc] init];
+        self.shelfStatus = [[[ShelfStatus alloc] init] autorelease];
+        self.issueViewControllers = [[[NSMutableArray alloc] init] autorelease];
         self.supportedOrientation = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"UISupportedInterfaceOrientations"];
         self.bookToBeProcessed = nil;
 
@@ -149,12 +149,13 @@
 
     self.navigationItem.title = NSLocalizedString(@"SHELF_NAVIGATION_TITLE", nil);
 
-    self.background = [[UIImageView alloc] init];
+    self.background = [[[UIImageView alloc] init] autorelease];
 
-    self.gridView = [[AQGridView alloc] init];
+    self.gridView = [[UICollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:[[[UICollectionViewFlowLayout alloc] init] autorelease]];
     self.gridView.dataSource = self;
     self.gridView.delegate = self;
     self.gridView.backgroundColor = [UIColor clearColor];
+    [self.gridView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:@"cellIdentifier"];
 
     [self.view addSubview:self.background];
     [self.view addSubview:self.gridView];
@@ -239,6 +240,7 @@
 
     NSString *image = @"";
     CGSize size = [UIScreen mainScreen].bounds.size;
+    int landscapePadding = 0;
 
     if (UIInterfaceOrientationIsPortrait(toInterfaceOrientation)) {
         width  = size.width;
@@ -251,6 +253,8 @@
             height = height + 12;
         }
         image  = @"shelf-bg-landscape";
+        CGFloat cellWidth = [IssueViewController getIssueCellSize].width;
+        landscapePadding = width / 4 - cellWidth / 2;
     }
 
     if (size.height == 568) {
@@ -264,7 +268,7 @@
     self.background.frame = CGRectMake(0, 0, width, height);
     self.background.image = [UIImage imageNamed:image];
 
-    self.gridView.frame = CGRectMake(0, bannerHeight, width, height - bannerHeight);
+    self.gridView.frame = CGRectMake(landscapePadding, bannerHeight, width - 2 * landscapePadding, height - bannerHeight);
 }
 - (IssueViewController *)createIssueViewControllerWithIssue:(BakerIssue *)issue
 {
@@ -275,27 +279,29 @@
 
 #pragma mark - Shelf data source
 
-- (NSUInteger)numberOfItemsInGridView:(AQGridView *)aGridView
-{
+- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
+    return 1;
+}
+
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
     return [issueViewControllers count];
 }
-- (AQGridViewCell *)gridView:(AQGridView *)aGridView cellForItemAtIndex:(NSUInteger)index
-{
+
+- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     CGSize cellSize = [IssueViewController getIssueCellSize];
     CGRect cellFrame = CGRectMake(0, 0, cellSize.width, cellSize.height);
 
     static NSString *cellIdentifier = @"cellIdentifier";
-    AQGridViewCell *cell = (AQGridViewCell *)[self.gridView dequeueReusableCellWithIdentifier:cellIdentifier];
+    UICollectionViewCell* cell = [self.gridView dequeueReusableCellWithReuseIdentifier:cellIdentifier forIndexPath:indexPath];
 	if (cell == nil)
 	{
-		cell = [[[AQGridViewCell alloc] initWithFrame:cellFrame reuseIdentifier:cellIdentifier] autorelease];
-		cell.selectionStyle = AQGridViewCellSelectionStyleNone;
+		UICollectionViewCell* cell = [[[UICollectionViewCell alloc] initWithFrame:cellFrame] autorelease];
 
         cell.contentView.backgroundColor = [UIColor clearColor];
         cell.backgroundColor = [UIColor clearColor];
 	}
 
-    IssueViewController *controller = [self.issueViewControllers objectAtIndex:index];
+    IssueViewController *controller = [self.issueViewControllers objectAtIndex:indexPath.row];
     UIView *removableIssueView = [cell.contentView viewWithTag:42];
     if (removableIssueView) {
         [removableIssueView removeFromSuperview];
@@ -304,8 +310,8 @@
 
     return cell;
 }
-- (CGSize)portraitGridCellSizeForGridView:(AQGridView *)aGridView
-{
+
+- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
     return [IssueViewController getIssueCellSize];
 }
 
@@ -324,24 +330,35 @@
                 issue.price = [shelfStatus priceFor:issue.productID];
             }
             
-            [self.issues enumerateObjectsUsingBlock:^(id object, NSUInteger idx, BOOL *stop) {
-                // NOTE: this block changes the issueViewController array while looping
-                
-                IssueViewController *existingIvc = nil;
-                if (idx < [self.issueViewControllers count]) {
-                    existingIvc = [self.issueViewControllers objectAtIndex:idx];
-                }
-                
-                BakerIssue *issue = (BakerIssue*)object;
-                if (!existingIvc || ![[existingIvc issue].ID isEqualToString:issue.ID]) {
-                    IssueViewController *ivc = [self createIssueViewControllerWithIssue:issue];
-                    [self.issueViewControllers insertObject:ivc atIndex:idx];
-                    [self.gridView insertItemsAtIndices:[NSIndexSet indexSetWithIndex:idx] withAnimation:AQGridViewItemAnimationNone];
-                } else {
-                    existingIvc.issue = issue;
-                    [existingIvc refreshContentWithCache:NO];
-                }
-            }];
+            void (^updateIssues)() = ^{
+                [self.issues enumerateObjectsUsingBlock:^(id object, NSUInteger idx, BOOL *stop) {
+                    // NOTE: this block changes the issueViewController array while looping
+                    
+                    IssueViewController *existingIvc = nil;
+                    if (idx < [self.issueViewControllers count]) {
+                        existingIvc = [self.issueViewControllers objectAtIndex:idx];
+                    }
+                    
+                    BakerIssue *issue = (BakerIssue*)object;
+                    if (!existingIvc || ![[existingIvc issue].ID isEqualToString:issue.ID]) {
+                        IssueViewController *ivc = [self createIssueViewControllerWithIssue:issue];
+                        [self.issueViewControllers insertObject:ivc atIndex:idx];
+                        [self.gridView insertItemsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForItem:idx inSection:0] ] ];
+                    } else {
+                        existingIvc.issue = issue;
+                        [existingIvc refreshContentWithCache:NO];
+                    }
+                }];
+            };
+            
+            // When first launched, the grid is not initialised, so we can't
+            // call in the "batch update" method of the grid view
+            if (self.gridView) {
+                [self.gridView performBatchUpdates:updateIssues completion:nil];
+            }
+            else {
+                updateIssues();
+            }
             
             [purchasesManager retrievePricesFor:issuesManager.productIDs andEnableFailureNotifications:NO];
         }
@@ -360,7 +377,6 @@
     if (subscriptionsActionSheet.visible) {
         [subscriptionsActionSheet dismissWithClickedButtonIndex:(subscriptionsActionSheet.numberOfButtons - 1) animated:YES];
     } else {
-        [self.subscriptionsActionSheet release];
         self.subscriptionsActionSheet = [self buildSubscriptionsActionSheet];
         [subscriptionsActionSheet showFromBarButtonItem:self.subscribeButton animated:YES];
     }
@@ -566,10 +582,10 @@
 
 #pragma mark - Navigation management
 
-- (void)gridView:(AQGridView *)myGridView didSelectItemAtIndex:(NSUInteger)index
-{
-    [myGridView deselectItemAtIndex:index animated:NO];
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+    [collectionView deselectItemAtIndexPath:indexPath animated:YES];
 }
+
 - (void)readIssue:(BakerIssue *)issue
 {
     BakerBook *book = nil;

@@ -4,7 +4,7 @@
 //
 //  ==========================================================================================
 //
-//  Copyright (c) 2010-2012, Davide Casali, Marco Colombo, Alessandro Morandi
+//  Copyright (c) 2010-2013, Davide Casali, Marco Colombo, Alessandro Morandi
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without modification, are
@@ -120,7 +120,7 @@
         userIsScrolling = NO;
         shouldPropagateInterceptedTouch = YES;
         shouldForceOrientationUpdate = YES;
-        
+
         adjustViewsOnAppDidBecomeActive = NO;
 
         webViewBackground = nil;
@@ -409,7 +409,7 @@
         number.backgroundColor = [UIColor clearColor];
         number.font = [UIFont fontWithName:@"Helvetica" size:40.0];
         number.textColor = foregroundColor;
-        number.textAlignment = UITextAlignmentCenter;
+        number.textAlignment = NSTextAlignmentCenter;
         number.alpha = [book.bakerPageNumbersAlpha floatValue];
 
         number.text = [NSString stringWithFormat:@"%d", i + 1];
@@ -951,14 +951,7 @@
     // Hide the IndexView before opening modal web view
     [self hideBars:[NSNumber numberWithBool:YES]];
 
-    // Check if iOS5+ method is supported
-    if ([self respondsToSelector:@selector(presentViewController:animated:completion:)]) {
-        // iOS 5+
-        [self presentViewController:myModalViewController animated:YES completion:nil];
-    } else {
-        // iOS 4
-        [self presentModalViewController:myModalViewController animated:YES];
-    }
+    [self presentViewController:myModalViewController animated:YES completion:nil];
 
     currentPageWillAppearUnderModal = YES;
 }
@@ -967,14 +960,7 @@
      * This function is called from inside the modal view to close itself (delegate).
      */
 
-    // Check if iOS5+ method is supported
-    if ([self respondsToSelector:@selector(dismissViewControllerAnimated:completion:)]) {
-        // iOS 5+
-        [self dismissViewControllerAnimated:YES completion:nil];
-    } else {
-        // iOS 4
-        [self dismissModalViewControllerAnimated:YES];
-    }
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 #pragma mark - SCROLLVIEW
@@ -1125,14 +1111,7 @@
                         [mailer setMessageBody:[body stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding] isHTML:NO];
 
                         // Show the view
-                        // Check if iOS5+ method is supported
-                        if ([self respondsToSelector:@selector(presentViewController:animated:completion:)]) {
-                            // iOS 5+
-                            [self presentViewController:mailer animated:YES completion:nil];
-                        } else {
-                            // iOS 4
-                            [self presentModalViewController:mailer animated:YES];
-                        }
+                        [self presentViewController:mailer animated:YES completion:nil];
 
                         currentPageWillAppearUnderModal = YES;
 
@@ -1159,7 +1138,13 @@
                 }
                 else if (![[url scheme] isEqualToString:@""] && ![[url scheme] isEqualToString:@"http"] && ![[url scheme] isEqualToString:@"https"])
                 {
-                    [[UIApplication sharedApplication] openURL:url];
+                    if ([[UIApplication sharedApplication] canOpenURL:url]) {
+                        [[UIApplication sharedApplication] openURL:url];
+                    } else {
+                        NSLog(@"[BakerView] ERROR: No installed application to open '%@'. An application to handle the '%@' URL scheme is required.", url, [url scheme]);
+                        [self webView:currPage dispatchHTMLEvent:@"urlnothandled" withParams:[NSDictionary dictionaryWithObject:url forKey:@"url"]];
+                    }
+
                     return NO;
                 }
                 else
@@ -1186,7 +1171,8 @@
 
                             // Generate new URL without
                             // We are regexp-ing three things: the string alone, the string first with other content, the string with other content in any other position
-                            NSRegularExpression *replacerRegexp = [NSRegularExpression regularExpressionWithPattern:[[NSString alloc] initWithFormat:@"\\?%@$|(?<=\\?)%@&?|()&?%@", URL_OPEN_EXTERNAL, URL_OPEN_EXTERNAL, URL_OPEN_EXTERNAL] options:NSRegularExpressionCaseInsensitive error:NULL];
+                            NSString *pattern = [[[NSString alloc] initWithFormat:@"\\?%@$|(?<=\\?)%@&?|()&?%@", URL_OPEN_EXTERNAL, URL_OPEN_EXTERNAL, URL_OPEN_EXTERNAL] autorelease];
+                            NSRegularExpression *replacerRegexp = [NSRegularExpression regularExpressionWithPattern:pattern options:NSRegularExpressionCaseInsensitive error:NULL];
                             NSString *oldURL = [url absoluteString];
                             //NSLog(@"[BakerView]     replacement pattern: %@", [replacerRegexp pattern]);
                             NSString *newURL = [replacerRegexp stringByReplacingMatchesInString:oldURL options:0 range:NSMakeRange(0, [oldURL length]) withTemplate:@""];
@@ -1202,7 +1188,8 @@
 
                             // Generate new URL without
                             // We are regexp-ing three things: the string alone, the string first with other content, the string with other content in any other position
-                            NSRegularExpression *replacerRegexp = [NSRegularExpression regularExpressionWithPattern:[[NSString alloc] initWithFormat:@"\\?%@$|(?<=\\?)%@&?|()&?%@", URL_OPEN_MODALLY, URL_OPEN_MODALLY, URL_OPEN_MODALLY] options:NSRegularExpressionCaseInsensitive error:NULL];
+                            NSString *pattern = [[[NSString alloc] initWithFormat:@"\\?%@$|(?<=\\?)%@&?|()&?%@", URL_OPEN_MODALLY, URL_OPEN_MODALLY, URL_OPEN_MODALLY] autorelease];
+                            NSRegularExpression *replacerRegexp = [NSRegularExpression regularExpressionWithPattern:pattern options:NSRegularExpressionCaseInsensitive error:NULL];
                             NSString *oldURL = [url absoluteString];
                             //NSLog(@"[BakerView]     replacement pattern: %@", [replacerRegexp pattern]);
                             NSString *newURL = [replacerRegexp stringByReplacingMatchesInString:oldURL options:0 range:NSMakeRange(0, [oldURL length]) withTemplate:@""];
@@ -1259,7 +1246,7 @@
 
         [self handlePageLoading];
     }
-    
+
     /** CHECK IF META TAG SAYS HTML FILE SHOULD BE PAGED **/
     [webView.scrollView setPagingEnabled:[Utils webViewShouldBePaged:webView forBook:book]];
 }
@@ -1307,9 +1294,17 @@
     }
 }
 - (void)webView:(UIWebView *)webView dispatchHTMLEvent:(NSString *)event {
-    NSString *jsDispatchEvent = [NSString stringWithFormat:@"var bakerDispatchedEvent = document.createEvent('Events');\
-                                 bakerDispatchedEvent.initEvent('%@', false, false);\
-                                 window.dispatchEvent(bakerDispatchedEvent);", event];
+    [self webView:webView dispatchHTMLEvent:event withParams:[NSDictionary dictionary]];
+}
+- (void)webView:(UIWebView *)webView dispatchHTMLEvent:(NSString *)event withParams:(NSDictionary *)params {
+    __block NSMutableString *jsDispatchEvent = [NSMutableString stringWithFormat:
+                                                @"var bakerDispatchedEvent = document.createEvent('Events');\
+                                                bakerDispatchedEvent.initEvent('%@', false, false);", event];
+    [params enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+        NSString *jsParamSet = [NSString stringWithFormat:@"bakerDispatchedEvent.%@='%@';\n", key, obj];
+        [jsDispatchEvent appendString:jsParamSet];
+    }];
+    [jsDispatchEvent appendString:@"window.dispatchEvent(bakerDispatchedEvent);"];
 
     [webView stringByEvaluatingJavaScriptFromString:jsDispatchEvent];
 }
@@ -1675,7 +1670,7 @@
 }
 - (void)toggleBars {
     // if modal view is up, don't toggle.
-    if (!self.modalViewController) {
+    if (!self.presentedViewController) {
         NSLog(@"[BakerView] Toggle bars visibility");
         UIApplication *sharedApplication = [UIApplication sharedApplication];
         BOOL hidden = sharedApplication.statusBarHidden;
@@ -1805,27 +1800,27 @@
 }
 
 - (void)forceOrientationUpdate {
-    
+
     if (shouldForceOrientationUpdate) {
-        
+
         // We need to run this only once to prevent looping in -viewWillAppear
         shouldForceOrientationUpdate = NO;
 
         UIInterfaceOrientation interfaceOrientation = [[UIApplication sharedApplication] statusBarOrientation];
-        
+
         if ( (UIInterfaceOrientationIsLandscape(interfaceOrientation) && [book.orientation isEqualToString:@"landscape"])
             ||
             (UIInterfaceOrientationIsPortrait(interfaceOrientation) && [book.orientation isEqualToString:@"portrait"]) ) {
-            
+
             //NSLog(@"[BakerView] Device and book orientations are in sync");
-            
+
         } else {
-            
+
             //NSLog(@"[BakerView] Device and book orientations are out of sync, force orientation update");
-            
+
             // Present and dismiss a vanilla view controller to trigger the orientation update
             [self presentViewController:[UIViewController new] animated:NO completion:^{ [self dismissViewControllerAnimated:NO completion:nil]; }];
-            
+
         }
     }
 }
@@ -1907,14 +1902,7 @@
     }
 
     // Remove the mail view
-    // Check if iOS5+ method is supported
-    if ([self respondsToSelector:@selector(dismissViewControllerAnimated:completion:)]) {
-        // iOS 5+
-        [self dismissViewControllerAnimated:YES completion:nil];
-    } else {
-        // iOS 4
-        [self dismissModalViewControllerAnimated:YES];
-    }
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 #pragma mark - INDEX VIEW

@@ -4,7 +4,7 @@
 //
 //  ==========================================================================================
 //
-//  Copyright (c) 2010-2012, Davide Casali, Marco Colombo, Alessandro Morandi
+//  Copyright (c) 2010-2013, Davide Casali, Marco Colombo, Alessandro Morandi
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without modification, are
@@ -67,7 +67,7 @@
 
     #ifdef BAKER_NEWSSTAND
 
-    NSLog(@"====== Baker Newsstand Mode enabled ======");    
+    NSLog(@"====== Baker Newsstand Mode enabled ======");
     [BakerAPI generateUUIDOnce];
 
     // Let the device know we want to handle Newsstand push notifications
@@ -106,7 +106,7 @@
 
     #endif
 
-    self.rootNavigationController = [[UICustomNavigationController alloc] initWithRootViewController:self.rootViewController];
+    self.rootNavigationController = [[[UICustomNavigationController alloc] initWithRootViewController:self.rootViewController] autorelease];
     UICustomNavigationBar *navigationBar = (UICustomNavigationBar *)self.rootNavigationController.navigationBar;
     [navigationBar setBackgroundImage:[UIImage imageNamed:@"navigation-bar-bg.png"] forBarMetrics:UIBarMetricsDefault];
     [navigationBar setTintColor:[UIColor clearColor]];

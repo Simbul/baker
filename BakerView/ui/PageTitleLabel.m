@@ -4,7 +4,7 @@
 //
 //  ==========================================================================================
 //
-//  Copyright (c) 2010-2012, Davide Casali, Marco Colombo, Alessandro Morandi
+//  Copyright (c) 2010-2013, Davide Casali, Marco Colombo, Alessandro Morandi
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without modification, are
@@ -64,12 +64,12 @@
                 titleFont = [UIFont fontWithName:@"Helvetica" size:15.0];
             }
 
-            CGSize titleTextSize = [titleText sizeWithFont:titleFont constrainedToSize:titleDimension lineBreakMode:UILineBreakModeTailTruncation];
+            CGSize titleTextSize = [titleText sizeWithFont:titleFont constrainedToSize:titleDimension lineBreakMode:NSLineBreakByTruncatingTail];
 
             self.frame = CGRectMake(0, 0, titleTextSize.width, titleTextSize.height);
             self.backgroundColor = [UIColor clearColor];
-            self.textAlignment = UITextAlignmentCenter;
-            self.lineBreakMode = UILineBreakModeTailTruncation;
+            self.textAlignment = NSTextAlignmentCenter;
+            self.lineBreakMode = NSLineBreakByTruncatingTail;
             self.numberOfLines = 0;
             self.textColor = color;
             self.alpha = alpha;

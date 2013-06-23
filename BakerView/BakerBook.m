@@ -4,7 +4,7 @@
 //
 //  ==========================================================================================
 //
-//  Copyright (c) 2010-2012, Davide Casali, Marco Colombo, Alessandro Morandi
+//  Copyright (c) 2010-2013, Davide Casali, Marco Colombo, Alessandro Morandi
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without modification, are
@@ -107,12 +107,19 @@
 
     NSError* error = nil;
     NSData* bookJSON = [NSData dataWithContentsOfFile:bookJSONPath options:0 error:&error];
-    // TODO: errror handling
+    if (error) {
+        NSLog(@"[BakerBook] ERROR reading 'book.json': %@", error.localizedDescription);
+        return nil;
+    }
+
     NSDictionary* bookData = [NSJSONSerialization JSONObjectWithData:bookJSON
                                                              options:0
                                                                error:&error];
-    // TODO: deal with error
-    
+    if (error) {
+        NSLog(@"[BakerBook] ERROR parsing 'book.json': %@", error.localizedDescription);
+        return nil;
+    }
+
     return [self initWithBookData:bookData];
 }
 - (id)initWithBookData:(NSDictionary *)bookData
@@ -280,6 +287,7 @@
 
 
     if (![self matchParam:param againstParamsArray:shouldBeArray]) {
+        NSLog(@"[BakerBook] ERROR: param '%@' should not be an Array. Check it in 'book.json'.", param);
         return NO;
     }
 
@@ -324,6 +332,7 @@
 
 
     if (![self matchParam:param againstParamsArray:shouldBeString]) {
+        NSLog(@"[BakerBook] ERROR: param '%@' should not be a String. Check it in 'book.json'.", param);
         return NO;
     }
 
@@ -361,6 +370,7 @@
 
 
     if (![self matchParam:param againstParamsArray:shouldBeNumber]) {
+        NSLog(@"[BakerBook] ERROR: param '%@' should not be a Number. Check it in 'book.json'.", param);
         return NO;
     }
 
@@ -373,8 +383,7 @@
             return YES;
         }
     }
-    
-    NSLog(@"[BakerBook] ERROR: param '%@' type is wrong. Check it in 'book.json'.", param);
+
     return NO;
 }
 

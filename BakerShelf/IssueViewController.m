@@ -4,7 +4,7 @@
 //
 //  ==========================================================================================
 //
-//  Copyright (c) 2010-2012, Davide Casali, Marco Colombo, Alessandro Morandi
+//  Copyright (c) 2010-2013, Davide Casali, Marco Colombo, Alessandro Morandi
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without modification, are
@@ -101,16 +101,16 @@
 
     self.issueCover = [UIButton buttonWithType:UIButtonTypeCustom];
     issueCover.frame = CGRectMake(ui.cellPadding, ui.cellPadding, ui.thumbWidth, ui.thumbHeight);
-    
+
     issueCover.backgroundColor = [UIColor colorWithHexString:ISSUES_COVER_BACKGROUND_COLOR];
     issueCover.adjustsImageWhenHighlighted = NO;
     issueCover.adjustsImageWhenDisabled = NO;
-        
+
     issueCover.layer.shadowOpacity = 0.5;
     issueCover.layer.shadowOffset = CGSizeMake(0, 2);
     issueCover.layer.shouldRasterize = YES;
     issueCover.layer.rasterizationScale = [UIScreen mainScreen].scale;
-    
+
     [issueCover addTarget:self action:@selector(actionButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:issueCover];
 
@@ -124,8 +124,8 @@
     self.titleLabel = [[[UILabel alloc] init] autorelease];
     titleLabel.textColor = [UIColor colorWithHexString:ISSUES_TITLE_COLOR];
     titleLabel.backgroundColor = [UIColor clearColor];
-    titleLabel.lineBreakMode = UILineBreakModeTailTruncation;
-    titleLabel.textAlignment = UITextAlignmentLeft;
+    titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
+    titleLabel.textAlignment = NSTextAlignmentLeft;
     titleLabel.font = titleFont;
 
     [self.view addSubview:titleLabel];
@@ -134,8 +134,8 @@
     self.infoLabel = [[[UILabel alloc] init] autorelease];
     infoLabel.textColor = [UIColor colorWithHexString:ISSUES_INFO_COLOR];
     infoLabel.backgroundColor = [UIColor clearColor];
-    infoLabel.lineBreakMode = UILineBreakModeTailTruncation;
-    infoLabel.textAlignment = UITextAlignmentLeft;
+    infoLabel.lineBreakMode = NSLineBreakByTruncatingTail;
+    infoLabel.textAlignment = NSTextAlignmentLeft;
     infoLabel.font = infoFont;
 
     [self.view addSubview:infoLabel];
@@ -144,8 +144,8 @@
     self.priceLabel = [[[UILabel alloc] init] autorelease];
     priceLabel.textColor = [UIColor colorWithHexString:ISSUES_PRICE_COLOR];
     priceLabel.backgroundColor = [UIColor clearColor];
-    priceLabel.lineBreakMode = UILineBreakModeTailTruncation;
-    priceLabel.textAlignment = UITextAlignmentLeft;
+    priceLabel.lineBreakMode = NSLineBreakByTruncatingTail;
+    priceLabel.textAlignment = NSTextAlignmentLeft;
     priceLabel.font = titleFont;
 
     [self.view addSubview:priceLabel];
@@ -183,7 +183,7 @@
     self.loadingLabel = [[[UILabel alloc] init] autorelease];
     loadingLabel.textColor = [UIColor colorWithHexString:ISSUES_LOADING_LABEL_COLOR];
     loadingLabel.backgroundColor = [UIColor clearColor];
-    loadingLabel.textAlignment = UITextAlignmentLeft;
+    loadingLabel.textAlignment = NSTextAlignmentLeft;
     loadingLabel.text = NSLocalizedString(@"DOWNLOADING_TEXT", nil);
     loadingLabel.font = actionFont;
 
@@ -220,7 +220,7 @@
     }];
 
     // SETUP TITLE LABEL
-    CGSize titleSize = [self.issue.title sizeWithFont:titleFont constrainedToSize:CGSizeMake(170, MAXFLOAT) lineBreakMode:UILineBreakModeWordWrap];
+    CGSize titleSize = [self.issue.title sizeWithFont:titleFont constrainedToSize:CGSizeMake(170, MAXFLOAT) lineBreakMode:NSLineBreakByWordWrapping];
     uint titleLines = MIN(4, titleSize.height / textLineheight);
 
     titleLabel.frame = CGRectMake(ui.contentOffset, heightOffset, 170, textLineheight * titleLines);
@@ -230,7 +230,7 @@
     heightOffset = heightOffset + titleLabel.frame.size.height + 5;
 
     // SETUP INFO LABEL
-    CGSize infoSize = [self.issue.info sizeWithFont:infoFont constrainedToSize:CGSizeMake(170, MAXFLOAT) lineBreakMode:UILineBreakModeWordWrap];
+    CGSize infoSize = [self.issue.info sizeWithFont:infoFont constrainedToSize:CGSizeMake(170, MAXFLOAT) lineBreakMode:NSLineBreakByWordWrapping];
     uint infoLines = MIN(4, infoSize.height / textLineheight);
 
     infoLabel.frame = CGRectMake(ui.contentOffset, heightOffset, 170, textLineheight * infoLines);
@@ -603,12 +603,12 @@
         NKIssue *nkIssue = [nkLib issueWithName:self.issue.ID];
         NSString *name = nkIssue.name;
         NSDate *date = nkIssue.date;
-        
+
         [nkLib removeIssue:nkIssue];
-        
+
         nkIssue = [nkLib addIssueWithName:name date:date];
         self.issue.path = [[nkIssue contentURL] path];
-        
+
         [self refresh];
     }
 }
@@ -668,16 +668,16 @@
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
         return 240;
     } else {
-        return 156;
+        return 190;
     }
 }
 + (CGSize)getIssueCellSize
 {
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
-        return CGSizeMake((screenRect.size.width - 2) / 2, [IssueViewController getIssueCellHeight]);
+        return CGSizeMake((screenRect.size.width - 10) / 2, [IssueViewController getIssueCellHeight]);
     } else {
-        return CGSizeMake(screenRect.size.width - 2, [IssueViewController getIssueCellHeight]);
+        return CGSizeMake(screenRect.size.width - 10, [IssueViewController getIssueCellHeight]);
     }
 }
 
