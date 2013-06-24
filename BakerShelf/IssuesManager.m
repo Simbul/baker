@@ -65,6 +65,12 @@
 
 #ifdef BAKER_NEWSSTAND
 -(void)refresh:(void (^)(BOOL)) callback {
+    // Credit where credit is due. This semaphore solution found here:
+    // http://stackoverflow.com/a/4326754/2998
+    dispatch_semaphore_t sema = NULL;
+    if (!callback) {
+        sema = dispatch_semaphore_create(0);
+    }
     [self getShelfJSON:^(NSData* json) {
         if (json) {
             NSError* error = nil;
@@ -89,13 +95,24 @@
             if (callback) {
                 callback(YES);
             }
+            else {
+                dispatch_semaphore_signal(sema);
+            }
         }
         else {
             if (callback) {
                 callback(NO);
             }
+            else {
+                dispatch_semaphore_signal(sema);
+            }
         }
     }];
+    
+    if (! callback) {
+        dispatch_semaphore_wait(sema, DISPATCH_TIME_FOREVER);
+        dispatch_release(sema);
+    }
 }
 
 -(void)getShelfJSON:(void (^)(NSData*)) callback {
