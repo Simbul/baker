@@ -73,6 +73,12 @@
     // Let the device know we want to handle Newsstand push notifications
     [application registerForRemoteNotificationTypes:UIRemoteNotificationTypeNewsstandContentAvailability];
 
+#ifdef DEBUG
+    // For debug only... so that you can download multiple issues per day during development
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"NKDontThrottleNewsstandContentNotifications"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+#endif
+
     // Check if the app is runnig in response to a notification
     NSDictionary *payload = [launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
     if (payload) {
