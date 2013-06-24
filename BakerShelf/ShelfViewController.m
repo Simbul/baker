@@ -330,24 +330,36 @@
         }
 
         void (^updateIssues)() = ^{
-            [self.issues enumerateObjectsUsingBlock:^(id object, NSUInteger idx, BOOL *stop) {
-                // NOTE: this block changes the issueViewController array while looping
+            // Step 1: remove controllers for issues that no longer exist
+            __block NSMutableArray *discardedControllers = [NSMutableArray array];
+            [self.issueViewControllers enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+                IssueViewController *ivc = (IssueViewController *)obj;
                 
-                IssueViewController *existingIvc = nil;
-                if (idx < [self.issueViewControllers count]) {
-                    existingIvc = [self.issueViewControllers objectAtIndex:idx];
-                }
-                
-                BakerIssue *issue = (BakerIssue*)object;
-                if (!existingIvc || ![[existingIvc issue].ID isEqualToString:issue.ID]) {
-                    IssueViewController *ivc = [self createIssueViewControllerWithIssue:issue];
-                    [self.issueViewControllers insertObject:ivc atIndex:idx];
-                    [self.gridView insertItemsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForItem:idx inSection:0] ] ];
-                } else {
-                    existingIvc.issue = issue;
-                    [existingIvc refreshContentWithCache:NO];
+                if (![self bakerIssueWithID:ivc.issue.ID]) {
+                    [discardedControllers addObject:ivc];
+                    [self.gridView deleteItemsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForItem:idx inSection:0]]];
                 }
             }];
+            [self.issueViewControllers removeObjectsInArray:discardedControllers];
+
+            // Step 2: add controllers for issues that did not yet exist (and refresh the ones that do exist)
+            [self.issues enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+                // NOTE: this block changes the issueViewController array while looping
+                BakerIssue *issue = (BakerIssue *)obj;
+                
+                IssueViewController *existingIvc = [self issueViewControllerWithID:issue.ID];
+
+                if (existingIvc) {
+                    existingIvc.issue = issue;
+                    [existingIvc refreshContentWithCache:NO];
+                } else {
+                    IssueViewController *newIvc = [self createIssueViewControllerWithIssue:issue];
+                    [self.issueViewControllers insertObject:newIvc atIndex:idx];
+                    [self.gridView insertItemsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForItem:idx inSection:0] ] ];
+                }
+            }];
+
+            [self.gridView reloadData];
         };
         
         // When first launched, the grid is not initialised, so we can't
@@ -367,6 +379,30 @@
                       buttonTitle:NSLocalizedString(@"INTERNET_CONNECTION_UNAVAILABLE_CLOSE", nil)];
     }
     [self setrefreshButtonEnabled:YES];
+}
+
+- (IssueViewController *)issueViewControllerWithID:(NSString *)ID {
+    __block IssueViewController* foundController = nil;
+    [self.issueViewControllers enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        IssueViewController *ivc = (IssueViewController *)obj;
+        if ([ivc.issue.ID isEqualToString:ID]) {
+            foundController = ivc;
+            *stop = YES;
+        }
+    }];
+    return foundController;
+}
+
+- (BakerIssue *)bakerIssueWithID:(NSString *)ID {
+    __block BakerIssue *foundIssue = nil;
+    [self.issues enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        BakerIssue *issue = (BakerIssue *)obj;
+        if ([issue.ID isEqualToString:ID]) {
+            foundIssue = issue;
+            *stop = YES;
+        }
+    }];
+    return foundIssue;
 }
 
 #pragma mark - Store Kit

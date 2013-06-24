@@ -129,6 +129,7 @@
 
 -(void)updateNewsstandIssuesList:(NSArray *)issuesList {
     NKLibrary *nkLib = [NKLibrary sharedLibrary];
+    NSMutableArray *discardedIssues = [NSMutableArray arrayWithArray:[nkLib issues]];
 
     for (NSDictionary *issue in issuesList) {
         NSDate *date = [Utils dateWithFormattedString:[issue objectForKey:@"date"]];
@@ -136,14 +137,22 @@
 
         NKIssue *nkIssue = [nkLib issueWithName:name];
         if(!nkIssue) {
+            // Add issue to Newsstand Library
             @try {
                 nkIssue = [nkLib addIssueWithName:name date:date];
                 NSLog(@"[BakerShelf] Newsstand - Added %@ %@", name, date);
             } @catch (NSException *exception) {
                 NSLog(@"[BakerShelf] ERROR: Exception %@", exception);
             }
-
+        } else {
+            // Issue already in Newsstand Library
+            [discardedIssues removeObject:nkIssue];
         }
+    }
+
+    for (NKIssue *discardedIssue in discardedIssues) {
+        [nkLib removeIssue:discardedIssue];
+        NSLog(@"[BakerShelf] Newsstand - Removed %@", discardedIssue.name);
     }
 }
 
