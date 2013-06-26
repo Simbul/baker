@@ -80,6 +80,7 @@
         [self addIssueObserver:@selector(handleDownloadProgressing:) name:self.issue.notificationDownloadProgressingName];
         [self addIssueObserver:@selector(handleDownloadFinished:) name:self.issue.notificationDownloadFinishedName];
         [self addIssueObserver:@selector(handleDownloadError:) name:self.issue.notificationDownloadErrorName];
+        [self addIssueObserver:@selector(handleUnzipError:) name:self.issue.notificationUnzipErrorName];
         #endif
     }
     return self;
@@ -576,6 +577,14 @@
     [Utils showAlertWithTitle:NSLocalizedString(@"DOWNLOAD_FAILED_TITLE", nil)
                       message:NSLocalizedString(@"DOWNLOAD_FAILED_MESSAGE", nil)
                   buttonTitle:NSLocalizedString(@"DOWNLOAD_FAILED_CLOSE", nil)];
+
+    self.issue.transientStatus = BakerIssueTransientStatusNone;
+    [self refresh];
+}
+- (void)handleUnzipError:(NSNotification *)notification {
+    [Utils showAlertWithTitle:NSLocalizedString(@"UNZIP_FAILED_TITLE", nil)
+                      message:NSLocalizedString(@"UNZIP_FAILED_MESSAGE", nil)
+                  buttonTitle:NSLocalizedString(@"UNZIP_FAILED_CLOSE", nil)];
 
     self.issue.transientStatus = BakerIssueTransientStatusNone;
     [self refresh];

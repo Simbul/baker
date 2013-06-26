@@ -56,6 +56,7 @@
 @synthesize notificationDownloadProgressingName;
 @synthesize notificationDownloadFinishedName;
 @synthesize notificationDownloadErrorName;
+@synthesize notificationUnzipErrorName;
 
 -(id)initWithBakerBook:(BakerBook *)book {
     self = [super init];
@@ -91,6 +92,7 @@
     self.notificationDownloadProgressingName = [NSString stringWithFormat:@"notification_download_progressing_%@", self.ID];
     self.notificationDownloadFinishedName = [NSString stringWithFormat:@"notification_download_finished_%@", self.ID];
     self.notificationDownloadErrorName = [NSString stringWithFormat:@"notification_download_error_%@", self.ID];
+    self.notificationUnzipErrorName = [NSString stringWithFormat:@"notification_unzip_error_%@", self.ID];
 }
 
 #ifdef BAKER_NEWSSTAND
@@ -184,7 +186,15 @@
 
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
         NSLog(@"[BakerShelf] Newsstand - File is being unzipped to %@", destinationPath);
-        [SSZipArchive unzipFileAtPath:[destinationURL path] toDestination:destinationPath];
+        BOOL unzipSuccessful = NO;
+        unzipSuccessful = [SSZipArchive unzipFileAtPath:[destinationURL path] toDestination:destinationPath];
+        if (!unzipSuccessful) {
+            NSLog(@"[BakerShelf] Newsstand - Unable to unzip file: %@. The file may not be a valid HPUB archive.", [destinationURL path]);
+            dispatch_async(dispatch_get_main_queue(), ^(void) {
+                [[NSNotificationCenter defaultCenter] postNotificationName:notificationUnzipErrorName object:self userInfo:nil];
+                [self updateNewsstandIcon];
+            });
+        }
 
         NSLog(@"[BakerShelf] Newsstand - Removing temporary downloaded file %@", [destinationURL path]);
         NSFileManager *fileMgr = [NSFileManager defaultManager];
@@ -193,11 +203,13 @@
             NSLog(@"[BakerShelf] Newsstand - Unable to delete file: %@", [error localizedDescription]);
         }
 
-        // Notification and UI update have to be handled on the main thread
-        dispatch_async(dispatch_get_main_queue(), ^(void) {
-            [[NSNotificationCenter defaultCenter] postNotificationName:notificationDownloadFinishedName object:self userInfo:nil];
-            [self updateNewsstandIcon];
-        });
+        if (unzipSuccessful) {
+            // Notification and UI update have to be handled on the main thread
+            dispatch_async(dispatch_get_main_queue(), ^(void) {
+                [[NSNotificationCenter defaultCenter] postNotificationName:notificationDownloadFinishedName object:self userInfo:nil];
+                [self updateNewsstandIcon];
+            });
+        }
     });
 }
 - (void)updateNewsstandIcon {
@@ -291,6 +303,7 @@
     [coverPath release];
     [coverURL release];
 
+    [notificationUnzipErrorName release];
     [notificationDownloadErrorName release];
     [notificationDownloadFinishedName release];
     [notificationDownloadProgressingName release];

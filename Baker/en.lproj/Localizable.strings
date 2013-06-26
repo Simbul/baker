@@ -46,6 +46,11 @@
 "DOWNLOAD_FAILED_MESSAGE" = "The issue could not be downloaded";
 "DOWNLOAD_FAILED_CLOSE" = "Close";
 
+// Unzip alert
+"UNZIP_FAILED_TITLE" = "Opening failed";
+"UNZIP_FAILED_MESSAGE" = "The issue could not be opened";
+"UNZIP_FAILED_CLOSE" = "Close";
+
 // Connection alert
 "INTERNET_CONNECTION_UNAVAILABLE_TITLE" = "No Internet Connection";
 "INTERNET_CONNECTION_UNAVAILABLE_MESSAGE" = "An Internet connection is unavailable. Some features of this application require an active connection.";
