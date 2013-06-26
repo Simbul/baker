@@ -1773,7 +1773,7 @@
 - (BOOL)shouldAutorotate {
     return YES;
 }
-- (NSInteger)supportedInterfaceOrientations {
+- (NSUInteger)supportedInterfaceOrientations {
     if ([book.orientation isEqualToString:@"portrait"]) {
         return (UIInterfaceOrientationMaskPortrait | UIInterfaceOrientationMaskPortraitUpsideDown);
     } else if ([book.orientation isEqualToString:@"landscape"]) {

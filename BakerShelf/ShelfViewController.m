@@ -221,7 +221,7 @@
         [self handleBookToBeProcessed];
     }
 }
-- (NSInteger)supportedInterfaceOrientations
+- (NSUInteger)supportedInterfaceOrientations
 {
     return UIInterfaceOrientationMaskAll;
 }
