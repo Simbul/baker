@@ -90,11 +90,20 @@
                 backgroundTask = UIBackgroundTaskInvalid;
             }];
 
+            // Credit where credit is due. This semaphore solution found here:
+            // http://stackoverflow.com/a/4326754/2998
+            dispatch_semaphore_t sema = NULL;
+            sema = dispatch_semaphore_create(0);
+
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
                 [self applicationWillHandleNewsstandNotificationOfContent:[payload objectForKey:@"content-name"]];
                 [application endBackgroundTask:backgroundTask];
                 backgroundTask = UIBackgroundTaskInvalid;
+                dispatch_semaphore_signal(sema);
             });
+
+            dispatch_semaphore_wait(sema, DISPATCH_TIME_FOREVER);
+            dispatch_release(sema);
         }
     }
 
