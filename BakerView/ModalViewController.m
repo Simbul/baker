@@ -125,8 +125,16 @@
 
 
     // ****** Add items to toolbar
-    NSArray *items = [NSArray arrayWithObjects: btnClose, btnGoBack, btnGoForward, btnSpinner, spacer, btnAction, nil];
-    [toolbar setItems:items animated:NO];
+    if ([[myUrl scheme] isEqualToString:@"file"])
+    {
+        NSArray *items = [NSArray arrayWithObjects: btnClose, btnGoBack, btnGoForward, btnSpinner, spacer, nil];
+        [toolbar setItems:items animated:NO];
+    }
+    else
+    {
+        NSArray *items = [NSArray arrayWithObjects: btnClose, btnGoBack, btnGoForward, btnSpinner, spacer, btnAction, nil];
+        [toolbar setItems:items animated:NO];
+    }
 
 
     // ****** Add WebView
