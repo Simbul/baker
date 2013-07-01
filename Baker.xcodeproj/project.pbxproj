@@ -49,6 +49,8 @@
 		AB40048115B4B90200D87E2A /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB40048015B4B90200D87E2A /* MessageUI.framework */; };
 		AB40048315B4B90A00D87E2A /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = AB40048215B4B90A00D87E2A /* libz.dylib */; };
 		AB40048515B4BB8B00D87E2A /* books in Resources */ = {isa = PBXBuildFile; fileRef = AB40048415B4BB8B00D87E2A /* books */; };
+		AB40E4F817823BF4007927EF /* navigation-bar-bg-ios6.png in Resources */ = {isa = PBXBuildFile; fileRef = AB40E4F617823BF4007927EF /* navigation-bar-bg-ios6.png */; };
+		AB40E4F917823BF4007927EF /* navigation-bar-bg-ios6@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = AB40E4F717823BF4007927EF /* navigation-bar-bg-ios6@2x.png */; };
 		AB5CEB5A161E4081008B4943 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = AB5CEB59161E4081008B4943 /* Default-568h@2x.png */; };
 		AB5D48D01609178900828D16 /* NewsstandKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB5D48CD1609176A00828D16 /* NewsstandKit.framework */; };
 		AB67F5BA16EE99B2005A04F6 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = AB67F5B916EE99B2005A04F6 /* Reachability.m */; };
@@ -143,6 +145,8 @@
 		AB40048015B4B90200D87E2A /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		AB40048215B4B90A00D87E2A /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		AB40048415B4BB8B00D87E2A /* books */ = {isa = PBXFileReference; lastKnownFileType = folder; path = books; sourceTree = "<group>"; };
+		AB40E4F617823BF4007927EF /* navigation-bar-bg-ios6.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "navigation-bar-bg-ios6.png"; sourceTree = "<group>"; };
+		AB40E4F717823BF4007927EF /* navigation-bar-bg-ios6@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "navigation-bar-bg-ios6@2x.png"; sourceTree = "<group>"; };
 		AB5CEB59161E4081008B4943 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		AB5D48CD1609176A00828D16 /* NewsstandKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NewsstandKit.framework; path = System/Library/Frameworks/NewsstandKit.framework; sourceTree = SDKROOT; };
 		AB67F5B816EE99B2005A04F6 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
@@ -209,6 +213,8 @@
 			children = (
 				9F1FC71116500A47002C8277 /* navigation-bar-bg.png */,
 				9F1FC71216500A47002C8277 /* navigation-bar-bg@2x.png */,
+				AB40E4F617823BF4007927EF /* navigation-bar-bg-ios6.png */,
+				AB40E4F717823BF4007927EF /* navigation-bar-bg-ios6@2x.png */,
 				9FA57FC6164C84E2006DBD5E /* shelf-bg-portrait~ipad.png */,
 				9FA57FC4164C84E2006DBD5E /* shelf-bg-portrait@2x~ipad.png */,
 				9FA57FC2164C84E2006DBD5E /* shelf-bg-landscape~ipad.png */,
@@ -492,6 +498,8 @@
 				9F1FC7171650102C002C8277 /* shelf-bg-landscape-568h.png in Resources */,
 				9F1FC7181650102C002C8277 /* shelf-bg-portrait-568h.png in Resources */,
 				20CC551D16AD346900DEFB5C /* Localizable.strings in Resources */,
+				AB40E4F817823BF4007927EF /* navigation-bar-bg-ios6.png in Resources */,
+				AB40E4F917823BF4007927EF /* navigation-bar-bg-ios6@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
