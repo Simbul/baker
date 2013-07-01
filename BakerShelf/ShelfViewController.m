@@ -319,66 +319,66 @@
 - (void)handleRefresh:(NSNotification *)notification {
     [self setrefreshButtonEnabled:NO];
 
-    if([issuesManager refresh]) {
-        self.issues = issuesManager.issues;
+    [issuesManager refresh:^(BOOL status) {
+        if(status) {
+            [purchasesManager retrievePurchasesFor:[issuesManager productIDs]];
 
-        [purchasesManager retrievePurchasesFor:[issuesManager productIDs]];
+            [shelfStatus load];
+            for (BakerIssue *issue in self.issues) {
+                issue.price = [shelfStatus priceFor:issue.productID];
+            }
 
-        [shelfStatus load];
-        for (BakerIssue *issue in self.issues) {
-            issue.price = [shelfStatus priceFor:issue.productID];
+            void (^updateIssues)() = ^{
+                // Step 1: remove controllers for issues that no longer exist
+                __block NSMutableArray *discardedControllers = [NSMutableArray array];
+                [self.issueViewControllers enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+                    IssueViewController *ivc = (IssueViewController *)obj;
+                    
+                    if (![self bakerIssueWithID:ivc.issue.ID]) {
+                        [discardedControllers addObject:ivc];
+                        [self.gridView deleteItemsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForItem:idx inSection:0]]];
+                    }
+                }];
+                [self.issueViewControllers removeObjectsInArray:discardedControllers];
+
+                // Step 2: add controllers for issues that did not yet exist (and refresh the ones that do exist)
+                [self.issues enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+                    // NOTE: this block changes the issueViewController array while looping
+                    BakerIssue *issue = (BakerIssue *)obj;
+                    
+                    IssueViewController *existingIvc = [self issueViewControllerWithID:issue.ID];
+
+                    if (existingIvc) {
+                        existingIvc.issue = issue;
+                        [existingIvc refreshContentWithCache:NO];
+                    } else {
+                        IssueViewController *newIvc = [self createIssueViewControllerWithIssue:issue];
+                        [self.issueViewControllers insertObject:newIvc atIndex:idx];
+                        [self.gridView insertItemsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForItem:idx inSection:0] ] ];
+                    }
+                }];
+
+                [self.gridView reloadData];
+            };
+            
+            // When first launched, the grid is not initialised, so we can't
+            // call in the "batch update" method of the grid view
+            if (self.gridView) {
+                [self.gridView performBatchUpdates:updateIssues completion:nil];
+            }
+            else {
+                updateIssues();
+            }
+            
+            [purchasesManager retrievePricesFor:issuesManager.productIDs andEnableFailureNotifications:NO];
         }
-
-        void (^updateIssues)() = ^{
-            // Step 1: remove controllers for issues that no longer exist
-            __block NSMutableArray *discardedControllers = [NSMutableArray array];
-            [self.issueViewControllers enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-                IssueViewController *ivc = (IssueViewController *)obj;
-                
-                if (![self bakerIssueWithID:ivc.issue.ID]) {
-                    [discardedControllers addObject:ivc];
-                    [self.gridView deleteItemsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForItem:idx inSection:0]]];
-                }
-            }];
-            [self.issueViewControllers removeObjectsInArray:discardedControllers];
-
-            // Step 2: add controllers for issues that did not yet exist (and refresh the ones that do exist)
-            [self.issues enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-                // NOTE: this block changes the issueViewController array while looping
-                BakerIssue *issue = (BakerIssue *)obj;
-                
-                IssueViewController *existingIvc = [self issueViewControllerWithID:issue.ID];
-
-                if (existingIvc) {
-                    existingIvc.issue = issue;
-                    [existingIvc refreshContentWithCache:NO];
-                } else {
-                    IssueViewController *newIvc = [self createIssueViewControllerWithIssue:issue];
-                    [self.issueViewControllers insertObject:newIvc atIndex:idx];
-                    [self.gridView insertItemsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForItem:idx inSection:0] ] ];
-                }
-            }];
-
-            [self.gridView reloadData];
-        };
-        
-        // When first launched, the grid is not initialised, so we can't
-        // call in the "batch update" method of the grid view
-        if (self.gridView) {
-            [self.gridView performBatchUpdates:updateIssues completion:nil];
+        else{
+            [Utils showAlertWithTitle:NSLocalizedString(@"INTERNET_CONNECTION_UNAVAILABLE_TITLE", nil)
+                              message:NSLocalizedString(@"INTERNET_CONNECTION_UNAVAILABLE_MESSAGE", nil)
+                          buttonTitle:NSLocalizedString(@"INTERNET_CONNECTION_UNAVAILABLE_CLOSE", nil)];
         }
-        else {
-            updateIssues();
-        }
-
-        [purchasesManager retrievePricesFor:issuesManager.productIDs andEnableFailureNotifications:NO];
-    }
-    else{
-        [Utils showAlertWithTitle:NSLocalizedString(@"INTERNET_CONNECTION_UNAVAILABLE_TITLE", nil)
-                          message:NSLocalizedString(@"INTERNET_CONNECTION_UNAVAILABLE_MESSAGE", nil)
-                      buttonTitle:NSLocalizedString(@"INTERNET_CONNECTION_UNAVAILABLE_CLOSE", nil)];
-    }
-    [self setrefreshButtonEnabled:YES];
+        [self setrefreshButtonEnabled:YES];
+    }];
 }
 
 - (IssueViewController *)issueViewControllerWithID:(NSString *)ID {
