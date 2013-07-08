@@ -8,4 +8,6 @@ Pod::Spec.new do |s|
   s.source_files = '**/*.{h,m}'
   s.platform = :ios, '5.0'
   s.requires_arc = false
+  s.frameworks = "AVFoundation"
+
 end
