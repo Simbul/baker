@@ -11,11 +11,12 @@
     "zoomable": false,
 
     "-baker-background": "#000000",
-    "-baker-vertical-bounce": true,
+    "-baker-vertical-bounce": false,
     "-baker-media-autoplay": true,
     "-baker-background-image-portrait": "gfx/background-portrait.png",
     "-baker-background-image-landscape": "gfx/background-landscape.png",
     "-baker-page-numbers-color": "#000000",
+    "-baker-rendering": "three-cards",
 
     "contents": [
         "Book Cover.html",

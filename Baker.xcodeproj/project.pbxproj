@@ -7,6 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1E13B4B1178B00160079A6A2 /* landscape.css in Resources */ = {isa = PBXBuildFile; fileRef = 1E13B4AF178B00160079A6A2 /* landscape.css */; };
+		1E13B4B2178B00160079A6A2 /* portrait.css in Resources */ = {isa = PBXBuildFile; fileRef = 1E13B4B0178B00160079A6A2 /* portrait.css */; };
+		1E13B4BA178B00400079A6A2 /* CharterITC Bold Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 1E13B4B4178B00400079A6A2 /* CharterITC Bold Italic.otf */; };
+		1E13B4BB178B00400079A6A2 /* CharterITC Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 1E13B4B5178B00400079A6A2 /* CharterITC Bold.otf */; };
+		1E13B4BC178B00400079A6A2 /* CharterITC Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 1E13B4B6178B00400079A6A2 /* CharterITC Italic.otf */; };
+		1E13B4BD178B00400079A6A2 /* CharterITC.otf in Resources */ = {isa = PBXBuildFile; fileRef = 1E13B4B7178B00400079A6A2 /* CharterITC.otf */; };
+		1E13B4BE178B00400079A6A2 /* CharterITCBlack Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 1E13B4B8178B00400079A6A2 /* CharterITCBlack Italic.otf */; };
+		1E13B4BF178B00400079A6A2 /* CharterITCBlack.otf in Resources */ = {isa = PBXBuildFile; fileRef = 1E13B4B9178B00400079A6A2 /* CharterITCBlack.otf */; };
 		20CC551D16AD346900DEFB5C /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 20CC551F16AD346900DEFB5C /* Localizable.strings */; };
 		9F1FC71316500A47002C8277 /* navigation-bar-bg.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F1FC71116500A47002C8277 /* navigation-bar-bg.png */; };
 		9F1FC71416500A47002C8277 /* navigation-bar-bg@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F1FC71216500A47002C8277 /* navigation-bar-bg@2x.png */; };
@@ -76,6 +84,14 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1E13B4AF178B00160079A6A2 /* landscape.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = landscape.css; sourceTree = "<group>"; };
+		1E13B4B0178B00160079A6A2 /* portrait.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = portrait.css; sourceTree = "<group>"; };
+		1E13B4B4178B00400079A6A2 /* CharterITC Bold Italic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "CharterITC Bold Italic.otf"; sourceTree = "<group>"; };
+		1E13B4B5178B00400079A6A2 /* CharterITC Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "CharterITC Bold.otf"; sourceTree = "<group>"; };
+		1E13B4B6178B00400079A6A2 /* CharterITC Italic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "CharterITC Italic.otf"; sourceTree = "<group>"; };
+		1E13B4B7178B00400079A6A2 /* CharterITC.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = CharterITC.otf; sourceTree = "<group>"; };
+		1E13B4B8178B00400079A6A2 /* CharterITCBlack Italic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "CharterITCBlack Italic.otf"; sourceTree = "<group>"; };
+		1E13B4B9178B00400079A6A2 /* CharterITCBlack.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = CharterITCBlack.otf; sourceTree = "<group>"; };
 		20CC551E16AD346900DEFB5C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		9F1FC71116500A47002C8277 /* navigation-bar-bg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "navigation-bar-bg.png"; sourceTree = "<group>"; };
 		9F1FC71216500A47002C8277 /* navigation-bar-bg@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "navigation-bar-bg@2x.png"; sourceTree = "<group>"; };
@@ -204,6 +220,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1E13B4B3178B00400079A6A2 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				1E13B4B4178B00400079A6A2 /* CharterITC Bold Italic.otf */,
+				1E13B4B5178B00400079A6A2 /* CharterITC Bold.otf */,
+				1E13B4B6178B00400079A6A2 /* CharterITC Italic.otf */,
+				1E13B4B7178B00400079A6A2 /* CharterITC.otf */,
+				1E13B4B8178B00400079A6A2 /* CharterITCBlack Italic.otf */,
+				1E13B4B9178B00400079A6A2 /* CharterITCBlack.otf */,
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
 		9F58D85E15D6743C0027902C /* img */ = {
 			isa = PBXGroup;
 			children = (
@@ -399,6 +428,9 @@
 		ABAFB59215AB9A2E002FA498 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				1E13B4B3178B00400079A6A2 /* Fonts */,
+				1E13B4AF178B00160079A6A2 /* landscape.css */,
+				1E13B4B0178B00160079A6A2 /* portrait.css */,
 				20CC551F16AD346900DEFB5C /* Localizable.strings */,
 				BF3CCC9D15D080560087B9CA /* icon */,
 				ABAFB59315AB9A2E002FA498 /* Baker-Info.plist */,
@@ -492,6 +524,14 @@
 				9F1FC7171650102C002C8277 /* shelf-bg-landscape-568h.png in Resources */,
 				9F1FC7181650102C002C8277 /* shelf-bg-portrait-568h.png in Resources */,
 				20CC551D16AD346900DEFB5C /* Localizable.strings in Resources */,
+				1E13B4B1178B00160079A6A2 /* landscape.css in Resources */,
+				1E13B4B2178B00160079A6A2 /* portrait.css in Resources */,
+				1E13B4BA178B00400079A6A2 /* CharterITC Bold Italic.otf in Resources */,
+				1E13B4BB178B00400079A6A2 /* CharterITC Bold.otf in Resources */,
+				1E13B4BC178B00400079A6A2 /* CharterITC Italic.otf in Resources */,
+				1E13B4BD178B00400079A6A2 /* CharterITC.otf in Resources */,
+				1E13B4BE178B00400079A6A2 /* CharterITCBlack Italic.otf in Resources */,
+				1E13B4BF178B00400079A6A2 /* CharterITCBlack.otf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -918,7 +918,8 @@
     }
 
 
-    ((UIScrollView *)[[webView subviews] objectAtIndex:0]).pagingEnabled = [book.bakerVerticalPagination boolValue];
+    [webView.scrollView setPagingEnabled:YES];
+//    ((UIScrollView *)[[webView subviews] objectAtIndex:0]).pagingEnabled = [book.bakerVerticalPagination boolValue];
 
     [scrollView addSubview:webView];
     [self loadWebView:webView withPage:page];
@@ -1247,8 +1248,6 @@
         [self handlePageLoading];
     }
 
-    /** CHECK IF META TAG SAYS HTML FILE SHOULD BE PAGED **/
-    [webView.scrollView setPagingEnabled:[Utils webViewShouldBePaged:webView forBook:book]];
 }
 - (void)webView:(UIWebView *)webView hidden:(BOOL)status animating:(BOOL)animating {
 
@@ -1308,8 +1307,41 @@
 
     [webView stringByEvaluatingJavaScriptFromString:jsDispatchEvent];
 }
+
+- (void)injectCssToWebView:(UIWebView *)webView interfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+    
+    NSString *theScriptToExecute;
+    
+    BOOL isLands = UIInterfaceOrientationIsLandscape(interfaceOrientation);
+    
+    if (isLands) {
+#ifndef DEBUG_MODE
+        theScriptToExecute = [NSString stringWithFormat:@"var fileref=document.createElement(\"link\"); fileref.setAttribute(\"rel\", \"stylesheet\"); fileref.setAttribute(\"type\", \"text/css\"); fileref.setAttribute(\"href\", \"%@\"); document.getElementsByTagName(\"head\")[0].appendChild(fileref);", [[NSBundle mainBundle] pathForResource:@"landscape" ofType:@"css"]];
+        
+        //        NSString *secondScript = @"document.addEventListener('WebViewJavascriptBridgeReady', function onBridgeReady(event) {    var bridge = event.bridge    bridge.init(function(message, responseCallback) {        alert('Received message: ' + message)           if (responseCallback) {            responseCallback(\"Right back atcha\")        }    })    bridge.send('Hello from the javascript')    bridge.send('Please respond to this', function responseCallback(responseData) {        console.log(\"Javascript got its response\", responseData)    })}, false)";
+        
+#else
+        theScriptToExecute = [NSString stringWithFormat:@"var fileref=document.createElement(\"link\"); fileref.setAttribute(\"rel\", \"stylesheet\"); fileref.setAttribute(\"type\", \"text/css\"); fileref.setAttribute(\"href\", \"%@\"); document.getElementsByTagName(\"head\")[0].appendChild(fileref);", @"http://brainfaq.ru/dev/landscape.css"];
+#endif
+    }
+    
+    else {
+        
+#ifndef DEBUG_MODE
+        theScriptToExecute = [NSString stringWithFormat:@"var fileref=document.createElement(\"link\"); fileref.setAttribute(\"rel\", \"stylesheet\"); fileref.setAttribute(\"type\", \"text/css\"); fileref.setAttribute(\"href\", \"%@\"); document.getElementsByTagName(\"head\")[0].appendChild(fileref);", [[NSBundle mainBundle] pathForResource:@"portrait" ofType:@"css"]];
+#else
+        theScriptToExecute = [NSString stringWithFormat:@"var fileref=document.createElement(\"link\"); fileref.setAttribute(\"rel\", \"stylesheet\"); fileref.setAttribute(\"type\", \"text/css\"); fileref.setAttribute(\"href\", \"%@\"); document.getElementsByTagName(\"head\")[0].appendChild(fileref);", @"http://brainfaq.ru/dev/portrait.css"];
+#endif
+        
+    }
+    
+    [webView stringByEvaluatingJavaScriptFromString:theScriptToExecute];
+    
+}
+
 - (void)webView:(UIWebView *)webView setCorrectOrientation:(UIInterfaceOrientation)interfaceOrientation {
 
+    
     // Since the UIWebView doesn't handle orientationchange events correctly we have to set the correct value for window.orientation property ourselves
     NSString *jsOrientationGetter;
     switch (interfaceOrientation) {
@@ -1330,6 +1362,10 @@
     }
 
     [webView stringByEvaluatingJavaScriptFromString:jsOrientationGetter];
+    
+    [self injectCssToWebView:webView interfaceOrientation:interfaceOrientation];
+    
+    
 }
 
 #pragma mark - SCREENSHOTS
