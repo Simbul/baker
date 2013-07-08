@@ -147,7 +147,7 @@
     scrollView.pagingEnabled = YES;
     scrollView.delegate = self;
 
-    scrollView.scrollEnabled = [book.bakerPageTurnSwipe boolValue];
+//    scrollView.scrollEnabled = [book.bakerPageTurnSwipe boolValue];
     scrollView.backgroundColor = [Utils colorWithHexString:book.bakerBackground];
 
     [self.view addSubview:scrollView];
@@ -283,7 +283,7 @@
     [toLoad removeAllObjects];
 }
 - (void)resetPageSlots {
-    //NSLog(@"[BakerView] Reset leftover page slot");
+    NSLog(@"[BakerView] Reset leftover page slot");
 
     if (currPage) {
         [currPage setDelegate:nil];
@@ -306,7 +306,7 @@
     prevPage = nil;
 }
 - (void)resetPageDetails {
-    //NSLog(@"[BakerView] Reset page details array and empty screenshot directory");
+    NSLog(@"[BakerView] Reset page details array and empty screenshot directory");
 
     for (NSMutableDictionary *details in pageDetails) {
         for (NSString *key in details) {
@@ -372,7 +372,7 @@
     [self handlePageLoading];
 }
 - (void)buildPageDetails {
-    //NSLog(@"[BakerView] Init page details for the book pages");
+    NSLog(@"[BakerView] Init page details for the book pages");
 
     for (int i = 0; i < totalPages; i++) {
 
@@ -445,7 +445,7 @@
     }
 }
 - (void)updateBookLayout {
-    //NSLog(@"[BakerView]     Prevent page from changing until layout is updated");
+    NSLog(@"[BakerView]     Prevent page from changing until layout is updated");
     [self lockPage:[NSNumber numberWithBool:YES]];
     [self showPageDetails];
 
@@ -463,7 +463,7 @@
 
     [scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:NO];
 
-    //NSLog(@"[BakerView]     Unlock page changing");
+    NSLog(@"[BakerView]     Unlock page changing");
     [self lockPage:[NSNumber numberWithBool:NO]];
 }
 - (void)adjustScrollViewPosition {
@@ -493,7 +493,7 @@
     scrollView.contentSize = CGSizeMake(pageWidth * totalPages, pageHeight);
 }
 - (void)setTappableAreaSize {
-    //NSLog(@"[BakerView] Set tappable area size");
+    NSLog(@"[BakerView] Set tappable area size");
 
     int tappableAreaSize = screenBounds.size.width/16;
     if (screenBounds.size.width < 768) {
@@ -506,7 +506,7 @@
     rightTapArea = CGRectMake(pageWidth - tappableAreaSize, tappableAreaSize, tappableAreaSize, pageHeight - (tappableAreaSize * 2));
 }
 - (void)showPageDetails {
-    //NSLog(@"[BakerView] Show page details for the book pages");
+    NSLog(@"[BakerView] Show page details for the book pages");
 
     // TODO: IS THIS NEEDED ?
     for (NSMutableDictionary *details in pageDetails) {
@@ -575,7 +575,7 @@
 }
 
 - (void)setupWebView:(UIWebView *)webView {
-    //NSLog(@"[BakerView] Setup webView");
+    NSLog(@"[BakerView] Setup webView");
 
     if (webViewBackground == nil)
     {
@@ -616,7 +616,7 @@
 
 #pragma mark - LOADING
 - (BOOL)changePage:(int)page {
-    //NSLog(@"[BakerView] Check if page has changed");
+    NSLog(@"[BakerView] Check if page has changed");
 
     BOOL pageChanged = NO;
 
@@ -666,7 +666,7 @@
     NSString *path = [NSString stringWithString:[pages objectAtIndex:currentPageNumber - 1]];
     if ([[NSFileManager defaultManager] fileExistsAtPath:path] && tapNumber != 0) {
 
-        //NSLog(@"[BakerView] Goto page -> %@", [[NSFileManager defaultManager] displayNameAtPath:path]);
+        NSLog(@"[BakerView] Goto page -> %@", [[NSFileManager defaultManager] displayNameAtPath:path]);
 
         if ([book.bakerRendering isEqualToString:@"three-cards"])
         {
@@ -841,13 +841,13 @@
     else
     {
         if (stackedScrollingAnimations == 0) {
-            scrollView.scrollEnabled = [book.bakerPageTurnSwipe boolValue]; // YES by default, NO if specified
+//            scrollView.scrollEnabled = [book.bakerPageTurnSwipe boolValue]; // YES by default, NO if specified
         }
         currentPageIsLocked = NO;
     }
 }
 - (void)addPageLoading:(int)slot {
-    //NSLog(@"[BakerView] Add page to the loding queue");
+    NSLog(@"[BakerView] Add page to the loding queue");
 
     NSArray *objs = [NSArray arrayWithObjects:[NSNumber numberWithInt:slot], [NSNumber numberWithInt:currentPageNumber + slot], nil];
     NSArray *keys = [NSArray arrayWithObjects:@"slot", @"page", nil];
@@ -864,14 +864,14 @@
         int slot = [[[toLoad objectAtIndex:0] valueForKey:@"slot"] intValue];
         int page = [[[toLoad objectAtIndex:0] valueForKey:@"page"] intValue];
 
-        //NSLog(@"[BakerView] Handle loading of slot %d with page %d", slot, page);
+        NSLog(@"[BakerView] Handle loading of slot %d with page %d", slot, page);
 
         [toLoad removeObjectAtIndex:0];
         [self loadSlot:slot withPage:page];
     }
 }
 - (void)loadSlot:(int)slot withPage:(int)page {
-    //NSLog(@"[BakerView] Setting up slot %d with page %d.", slot, page);
+    NSLog(@"[BakerView] Setting up slot %d with page %d.", slot, page);
 
     UIWebView *webView = [[[UIWebView alloc] init] autorelease];
     [self setupWebView:webView];
@@ -943,7 +943,7 @@
      * It contains a fix to avoid an overlapping status bar.
      */
 
-    //NSLog(@"[BakerView] Loading a Modal WebView with URL: %@", url.absoluteString);
+    NSLog(@"[BakerView] Loading a Modal WebView with URL: %@", url.absoluteString);
 
     myModalViewController = [[[ModalViewController alloc] initWithUrl:url] autorelease];
     myModalViewController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
@@ -969,14 +969,14 @@
     return CGRectMake(pageWidth * (page - 1), 0, pageWidth, pageHeight);
 }
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scroll {
-    //NSLog(@"[BakerView] Scrollview will begin dragging");
+    NSLog(@"[BakerView] Scrollview will begin dragging");
     [self hideBars:[NSNumber numberWithBool:YES]];
 }
 - (void)scrollViewDidEndDragging:(UIScrollView *)scroll willDecelerate:(BOOL)decelerate {
-    //NSLog(@"[BakerView] Scrollview did end dragging");
+    NSLog(@"[BakerView] Scrollview did end dragging");
 }
 - (void)scrollViewWillBeginDecelerating:(UIScrollView *)scroll {
-    //NSLog(@"[BakerView] Scrollview will begin decelerating");
+    NSLog(@"[BakerView] Scrollview will begin decelerating");
 }
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scroll {
 
@@ -984,7 +984,7 @@
     NSLog(@"[BakerView] Swiping to page: %d", page);
 
     if (currentPageNumber != page) {
-
+        
         lastPageNumber = currentPageNumber;
         currentPageNumber = page;
 
@@ -995,11 +995,11 @@
     }
 }
 - (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scroll {
-    //NSLog(@"[BakerView] Scrollview did end scrolling animation");
+    NSLog(@"[BakerView] Scrollview did end scrolling animation");
 
     stackedScrollingAnimations--;
     if (stackedScrollingAnimations == 0) {
-        //NSLog(@"[BakerView]     Scroll enabled");
+        NSLog(@"[BakerView]     Scroll enabled");
         scroll.scrollEnabled = [book.bakerPageTurnSwipe boolValue]; // YES by default, NO if specified
     }
 }
@@ -1012,17 +1012,17 @@
 
     if ([webView isEqual:prevPage])
     {
-        //NSLog(@"[BakerView]     Page is prev page --> load page");
+        NSLog(@"[BakerView]     Page is prev page --> load page");
         return YES;
     }
     else if ([webView isEqual:nextPage])
     {
-        //NSLog(@"[BakerView]     Page is next page --> load page");
+        NSLog(@"[BakerView]     Page is next page --> load page");
         return YES;
     }
     else if (currentPageIsDelayingLoading)
     {
-        //NSLog(@"[BakerView]     Page is current page and current page IS delaying loading --> load page");
+        NSLog(@"[BakerView]     Page is current page and current page IS delaying loading --> load page");
         currentPageIsDelayingLoading = NO;
         return ![self isIndexView:webView];
     }
@@ -1034,12 +1034,12 @@
             // Existing, checking if index...
             if([[url relativePath] isEqualToString:[indexViewController indexPath]])
             {
-                //NSLog(@"[BakerView]     Page is index --> load index");
+                NSLog(@"[BakerView]     Page is index --> load index");
                 return YES;
             }
             else
             {
-                //NSLog(@"[BakerView]     Page is current page and current page IS NOT delaying loading --> handle clicked link: %@", [url absoluteString]);
+                NSLog(@"[BakerView]     Page is current page and current page IS NOT delaying loading --> handle clicked link: %@", [url absoluteString]);
 
                 // Not index, checking scheme...
                 if ([[url scheme] isEqualToString:@"file"])
@@ -1156,7 +1156,7 @@
                     // * open a page outside of Baker.
 
                     NSString *params = [url query];
-                    //NSLog(@"[BakerView]     Opening absolute URL: %@", [url absoluteString]);
+                    NSLog(@"[BakerView]     Opening absolute URL: %@", [url absoluteString]);
 
                     if (params != nil)
                     {
@@ -1168,14 +1168,14 @@
 
                         if (matches > 0)
                         {
-                            //NSLog(@"[BakerView]     Link contain param '%@' --> open link in Safari", URL_OPEN_EXTERNAL);
+                            NSLog(@"[BakerView]     Link contain param '%@' --> open link in Safari", URL_OPEN_EXTERNAL);
 
                             // Generate new URL without
                             // We are regexp-ing three things: the string alone, the string first with other content, the string with other content in any other position
                             NSString *pattern = [[[NSString alloc] initWithFormat:@"\\?%@$|(?<=\\?)%@&?|()&?%@", URL_OPEN_EXTERNAL, URL_OPEN_EXTERNAL, URL_OPEN_EXTERNAL] autorelease];
                             NSRegularExpression *replacerRegexp = [NSRegularExpression regularExpressionWithPattern:pattern options:NSRegularExpressionCaseInsensitive error:NULL];
                             NSString *oldURL = [url absoluteString];
-                            //NSLog(@"[BakerView]     replacement pattern: %@", [replacerRegexp pattern]);
+                            NSLog(@"[BakerView]     replacement pattern: %@", [replacerRegexp pattern]);
                             NSString *newURL = [replacerRegexp stringByReplacingMatchesInString:oldURL options:0 range:NSMakeRange(0, [oldURL length]) withTemplate:@""];
 
                             NSLog(@"[BakerView]     Opening in Safari with URL: %@", newURL);
@@ -1185,14 +1185,14 @@
                         }
                         else if (matchesModal)
                         {
-                            //NSLog(@"[BakerView]     Link contain param '%@' --> open link modally", URL_OPEN_MODALLY);
+                            NSLog(@"[BakerView]     Link contain param '%@' --> open link modally", URL_OPEN_MODALLY);
 
                             // Generate new URL without
                             // We are regexp-ing three things: the string alone, the string first with other content, the string with other content in any other position
                             NSString *pattern = [[[NSString alloc] initWithFormat:@"\\?%@$|(?<=\\?)%@&?|()&?%@", URL_OPEN_MODALLY, URL_OPEN_MODALLY, URL_OPEN_MODALLY] autorelease];
                             NSRegularExpression *replacerRegexp = [NSRegularExpression regularExpressionWithPattern:pattern options:NSRegularExpressionCaseInsensitive error:NULL];
                             NSString *oldURL = [url absoluteString];
-                            //NSLog(@"[BakerView]     replacement pattern: %@", [replacerRegexp pattern]);
+                            NSLog(@"[BakerView]     replacement pattern: %@", [replacerRegexp pattern]);
                             NSString *newURL = [replacerRegexp stringByReplacingMatchesInString:oldURL options:0 range:NSMakeRange(0, [oldURL length]) withTemplate:@""];
 
                             NSLog(@"[BakerView]     Opening in Modal Panel with URL: %@", newURL);
@@ -1213,7 +1213,7 @@
     }
 }
 - (void)webViewDidStartLoad:(UIWebView *)webView {
-    //NSLog(@"[BakerView] Page did start load");
+    NSLog(@"[BakerView] Page did start load");
 }
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
     // Sent if a web view failed to load content.
@@ -1226,7 +1226,8 @@
     }
 }
 - (void)webViewDidFinishLoad:(UIWebView *)webView {
-    //NSLog(@"[BakerView] Page did finish load");
+    NSLog(@"[BakerView] Page did finish load");
+    scrollView.scrollEnabled = YES;
     [self webView:webView setCorrectOrientation:self.interfaceOrientation];
 
     if (webView.hidden == YES)
@@ -1251,7 +1252,7 @@
 }
 - (void)webView:(UIWebView *)webView hidden:(BOOL)status animating:(BOOL)animating {
 
-    //NSLog(@"[BakerView] webView hidden: %d animating: %d", status, animating);
+    NSLog(@"[BakerView] webView hidden: %d animating: %d", status, animating);
 
     if (animating) {
 
@@ -1278,7 +1279,7 @@
         if (currentPageFirstLoading)
         {
             // ... check if there is a saved starting scroll index and set it
-            //NSLog(@"[BakerView]     Handle last scroll index if necessary");
+            NSLog(@"[BakerView]     Handle last scroll index if necessary");
             NSString *currPageScrollIndex = bookStatus.scrollIndex;
             if (currPageScrollIndex != nil) {
                 [self scrollDownCurrentPage:[currPageScrollIndex intValue] animating:YES];
@@ -1287,7 +1288,7 @@
         }
         else
         {
-            //NSLog(@"[BakerView]     Handle saved hash reference if necessary");
+            NSLog(@"[BakerView]     Handle saved hash reference if necessary");
             [self handleAnchor:YES];
         }
     }
@@ -1453,7 +1454,7 @@
 
     if (![self checkScreeshotForPage:pageNumber andOrientation:interfaceOrientation])
     {
-        //NSLog(@"[BakerView] Taking screenshot of page %d", pageNumber);
+        NSLog(@"[BakerView] Taking screenshot of page %d", pageNumber);
 
         NSString *screenshotFile = [cachedScreenshotsPath stringByAppendingPathComponent:[NSString stringWithFormat:@"screenshot-%@-%i.jpg", interfaceOrientation, pageNumber]];
         UIImage *screenshot = nil;
@@ -1563,7 +1564,7 @@
         }
     } else if (shouldPropagateIndexInterceptedTouch) {
         if (touch.tapCount == 2) {
-            //NSLog(@"[BakerView]     Index Double Tap: Bars Toggled");
+            NSLog(@"[BakerView]     Index Double Tap: Bars Toggled");
             [self toggleBars];
         }
     }
@@ -1575,7 +1576,7 @@
      */
 
     CGPoint tapPoint = [touch locationInView:self.view];
-    //NSLog(@"[BakerView] User tap at [%f, %f]", tapPoint.x, tapPoint.y);
+    NSLog(@"[BakerView] User tap at [%f, %f]", tapPoint.x, tapPoint.y);
 
     // Swipe or scroll the page.
     if (!currentPageIsLocked)
@@ -1599,13 +1600,19 @@
             if ([book.bakerPageTurnTap boolValue]) [self changePage:page];
         }
         else if (touch.tapCount == 2) {
-            //NSLog(@"[BakerView]     Index Double Tap: Bars Toggled");
+            NSLog(@"[BakerView]     Index Double Tap: Bars Toggled");
             [self toggleBars];
         }
     }
 }
 - (void)userDidScroll:(UITouch *)touch {
-    //NSLog(@"[BakerView] User scroll");
+//    CGFloat pageWidth = scrollView.frame.size.width;
+    int page = floor((scrollView.contentOffset.x - pageWidth / 2) / pageWidth) + 2;
+//    if (page != currentPageNumber)
+//        scrollView.scrollEnabled = NO;
+    //
+    //    NSLog(@"%i %f", page, scrollView.contentOffset.x);
+    NSLog(@"[BakerView] User scroll %i %f",   page,  scrollView.contentOffset.x);
     [self hideBars:[NSNumber numberWithBool:YES]];
 
     currPage.backgroundColor = webViewBackground;
@@ -1617,7 +1624,7 @@
     for (UIView *subview in currPage.subviews) {
         if ([subview isKindOfClass:[UIScrollView class]]) {
             CGSize size = ((UIScrollView *)subview).contentSize;
-            //NSLog(@"[BakerView] Setting current page height from %d to %f", currentPageHeight, size.height);
+            NSLog(@"[BakerView] Setting current page height from %d to %f", currentPageHeight, size.height);
             currentPageHeight = size.height;
         }
     }
@@ -1638,7 +1645,7 @@
     {
         if (targetOffset < 0) targetOffset = 0;
 
-        //NSLog(@"[BakerView] Scrolling page up to %d", targetOffset);
+        NSLog(@"[BakerView] Scrolling page up to %d", targetOffset);
         [self scrollPage:currPage to:[NSString stringWithFormat:@"%d", targetOffset] animating:animating];
     }
 }
@@ -1649,7 +1656,7 @@
     {
         if (targetOffset > currentPageMaxScroll) targetOffset = currentPageMaxScroll;
 
-        //NSLog(@"[BakerView] Scrolling page down to %d", targetOffset);
+        NSLog(@"[BakerView] Scrolling page down to %d", targetOffset);
         [self scrollPage:currPage to:[NSString stringWithFormat:@"%d", targetOffset] animating:animating];
     }
 
@@ -1848,11 +1855,11 @@
             ||
             (UIInterfaceOrientationIsPortrait(interfaceOrientation) && [book.orientation isEqualToString:@"portrait"]) ) {
 
-            //NSLog(@"[BakerView] Device and book orientations are in sync");
+            NSLog(@"[BakerView] Device and book orientations are in sync");
 
         } else {
 
-            //NSLog(@"[BakerView] Device and book orientations are out of sync, force orientation update");
+            NSLog(@"[BakerView] Device and book orientations are out of sync, force orientation update");
 
             // Present and dismiss a vanilla view controller to trigger the orientation update
             [self presentViewController:[UIViewController new] animated:NO completion:^{ [self dismissViewControllerAnimated:NO completion:nil]; }];
@@ -1870,7 +1877,7 @@
         bookStatus.scrollIndex = [currPage stringByEvaluatingJavaScriptFromString:@"window.scrollY;"];
     }
     [bookStatus save];
-    //NSLog(@"[BakerView] Saved status");
+    NSLog(@"[BakerView] Saved status");
 }
 - (void)didReceiveMemoryWarning {
     // Releases the view if it doesn't have a superview.
@@ -1948,6 +1955,12 @@
     } else {
         return NO;
     }
+}
+
+- (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset {
+    
+    NSLog(@"stop!!!!");
+
 }
 
 @end

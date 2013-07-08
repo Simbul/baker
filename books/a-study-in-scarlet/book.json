@@ -1,11 +1,7 @@
 {
-    "hpub": 1,
     "title": "A Study in Scarlet",
     "author": ["Arthur Conan Doyle"],
-    "creator": ["D. Casali", "M. Colombo", "A. Morandi"],
-    "date": "1887-10-10",
     "url": "book://bakerframework.com/newsstand-books/a-study-in-scarlet",
-    "cover": "a-study-in-scarlet.png",
 
     "orientation": "both",
     "zoomable": false,
@@ -17,7 +13,7 @@
     "-baker-background-image-landscape": "gfx/background-landscape.png",
     "-baker-page-numbers-color": "#000000",
     "-baker-rendering": "three-cards",
-
+    "-baker-page-turn-tap": false,
     "contents": [
         "Book Cover.html",
         "Book Index.html",
