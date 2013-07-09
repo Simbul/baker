@@ -321,6 +321,8 @@
 
     [issuesManager refresh:^(BOOL status) {
         if(status) {
+            self.issues = issuesManager.issues;
+
             [purchasesManager retrievePurchasesFor:[issuesManager productIDs]];
 
             [shelfStatus load];
