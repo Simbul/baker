@@ -36,6 +36,7 @@
 #import "UICustomNavigationBar.h"
 #import "IssuesManager.h"
 #import "BakerAPI.h"
+#import "UIColor+Extensions.h"
 
 #import "BakerViewController.h"
 
@@ -124,7 +125,7 @@
     self.rootNavigationController = [[[UICustomNavigationController alloc] initWithRootViewController:self.rootViewController] autorelease];
     UICustomNavigationBar *navigationBar = (UICustomNavigationBar *)self.rootNavigationController.navigationBar;
     [navigationBar setBackgroundImage:[UIImage imageNamed:@"navigation-bar-bg.png"] forBarMetrics:UIBarMetricsDefault];
-    [navigationBar setTintColor:[UIColor clearColor]];
+    [navigationBar setTintColor:[UIColor colorWithHexString:@"333333"]]; // black will not trigger a pushed status
 
     self.window = [[[InterceptorWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]] autorelease];
     self.window.backgroundColor = [UIColor whiteColor];
