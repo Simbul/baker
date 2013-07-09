@@ -170,19 +170,19 @@
 {
     #ifdef BAKER_NEWSSTAND
     IssuesManager *issuesManager = [IssuesManager sharedInstance];
-    [issuesManager refresh:nil];
-
-    if (contentName) {
-        for (BakerIssue *issue in issuesManager.issues) {
-            if ([issue.ID isEqualToString:contentName]) {
-                [issue download];
-                break;
+    [issuesManager refresh:^(BOOL status) {
+        if (contentName) {
+            for (BakerIssue *issue in issuesManager.issues) {
+                if ([issue.ID isEqualToString:contentName]) {
+                    [issue download];
+                    break;
+                }
             }
+        } else {
+            BakerIssue *targetIssue = [issuesManager.issues objectAtIndex:0];
+            [targetIssue download];
         }
-    } else {
-        BakerIssue *targetIssue = [issuesManager.issues objectAtIndex:0];
-        [targetIssue download];
-    }
+    }];
     #endif
 }
 - (void)applicationWillResignActive:(UIApplication *)application
