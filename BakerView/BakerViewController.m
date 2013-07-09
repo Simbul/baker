@@ -147,7 +147,7 @@
     scrollView.pagingEnabled = YES;
     scrollView.delegate = self;
 
-//    scrollView.scrollEnabled = [book.bakerPageTurnSwipe boolValue];
+    scrollView.scrollEnabled = [book.bakerPageTurnSwipe boolValue];
     scrollView.backgroundColor = [Utils colorWithHexString:book.bakerBackground];
 
     [self.view addSubview:scrollView];
@@ -841,7 +841,7 @@
     else
     {
         if (stackedScrollingAnimations == 0) {
-//            scrollView.scrollEnabled = [book.bakerPageTurnSwipe boolValue]; // YES by default, NO if specified
+            scrollView.scrollEnabled = [book.bakerPageTurnSwipe boolValue]; // YES by default, NO if specified
         }
         currentPageIsLocked = NO;
     }
@@ -984,7 +984,7 @@
     NSLog(@"[BakerView] Swiping to page: %d", page);
 
     if (currentPageNumber != page) {
-        
+
         lastPageNumber = currentPageNumber;
         currentPageNumber = page;
 
@@ -1007,6 +1007,7 @@
 #pragma mark - WEBVIEW
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
 
+    
     // Sent before a web view begins loading content, useful to trigger actions before the WebView.
     NSURL *url = [request URL];
 
@@ -1227,7 +1228,6 @@
 }
 - (void)webViewDidFinishLoad:(UIWebView *)webView {
     NSLog(@"[BakerView] Page did finish load");
-    scrollView.scrollEnabled = YES;
     [self webView:webView setCorrectOrientation:self.interfaceOrientation];
 
     if (webView.hidden == YES)
@@ -1324,8 +1324,7 @@
 #else
         theScriptToExecute = [NSString stringWithFormat:@"var fileref=document.createElement(\"link\"); fileref.setAttribute(\"rel\", \"stylesheet\"); fileref.setAttribute(\"type\", \"text/css\"); fileref.setAttribute(\"href\", \"%@\"); document.getElementsByTagName(\"head\")[0].appendChild(fileref);", @"http://brainfaq.ru/dev/landscape.css"];
 #endif
-    }
-    
+    }    
     else {
         
 #ifndef DEBUG_MODE
@@ -1335,6 +1334,11 @@
 #endif
         
     }
+    
+//    NSString *result = [webView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:@"function f(){ %@ return \"hello\"; } f();", theScriptToExecute]];
+//    NSLog(@"result: '%@'", result);
+//    
+//    [webView stringByEvaluatingJavaScriptFromString:theScriptToExecute];
     
     [webView stringByEvaluatingJavaScriptFromString:theScriptToExecute];
     
@@ -1606,13 +1610,7 @@
     }
 }
 - (void)userDidScroll:(UITouch *)touch {
-//    CGFloat pageWidth = scrollView.frame.size.width;
-    int page = floor((scrollView.contentOffset.x - pageWidth / 2) / pageWidth) + 2;
-//    if (page != currentPageNumber)
-//        scrollView.scrollEnabled = NO;
-    //
-    //    NSLog(@"%i %f", page, scrollView.contentOffset.x);
-    NSLog(@"[BakerView] User scroll %i %f",   page,  scrollView.contentOffset.x);
+    NSLog(@"[BakerView] User scroll");
     [self hideBars:[NSNumber numberWithBool:YES]];
 
     currPage.backgroundColor = webViewBackground;
@@ -1955,12 +1953,6 @@
     } else {
         return NO;
     }
-}
-
-- (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset {
-    
-    NSLog(@"stop!!!!");
-
 }
 
 @end
