@@ -63,6 +63,8 @@
     if (self) {
         NSLog(@"[BakerView] Init book view...");
         self.book = bakerBook;
+        
+        jsHandler.delegate = self;
 
 
         // ****** DEVICE SCREEN BOUNDS
@@ -1138,6 +1140,11 @@
 
                     return NO;
                 }
+                else if ([jsHandler parseJSResponce:[url absoluteString]])
+                {
+                    // Matched laResponce
+                    return YES;
+                }
                 else if (![[url scheme] isEqualToString:@""] && ![[url scheme] isEqualToString:@"http"] && ![[url scheme] isEqualToString:@"https"])
                 {
                     if ([[UIApplication sharedApplication] canOpenURL:url]) {
@@ -1953,6 +1960,13 @@
     } else {
         return NO;
     }
+}
+
+#pragma mark - JS HANDLING
+
+- (void) jsResponseEvent: (JSResponseHandler *) sender
+{
+    NSLog(@"JS event fired");
 }
 
 @end

@@ -36,11 +36,12 @@
 #import "ModalViewController.h"
 #import "BakerBook.h"
 #import "BakerBookStatus.h"
+#import "JSResponseHandler.h"
 
 
 @class Downloader;
 
-@interface BakerViewController : UIViewController <UIWebViewDelegate, UIScrollViewDelegate, MFMailComposeViewControllerDelegate, modalWebViewDelegate> {
+@interface BakerViewController : UIViewController <UIWebViewDelegate, UIScrollViewDelegate, MFMailComposeViewControllerDelegate, modalWebViewDelegate, JSResponseDelegate> {
 
     CGRect screenBounds;
 
@@ -107,6 +108,7 @@
     ModalViewController *myModalViewController;
 
     BakerBookStatus *bookStatus;
+    JSResponseHandler *jsHandler;
 }
 
 #pragma mark - PROPERTIES
@@ -190,5 +192,8 @@
 
 #pragma mark - INDEX VIEW
 - (BOOL)isIndexView:(UIWebView *)webView;
+
+#pragma mark - JS HANDLING
+- (void) jsResponseEvent: (JSResponseHandler *) sender;
 
 @end
