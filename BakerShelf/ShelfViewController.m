@@ -41,6 +41,10 @@
 #import "Utils.h"
 
 @implementation ShelfViewController
+{
+    __weak UIPopoverController *infoPopover;
+}
+
 
 @synthesize issues;
 @synthesize issueViewControllers;
@@ -214,6 +218,15 @@
     }
     self.navigationItem.leftBarButtonItems = buttonItems;
     #endif
+    
+    UIBarButtonItem *infoButton = [[[UIBarButtonItem alloc]
+                                    initWithTitle: NSLocalizedString(@"INFO_BUTTON_TEXT", nil)
+                                    style:UIBarButtonItemStylePlain
+                                    target:self
+                                    action:@selector(handleInfoButtonPressed:)]
+                                   autorelease];
+    // Remove this line if you don't want the info button to be added to the shelf navigation bar.
+    self.navigationItem.rightBarButtonItem = infoButton;
 }
 - (void)viewDidAppear:(BOOL)animated
 {
@@ -406,6 +419,44 @@
 }
 
 #pragma mark - Store Kit
+- (void)handleInfoButtonPressed:(id)sender {
+    
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+    {
+        if ([infoPopover isPopoverVisible])
+        {
+            [infoPopover dismissPopoverAnimated:YES];
+            return;
+        }
+    }
+    
+    UIViewController *popoverContent = [[UIViewController alloc] init];
+    UIWebView *popoverView = [[UIWebView alloc] init];
+    popoverView.backgroundColor = [UIColor blackColor];
+    popoverContent.view = popoverView;
+    
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"info" ofType:@"html"];
+    NSFileHandle *readHandle = [NSFileHandle fileHandleForReadingAtPath:path];
+    NSString *htmlString = [[NSString alloc] initWithData:[readHandle readDataToEndOfFile] encoding:NSUTF8StringEncoding];
+    NSURL *mainBundleURL = [NSURL fileURLWithPath:[[NSBundle mainBundle] bundlePath]];
+    [popoverView loadHTMLString:htmlString baseURL:mainBundleURL];
+    
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+    {
+        infoPopover = [[UIPopoverController alloc] initWithContentViewController:popoverContent];
+        [infoPopover presentPopoverFromBarButtonItem:sender
+                            permittedArrowDirections:UIPopoverArrowDirectionUp
+                                            animated:YES];
+    }
+    else {
+        [self.navigationController pushViewController:popoverContent animated:YES];
+    }
+    
+    [htmlString release];
+    [popoverView release];
+    [popoverContent release];
+}
+
 
 - (void)handleSubscribeButtonPressed:(NSNotification *)notification {
     if (subscriptionsActionSheet.visible) {
