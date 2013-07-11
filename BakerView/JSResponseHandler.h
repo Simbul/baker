@@ -8,15 +8,23 @@
 
 #import <Foundation/Foundation.h>
 
+typedef NS_ENUM(NSUInteger, PageRelPos) {
+    pPrev,
+    pCurr,
+    pNext
+};
+
 @class JSResponseHandler;
 @protocol JSResponseDelegate
-- (void) jsResponseEvent: (JSResponseHandler *) sender;
+- (void) jsResponseEvent: (JSResponseHandler *) sender
+                 inPage :(PageRelPos)pagePos;
 @end
 
 @interface JSResponseHandler : NSObject
 
-@property (nonatomic) id <JSResponseDelegate> delegate;
+@property (assign, nonatomic) id <JSResponseDelegate> delegate;
 
-- (BOOL)parseJSResponce : (NSString*) response;
+- (BOOL)parseJSResponse : (NSString*) response
+                forPage :(PageRelPos)pagePos;
 
 @end

@@ -10,30 +10,20 @@
 
 @implementation JSResponseHandler
 
-- (BOOL)parseJSResponce : (NSString*) response
+- (BOOL)parseJSResponse : (NSString*) response
+                forPage : (PageRelPos)pagePos
 {
-//    responce from
-//    function ObjCAlert() {
-//        document.location = "laResponse:event:event_from_JS";
-//    };
+//    response from
+//        document.location = "laresponse:event:event_from_js";
     NSArray *components = [response componentsSeparatedByString:@":"];
     if (components.count) {
-        if ([[components objectAtIndex:0] isEqualToString:@"laResponse"]) {
-            if ([[components objectAtIndex:1] isEqualToString:@"event"]) {
-                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Objective-C Alert"
-                                                                message:[components objectAtIndex:2]
-                                                               delegate:self
-                                                      cancelButtonTitle:@"OK"
-                                                      otherButtonTitles:nil];
-                [alert show];
-            }
-            
-            [self.delegate jsResponseEvent:self];
-            return NO;
+        if ([[components objectAtIndex:0] isEqualToString:@"laresponse"]) {
+            [self.delegate jsResponseEvent:self inPage:pagePos];
+            return YES;
         }
     }
     
-    return YES;
+    return NO;
 }
 
 @end

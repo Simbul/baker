@@ -195,5 +195,6 @@
 
 #pragma mark - JS HANDLING
 - (void) jsResponseEvent: (JSResponseHandler *) sender;
+- (void) injectHandlerInJS:(UIWebView*) webView;
 
 @end

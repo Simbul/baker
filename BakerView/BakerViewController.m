@@ -64,6 +64,7 @@
         NSLog(@"[BakerView] Init book view...");
         self.book = bakerBook;
         
+        jsHandler = [[JSResponseHandler alloc] init];
         jsHandler.delegate = self;
 
 
@@ -1013,6 +1014,24 @@
     // Sent before a web view begins loading content, useful to trigger actions before the WebView.
     NSURL *url = [request URL];
 
+    PageRelPos pagePos;
+    if ([webView isEqual:prevPage])
+    {
+        pagePos = pPrev;
+    }
+    else if ([webView isEqual:currPage])
+    {
+        pagePos = pCurr;
+    }
+    else {
+        pagePos = pNext;
+    }
+    if ([jsHandler parseJSResponse:[url absoluteString] forPage:pagePos])
+    {
+        // Matched laResponse
+        return NO;
+    }
+    
     if ([webView isEqual:prevPage])
     {
         NSLog(@"[BakerView]     Page is prev page --> load page");
@@ -1139,11 +1158,6 @@
                     }
 
                     return NO;
-                }
-                else if ([jsHandler parseJSResponce:[url absoluteString]])
-                {
-                    // Matched laResponce
-                    return YES;
                 }
                 else if (![[url scheme] isEqualToString:@""] && ![[url scheme] isEqualToString:@"http"] && ![[url scheme] isEqualToString:@"https"])
                 {
@@ -1339,7 +1353,6 @@
 #else
         theScriptToExecute = [NSString stringWithFormat:@"var fileref=document.createElement(\"link\"); fileref.setAttribute(\"rel\", \"stylesheet\"); fileref.setAttribute(\"type\", \"text/css\"); fileref.setAttribute(\"href\", \"%@\"); document.getElementsByTagName(\"head\")[0].appendChild(fileref);", @"http://brainfaq.ru/dev/portrait.css"];
 #endif
-        
     }
     
 //    NSString *result = [webView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:@"function f(){ %@ return \"hello\"; } f();", theScriptToExecute]];
@@ -1347,8 +1360,8 @@
 //    
 //    [webView stringByEvaluatingJavaScriptFromString:theScriptToExecute];
     
+    [self injectHandlerInJS:webView];
     [webView stringByEvaluatingJavaScriptFromString:theScriptToExecute];
-    
 }
 
 - (void)webView:(UIWebView *)webView setCorrectOrientation:(UIInterfaceOrientation)interfaceOrientation {
@@ -1919,6 +1932,7 @@
     [prevPage release];
 
     [webViewBackground release];
+    [jsHandler release];
 
     [super dealloc];
 }
@@ -1965,8 +1979,50 @@
 #pragma mark - JS HANDLING
 
 - (void) jsResponseEvent: (JSResponseHandler *) sender
+                 inPage : (PageRelPos)pagePos
 {
-    NSLog(@"JS event fired");
+    NSLog(@"JS event fired in webView %d", pagePos);
 }
 
+- (void) injectHandlerInJS:(UIWebView*) webView
+{
+//    NSString *result = [webView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:
+//                                                                        @"link.onload = function () {"
+//                                                                        "       document.location = \"laresponse:event:event_from_js\";"
+//                                                                        "}"
+//                                                                        ]];
+//    NSString *result2 = [webView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:
+//                                                                         @"if (link.addEventListener) {"
+//                                                                         "  link.addEventListener('load', function() { "
+//                                                                         "      document.location = \"laresponse:event:event_from_js\";"
+//                                                                         "  }, false);"
+//                                                                         "}"
+//                                                                        ]];
+//    NSString *result3 = [webView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:
+//                                                                         @"link.onreadystatechange = function() {"
+//                                                                         "    var state = link.readyState;"
+//                                                                         "    if (state === 'loaded' || state === 'complete') {"
+//                                                                         "      link.onreadystatechange = null;"
+//                                                                         "      document.location = \"laresponse:event:event_from_js\";"
+//                                                                         "    }"
+//                                                                         "};"
+//                                                                         ]];
+    NSString *result4 = [webView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:
+                                                                         @"var cssnum = document.styleSheets.length;                  "
+                                                                         "var ti = setInterval(function() {                          "
+                                                                         "    if (document.styleSheets.length > cssnum) {            "
+                                                                         "        document.location = \"laresponse:event:event_from_js\"; "
+                                                                         "        clearInterval(ti);                                 "
+                                                                         "    }                                                      "
+                                                                         "}, 10);                                                    "
+                                                                         ]];
+//    NSString *result5 = [webView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:
+//                                                                         @"var img = document.createElement('img');  "
+//                                                                         "img.onerror = function(){                  "
+//                                                                         "    document.location = \"laresponse:event:event_from_js\";       "
+//                                                                         "}                                          "
+//                                                                         "img.src = url;                             "
+//                                                                         ]];
+
+}
 @end
