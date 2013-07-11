@@ -16,8 +16,10 @@ typedef NS_ENUM(NSUInteger, PageRelPos) {
 
 @class JSResponseHandler;
 @protocol JSResponseDelegate
-- (void) jsResponseEvent: (JSResponseHandler *) sender
+- (void) styleSheetUpdated: (JSResponseHandler *) sender
                  inPage :(PageRelPos)pagePos;
+- (void) pageFinishedLoading: (JSResponseHandler *) sender
+                   inPage :(PageRelPos)pagePos;
 @end
 
 @interface JSResponseHandler : NSObject

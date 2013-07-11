@@ -1978,10 +1978,16 @@
 
 #pragma mark - JS HANDLING
 
-- (void) jsResponseEvent: (JSResponseHandler *) sender
+- (void) styleSheetUpdated: (JSResponseHandler *) sender
                  inPage : (PageRelPos)pagePos
 {
-    NSLog(@"JS event fired in webView %d", pagePos);
+    NSLog(@"[BakerView] Stylesheet updated in page %d", pagePos);
+}
+
+- (void) pageFinishedLoading:(JSResponseHandler *)sender
+                      inPage:(PageRelPos)pagePos
+{
+    NSLog(@"[BakerView] Page %d finished loading", pagePos);
 }
 
 - (void) injectHandlerInJS:(UIWebView*) webView
@@ -2011,11 +2017,16 @@
                                                                          @"var cssnum = document.styleSheets.length;                  "
                                                                          "var ti = setInterval(function() {                          "
                                                                          "    if (document.styleSheets.length > cssnum) {            "
-                                                                         "        document.location = \"laresponse:event:event_from_js\"; "
+                                                                         "        document.location = \"laresponse:event:css_updated\"; "
                                                                          "        clearInterval(ti);                                 "
                                                                          "    }                                                      "
                                                                          "}, 10);                                                    "
                                                                          ]];
+    NSString *result = [webView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:
+                                                                        @"document.onload = function () {"
+                                                                        "       document.location = \"laresponse:event:page_loaded\";"
+                                                                        "}"
+                                                                        ]];
 //    NSString *result5 = [webView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:
 //                                                                         @"var img = document.createElement('img');  "
 //                                                                         "img.onerror = function(){                  "

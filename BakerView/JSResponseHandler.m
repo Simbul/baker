@@ -18,7 +18,14 @@
     NSArray *components = [response componentsSeparatedByString:@":"];
     if (components.count) {
         if ([[components objectAtIndex:0] isEqualToString:@"laresponse"]) {
-            [self.delegate jsResponseEvent:self inPage:pagePos];
+            if ([[components objectAtIndex:2] isEqualToString:@"css_updated"])
+            {
+                [self.delegate styleSheetUpdated:self inPage:pagePos];
+            }
+            if ([[components objectAtIndex:2] isEqualToString:@"page_loaded"])
+            {
+                [self.delegate pageFinishedLoading:self inPage:pagePos];
+            }
             return YES;
         }
     }
