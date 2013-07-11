@@ -52,6 +52,16 @@
         #define NEWSSTAND_MANIFEST_URL @"http://bakerframework.com/demo/shelf.json"
 
         // ----------------------------------------------------------------------------------------------------
+        // Optional - This redefinition means you can have separate publication records for testing and
+        // production. This is useful for when you've already published your app, but want to
+        // test a new issue on your device before releasing it to everyone else.
+        // It will require you setting up an alternative JSON file on your server.
+        #ifdef DEBUG
+            #undef NEWSSTAND_MANIFEST_URL
+            #define NEWSSTAND_MANIFEST_URL @"http://bakerframework.com/testing/shelf.json"
+        #endif
+
+        // ----------------------------------------------------------------------------------------------------
         // Optional - This constant specifies the URL to ping back when a user purchases an issue or a subscription.
         // For more information, see: https://github.com/Simbul/baker/wiki/Baker-Server-API
         // E.g. @"http://example.com/purchased"
