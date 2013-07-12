@@ -1,0 +1,50 @@
+@font-face {
+    font-style: normal;
+    text-align: justify;
+    font-family:"Charter" ;
+    font-weight: normal;
+    src: url(CharterITC.otf);}
+    
+    @font-face {
+        font-style: italic;
+        text-align: justify;
+        font-family:"Charter" ;
+        font-weight: normal;
+        src: url(CharterITC.otf);}
+	
+    @font-face {
+        font-style: normal;
+        font-family:"Charter";
+        font-weight: bold;
+        src: url(CharterITC.otf);}
+    
+    @font-face {
+        font-style:  italic;
+        font-family:"Charter";
+        font-weight: bold;
+        src: url(CharterITC.otf);}
+    
+        body {
+            width: 700px !important;
+            height: 900px !important;
+            text-align: justify;
+
+            -webkit-column-width: 700px;
+            position: absolute;
+            margin-left: 34px !important;
+            margin-right: 34px !important;
+            -webkit-column-gap: 68px;
+            font-family :   "Charter" !important;
+            font-size   :   100%;
+
+            color:#000000;
+            background-color:#FFFFFF;
+
+        }
+
+        body img {
+            max-height: 980px !important;
+            display: block !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+        }

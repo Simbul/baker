@@ -7,7 +7,17 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1E13B4B1178B00160079A6A2 /* landscape.css in Resources */ = {isa = PBXBuildFile; fileRef = 1E13B4AF178B00160079A6A2 /* landscape.css */; };
+		1E13B4B2178B00160079A6A2 /* portrait.css in Resources */ = {isa = PBXBuildFile; fileRef = 1E13B4B0178B00160079A6A2 /* portrait.css */; };
+		1E13B4BA178B00400079A6A2 /* CharterITC Bold Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 1E13B4B4178B00400079A6A2 /* CharterITC Bold Italic.otf */; };
+		1E13B4BB178B00400079A6A2 /* CharterITC Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 1E13B4B5178B00400079A6A2 /* CharterITC Bold.otf */; };
+		1E13B4BC178B00400079A6A2 /* CharterITC Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 1E13B4B6178B00400079A6A2 /* CharterITC Italic.otf */; };
+		1E13B4BD178B00400079A6A2 /* CharterITC.otf in Resources */ = {isa = PBXBuildFile; fileRef = 1E13B4B7178B00400079A6A2 /* CharterITC.otf */; };
+		1E13B4BE178B00400079A6A2 /* CharterITCBlack Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 1E13B4B8178B00400079A6A2 /* CharterITCBlack Italic.otf */; };
+		1E13B4BF178B00400079A6A2 /* CharterITCBlack.otf in Resources */ = {isa = PBXBuildFile; fileRef = 1E13B4B9178B00400079A6A2 /* CharterITCBlack.otf */; };
 		20CC551D16AD346900DEFB5C /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 20CC551F16AD346900DEFB5C /* Localizable.strings */; };
+		7852A68C17902AF400364B6D /* JS in Resources */ = {isa = PBXBuildFile; fileRef = 7852A68B17902AF400364B6D /* JS */; };
+		78A7E1B6178DC5DE00FA93BA /* JSResponseHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 78A7E1B5178DC5DE00FA93BA /* JSResponseHandler.m */; };
 		9F1FC71316500A47002C8277 /* navigation-bar-bg.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F1FC71116500A47002C8277 /* navigation-bar-bg.png */; };
 		9F1FC71416500A47002C8277 /* navigation-bar-bg@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F1FC71216500A47002C8277 /* navigation-bar-bg@2x.png */; };
 		9F1FC7171650102C002C8277 /* shelf-bg-landscape-568h.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F1FC7151650102C002C8277 /* shelf-bg-landscape-568h.png */; };
@@ -76,7 +86,18 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1E13B4AF178B00160079A6A2 /* landscape.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = landscape.css; sourceTree = "<group>"; };
+		1E13B4B0178B00160079A6A2 /* portrait.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = portrait.css; sourceTree = "<group>"; };
+		1E13B4B4178B00400079A6A2 /* CharterITC Bold Italic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "CharterITC Bold Italic.otf"; sourceTree = "<group>"; };
+		1E13B4B5178B00400079A6A2 /* CharterITC Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "CharterITC Bold.otf"; sourceTree = "<group>"; };
+		1E13B4B6178B00400079A6A2 /* CharterITC Italic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "CharterITC Italic.otf"; sourceTree = "<group>"; };
+		1E13B4B7178B00400079A6A2 /* CharterITC.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = CharterITC.otf; sourceTree = "<group>"; };
+		1E13B4B8178B00400079A6A2 /* CharterITCBlack Italic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "CharterITCBlack Italic.otf"; sourceTree = "<group>"; };
+		1E13B4B9178B00400079A6A2 /* CharterITCBlack.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = CharterITCBlack.otf; sourceTree = "<group>"; };
 		20CC551E16AD346900DEFB5C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		7852A68B17902AF400364B6D /* JS */ = {isa = PBXFileReference; lastKnownFileType = folder; name = JS; path = ../JS; sourceTree = "<group>"; };
+		78A7E1B4178DC5DE00FA93BA /* JSResponseHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSResponseHandler.h; sourceTree = "<group>"; };
+		78A7E1B5178DC5DE00FA93BA /* JSResponseHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSResponseHandler.m; sourceTree = "<group>"; };
 		9F1FC71116500A47002C8277 /* navigation-bar-bg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "navigation-bar-bg.png"; sourceTree = "<group>"; };
 		9F1FC71216500A47002C8277 /* navigation-bar-bg@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "navigation-bar-bg@2x.png"; sourceTree = "<group>"; };
 		9F1FC7151650102C002C8277 /* shelf-bg-landscape-568h.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "shelf-bg-landscape-568h.png"; sourceTree = "<group>"; };
@@ -204,6 +225,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1E13B4B3178B00400079A6A2 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				1E13B4B4178B00400079A6A2 /* CharterITC Bold Italic.otf */,
+				1E13B4B5178B00400079A6A2 /* CharterITC Bold.otf */,
+				1E13B4B6178B00400079A6A2 /* CharterITC Italic.otf */,
+				1E13B4B7178B00400079A6A2 /* CharterITC.otf */,
+				1E13B4B8178B00400079A6A2 /* CharterITCBlack Italic.otf */,
+				1E13B4B9178B00400079A6A2 /* CharterITCBlack.otf */,
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
 		9F58D85E15D6743C0027902C /* img */ = {
 			isa = PBXGroup;
 			children = (
@@ -254,6 +288,8 @@
 				9F8FC1C315C55E8C0065F0A3 /* BakerBook.m */,
 				AB26004F16011D9D00E9AA66 /* BakerBookStatus.h */,
 				AB26005016011D9D00E9AA66 /* BakerBookStatus.m */,
+				78A7E1B4178DC5DE00FA93BA /* JSResponseHandler.h */,
+				78A7E1B5178DC5DE00FA93BA /* JSResponseHandler.m */,
 				AB40042A15B4B83000D87E2A /* BakerViewController.h */,
 				AB40042B15B4B83000D87E2A /* BakerViewController.m */,
 				AB40043315B4B83000D87E2A /* IndexViewController.h */,
@@ -399,6 +435,10 @@
 		ABAFB59215AB9A2E002FA498 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				7852A68B17902AF400364B6D /* JS */,
+				1E13B4B3178B00400079A6A2 /* Fonts */,
+				1E13B4AF178B00160079A6A2 /* landscape.css */,
+				1E13B4B0178B00160079A6A2 /* portrait.css */,
 				20CC551F16AD346900DEFB5C /* Localizable.strings */,
 				BF3CCC9D15D080560087B9CA /* icon */,
 				ABAFB59315AB9A2E002FA498 /* Baker-Info.plist */,
@@ -492,6 +532,15 @@
 				9F1FC7171650102C002C8277 /* shelf-bg-landscape-568h.png in Resources */,
 				9F1FC7181650102C002C8277 /* shelf-bg-portrait-568h.png in Resources */,
 				20CC551D16AD346900DEFB5C /* Localizable.strings in Resources */,
+				1E13B4B1178B00160079A6A2 /* landscape.css in Resources */,
+				1E13B4B2178B00160079A6A2 /* portrait.css in Resources */,
+				1E13B4BA178B00400079A6A2 /* CharterITC Bold Italic.otf in Resources */,
+				1E13B4BB178B00400079A6A2 /* CharterITC Bold.otf in Resources */,
+				1E13B4BC178B00400079A6A2 /* CharterITC Italic.otf in Resources */,
+				1E13B4BD178B00400079A6A2 /* CharterITC.otf in Resources */,
+				1E13B4BE178B00400079A6A2 /* CharterITCBlack Italic.otf in Resources */,
+				1E13B4BF178B00400079A6A2 /* CharterITCBlack.otf in Resources */,
+				7852A68C17902AF400364B6D /* JS in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -535,6 +584,7 @@
 				ABADF3F916C7BAD900F52F3C /* NSURL+Extensions.m in Sources */,
 				AB67F5BA16EE99B2005A04F6 /* Reachability.m in Sources */,
 				ABF23B1D1708418E003AA3B0 /* BakerAPI.m in Sources */,
+				78A7E1B6178DC5DE00FA93BA /* JSResponseHandler.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -611,7 +661,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Baker/Baker-Prefix.pch";
 				INFOPLIST_FILE = "Baker/Baker-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = 2;
 				WRAPPER_EXTENSION = app;
@@ -624,7 +674,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Baker/Baker-Prefix.pch";
 				INFOPLIST_FILE = "Baker/Baker-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = 2;
 				WRAPPER_EXTENSION = app;
