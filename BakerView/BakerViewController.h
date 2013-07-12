@@ -109,6 +109,7 @@
 
     BakerBookStatus *bookStatus;
     JSResponseHandler *jsHandler;
+    int fixedParagraph;
 }
 
 #pragma mark - PROPERTIES
@@ -196,5 +197,9 @@
 #pragma mark - JS HANDLING
 - (void) jsResponseEvent: (JSResponseHandler *) sender;
 - (void) injectHandlerInJS:(UIWebView*) webView;
+- (int) getCurrentParagraph:(UIWebView*)webView;
+- (void) moveViewOffset: (UIWebView*) webView
+          inScrollView: (UIScrollView*) scroll
+           toParagraph: (int) paragraphNo;
 
 @end

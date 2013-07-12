@@ -66,6 +66,7 @@
         
         jsHandler = [[JSResponseHandler alloc] init];
         jsHandler.delegate = self;
+        fixedParagraph = -1;
 
 
         // ****** DEVICE SCREEN BOUNDS
@@ -150,7 +151,7 @@
     scrollView.pagingEnabled = YES;
     scrollView.delegate = self;
 
-    scrollView.scrollEnabled = [book.bakerPageTurnSwipe boolValue];
+//    scrollView.scrollEnabled = [book.bakerPageTurnSwipe boolValue];
     scrollView.backgroundColor = [Utils colorWithHexString:book.bakerBackground];
 
     [self.view addSubview:scrollView];
@@ -844,7 +845,7 @@
     else
     {
         if (stackedScrollingAnimations == 0) {
-            scrollView.scrollEnabled = [book.bakerPageTurnSwipe boolValue]; // YES by default, NO if specified
+//            scrollView.scrollEnabled = [book.bakerPageTurnSwipe boolValue]; // YES by default, NO if specified
         }
         currentPageIsLocked = NO;
     }
@@ -1005,6 +1006,16 @@
         NSLog(@"[BakerView]     Scroll enabled");
         scroll.scrollEnabled = [book.bakerPageTurnSwipe boolValue]; // YES by default, NO if specified
     }
+}
+
+- (void) scrollViewDidScroll:(UIScrollView *)theScrollView
+{
+    
+    int page = theScrollView.contentOffset.x / pageWidth + 1;
+    
+    if (page != currentPageNumber)
+        theScrollView.scrollEnabled = NO;
+//    NSLog(@"Current page %d and page %d", currentPageNumber, page);
 }
 
 #pragma mark - WEBVIEW
@@ -1338,7 +1349,7 @@
     
     if (isLands) {
 #ifndef DEBUG_MODE
-        theScriptToExecute = [NSString stringWithFormat:@"var fileref=document.createElement(\"link\"); fileref.setAttribute(\"rel\", \"stylesheet\"); fileref.setAttribute(\"type\", \"text/css\"); fileref.setAttribute(\"href\", \"%@\"); document.getElementsByTagName(\"head\")[0].appendChild(fileref);", [[NSBundle mainBundle] pathForResource:@"landscape" ofType:@"css"]];
+        theScriptToExecute = [NSString stringWithFormat:@"var fileref=document.createElement(\"link\"); fileref.setAttribute(\"rel\", \"stylesheet\"); fileref.setAttribute(\"type\", \"text/css\"); fileref.setAttribute(\"href\", \"%@\"); document.getElementsByTagName(\"head\")[0].appendChild(fileref);css", [[NSBundle mainBundle] pathForResource:@"landscape" ofType:@"css"]];
         
         //        NSString *secondScript = @"document.addEventListener('WebViewJavascriptBridgeReady', function onBridgeReady(event) {    var bridge = event.bridge    bridge.init(function(message, responseCallback) {        alert('Received message: ' + message)           if (responseCallback) {            responseCallback(\"Right back atcha\")        }    })    bridge.send('Hello from the javascript')    bridge.send('Please respond to this', function responseCallback(responseData) {        console.log(\"Javascript got its response\", responseData)    })}, false)";
         
@@ -1359,6 +1370,12 @@
 //    NSLog(@"result: '%@'", result);
 //    
 //    [webView stringByEvaluatingJavaScriptFromString:theScriptToExecute];
+    
+    if([webView isEqual:currPage])
+    {
+        fixedParagraph = [self getCurrentParagraph:webView];
+        NSLog(@"[JS Testing] current paragraph:%i",fixedParagraph);
+    }
     
     [self injectHandlerInJS:webView];
     [webView stringByEvaluatingJavaScriptFromString:theScriptToExecute];
@@ -1630,7 +1647,7 @@
     }
 }
 - (void)userDidScroll:(UITouch *)touch {
-    NSLog(@"[BakerView] User scroll");
+    //NSLog(@"[BakerView] User scroll");
     [self hideBars:[NSNumber numberWithBool:YES]];
 
     currPage.backgroundColor = webViewBackground;
@@ -1982,6 +1999,15 @@
                  inPage : (PageRelPos)pagePos
 {
     NSLog(@"[BakerView] Stylesheet updated in page %d", pagePos);
+    
+    if (fixedParagraph >= 0 && pagePos == pCurr)
+    {
+        [self moveViewOffset:currPage inScrollView:currPage.scrollView toParagraph:fixedParagraph];
+    }
+    if (pagePos == pNext || pagePos == pPrev)
+    {
+        scrollView.scrollEnabled = YES;
+    }
 }
 
 - (void) pageFinishedLoading:(JSResponseHandler *)sender
@@ -1992,48 +2018,42 @@
 
 - (void) injectHandlerInJS:(UIWebView*) webView
 {
-//    NSString *result = [webView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:
-//                                                                        @"link.onload = function () {"
-//                                                                        "       document.location = \"laresponse:event:event_from_js\";"
-//                                                                        "}"
-//                                                                        ]];
-//    NSString *result2 = [webView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:
-//                                                                         @"if (link.addEventListener) {"
-//                                                                         "  link.addEventListener('load', function() { "
-//                                                                         "      document.location = \"laresponse:event:event_from_js\";"
-//                                                                         "  }, false);"
-//                                                                         "}"
-//                                                                        ]];
-//    NSString *result3 = [webView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:
-//                                                                         @"link.onreadystatechange = function() {"
-//                                                                         "    var state = link.readyState;"
-//                                                                         "    if (state === 'loaded' || state === 'complete') {"
-//                                                                         "      link.onreadystatechange = null;"
-//                                                                         "      document.location = \"laresponse:event:event_from_js\";"
-//                                                                         "    }"
-//                                                                         "};"
-//                                                                         ]];
-    NSString *result4 = [webView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:
-                                                                         @"var cssnum = document.styleSheets.length;                  "
-                                                                         "var ti = setInterval(function() {                          "
-                                                                         "    if (document.styleSheets.length > cssnum) {            "
-                                                                         "        document.location = \"laresponse:event:css_updated\"; "
-                                                                         "        clearInterval(ti);                                 "
-                                                                         "    }                                                      "
-                                                                         "}, 10);                                                    "
-                                                                         ]];
-    NSString *result = [webView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:
-                                                                        @"document.onload = function () {"
-                                                                        "       document.location = \"laresponse:event:page_loaded\";"
-                                                                        "}"
-                                                                        ]];
-//    NSString *result5 = [webView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:
-//                                                                         @"var img = document.createElement('img');  "
-//                                                                         "img.onerror = function(){                  "
-//                                                                         "    document.location = \"laresponse:event:event_from_js\";       "
-//                                                                         "}                                          "
-//                                                                         "img.src = url;                             "
-//                                                                         ]];
+    NSString* scriptPath = [[NSBundle mainBundle] pathForResource:@"updateCssEvent"
+                                                           ofType:@"js"
+                                                      inDirectory:@"JS"];
+    NSString* scriptUpdate = [NSString stringWithContentsOfFile:scriptPath
+                                                 encoding:NSUTF8StringEncoding
+                                                    error:NULL];
+    [webView stringByEvaluatingJavaScriptFromString:scriptUpdate];
+}
 
+- (int) getCurrentParagraph:(UIWebView*)webView
+{
+    NSString* scriptPath = [[NSBundle mainBundle] pathForResource:@"getTopElem"
+                                                           ofType:@"js"
+                                                      inDirectory:@"JS"];
+    NSString* script = [NSString stringWithContentsOfFile:scriptPath
+                                                  encoding:NSUTF8StringEncoding
+                                                     error:NULL];
+    NSString* result = [webView stringByEvaluatingJavaScriptFromString:script];
+    return [result intValue];
+}
+
+- (void) moveViewOffset: (UIWebView*) webview
+          inScrollView: (UIScrollView*) scroll
+           toParagraph: (int) paragraphNo
+{
+    if (paragraphNo < 0)
+        return;
+    NSString* scriptPath = [[NSBundle mainBundle] pathForResource:@"moveToParagraph"
+                                                           ofType:@"js"
+                                                      inDirectory:@"JS"];
+    NSString* script = [NSString stringWithContentsOfFile:scriptPath
+                                                 encoding:NSUTF8StringEncoding
+                                                    error:NULL];
+    NSString* paragraphOffset = [webview stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:script, paragraphNo]];
+    int offset = scroll.frame.size.width * ([paragraphOffset intValue] / (int)scroll.frame.size.width);
+    [scroll setContentOffset:CGPointMake(offset, 0)
+                    animated:NO];
 }
 @end
