@@ -225,8 +225,12 @@
                                     target:self
                                     action:@selector(handleInfoButtonPressed:)]
                                    autorelease];
-    // Remove this line if you don't want the info button to be added to the shelf navigation bar.
-    self.navigationItem.rightBarButtonItem = infoButton;
+
+    // Remove file info.html if you don't want the info button to be added to the shelf navigation bar
+    NSString *infoPath = [[NSBundle mainBundle] pathForResource:@"info" ofType:@"html"];
+    if ([[NSFileManager defaultManager] fileExistsAtPath:infoPath]) {
+        self.navigationItem.rightBarButtonItem = infoButton;
+    }
 }
 - (void)viewDidAppear:(BOOL)animated
 {
