@@ -110,7 +110,7 @@
 }
 
 - (void)productsRequest:(SKProductsRequest *)request didReceiveResponse:(SKProductsResponse *)response {
-    NSLog(@"############ REQUEST RECEIVED RESPONSE %@", response.products);
+    [self logProducts:response.products];
 
     for (NSString *productID in response.invalidProductIdentifiers) {
         NSLog(@"Invalid product identifier: %@", productID);
@@ -126,6 +126,13 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_products_retrieved" object:self userInfo:userInfo];
 
     [request release];
+}
+
+- (void)logProducts:(NSArray *)skProducts {
+    NSLog(@"Received %d products from App Store", [skProducts count]);
+    for (SKProduct *skProduct in skProducts) {
+        NSLog(@"- %@", skProduct.productIdentifier);
+    }
 }
 
 - (void)request:(SKRequest *)request didFailWithError:(NSError *)error {
@@ -237,7 +244,7 @@
 #pragma mark - Payment queue
 
 - (void)paymentQueue:(SKPaymentQueue *)queue updatedTransactions:(NSArray *)transactions {
-    NSLog(@"############ UPDATED TRANSACTIONS %@", transactions);
+    [self logTransactions:transactions];
 
     BOOL isRestoring = NO;
     for(SKPaymentTransaction *transaction in transactions) {
@@ -262,6 +269,29 @@
 
     if (isRestoring) {
         [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_multiple_restores" object:self userInfo:nil];
+    }
+}
+
+- (void)logTransactions:(NSArray *)transactions {
+    NSLog(@"Received %d transactions from App Store", [transactions count]);
+    for(SKPaymentTransaction *transaction in transactions) {
+        switch (transaction.transactionState) {
+            case SKPaymentTransactionStatePurchasing:
+                NSLog(@"- purchasing: %@", transaction.payment.productIdentifier);
+                break;
+            case SKPaymentTransactionStatePurchased:
+                NSLog(@"- purchased: %@", transaction.payment.productIdentifier);
+                break;
+            case SKPaymentTransactionStateFailed:
+                NSLog(@"- failed: %@", transaction.payment.productIdentifier);
+                break;
+            case SKPaymentTransactionStateRestored:
+                NSLog(@"- restored: %@", transaction.payment.productIdentifier);
+                break;
+            default:
+                NSLog(@"- unsupported transaction type: %@", transaction.payment.productIdentifier);
+                break;
+        }
     }
 }
 
