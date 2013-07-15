@@ -41,10 +41,6 @@
 #import "Utils.h"
 
 @implementation ShelfViewController
-{
-    __weak UIPopoverController *infoPopover;
-}
-
 
 @synthesize issues;
 @synthesize issueViewControllers;
