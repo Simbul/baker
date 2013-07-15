@@ -223,7 +223,7 @@
                                    autorelease];
 
     // Remove file info.html if you don't want the info button to be added to the shelf navigation bar
-    NSString *infoPath = [[NSBundle mainBundle] pathForResource:@"info" ofType:@"html"];
+    NSString *infoPath = [[NSBundle mainBundle] pathForResource:@"info" ofType:@"html" inDirectory:@"info"];
     if ([[NSFileManager defaultManager] fileExistsAtPath:infoPath]) {
         self.navigationItem.rightBarButtonItem = infoButton;
     }
@@ -423,6 +423,7 @@
 #pragma mark - Store Kit
 - (void)handleInfoButtonPressed:(id)sender {
     
+    // If the button is pressed when the info box is open, close it
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
     {
         if ([infoPopover isPopoverVisible])
@@ -432,29 +433,30 @@
         }
     }
     
+    // Prepare new view
     UIViewController *popoverContent = [[UIViewController alloc] init];
     UIWebView *popoverView = [[UIWebView alloc] init];
     popoverView.backgroundColor = [UIColor blackColor];
     popoverContent.view = popoverView;
     
-    NSString *path = [[NSBundle mainBundle] pathForResource:@"info" ofType:@"html"];
-    NSFileHandle *readHandle = [NSFileHandle fileHandleForReadingAtPath:path];
-    NSString *htmlString = [[NSString alloc] initWithData:[readHandle readDataToEndOfFile] encoding:NSUTF8StringEncoding];
-    NSURL *mainBundleURL = [NSURL fileURLWithPath:[[NSBundle mainBundle] bundlePath]];
-    [popoverView loadHTMLString:htmlString baseURL:mainBundleURL];
+    // Load HTML file
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"info" ofType:@"html" inDirectory:@"info"];
+    [popoverView loadRequest:[NSURLRequest requestWithURL:[NSURL fileURLWithPath:path]]];
     
+    // Open view
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
     {
+        // On iPad use the UIPopoverController
         infoPopover = [[UIPopoverController alloc] initWithContentViewController:popoverContent];
         [infoPopover presentPopoverFromBarButtonItem:sender
                             permittedArrowDirections:UIPopoverArrowDirectionUp
                                             animated:YES];
     }
     else {
+        // On iPhone push the view controller to the navigation
         [self.navigationController pushViewController:popoverContent animated:YES];
     }
     
-    [htmlString release];
     [popoverView release];
     [popoverContent release];
 }
