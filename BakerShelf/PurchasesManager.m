@@ -362,7 +362,7 @@
 #pragma mark - Subscriptions
 
 - (BOOL)hasSubscriptions {
-    return [FREE_SUBSCRIPTION_PRODUCT_ID length] > 0;
+    return [FREE_SUBSCRIPTION_PRODUCT_ID length] > 0 || [AUTO_RENEWABLE_SUBSCRIPTION_PRODUCT_IDS count] > 0;
 }
 
 #pragma mark - Memory management
