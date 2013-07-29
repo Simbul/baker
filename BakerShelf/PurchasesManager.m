@@ -205,7 +205,7 @@
     }
 }
 
-- (void)retrievePurchasesFor:(NSSet *)productIDs {
+- (void)retrievePurchasesFor:(NSSet *)productIDs withCallback:(void (^)(NSDictionary*))callback {
     BakerAPI *api = [BakerAPI sharedInstance];
 
     if ([api canGetPurchasesJSON]) {
@@ -228,6 +228,8 @@
                     NSLog(@"ERROR: Could not parse response from purchases API call. Received: %@", jsonResponse);
                 }
             }
+
+            callback([NSDictionary dictionaryWithDictionary:_purchases]);
         }];
     }
 }

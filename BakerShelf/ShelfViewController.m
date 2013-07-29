@@ -336,7 +336,9 @@
         if(status) {
             self.issues = issuesManager.issues;
 
-            [purchasesManager retrievePurchasesFor:[issuesManager productIDs]];
+            [purchasesManager retrievePurchasesFor:[issuesManager productIDs] withCallback:^(NSDictionary *purchases) {
+                // noop
+            }];
 
             [shelfStatus load];
             for (BakerIssue *issue in self.issues) {
