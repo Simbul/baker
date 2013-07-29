@@ -159,6 +159,12 @@
     [requestParams setObject:[Utils appID] forKey:@"app_id"];
     [requestParams setObject:[BakerAPI UUID] forKey:@"user_id"];
 
+    #if DEBUG
+        [requestParams setObject:@"debug" forKey:@"environment"];
+    #else
+        [requestParams setObject:@"production" forKey:@"environment"];
+    #endif
+
     NSURL *requestURL = [self replaceParameters:requestParams inURL:url];
     NSMutableURLRequest *request = nil;
 
