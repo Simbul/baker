@@ -76,6 +76,12 @@
     // Let the device know we want to handle Newsstand push notifications
     [application registerForRemoteNotificationTypes:UIRemoteNotificationTypeNewsstandContentAvailability];
 
+#ifdef DEBUG
+    // For debug only... so that you can download multiple issues per day during development
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"NKDontThrottleNewsstandContentNotifications"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+#endif
+
     // Check if the app is runnig in response to a notification
     NSDictionary *payload = [launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
     if (payload) {
@@ -87,11 +93,20 @@
                 backgroundTask = UIBackgroundTaskInvalid;
             }];
 
+            // Credit where credit is due. This semaphore solution found here:
+            // http://stackoverflow.com/a/4326754/2998
+            dispatch_semaphore_t sema = NULL;
+            sema = dispatch_semaphore_create(0);
+
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
                 [self applicationWillHandleNewsstandNotificationOfContent:[payload objectForKey:@"content-name"]];
                 [application endBackgroundTask:backgroundTask];
                 backgroundTask = UIBackgroundTaskInvalid;
+                dispatch_semaphore_signal(sema);
             });
+
+            dispatch_semaphore_wait(sema, DISPATCH_TIME_FOREVER);
+            dispatch_release(sema);
         }
     }
 
@@ -169,19 +184,19 @@
 {
     #ifdef BAKER_NEWSSTAND
     IssuesManager *issuesManager = [IssuesManager sharedInstance];
-    [issuesManager refresh];
-
-    if (contentName) {
-        for (BakerIssue *issue in issuesManager.issues) {
-            if ([issue.ID isEqualToString:contentName]) {
-                [issue download];
-                break;
+    [issuesManager refresh:^(BOOL status) {
+        if (contentName) {
+            for (BakerIssue *issue in issuesManager.issues) {
+                if ([issue.ID isEqualToString:contentName]) {
+                    [issue download];
+                    break;
+                }
             }
+        } else {
+            BakerIssue *targetIssue = [issuesManager.issues objectAtIndex:0];
+            [targetIssue download];
         }
-    } else {
-        BakerIssue *targetIssue = [issuesManager.issues objectAtIndex:0];
-        [targetIssue download];
-    }
+    }];
     #endif
 }
 - (void)applicationWillResignActive:(UIApplication *)application

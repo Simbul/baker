@@ -110,7 +110,7 @@
 }
 
 - (void)productsRequest:(SKProductsRequest *)request didReceiveResponse:(SKProductsResponse *)response {
-    NSLog(@"############ REQUEST RECEIVED RESPONSE %@", response.products);
+    [self logProducts:response.products];
 
     for (NSString *productID in response.invalidProductIdentifiers) {
         NSLog(@"Invalid product identifier: %@", productID);
@@ -126,6 +126,13 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_products_retrieved" object:self userInfo:userInfo];
 
     [request release];
+}
+
+- (void)logProducts:(NSArray *)skProducts {
+    NSLog(@"Received %d products from App Store", [skProducts count]);
+    for (SKProduct *skProduct in skProducts) {
+        NSLog(@"- %@", skProduct.productIdentifier);
+    }
 }
 
 - (void)request:(SKRequest *)request didFailWithError:(NSError *)error {
@@ -198,30 +205,32 @@
     }
 }
 
-- (void)retrievePurchasesFor:(NSSet *)productIDs {
+- (void)retrievePurchasesFor:(NSSet *)productIDs withCallback:(void (^)(NSDictionary*))callback {
     BakerAPI *api = [BakerAPI sharedInstance];
 
     if ([api canGetPurchasesJSON]) {
-        NSData* jsonResponse = [api getPurchasesJSON];
-
-        if (jsonResponse) {
-            NSError* error = nil;
-            NSDictionary *purchasesResponse = [NSJSONSerialization JSONObjectWithData:jsonResponse
-                                                                              options:0
-                                                                                error:&error];
-            // TODO: handle error
-
-            if (purchasesResponse) {
-                NSArray *purchasedIssues = [purchasesResponse objectForKey:@"issues"];
-                self.subscribed = [[purchasesResponse objectForKey:@"subscribed"] boolValue];
-
-                [productIDs enumerateObjectsUsingBlock:^(id obj, BOOL *stop) {
-                    [_purchases setObject:[NSNumber numberWithBool:[purchasedIssues containsObject:obj]] forKey:obj];
-                }];
-            } else {
-                NSLog(@"ERROR: Could not parse response from purchases API call. Received: %@", jsonResponse);
+        [api getPurchasesJSON:^(NSData* jsonResponse) {
+            if (jsonResponse) {
+                NSError* error = nil;
+                NSDictionary *purchasesResponse = [NSJSONSerialization JSONObjectWithData:jsonResponse
+                                                                                  options:0
+                                                                                    error:&error];
+                // TODO: handle error
+                
+                if (purchasesResponse) {
+                    NSArray *purchasedIssues = [purchasesResponse objectForKey:@"issues"];
+                    self.subscribed = [[purchasesResponse objectForKey:@"subscribed"] boolValue];
+                    
+                    [productIDs enumerateObjectsUsingBlock:^(id obj, BOOL *stop) {
+                        [_purchases setObject:[NSNumber numberWithBool:[purchasedIssues containsObject:obj]] forKey:obj];
+                    }];
+                } else {
+                    NSLog(@"ERROR: Could not parse response from purchases API call. Received: %@", jsonResponse);
+                }
             }
-        }
+
+            callback([NSDictionary dictionaryWithDictionary:_purchases]);
+        }];
     }
 }
 
@@ -237,7 +246,7 @@
 #pragma mark - Payment queue
 
 - (void)paymentQueue:(SKPaymentQueue *)queue updatedTransactions:(NSArray *)transactions {
-    NSLog(@"############ UPDATED TRANSACTIONS %@", transactions);
+    [self logTransactions:transactions];
 
     BOOL isRestoring = NO;
     for(SKPaymentTransaction *transaction in transactions) {
@@ -262,6 +271,29 @@
 
     if (isRestoring) {
         [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_multiple_restores" object:self userInfo:nil];
+    }
+}
+
+- (void)logTransactions:(NSArray *)transactions {
+    NSLog(@"Received %d transactions from App Store", [transactions count]);
+    for(SKPaymentTransaction *transaction in transactions) {
+        switch (transaction.transactionState) {
+            case SKPaymentTransactionStatePurchasing:
+                NSLog(@"- purchasing: %@", transaction.payment.productIdentifier);
+                break;
+            case SKPaymentTransactionStatePurchased:
+                NSLog(@"- purchased: %@", transaction.payment.productIdentifier);
+                break;
+            case SKPaymentTransactionStateFailed:
+                NSLog(@"- failed: %@", transaction.payment.productIdentifier);
+                break;
+            case SKPaymentTransactionStateRestored:
+                NSLog(@"- restored: %@", transaction.payment.productIdentifier);
+                break;
+            default:
+                NSLog(@"- unsupported transaction type: %@", transaction.payment.productIdentifier);
+                break;
+        }
     }
 }
 
@@ -332,7 +364,7 @@
 #pragma mark - Subscriptions
 
 - (BOOL)hasSubscriptions {
-    return [FREE_SUBSCRIPTION_PRODUCT_ID length] > 0;
+    return [FREE_SUBSCRIPTION_PRODUCT_ID length] > 0 || [AUTO_RENEWABLE_SUBSCRIPTION_PRODUCT_IDS count] > 0;
 }
 
 #pragma mark - Memory management

@@ -71,6 +71,7 @@
 		ABDC05AF16A4C42A00F6B63D /* JSONStatus.m in Sources */ = {isa = PBXBuildFile; fileRef = ABDC05AE16A4C42A00F6B63D /* JSONStatus.m */; };
 		ABDC05B216A4CB3900F6B63D /* ShelfStatus.m in Sources */ = {isa = PBXBuildFile; fileRef = ABDC05B116A4CB3900F6B63D /* ShelfStatus.m */; };
 		ABF23B1D1708418E003AA3B0 /* BakerAPI.m in Sources */ = {isa = PBXBuildFile; fileRef = ABF23B1C1708418E003AA3B0 /* BakerAPI.m */; };
+		BF0785EB1794AF4000EB988E /* info in Resources */ = {isa = PBXBuildFile; fileRef = BF0785EA1794AF4000EB988E /* info */; };
 		BF3CCCA215D080560087B9CA /* ios-icon-ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = BF3CCC9E15D080560087B9CA /* ios-icon-ipad.png */; };
 		BF3CCCA315D080560087B9CA /* ios-icon-ipad@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BF3CCC9F15D080560087B9CA /* ios-icon-ipad@2x.png */; };
 		BF3CCCA415D080560087B9CA /* ios-icon-iphone.png in Resources */ = {isa = PBXBuildFile; fileRef = BF3CCCA015D080560087B9CA /* ios-icon-iphone.png */; };
@@ -181,6 +182,7 @@
 		ABDC05B116A4CB3900F6B63D /* ShelfStatus.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShelfStatus.m; sourceTree = "<group>"; };
 		ABF23B1B1708418E003AA3B0 /* BakerAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BakerAPI.h; sourceTree = "<group>"; };
 		ABF23B1C1708418E003AA3B0 /* BakerAPI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BakerAPI.m; sourceTree = "<group>"; };
+		BF0785EA1794AF4000EB988E /* info */ = {isa = PBXFileReference; lastKnownFileType = folder; path = info; sourceTree = "<group>"; };
 		BF3CCC9E15D080560087B9CA /* ios-icon-ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ios-icon-ipad.png"; sourceTree = "<group>"; };
 		BF3CCC9F15D080560087B9CA /* ios-icon-ipad@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ios-icon-ipad@2x.png"; sourceTree = "<group>"; };
 		BF3CCCA015D080560087B9CA /* ios-icon-iphone.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ios-icon-iphone.png"; sourceTree = "<group>"; };
@@ -328,6 +330,7 @@
 		AB40047B15B4B8B800D87E2A /* BakerShelf */ = {
 			isa = PBXGroup;
 			children = (
+				BF0785EA1794AF4000EB988E /* info */,
 				AB379313161759A900B4C1A3 /* Constants.h */,
 				AB3496BB1661472A00AEB508 /* UIConstants.h */,
 				9F58D85E15D6743C0027902C /* img */,
@@ -500,6 +503,7 @@
 				20CC551D16AD346900DEFB5C /* Localizable.strings in Resources */,
 				AB40E4F817823BF4007927EF /* navigation-bar-bg-ios6.png in Resources */,
 				AB40E4F917823BF4007927EF /* navigation-bar-bg-ios6@2x.png in Resources */,
+				BF0785EB1794AF4000EB988E /* info in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
