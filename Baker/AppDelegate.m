@@ -171,18 +171,34 @@
 {
     #ifdef BAKER_NEWSSTAND
     IssuesManager *issuesManager = [IssuesManager sharedInstance];
+    PurchasesManager *purchasesManager = [PurchasesManager sharedInstance];
+    __block BakerIssue *targetIssue = nil;
+
     [issuesManager refresh:^(BOOL status) {
         if (contentName) {
             for (BakerIssue *issue in issuesManager.issues) {
                 if ([issue.ID isEqualToString:contentName]) {
-                    [issue download];
+                    targetIssue = issue;
                     break;
                 }
             }
         } else {
-            BakerIssue *targetIssue = [issuesManager.issues objectAtIndex:0];
-            [targetIssue download];
+            targetIssue = [issuesManager.issues objectAtIndex:0];
         }
+
+        [purchasesManager retrievePurchasesFor:[issuesManager productIDs] withCallback:^(NSDictionary *_purchases) {
+
+            NSString *targetStatus = [targetIssue getStatus];
+            NSLog(@"[AppDelegate] Push Notification - Target status: %@", targetStatus);
+
+            if ([targetStatus isEqualToString:@"remote"] || [targetStatus isEqualToString:@"purchased"]) {
+                [targetIssue download];
+            } else if ([targetStatus isEqualToString:@"purchasable"] || [targetStatus isEqualToString:@"unpriced"]) {
+                NSLog(@"[AppDelegate] Push Notification - You are not entitled to download issue '%@', issue not purchased yet", targetIssue.ID);
+            } else if (![targetStatus isEqualToString:@"remote"]) {
+                NSLog(@"[AppDelegate] Push Notification - Issue '%@' in download or already downloaded", targetIssue.ID);
+            }
+        }];
     }];
     #endif
 }
