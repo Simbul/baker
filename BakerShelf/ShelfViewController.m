@@ -336,10 +336,6 @@
         if(status) {
             self.issues = issuesManager.issues;
 
-            [purchasesManager retrievePurchasesFor:[issuesManager productIDs] withCallback:^(NSDictionary *purchases) {
-                // noop
-            }];
-
             [shelfStatus load];
             for (BakerIssue *issue in self.issues) {
                 issue.price = [shelfStatus priceFor:issue.productID];
@@ -350,7 +346,7 @@
                 __block NSMutableArray *discardedControllers = [NSMutableArray array];
                 [self.issueViewControllers enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
                     IssueViewController *ivc = (IssueViewController *)obj;
-                    
+
                     if (![self bakerIssueWithID:ivc.issue.ID]) {
                         [discardedControllers addObject:ivc];
                         [self.gridView deleteItemsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForItem:idx inSection:0]]];
@@ -362,12 +358,11 @@
                 [self.issues enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
                     // NOTE: this block changes the issueViewController array while looping
                     BakerIssue *issue = (BakerIssue *)obj;
-                    
+
                     IssueViewController *existingIvc = [self issueViewControllerWithID:issue.ID];
 
                     if (existingIvc) {
                         existingIvc.issue = issue;
-                        [existingIvc refreshContentWithCache:NO];
                     } else {
                         IssueViewController *newIvc = [self createIssueViewControllerWithIssue:issue];
                         [self.issueViewControllers insertObject:newIvc atIndex:idx];
@@ -377,7 +372,7 @@
 
                 [self.gridView reloadData];
             };
-            
+
             // When first launched, the grid is not initialised, so we can't
             // call in the "batch update" method of the grid view
             if (self.gridView) {
@@ -386,15 +381,22 @@
             else {
                 updateIssues();
             }
-            
+
+            [purchasesManager retrievePurchasesFor:[issuesManager productIDs] withCallback:^(NSDictionary *purchases) {
+                // List of purchases has been returned, so we can refresh all issues
+                [self.issueViewControllers enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+                    [(IssueViewController *)obj refreshContentWithCache:NO];
+                }];
+                [self setrefreshButtonEnabled:YES];
+            }];
+
             [purchasesManager retrievePricesFor:issuesManager.productIDs andEnableFailureNotifications:NO];
-        }
-        else{
+        } else {
             [Utils showAlertWithTitle:NSLocalizedString(@"INTERNET_CONNECTION_UNAVAILABLE_TITLE", nil)
                               message:NSLocalizedString(@"INTERNET_CONNECTION_UNAVAILABLE_MESSAGE", nil)
                           buttonTitle:NSLocalizedString(@"INTERNET_CONNECTION_UNAVAILABLE_CLOSE", nil)];
+            [self setrefreshButtonEnabled:YES];
         }
-        [self setrefreshButtonEnabled:YES];
     }];
 }
 
