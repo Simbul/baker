@@ -64,67 +64,72 @@
 }
 
 #ifdef BAKER_NEWSSTAND
--(BOOL)refresh {
-    NSData *json = [self getShelfJSON];
-
-    if (json) {
-        NSError* error = nil;
-        NSArray* jsonArr = [NSJSONSerialization JSONObjectWithData:json
-                                                           options:0
-                                                             error:&error];
-
-        [self updateNewsstandIssuesList:jsonArr];
-
-        NSMutableArray *tmpIssues = [NSMutableArray array];
-        [jsonArr enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-            BakerIssue *issue = [[[BakerIssue alloc] initWithIssueData:obj] autorelease];
-            [tmpIssues addObject:issue];
-        }];
-
-        self.issues = [tmpIssues sortedArrayUsingComparator:^NSComparisonResult(id a, id b) {
-            NSDate *first = [Utils dateWithFormattedString:[(BakerIssue*)a date]];
-            NSDate *second = [Utils dateWithFormattedString:[(BakerIssue*)b date]];
-            return [second compare:first];
-        }];
-
-        return YES;
-    } else {
-        NSLog(@"[BakerShelf] ERROR: 'shelf.json' is missing. Add URL to 'NEWSSTAND_MANIFEST_URL' in Constants.h");
-        return NO;
-    }
+-(void)refresh:(void (^)(BOOL)) callback {
+    [self getShelfJSON:^(NSData* json) {
+        if (json) {
+            NSError* error = nil;
+            NSArray* jsonArr = [NSJSONSerialization JSONObjectWithData:json
+                                                               options:0
+                                                                 error:&error];
+            
+            [self updateNewsstandIssuesList:jsonArr];
+            
+            NSMutableArray *tmpIssues = [NSMutableArray array];
+            [jsonArr enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+                BakerIssue *issue = [[[BakerIssue alloc] initWithIssueData:obj] autorelease];
+                [tmpIssues addObject:issue];
+            }];
+            
+            self.issues = [tmpIssues sortedArrayUsingComparator:^NSComparisonResult(id a, id b) {
+                NSDate *first = [Utils dateWithFormattedString:[(BakerIssue*)a date]];
+                NSDate *second = [Utils dateWithFormattedString:[(BakerIssue*)b date]];
+                return [second compare:first];
+            }];
+            
+            if (callback) {
+                callback(YES);
+            }
+        }
+        else {
+            if (callback) {
+                callback(NO);
+            }
+        }
+    }];
 }
 
--(NSData *)getShelfJSON {
+-(void)getShelfJSON:(void (^)(NSData*)) callback {
     BakerAPI *api = [BakerAPI sharedInstance];
-    NSData *json = [api getShelfJSON];
-
-    NSError *cachedShelfError = nil;
-
-    if (json) {
-        // Cache the shelf manifest
-        [[NSFileManager defaultManager] createFileAtPath:self.shelfManifestPath contents:nil attributes:nil];
-        [json writeToFile:self.shelfManifestPath
-                  options:NSDataWritingAtomic
-                    error:&cachedShelfError];
-        if (cachedShelfError) {
-            NSLog(@"[BakerShelf] ERROR: Unable to cache 'shelf.json' manifest: %@", cachedShelfError);
-        }
-    } else {
-        // Can't download it... Let's try to load it from previously cached version...
-        if ([[NSFileManager defaultManager] fileExistsAtPath:self.shelfManifestPath]) {
-            NSLog(@"[BakerShelf] Loading cached Shelf manifest from %@", self.shelfManifestPath);
-            json = [NSData dataWithContentsOfFile:self.shelfManifestPath options:NSDataReadingMappedIfSafe error:&cachedShelfError];
+    [api getShelfJSON:^(NSData* json) {
+        NSError *cachedShelfError = nil;
+        
+        if (json) {
+            // Cache the shelf manifest
+            [[NSFileManager defaultManager] createFileAtPath:self.shelfManifestPath contents:nil attributes:nil];
+            NSError* error = nil;
+            [json writeToFile:self.shelfManifestPath
+                      options:NSDataWritingAtomic
+                        error:&error];
             if (cachedShelfError) {
-                NSLog(@"[BakerShelf] Error loading cached copy of 'shelf.json': %@", cachedShelfError);
+                NSLog(@"[BakerShelf] ERROR: Unable to cache 'shelf.json' manifest: %@", cachedShelfError);
             }
         } else {
-            // Not even in cache. Bad luck.
-            NSLog(@"[BakerShelf] No cached 'shelf.json' manifest found at %@", self.shelfManifestPath);
-            json = nil;
+            if ([[NSFileManager defaultManager] fileExistsAtPath:self.shelfManifestPath]) {
+                NSLog(@"[BakerShelf] Loading cached Shelf manifest from %@", self.shelfManifestPath);
+                json = [NSData dataWithContentsOfFile:self.shelfManifestPath options:NSDataReadingMappedIfSafe error:&cachedShelfError];
+                if (cachedShelfError) {
+                    NSLog(@"[BakerShelf] Error loading cached copy of 'shelf.json': %@", cachedShelfError);
+                }
+            } else {
+                NSLog(@"[BakerShelf] No cached 'shelf.json' manifest found at %@", self.shelfManifestPath);
+                json = nil;
+            }
         }
-    }
-
-    return json;
+        
+        if (callback) {
+            callback(json);
+        };
+    }];
 }
 
 -(void)updateNewsstandIssuesList:(NSArray *)issuesList {

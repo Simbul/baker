@@ -6,6 +6,9 @@
 "PRODUCTS_REQUEST_FAILED_TITLE" = "Failure connecting to the App Store";
 "PRODUCTS_REQUEST_FAILED_CLOSE" = "Close";
 
+// Info button
+"INFO_BUTTON_TEXT" = "Info";
+
 // Subscription button
 "SUBSCRIBE_BUTTON_TEXT" = "Subscribe";
 "SUBSCRIBE_BUTTON_DISABLED_TEXT" = "Subscribing...";

@@ -499,8 +499,10 @@
         }
 
         self.issue.transientStatus = BakerIssueTransientStatusNone;
-        [purchasesManager retrievePurchasesFor:[NSSet setWithObject:self.issue.productID]];
-        [self refresh];
+
+        [purchasesManager retrievePurchasesFor:[NSSet setWithObject:self.issue.productID] withCallback:^(NSDictionary *purchases) {
+            [self refresh];
+        }];
     }
 }
 - (void)handleIssuePurchaseFailed:(NSNotification *)notification {

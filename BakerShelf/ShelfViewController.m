@@ -214,6 +214,19 @@
     }
     self.navigationItem.leftBarButtonItems = buttonItems;
     #endif
+    
+    UIBarButtonItem *infoButton = [[[UIBarButtonItem alloc]
+                                    initWithTitle: NSLocalizedString(@"INFO_BUTTON_TEXT", nil)
+                                    style:UIBarButtonItemStylePlain
+                                    target:self
+                                    action:@selector(handleInfoButtonPressed:)]
+                                   autorelease];
+
+    // Remove file info.html if you don't want the info button to be added to the shelf navigation bar
+    NSString *infoPath = [[NSBundle mainBundle] pathForResource:@"info" ofType:@"html" inDirectory:@"info"];
+    if ([[NSFileManager defaultManager] fileExistsAtPath:infoPath]) {
+        self.navigationItem.rightBarButtonItem = infoButton;
+    }
 }
 - (void)viewDidAppear:(BOOL)animated
 {
@@ -319,66 +332,70 @@
 - (void)handleRefresh:(NSNotification *)notification {
     [self setrefreshButtonEnabled:NO];
 
-    if([issuesManager refresh]) {
-        self.issues = issuesManager.issues;
+    [issuesManager refresh:^(BOOL status) {
+        if(status) {
+            self.issues = issuesManager.issues;
 
-        [purchasesManager retrievePurchasesFor:[issuesManager productIDs]];
-
-        [shelfStatus load];
-        for (BakerIssue *issue in self.issues) {
-            issue.price = [shelfStatus priceFor:issue.productID];
-        }
-
-        void (^updateIssues)() = ^{
-            // Step 1: remove controllers for issues that no longer exist
-            __block NSMutableArray *discardedControllers = [NSMutableArray array];
-            [self.issueViewControllers enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-                IssueViewController *ivc = (IssueViewController *)obj;
-                
-                if (![self bakerIssueWithID:ivc.issue.ID]) {
-                    [discardedControllers addObject:ivc];
-                    [self.gridView deleteItemsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForItem:idx inSection:0]]];
-                }
-            }];
-            [self.issueViewControllers removeObjectsInArray:discardedControllers];
-
-            // Step 2: add controllers for issues that did not yet exist (and refresh the ones that do exist)
-            [self.issues enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-                // NOTE: this block changes the issueViewController array while looping
-                BakerIssue *issue = (BakerIssue *)obj;
-                
-                IssueViewController *existingIvc = [self issueViewControllerWithID:issue.ID];
-
-                if (existingIvc) {
-                    existingIvc.issue = issue;
-                    [existingIvc refreshContentWithCache:NO];
-                } else {
-                    IssueViewController *newIvc = [self createIssueViewControllerWithIssue:issue];
-                    [self.issueViewControllers insertObject:newIvc atIndex:idx];
-                    [self.gridView insertItemsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForItem:idx inSection:0] ] ];
-                }
+            [purchasesManager retrievePurchasesFor:[issuesManager productIDs] withCallback:^(NSDictionary *purchases) {
+                // noop
             }];
 
-            [self.gridView reloadData];
-        };
-        
-        // When first launched, the grid is not initialised, so we can't
-        // call in the "batch update" method of the grid view
-        if (self.gridView) {
-            [self.gridView performBatchUpdates:updateIssues completion:nil];
-        }
-        else {
-            updateIssues();
-        }
+            [shelfStatus load];
+            for (BakerIssue *issue in self.issues) {
+                issue.price = [shelfStatus priceFor:issue.productID];
+            }
 
-        [purchasesManager retrievePricesFor:issuesManager.productIDs andEnableFailureNotifications:NO];
-    }
-    else{
-        [Utils showAlertWithTitle:NSLocalizedString(@"INTERNET_CONNECTION_UNAVAILABLE_TITLE", nil)
-                          message:NSLocalizedString(@"INTERNET_CONNECTION_UNAVAILABLE_MESSAGE", nil)
-                      buttonTitle:NSLocalizedString(@"INTERNET_CONNECTION_UNAVAILABLE_CLOSE", nil)];
-    }
-    [self setrefreshButtonEnabled:YES];
+            void (^updateIssues)() = ^{
+                // Step 1: remove controllers for issues that no longer exist
+                __block NSMutableArray *discardedControllers = [NSMutableArray array];
+                [self.issueViewControllers enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+                    IssueViewController *ivc = (IssueViewController *)obj;
+                    
+                    if (![self bakerIssueWithID:ivc.issue.ID]) {
+                        [discardedControllers addObject:ivc];
+                        [self.gridView deleteItemsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForItem:idx inSection:0]]];
+                    }
+                }];
+                [self.issueViewControllers removeObjectsInArray:discardedControllers];
+
+                // Step 2: add controllers for issues that did not yet exist (and refresh the ones that do exist)
+                [self.issues enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+                    // NOTE: this block changes the issueViewController array while looping
+                    BakerIssue *issue = (BakerIssue *)obj;
+                    
+                    IssueViewController *existingIvc = [self issueViewControllerWithID:issue.ID];
+
+                    if (existingIvc) {
+                        existingIvc.issue = issue;
+                        [existingIvc refreshContentWithCache:NO];
+                    } else {
+                        IssueViewController *newIvc = [self createIssueViewControllerWithIssue:issue];
+                        [self.issueViewControllers insertObject:newIvc atIndex:idx];
+                        [self.gridView insertItemsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForItem:idx inSection:0] ] ];
+                    }
+                }];
+
+                [self.gridView reloadData];
+            };
+            
+            // When first launched, the grid is not initialised, so we can't
+            // call in the "batch update" method of the grid view
+            if (self.gridView) {
+                [self.gridView performBatchUpdates:updateIssues completion:nil];
+            }
+            else {
+                updateIssues();
+            }
+            
+            [purchasesManager retrievePricesFor:issuesManager.productIDs andEnableFailureNotifications:NO];
+        }
+        else{
+            [Utils showAlertWithTitle:NSLocalizedString(@"INTERNET_CONNECTION_UNAVAILABLE_TITLE", nil)
+                              message:NSLocalizedString(@"INTERNET_CONNECTION_UNAVAILABLE_MESSAGE", nil)
+                          buttonTitle:NSLocalizedString(@"INTERNET_CONNECTION_UNAVAILABLE_CLOSE", nil)];
+        }
+        [self setrefreshButtonEnabled:YES];
+    }];
 }
 
 - (IssueViewController *)issueViewControllerWithID:(NSString *)ID {
@@ -406,6 +423,46 @@
 }
 
 #pragma mark - Store Kit
+- (void)handleInfoButtonPressed:(id)sender {
+    
+    // If the button is pressed when the info box is open, close it
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+    {
+        if ([infoPopover isPopoverVisible])
+        {
+            [infoPopover dismissPopoverAnimated:YES];
+            return;
+        }
+    }
+    
+    // Prepare new view
+    UIViewController *popoverContent = [[UIViewController alloc] init];
+    UIWebView *popoverView = [[UIWebView alloc] init];
+    popoverView.backgroundColor = [UIColor blackColor];
+    popoverContent.view = popoverView;
+    
+    // Load HTML file
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"info" ofType:@"html" inDirectory:@"info"];
+    [popoverView loadRequest:[NSURLRequest requestWithURL:[NSURL fileURLWithPath:path]]];
+    
+    // Open view
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+    {
+        // On iPad use the UIPopoverController
+        infoPopover = [[UIPopoverController alloc] initWithContentViewController:popoverContent];
+        [infoPopover presentPopoverFromBarButtonItem:sender
+                            permittedArrowDirections:UIPopoverArrowDirectionUp
+                                            animated:YES];
+    }
+    else {
+        // On iPhone push the view controller to the navigation
+        [self.navigationController pushViewController:popoverContent animated:YES];
+    }
+    
+    [popoverView release];
+    [popoverContent release];
+}
+
 
 - (void)handleSubscribeButtonPressed:(NSNotification *)notification {
     if (subscriptionsActionSheet.visible) {
