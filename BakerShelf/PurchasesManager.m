@@ -231,6 +231,8 @@
 
             callback([NSDictionary dictionaryWithDictionary:_purchases]);
         }];
+    } else {
+        callback(nil);
     }
 }
 
