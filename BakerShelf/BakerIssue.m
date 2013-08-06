@@ -181,10 +181,16 @@
 #ifdef BAKER_NEWSSTAND
 - (void)unpackAssetDownload:(NKAssetDownload *)newsstandAssetDownload toURL:(NSURL *)destinationURL {
 
+    UIApplication *application = [UIApplication sharedApplication];
     NKIssue *nkIssue = newsstandAssetDownload.issue;
     NSString *destinationPath = [[nkIssue contentURL] path];
 
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+    __block UIBackgroundTaskIdentifier backgroundTask = [application beginBackgroundTaskWithExpirationHandler:^{
+        [application endBackgroundTask:backgroundTask];
+        backgroundTask = UIBackgroundTaskInvalid;
+    }];
+
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         NSLog(@"[BakerShelf] Newsstand - File is being unzipped to %@", destinationPath);
         BOOL unzipSuccessful = NO;
         unzipSuccessful = [SSZipArchive unzipFileAtPath:[destinationURL path] toDestination:destinationPath];
@@ -192,7 +198,6 @@
             NSLog(@"[BakerShelf] Newsstand - Unable to unzip file: %@. The file may not be a valid HPUB archive.", [destinationURL path]);
             dispatch_async(dispatch_get_main_queue(), ^(void) {
                 [[NSNotificationCenter defaultCenter] postNotificationName:notificationUnzipErrorName object:self userInfo:nil];
-                [self updateNewsstandIcon];
             });
         }
 
@@ -207,9 +212,13 @@
             // Notification and UI update have to be handled on the main thread
             dispatch_async(dispatch_get_main_queue(), ^(void) {
                 [[NSNotificationCenter defaultCenter] postNotificationName:notificationDownloadFinishedName object:self userInfo:nil];
-                [self updateNewsstandIcon];
             });
         }
+
+        [self updateNewsstandIcon];
+
+        [application endBackgroundTask:backgroundTask];
+        backgroundTask = UIBackgroundTaskInvalid;
     });
 }
 - (void)updateNewsstandIcon {
