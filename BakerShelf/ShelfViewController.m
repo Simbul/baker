@@ -425,47 +425,6 @@
 }
 
 #pragma mark - Store Kit
-- (void)handleInfoButtonPressed:(id)sender {
-    
-    // If the button is pressed when the info box is open, close it
-    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
-    {
-        if ([infoPopover isPopoverVisible])
-        {
-            [infoPopover dismissPopoverAnimated:YES];
-            return;
-        }
-    }
-    
-    // Prepare new view
-    UIViewController *popoverContent = [[UIViewController alloc] init];
-    UIWebView *popoverView = [[UIWebView alloc] init];
-    popoverView.backgroundColor = [UIColor blackColor];
-    popoverContent.view = popoverView;
-    
-    // Load HTML file
-    NSString *path = [[NSBundle mainBundle] pathForResource:@"info" ofType:@"html" inDirectory:@"info"];
-    [popoverView loadRequest:[NSURLRequest requestWithURL:[NSURL fileURLWithPath:path]]];
-    
-    // Open view
-    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
-    {
-        // On iPad use the UIPopoverController
-        infoPopover = [[UIPopoverController alloc] initWithContentViewController:popoverContent];
-        [infoPopover presentPopoverFromBarButtonItem:sender
-                            permittedArrowDirections:UIPopoverArrowDirectionUp
-                                            animated:YES];
-    }
-    else {
-        // On iPhone push the view controller to the navigation
-        [self.navigationController pushViewController:popoverContent animated:YES];
-    }
-    
-    [popoverView release];
-    [popoverContent release];
-}
-
-
 - (void)handleSubscribeButtonPressed:(NSNotification *)notification {
     if (subscriptionsActionSheet.visible) {
         [subscriptionsActionSheet dismissWithClickedButtonIndex:(subscriptionsActionSheet.numberOfButtons - 1) animated:YES];
@@ -749,6 +708,46 @@
     } else {
         self.subscribeButton.title = NSLocalizedString(@"SUBSCRIBE_BUTTON_DISABLED_TEXT", nil);
     }
+}
+
+- (void)handleInfoButtonPressed:(id)sender {
+    
+    // If the button is pressed when the info box is open, close it
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+    {
+        if ([infoPopover isPopoverVisible])
+        {
+            [infoPopover dismissPopoverAnimated:YES];
+            return;
+        }
+    }
+    
+    // Prepare new view
+    UIViewController *popoverContent = [[UIViewController alloc] init];
+    UIWebView *popoverView = [[UIWebView alloc] init];
+    popoverView.backgroundColor = [UIColor blackColor];
+    popoverContent.view = popoverView;
+    
+    // Load HTML file
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"info" ofType:@"html" inDirectory:@"info"];
+    [popoverView loadRequest:[NSURLRequest requestWithURL:[NSURL fileURLWithPath:path]]];
+    
+    // Open view
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+    {
+        // On iPad use the UIPopoverController
+        infoPopover = [[UIPopoverController alloc] initWithContentViewController:popoverContent];
+        [infoPopover presentPopoverFromBarButtonItem:sender
+                            permittedArrowDirections:UIPopoverArrowDirectionUp
+                                            animated:YES];
+    }
+    else {
+        // On iPhone push the view controller to the navigation
+        [self.navigationController pushViewController:popoverContent animated:YES];
+    }
+    
+    [popoverView release];
+    [popoverContent release];
 }
 
 #pragma mark - Helper methods
