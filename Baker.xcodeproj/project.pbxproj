@@ -74,6 +74,7 @@
 		BF3CCCA315D080560087B9CA /* ios-icon-ipad@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BF3CCC9F15D080560087B9CA /* ios-icon-ipad@2x.png */; };
 		BF3CCCA415D080560087B9CA /* ios-icon-iphone.png in Resources */ = {isa = PBXBuildFile; fileRef = BF3CCCA015D080560087B9CA /* ios-icon-iphone.png */; };
 		BF3CCCA515D080560087B9CA /* ios-icon-iphone@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BF3CCCA115D080560087B9CA /* ios-icon-iphone@2x.png */; };
+		BFAB78D317B2A67E00E91ADE /* BakerAnalyticsEvents.m in Sources */ = {isa = PBXBuildFile; fileRef = BFAB78D217B2A67E00E91ADE /* BakerAnalyticsEvents.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -183,6 +184,8 @@
 		BF3CCC9F15D080560087B9CA /* ios-icon-ipad@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ios-icon-ipad@2x.png"; sourceTree = "<group>"; };
 		BF3CCCA015D080560087B9CA /* ios-icon-iphone.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ios-icon-iphone.png"; sourceTree = "<group>"; };
 		BF3CCCA115D080560087B9CA /* ios-icon-iphone@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ios-icon-iphone@2x.png"; sourceTree = "<group>"; };
+		BFAB78D117B2A67E00E91ADE /* BakerAnalyticsEvents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BakerAnalyticsEvents.h; sourceTree = "<group>"; };
+		BFAB78D217B2A67E00E91ADE /* BakerAnalyticsEvents.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BakerAnalyticsEvents.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -394,6 +397,8 @@
 			children = (
 				ABAFB59A15AB9A2E002FA498 /* AppDelegate.h */,
 				ABAFB59B15AB9A2E002FA498 /* AppDelegate.m */,
+				BFAB78D117B2A67E00E91ADE /* BakerAnalyticsEvents.h */,
+				BFAB78D217B2A67E00E91ADE /* BakerAnalyticsEvents.m */,
 				ABAFB59215AB9A2E002FA498 /* Supporting Files */,
 			);
 			path = Baker;
@@ -539,6 +544,7 @@
 				ABADF3F916C7BAD900F52F3C /* NSURL+Extensions.m in Sources */,
 				AB67F5BA16EE99B2005A04F6 /* Reachability.m in Sources */,
 				ABF23B1D1708418E003AA3B0 /* BakerAPI.m in Sources */,
+				BFAB78D317B2A67E00E91ADE /* BakerAnalyticsEvents.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -39,6 +39,7 @@
 #import "UIColor+Extensions.h"
 
 #import "BakerViewController.h"
+#import "BakerAnalyticsEvents.h"
 
 @implementation AppDelegate
 
@@ -133,6 +134,11 @@
     self.window.rootViewController = self.rootNavigationController;
     [self.window makeKeyAndVisible];
 
+    
+    // ****** Analytics Setup
+    [BakerAnalyticsEvents sharedInstance]; // Initialization
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"BakerApplicationStart" object:self]; // -> Baker Analytics Event
+    
     return YES;
 }
 
