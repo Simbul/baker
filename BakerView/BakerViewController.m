@@ -883,6 +883,8 @@
     // Since pointers can change at any time we've got to handle them directly on a slot basis.
     // Save the page pointer to a temp view to avoid code redundancy make Baker go apeshit.
     if (slot == 0) {
+        if (page == currentPageNumber)
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"BakerViewPage" object:self]; // -> Baker Analytics Event
 
         if (currPage) {
             currPage.delegate = nil;
@@ -943,6 +945,7 @@
      */
 
     //NSLog(@"[BakerView] Loading a Modal WebView with URL: %@", url.absoluteString);
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"BakerViewModalBrowser" object:self]; // -> Baker Analytics Event
 
     myModalViewController = [[[ModalViewController alloc] initWithUrl:url] autorelease];
     myModalViewController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
@@ -1688,6 +1691,8 @@
     }
 }
 - (void)showNavigationBar {
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"BakerViewIndexOpen" object:self]; // -> Baker Analytics Event
+    
     CGRect newNavigationFrame = [self getNewNavigationFrame:NO];
     UINavigationBar *navigationBar = self.navigationController.navigationBar;
 
@@ -1827,6 +1832,8 @@
 
 #pragma mark - MEMORY
 - (void)viewWillDisappear:(BOOL)animated {
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"BakerIssueClose" object:self]; // -> Baker Analytics Event
+    
     [self saveBookStatusWithScrollIndex];
 }
 - (void)saveBookStatusWithScrollIndex {
