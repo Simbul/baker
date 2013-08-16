@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		205D4BEE17BE0D430070D57E /* reload.png in Resources */ = {isa = PBXBuildFile; fileRef = 205D4BEC17BE0D430070D57E /* reload.png */; };
+		205D4BEF17BE0D430070D57E /* reload@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 205D4BED17BE0D430070D57E /* reload@2x.png */; };
 		20CC551D16AD346900DEFB5C /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 20CC551F16AD346900DEFB5C /* Localizable.strings */; };
 		9F1FC71316500A47002C8277 /* navigation-bar-bg.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F1FC71116500A47002C8277 /* navigation-bar-bg.png */; };
 		9F1FC71416500A47002C8277 /* navigation-bar-bg@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F1FC71216500A47002C8277 /* navigation-bar-bg@2x.png */; };
@@ -78,6 +80,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		205D4BEC17BE0D430070D57E /* reload.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = reload.png; sourceTree = "<group>"; };
+		205D4BED17BE0D430070D57E /* reload@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "reload@2x.png"; sourceTree = "<group>"; };
 		20CC551E16AD346900DEFB5C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		9F1FC71116500A47002C8277 /* navigation-bar-bg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "navigation-bar-bg.png"; sourceTree = "<group>"; };
 		9F1FC71216500A47002C8277 /* navigation-bar-bg@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "navigation-bar-bg@2x.png"; sourceTree = "<group>"; };
@@ -274,6 +278,8 @@
 		AB40042E15B4B83000D87E2A /* img */ = {
 			isa = PBXGroup;
 			children = (
+				205D4BEC17BE0D430070D57E /* reload.png */,
+				205D4BED17BE0D430070D57E /* reload@2x.png */,
 				AB40042F15B4B83000D87E2A /* back.png */,
 				AB40043015B4B83000D87E2A /* back@2x.png */,
 				AB40043115B4B83000D87E2A /* forward.png */,
@@ -501,6 +507,8 @@
 				9F1FC7181650102C002C8277 /* shelf-bg-portrait-568h.png in Resources */,
 				20CC551D16AD346900DEFB5C /* Localizable.strings in Resources */,
 				BF0785EB1794AF4000EB988E /* info in Resources */,
+				205D4BEE17BE0D430070D57E /* reload.png in Resources */,
+				205D4BEF17BE0D430070D57E /* reload@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

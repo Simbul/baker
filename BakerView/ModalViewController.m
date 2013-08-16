@@ -67,6 +67,7 @@
 @synthesize toolbar;
 @synthesize btnGoBack;
 @synthesize btnGoForward;
+@synthesize btnReload;
 @synthesize spinner;
 
 #pragma mark - INIT
@@ -99,12 +100,17 @@
                                                                   action:@selector(dismissAction)] autorelease];
     UIBarButtonItem *btnAction = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(openInSafari)] autorelease];
 
+   
     self.btnGoBack = [[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"back.png"] style:UIBarButtonItemStylePlain target:self action:@selector(goBack)] autorelease];
     btnGoBack.enabled = NO;
     btnGoBack.width = 30;
 
     self.btnGoForward = [[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"forward.png"] style:UIBarButtonItemStylePlain target:self action:@selector(goForward)] autorelease];
     btnGoForward.enabled = NO;
+    btnGoForward.width = 30;
+
+    self.btnReload = [[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"reload.png"] style:UIBarButtonItemStylePlain target:self action:@selector(reloadPage)] autorelease];
+    btnReload.enabled = NO;
     btnGoForward.width = 30;
 
     self.spinner = [[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray] autorelease];
@@ -125,7 +131,7 @@
 
 
     // ****** Add items to toolbar
-    NSArray *items = [NSArray arrayWithObjects: btnClose, btnGoBack, btnGoForward, btnSpinner, spacer, btnAction, nil];
+    NSArray *items = [NSArray arrayWithObjects: btnClose, btnGoBack, btnGoForward, btnReload, btnSpinner, spacer, btnAction, nil];
     [toolbar setItems:items animated:NO];
 
 
@@ -164,6 +170,7 @@
 
     [btnGoBack release];
     [btnGoForward release];
+    [btnReload release];
 
     [spinner release];
     [toolbar release];
@@ -197,6 +204,7 @@
     // ****** Update buttons
     btnGoBack.enabled    = [webViewIn canGoBack];
     btnGoForward.enabled = [webViewIn canGoForward];
+    btnReload.enabled = YES;
 }
 - (void)webView:(UIWebView *)webViewIn didFailLoadWithError:(NSError *)error {
     NSLog(@"[Modal] Failed to load '%@', error code %i", [webViewIn.request.URL absoluteString], [error code]);
@@ -243,6 +251,13 @@
      */
 
     [webView goForward];
+}
+- (void)reloadPage {
+    /****************************************************************************************************
+     * WebView reload button.
+     */
+    
+    [webView reload];
 }
 - (void)openInSafari {
     /****************************************************************************************************

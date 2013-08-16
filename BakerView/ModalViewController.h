@@ -44,12 +44,14 @@
 @property (strong, nonatomic) UIToolbar *toolbar;
 @property (strong, nonatomic) UIBarButtonItem *btnGoBack;
 @property (strong, nonatomic) UIBarButtonItem *btnGoForward;
+@property (strong, nonatomic) UIBarButtonItem *btnReload;
 @property (strong, nonatomic) UIActivityIndicatorView *spinner;
 
 - (id)initWithUrl:(NSURL *)url;
 - (void)dismissAction;
 - (void)goBack;
 - (void)goForward;
+- (void)reloadPage;
 - (void)openInSafari;
 
 @end
