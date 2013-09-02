@@ -209,17 +209,18 @@
 
         [super viewDidAppear:animated];
 
-        [self forceOrientationUpdate];
-        [self willRotateToInterfaceOrientation:self.interfaceOrientation duration:0];
-        [self performSelector:@selector(hideBars:) withObject:[NSNumber numberWithBool:YES] afterDelay:0.5];
+        if (![self forceOrientationUpdate]) {
+            [self willRotateToInterfaceOrientation:self.interfaceOrientation duration:0];
+            [self performSelector:@selector(hideBars:) withObject:[NSNumber numberWithBool:YES] afterDelay:0.5];
 
-        // Condition to make sure we only call startReading the first time this callback is invoked
-        // Fixes page reload on coming back from fullscreen video (#611)
-        if (currPage == nil) {
-            [self startReading];
+            // Condition to make sure we only call startReading the first time this callback is invoked
+            // Fixes page reload on coming back from fullscreen video (#611)
+            if (currPage == nil) {
+                [self startReading];
+            }
+
+            [self didRotateFromInterfaceOrientation:self.interfaceOrientation];
         }
-
-        [self didRotateFromInterfaceOrientation:self.interfaceOrientation];
     }
 
     currentPageWillAppearUnderModal = NO;
@@ -1809,13 +1810,10 @@
     [self setCurrentPageHeight];
 }
 
-- (void)forceOrientationUpdate {
-
+- (BOOL)forceOrientationUpdate {
+    // We need to run this only once to prevent looping in -viewWillAppear
     if (shouldForceOrientationUpdate) {
-
-        // We need to run this only once to prevent looping in -viewWillAppear
         shouldForceOrientationUpdate = NO;
-
         UIInterfaceOrientation interfaceOrientation = [[UIApplication sharedApplication] statusBarOrientation];
 
         if ( (UIInterfaceOrientationIsLandscape(interfaceOrientation) && [book.orientation isEqualToString:@"landscape"])
@@ -1823,15 +1821,17 @@
             (UIInterfaceOrientationIsPortrait(interfaceOrientation) && [book.orientation isEqualToString:@"portrait"]) ) {
 
             //NSLog(@"[BakerView] Device and book orientations are in sync");
-
+            return NO;
         } else {
-
             //NSLog(@"[BakerView] Device and book orientations are out of sync, force orientation update");
 
             // Present and dismiss a vanilla view controller to trigger the orientation update
             [self presentViewController:[UIViewController new] animated:NO completion:^{ [self dismissViewControllerAnimated:NO completion:nil]; }];
-
+            return YES;
         }
+
+    } else {
+        return NO;
     }
 }
 
