@@ -137,6 +137,11 @@
 
     [super viewDidLoad];
     self.navigationItem.title = book.title;
+    
+    
+    // ****** SET THE INITIAL SIZE FOR EVERYTHING
+    // Avoids strange animations when opening
+    [self setPageSize:[self getCurrentInterfaceOrientation:self.interfaceOrientation]];
 
 
     // ****** SCROLLVIEW INIT
