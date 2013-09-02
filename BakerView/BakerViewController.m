@@ -137,6 +137,11 @@
 
     [super viewDidLoad];
     self.navigationItem.title = book.title;
+    
+    
+    // ****** SET THE INITIAL SIZE FOR EVERYTHING
+    // Avoids strange animations when opening
+    [self setPageSize:[self getCurrentInterfaceOrientation:self.interfaceOrientation]];
 
     if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0")) {
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(preferredContentSizeChanged:) name:UIContentSizeCategoryDidChangeNotification object:nil];
