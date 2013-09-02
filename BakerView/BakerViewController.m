@@ -174,7 +174,7 @@
     }
 }
 - (void)viewWillAppear:(BOOL)animated {
-
+    
     if (!currentPageWillAppearUnderModal) {
 
         [super viewWillAppear:animated];
@@ -472,14 +472,14 @@
 }
 - (void)adjustScrollViewPosition {
     int scrollViewY = 0;
-    if (![UIApplication sharedApplication].statusBarHidden) {
+    
+    if (SYSTEM_VERSION_LESS_THAN(@"7.0") && ![UIApplication sharedApplication].statusBarHidden) {
         scrollViewY = -20;
     }
 
     [UIView animateWithDuration:UINavigationControllerHideShowBarDuration
-                     animations:^{
-                         scrollView.frame = CGRectMake(0, scrollViewY, pageWidth, pageHeight);
-                     }];
+                     animations:^{ scrollView.frame = CGRectMake(0, scrollViewY, pageWidth, pageHeight); }
+                     completion:^(BOOL finished) {}];
 }
 - (void)setPageSize:(NSString *)orientation {
     NSLog(@"[BakerView] Set size for orientation: %@", orientation);
@@ -1689,9 +1689,12 @@
         NSLog(@"[BakerView] Toggle bars visibility");
         UIApplication *sharedApplication = [UIApplication sharedApplication];
         BOOL hidden = sharedApplication.statusBarHidden;
+        hidden = self.navigationController.navigationBar.hidden;
 
         if (hidden) {
-            [sharedApplication setStatusBarHidden:NO withAnimation:UIStatusBarAnimationSlide];
+            if (SYSTEM_VERSION_LESS_THAN(@"7.0")) {
+                [sharedApplication setStatusBarHidden:NO withAnimation:UIStatusBarAnimationSlide];
+            }
             [self performSelector:@selector(showNavigationBar) withObject:nil afterDelay:0.1];
         } else {
             [self hideBars:[NSNumber numberWithBool:YES]];
@@ -1736,13 +1739,15 @@
                          completion:^(BOOL finished) {
                              navigationBar.hidden = YES;
                          }];
-        [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
     } else {
         navigationBar.frame = newNavigationFrame;
         navigationBar.hidden = YES;
+    }
+    
+    if (SYSTEM_VERSION_LESS_THAN(@"7.0")) {
         [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
     }
-
+        
     if(![indexViewController isDisabled]) {
         [indexViewController setIndexViewHidden:YES withAnimation:YES];
     }
