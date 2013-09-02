@@ -10,7 +10,7 @@
     "orientation": "both",
     "zoomable": false,
 
-    "-baker-background": "#000000",
+    "-baker-background": "#ffffff",
     "-baker-vertical-bounce": true,
     "-baker-media-autoplay": true,
     "-baker-background-image-portrait": "gfx/background-portrait.png",

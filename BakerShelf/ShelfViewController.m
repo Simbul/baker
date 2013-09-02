@@ -691,13 +691,8 @@
 }
 - (void)pushViewControllerWithBook:(BakerBook *)book
 {
-    BOOL animated = NO;
-    if (SYSTEM_VERSION_LESS_THAN(@"7.0")) {
-        animated = YES;
-    }
-    
     BakerViewController *bakerViewController = [[BakerViewController alloc] initWithBook:book];
-    [self.navigationController pushViewController:bakerViewController animated:animated];
+    [self.navigationController pushViewController:bakerViewController animated:YES];
     [bakerViewController release];
 }
 
