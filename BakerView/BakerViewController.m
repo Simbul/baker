@@ -1696,27 +1696,45 @@
         return CGRectMake(navX, 20, navW, navH);
     }
 }
+- (BOOL)prefersStatusBarHidden {
+    return barsHidden;
+}
+- (UIStatusBarAnimation)preferredStatusBarUpdateAnimation {
+    return UIStatusBarAnimationSlide;
+}
 - (void)toggleBars {
     // if modal view is up, don't toggle.
     if (!self.presentedViewController) {
         NSLog(@"[BakerView] Toggle bars visibility");
         BOOL hidden = barsHidden;
-
         if (hidden) {
-            barsHidden = NO;
-            [self performSelector:@selector(showNavigationBar) withObject:nil afterDelay:0.1];
+            [self showBars];
         } else {
             [self hideBars:[NSNumber numberWithBool:YES]];
         }
+    }
+}
+- (void)showBars {
 
-        if(![indexViewController isDisabled]) {
-            [indexViewController setIndexViewHidden:!hidden withAnimation:YES];
-        }
+    if (SYSTEM_VERSION_LESS_THAN(@"7.0")) {
+        [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationSlide];
+        [self performSelector:@selector(showNavigationBar) withObject:nil afterDelay:0.1];
+    } else {
+        [UIView animateWithDuration:UINavigationControllerHideShowBarDuration animations:^{
+            [self setNeedsStatusBarAppearanceUpdate];
+        }];
+        [self.navigationController setNavigationBarHidden:NO animated:YES];
+    }
+
+    barsHidden = NO;
+
+    if(![indexViewController isDisabled]) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"BakerViewIndexOpen" object:self]; // -> Baker Analytics Event
+        [indexViewController setIndexViewHidden:NO withAnimation:YES];
     }
 }
 - (void)showNavigationBar {
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"BakerViewIndexOpen" object:self]; // -> Baker Analytics Event
-    
+
     CGRect newNavigationFrame = [self getNewNavigationFrame:NO];
     UINavigationBar *navigationBar = self.navigationController.navigationBar;
 
@@ -1735,27 +1753,45 @@
 
     BOOL animateHiding = [animated boolValue];
 
-    CGRect newNavigationFrame = [self getNewNavigationFrame:YES];
-    UINavigationBar *navigationBar = self.navigationController.navigationBar;
+    if (SYSTEM_VERSION_LESS_THAN(@"7.0")) {
 
-    if (animateHiding) {
-        [UIView animateWithDuration:0.3
-                              delay:0
-                            options:UIViewAnimationOptionCurveEaseOut
-                         animations:^{
-                             navigationBar.frame = newNavigationFrame;
-                         }
-                         completion:^(BOOL finished) {
-                             navigationBar.hidden = YES;
-                         }];
+        CGRect newNavigationFrame = [self getNewNavigationFrame:YES];
+        UINavigationBar *navigationBar = self.navigationController.navigationBar;
+
+        if (animateHiding) {
+            [UIView animateWithDuration:0.3
+                                  delay:0
+                                options:UIViewAnimationOptionCurveEaseOut
+                             animations:^{
+                                 navigationBar.frame = newNavigationFrame;
+                             }
+                             completion:^(BOOL finished) {
+                                 navigationBar.hidden = YES;
+                             }];
+        } else {
+            navigationBar.frame = newNavigationFrame;
+            navigationBar.hidden = YES;
+        }
+
+        [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
+
     } else {
-        navigationBar.frame = newNavigationFrame;
-        navigationBar.hidden = YES;
+
+        if (animateHiding) {
+            [UIView animateWithDuration:UINavigationControllerHideShowBarDuration animations:^{
+                [self setNeedsStatusBarAppearanceUpdate];
+            }];
+        } else {
+           [self setNeedsStatusBarAppearanceUpdate];
+        }
+    
+        [self.navigationController setNavigationBarHidden:YES animated:animateHiding];
     }
+
     barsHidden = YES;
     
     if(![indexViewController isDisabled]) {
-        [indexViewController setIndexViewHidden:barsHidden withAnimation:YES];
+        [indexViewController setIndexViewHidden:YES withAnimation:YES];
     }
 }
 - (void)handleBookProtocol:(NSURL *)url
