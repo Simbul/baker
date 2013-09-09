@@ -55,6 +55,7 @@
 @synthesize scrollView;
 @synthesize currPage;
 @synthesize currentPageNumber;
+@synthesize barsHidden;
 
 #pragma mark - INIT
 - (id)initWithBook:(BakerBook *)bakerBook {
@@ -127,6 +128,7 @@
         shouldForceOrientationUpdate = YES;
 
         adjustViewsOnAppDidBecomeActive = NO;
+        barsHidden = NO;
 
         webViewBackground = nil;
 
@@ -484,7 +486,7 @@
 - (void)adjustScrollViewPosition {
     int scrollViewY = 0;
     
-    if (SYSTEM_VERSION_LESS_THAN(@"7.0") && ![UIApplication sharedApplication].statusBarHidden) {
+    if (SYSTEM_VERSION_LESS_THAN(@"7.0") && !barsHidden) {
         scrollViewY = -20;
     }
 
@@ -1698,14 +1700,10 @@
     // if modal view is up, don't toggle.
     if (!self.presentedViewController) {
         NSLog(@"[BakerView] Toggle bars visibility");
-        UIApplication *sharedApplication = [UIApplication sharedApplication];
-        BOOL hidden = sharedApplication.statusBarHidden;
-        hidden = self.navigationController.navigationBar.hidden;
+        BOOL hidden = barsHidden;
 
         if (hidden) {
-            if (SYSTEM_VERSION_LESS_THAN(@"7.0")) {
-                [sharedApplication setStatusBarHidden:NO withAnimation:UIStatusBarAnimationSlide];
-            }
+            barsHidden = NO;
             [self performSelector:@selector(showNavigationBar) withObject:nil afterDelay:0.1];
         } else {
             [self hideBars:[NSNumber numberWithBool:YES]];
@@ -1754,13 +1752,10 @@
         navigationBar.frame = newNavigationFrame;
         navigationBar.hidden = YES;
     }
+    barsHidden = YES;
     
-    if (SYSTEM_VERSION_LESS_THAN(@"7.0")) {
-        [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
-    }
-        
     if(![indexViewController isDisabled]) {
-        [indexViewController setIndexViewHidden:YES withAnimation:YES];
+        [indexViewController setIndexViewHidden:barsHidden withAnimation:YES];
     }
 }
 - (void)handleBookProtocol:(NSURL *)url
