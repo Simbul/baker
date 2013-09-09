@@ -64,6 +64,11 @@
         NSLog(@"[BakerView] Init book view...");
         self.book = bakerBook;
 
+        if ([self respondsToSelector:@selector(automaticallyAdjustsScrollViewInsets)]) {
+            // Only available in iOS 7 +
+            self.automaticallyAdjustsScrollViewInsets = NO;
+        }
+
 
         // ****** DEVICE SCREEN BOUNDS
         screenBounds = [[UIScreen mainScreen] bounds];
