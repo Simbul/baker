@@ -1706,8 +1706,8 @@
     // if modal view is up, don't toggle.
     if (!self.presentedViewController) {
         NSLog(@"[BakerView] Toggle bars visibility");
-        BOOL hidden = barsHidden;
-        if (hidden) {
+
+        if (barsHidden) {
             [self showBars];
         } else {
             [self hideBars:[NSNumber numberWithBool:YES]];
@@ -1715,6 +1715,8 @@
     }
 }
 - (void)showBars {
+
+    barsHidden = NO;
 
     if (SYSTEM_VERSION_LESS_THAN(@"7.0")) {
         [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationSlide];
@@ -1725,8 +1727,6 @@
         }];
         [self.navigationController setNavigationBarHidden:NO animated:YES];
     }
-
-    barsHidden = NO;
 
     if(![indexViewController isDisabled]) {
         [[NSNotificationCenter defaultCenter] postNotificationName:@"BakerViewIndexOpen" object:self]; // -> Baker Analytics Event
@@ -1750,6 +1750,8 @@
                      completion:nil];
 }
 - (void)hideBars:(NSNumber *)animated {
+
+    barsHidden = YES;
 
     BOOL animateHiding = [animated boolValue];
 
@@ -1784,12 +1786,10 @@
         } else {
            [self setNeedsStatusBarAppearanceUpdate];
         }
-    
+
         [self.navigationController setNavigationBarHidden:YES animated:animateHiding];
     }
 
-    barsHidden = YES;
-    
     if(![indexViewController isDisabled]) {
         [indexViewController setIndexViewHidden:YES withAnimation:YES];
     }
