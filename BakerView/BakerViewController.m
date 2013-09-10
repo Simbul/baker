@@ -55,6 +55,7 @@
 @synthesize scrollView;
 @synthesize currPage;
 @synthesize currentPageNumber;
+@synthesize barsHidden;
 
 #pragma mark - INIT
 - (id)initWithBook:(BakerBook *)bakerBook {
@@ -63,6 +64,11 @@
     if (self) {
         NSLog(@"[BakerView] Init book view...");
         self.book = bakerBook;
+
+        if ([self respondsToSelector:@selector(automaticallyAdjustsScrollViewInsets)]) {
+            // Only available in iOS 7 +
+            self.automaticallyAdjustsScrollViewInsets = NO;
+        }
 
 
         // ****** DEVICE SCREEN BOUNDS
@@ -122,6 +128,7 @@
         shouldForceOrientationUpdate = YES;
 
         adjustViewsOnAppDidBecomeActive = NO;
+        barsHidden = NO;
 
         webViewBackground = nil;
 
@@ -142,6 +149,10 @@
     // ****** SET THE INITIAL SIZE FOR EVERYTHING
     // Avoids strange animations when opening
     [self setPageSize:[self getCurrentInterfaceOrientation:self.interfaceOrientation]];
+
+    if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0")) {
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(preferredContentSizeChanged:) name:UIContentSizeCategoryDidChangeNotification object:nil];
+    }
 
 
     // ****** SCROLLVIEW INIT
@@ -175,7 +186,7 @@
     }
 }
 - (void)viewWillAppear:(BOOL)animated {
-
+    
     if (!currentPageWillAppearUnderModal) {
 
         [super viewWillAppear:animated];
@@ -474,14 +485,14 @@
 }
 - (void)adjustScrollViewPosition {
     int scrollViewY = 0;
-    if (![UIApplication sharedApplication].statusBarHidden) {
+    
+    if (SYSTEM_VERSION_LESS_THAN(@"7.0") && !barsHidden) {
         scrollViewY = -20;
     }
 
     [UIView animateWithDuration:UINavigationControllerHideShowBarDuration
-                     animations:^{
-                         scrollView.frame = CGRectMake(0, scrollViewY, pageWidth, pageHeight);
-                     }];
+                     animations:^{ scrollView.frame = CGRectMake(0, scrollViewY, pageWidth, pageHeight); }
+                     completion:^(BOOL finished) {}];
 }
 - (void)setPageSize:(NSString *)orientation {
     NSLog(@"[BakerView] Set size for orientation: %@", orientation);
@@ -672,7 +683,7 @@
     NSString *path = [NSString stringWithString:[pages objectAtIndex:currentPageNumber - 1]];
     if ([[NSFileManager defaultManager] fileExistsAtPath:path] && tapNumber != 0) {
 
-        //NSLog(@"[BakerView] Goto page -> %@", [[NSFileManager defaultManager] displayNameAtPath:path]);
+        // NSLog(@"[BakerView] Goto page -> %@", [[NSFileManager defaultManager] displayNameAtPath:path]);
 
         if ([book.bakerRendering isEqualToString:@"three-cards"])
         {
@@ -781,6 +792,11 @@
 
                     // Dispatch focus event on new current page
                     [self webView:currPage dispatchHTMLEvent:@"focus"];
+
+                    // Send preferred content size to current page
+                    if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0")) {
+                        [self webView:currPage dispatchHTMLEvent:@"contentsizechange" withParams:[NSDictionary dictionaryWithObject:[[UIApplication sharedApplication] preferredContentSizeCategory] forKey:@"sizecategory"]];
+                    }
                 }
 
                 [self setCurrentPageHeight];
@@ -1283,6 +1299,9 @@
     if ([webView isEqual:currPage])
     {
         [self webView:webView dispatchHTMLEvent:@"focus"];
+        if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0")) {
+            [self webView:currPage dispatchHTMLEvent:@"contentsizechange" withParams:[NSDictionary dictionaryWithObject:[[UIApplication sharedApplication] preferredContentSizeCategory] forKey:@"sizecategory"]];
+        }
 
         // If is the first time i load something in the currPage web view...
         if (currentPageFirstLoading)
@@ -1677,28 +1696,45 @@
         return CGRectMake(navX, 20, navW, navH);
     }
 }
+- (BOOL)prefersStatusBarHidden {
+    return barsHidden;
+}
+- (UIStatusBarAnimation)preferredStatusBarUpdateAnimation {
+    return UIStatusBarAnimationSlide;
+}
 - (void)toggleBars {
     // if modal view is up, don't toggle.
     if (!self.presentedViewController) {
         NSLog(@"[BakerView] Toggle bars visibility");
-        UIApplication *sharedApplication = [UIApplication sharedApplication];
-        BOOL hidden = sharedApplication.statusBarHidden;
-
+        BOOL hidden = barsHidden;
         if (hidden) {
-            [sharedApplication setStatusBarHidden:NO withAnimation:UIStatusBarAnimationSlide];
-            [self performSelector:@selector(showNavigationBar) withObject:nil afterDelay:0.1];
+            [self showBars];
         } else {
             [self hideBars:[NSNumber numberWithBool:YES]];
         }
+    }
+}
+- (void)showBars {
 
-        if(![indexViewController isDisabled]) {
-            [indexViewController setIndexViewHidden:!hidden withAnimation:YES];
-        }
+    if (SYSTEM_VERSION_LESS_THAN(@"7.0")) {
+        [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationSlide];
+        [self performSelector:@selector(showNavigationBar) withObject:nil afterDelay:0.1];
+    } else {
+        [UIView animateWithDuration:UINavigationControllerHideShowBarDuration animations:^{
+            [self setNeedsStatusBarAppearanceUpdate];
+        }];
+        [self.navigationController setNavigationBarHidden:NO animated:YES];
+    }
+
+    barsHidden = NO;
+
+    if(![indexViewController isDisabled]) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"BakerViewIndexOpen" object:self]; // -> Baker Analytics Event
+        [indexViewController setIndexViewHidden:NO withAnimation:YES];
     }
 }
 - (void)showNavigationBar {
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"BakerViewIndexOpen" object:self]; // -> Baker Analytics Event
-    
+
     CGRect newNavigationFrame = [self getNewNavigationFrame:NO];
     UINavigationBar *navigationBar = self.navigationController.navigationBar;
 
@@ -1717,26 +1753,43 @@
 
     BOOL animateHiding = [animated boolValue];
 
-    CGRect newNavigationFrame = [self getNewNavigationFrame:YES];
-    UINavigationBar *navigationBar = self.navigationController.navigationBar;
+    if (SYSTEM_VERSION_LESS_THAN(@"7.0")) {
 
-    if (animateHiding) {
-        [UIView animateWithDuration:0.3
-                              delay:0
-                            options:UIViewAnimationOptionCurveEaseOut
-                         animations:^{
-                             navigationBar.frame = newNavigationFrame;
-                         }
-                         completion:^(BOOL finished) {
-                             navigationBar.hidden = YES;
-                         }];
+        CGRect newNavigationFrame = [self getNewNavigationFrame:YES];
+        UINavigationBar *navigationBar = self.navigationController.navigationBar;
+
+        if (animateHiding) {
+            [UIView animateWithDuration:0.3
+                                  delay:0
+                                options:UIViewAnimationOptionCurveEaseOut
+                             animations:^{
+                                 navigationBar.frame = newNavigationFrame;
+                             }
+                             completion:^(BOOL finished) {
+                                 navigationBar.hidden = YES;
+                             }];
+        } else {
+            navigationBar.frame = newNavigationFrame;
+            navigationBar.hidden = YES;
+        }
+
         [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
+
     } else {
-        navigationBar.frame = newNavigationFrame;
-        navigationBar.hidden = YES;
-        [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
+
+        if (animateHiding) {
+            [UIView animateWithDuration:UINavigationControllerHideShowBarDuration animations:^{
+                [self setNeedsStatusBarAppearanceUpdate];
+            }];
+        } else {
+           [self setNeedsStatusBarAppearanceUpdate];
+        }
+    
+        [self.navigationController setNavigationBarHidden:YES animated:animateHiding];
     }
 
+    barsHidden = YES;
+    
     if(![indexViewController isDisabled]) {
         [indexViewController setIndexViewHidden:YES withAnimation:YES];
     }
@@ -1784,7 +1837,7 @@
 - (BOOL)shouldAutorotate {
     return YES;
 }
-- (NSInteger)supportedInterfaceOrientations {
+- (NSUInteger)supportedInterfaceOrientations {
     if ([book.orientation isEqualToString:@"portrait"]) {
         return (UIInterfaceOrientationMaskPortrait | UIInterfaceOrientationMaskPortraitUpsideDown);
     } else if ([book.orientation isEqualToString:@"landscape"]) {
@@ -1924,6 +1977,12 @@
     } else {
         return NO;
     }
+}
+
+#pragma mark - CONTENT SIZE
+- (void)preferredContentSizeChanged:(NSNotification *)notification {
+    NSString *sizeCategory = [notification.userInfo objectForKey:UIContentSizeCategoryNewValueKey];
+    [self webView:currPage dispatchHTMLEvent:@"contentsizechange" withParams:[NSDictionary dictionaryWithObject:sizeCategory forKey:@"sizecategory"]];
 }
 
 @end

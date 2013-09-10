@@ -30,6 +30,7 @@
 //
 
 #import "Constants.h"
+#import "UIConstants.h"
 
 #import "AppDelegate.h"
 #import "UICustomNavigationController.h"
@@ -37,6 +38,7 @@
 #import "IssuesManager.h"
 #import "BakerAPI.h"
 #import "UIColor+Extensions.h"
+#import "Utils.h"
 
 #import "BakerViewController.h"
 #import "BakerAnalyticsEvents.h"
@@ -125,8 +127,19 @@
 
     self.rootNavigationController = [[[UICustomNavigationController alloc] initWithRootViewController:self.rootViewController] autorelease];
     UICustomNavigationBar *navigationBar = (UICustomNavigationBar *)self.rootNavigationController.navigationBar;
-    [navigationBar setBackgroundImage:[UIImage imageNamed:@"navigation-bar-bg.png"] forBarMetrics:UIBarMetricsDefault];
-    [navigationBar setTintColor:[UIColor colorWithHexString:@"333333"]]; // black will not trigger a pushed status
+
+    if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0")) {
+        // Background is 64px high: in iOS7, it will be used as the background for the status bar as well.
+        [navigationBar setTintColor:[UIColor colorWithHexString:ISSUES_ACTION_BUTTON_BACKGROUND_COLOR]];
+        [navigationBar setBarTintColor:[UIColor colorWithHexString:@"ffffff"]];
+        [navigationBar setBackgroundImage:[UIImage imageNamed:@"navigation-bar-bg.png"] forBarMetrics:UIBarMetricsDefault];
+        navigationBar.titleTextAttributes = [NSDictionary dictionaryWithObject:[UIColor colorWithHexString:@"000000"] forKey:UITextAttributeTextColor];
+    } else {
+        // Background is 44px: in iOS6 and below, a higher background image would make the navigation bar
+        // appear higher than it should be.
+        [navigationBar setBackgroundImage:[UIImage imageNamed:@"navigation-bar-bg-ios6.png"] forBarMetrics:UIBarMetricsDefault];
+        [navigationBar setTintColor:[UIColor colorWithHexString:@"333333"]]; // black will not trigger a pushed status
+    }
 
     self.window = [[[InterceptorWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]] autorelease];
     self.window.backgroundColor = [UIColor whiteColor];
