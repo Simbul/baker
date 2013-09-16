@@ -220,7 +220,7 @@
         infoFont = [UIFont fontWithName:ISSUES_INFO_FONT size:ISSUES_INFO_FONT_SIZE];
     #else
         if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0")) {
-            infoFont = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
+            infoFont = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
         } else {
             infoFont = [UIFont fontWithName:@"Helvetica" size:15];
         }
@@ -230,7 +230,7 @@
         actionFont = [UIFont fontWithName:ISSUES_ACTION_BUTTON_FONT size:ISSUES_ACTION_BUTTON_FONT_SIZE];
     #else
         if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0")) {
-            actionFont = [UIFont preferredFontForTextStyle:UIFontTextStyleSubheadline];
+            actionFont = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
         } else {
             actionFont = [UIFont fontWithName:@"Helvetica-Bold" size:11];
         }
@@ -240,7 +240,7 @@
         archiveFont = [UIFont fontWithName:ISSUES_ARCHIVE_BUTTON_FONT size:ISSUES_ARCHIVE_BUTTON_FONT_SIZE];
     #else
         if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0")) {
-            archiveFont = [UIFont preferredFontForTextStyle:UIFontTextStyleSubheadline];
+            archiveFont = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
         } else {
             archiveFont = [UIFont fontWithName:@"Helvetica-Bold" size:11];
         }
@@ -275,7 +275,7 @@
 
     // SETUP PRICE LABEL
     self.priceLabel.frame = CGRectMake(ui.contentOffset, heightOffset, 170, textLineheight);
-    priceLabel.font = titleFont;
+    priceLabel.font = infoFont;
 
     heightOffset = heightOffset + priceLabel.frame.size.height + 10;
 
