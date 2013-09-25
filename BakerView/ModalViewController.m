@@ -109,7 +109,7 @@
     btnGoForward.enabled = NO;
     btnGoForward.width = 30;
 
-    self.btnReload = [[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"reload.png"] style:UIBarButtonItemStylePlain target:self action:@selector(reloadPage)] autorelease];
+    self.btnReload = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(reloadPage)] autorelease];
     btnReload.enabled = NO;
     btnGoForward.width = 30;
 
