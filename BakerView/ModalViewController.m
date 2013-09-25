@@ -59,6 +59,8 @@
 //
 
 #import "ModalViewController.h"
+#import "UIColor+Extensions.h"
+#import "UIConstants.h"
 
 @implementation ModalViewController
 
@@ -97,15 +99,20 @@
                                                                    style:UIBarButtonItemStyleBordered
                                                                   target:self
                                                                   action:@selector(dismissAction)] autorelease];
+    btnClose.tintColor = [UIColor colorWithHexString:ISSUES_ACTION_BUTTON_BACKGROUND_COLOR];
+
     UIBarButtonItem *btnAction = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(openInSafari)] autorelease];
+    btnAction.tintColor = [UIColor colorWithHexString:ISSUES_ACTION_BUTTON_BACKGROUND_COLOR];
 
     self.btnGoBack = [[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"back.png"] style:UIBarButtonItemStylePlain target:self action:@selector(goBack)] autorelease];
     btnGoBack.enabled = NO;
     btnGoBack.width = 30;
+    btnGoBack.tintColor = [UIColor colorWithHexString:ISSUES_ACTION_BUTTON_BACKGROUND_COLOR];
 
     self.btnGoForward = [[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"forward.png"] style:UIBarButtonItemStylePlain target:self action:@selector(goForward)] autorelease];
     btnGoForward.enabled = NO;
     btnGoForward.width = 30;
+    btnGoForward.tintColor = [UIColor colorWithHexString:ISSUES_ACTION_BUTTON_BACKGROUND_COLOR];
 
     self.spinner = [[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray] autorelease];
     spinner.frame = CGRectMake(3, 3, 25, 25);
