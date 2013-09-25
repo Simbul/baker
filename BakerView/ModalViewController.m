@@ -179,6 +179,9 @@
 
     [super dealloc];
 }
+- (BOOL)prefersStatusBarHidden {
+    return YES;
+}
 
 #pragma mark - WEBVIEW
 - (void)webViewDidStartLoad:(UIWebView *)webViewIn {
