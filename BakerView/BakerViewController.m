@@ -406,10 +406,8 @@
         // ****** Spinners
         UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
         spinner.backgroundColor = [UIColor clearColor];
-        if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"5.0")) {
-            spinner.color = foregroundColor;
-            spinner.alpha = [book.bakerPageNumbersAlpha floatValue];
-        };
+        spinner.color = foregroundColor;
+        spinner.alpha = [book.bakerPageNumbersAlpha floatValue];
 
         CGRect frame = spinner.frame;
         frame.origin.x = pageWidth * i + (pageWidth - frame.size.width) / 2;
