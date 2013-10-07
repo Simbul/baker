@@ -70,6 +70,7 @@
 @synthesize toolbar;
 @synthesize btnGoBack;
 @synthesize btnGoForward;
+@synthesize btnReload;
 @synthesize spinner;
 
 #pragma mark - INIT
@@ -111,6 +112,10 @@
     btnGoForward.enabled = NO;
     btnGoForward.width = 30;
 
+    self.btnReload = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(reloadPage)] autorelease];
+    btnReload.enabled = NO;
+    btnGoForward.width = 30;
+
     if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0")) {
         btnClose.tintColor = [UIColor colorWithHexString:ISSUES_ACTION_BUTTON_BACKGROUND_COLOR];
         btnAction.tintColor = [UIColor colorWithHexString:ISSUES_ACTION_BUTTON_BACKGROUND_COLOR];
@@ -135,7 +140,7 @@
 
 
     // ****** Add items to toolbar
-    NSArray *items = [NSArray arrayWithObjects: btnClose, btnGoBack, btnGoForward, btnSpinner, spacer, btnAction, nil];
+    NSArray *items = [NSArray arrayWithObjects: btnClose, btnGoBack, btnGoForward, btnReload, btnSpinner, spacer, btnAction, nil];
     [toolbar setItems:items animated:NO];
 
 
@@ -174,6 +179,7 @@
 
     [btnGoBack release];
     [btnGoForward release];
+    [btnReload release];
 
     [spinner release];
     [toolbar release];
@@ -210,6 +216,7 @@
     // ****** Update buttons
     btnGoBack.enabled    = [webViewIn canGoBack];
     btnGoForward.enabled = [webViewIn canGoForward];
+    btnReload.enabled = YES;
 }
 - (void)webView:(UIWebView *)webViewIn didFailLoadWithError:(NSError *)error {
     NSLog(@"[Modal] Failed to load '%@', error code %i", [webViewIn.request.URL absoluteString], [error code]);
@@ -256,6 +263,13 @@
      */
 
     [webView goForward];
+}
+- (void)reloadPage {
+    /****************************************************************************************************
+     * WebView reload button.
+     */
+    
+    [webView reload];
 }
 - (void)openInSafari {
     /****************************************************************************************************

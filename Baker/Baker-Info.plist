@@ -52,6 +52,7 @@
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>newsstand-content</string>
+		<string>remote-notification</string>
 	</array>
 	<key>UINewsstandApp</key>
 	<true/>
