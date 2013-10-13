@@ -42,9 +42,6 @@
 
     #ifdef BAKER_NEWSSTAND
 
-        // Remove the following line once you complete the Newsstand setup below.
-        #warning Newsstand: Remember to set the AppStore/Newsstand constants and delete this line once you did it.
-
         // ----------------------------------------------------------------------------------------------------
         // Mandatory - This constant defines where the JSON file containing all the publications is located.
         // For more information on this file, see: https://github.com/Simbul/baker/wiki/Newsstand-shelf-JSON

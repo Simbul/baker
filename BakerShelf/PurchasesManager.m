@@ -229,8 +229,12 @@
                 }
             }
 
-            callback([NSDictionary dictionaryWithDictionary:_purchases]);
+            if (callback) {
+                callback([NSDictionary dictionaryWithDictionary:_purchases]);
+            }
         }];
+    } else if (callback) {
+        callback(nil);
     }
 }
 
