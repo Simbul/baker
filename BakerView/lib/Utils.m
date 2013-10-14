@@ -111,4 +111,20 @@
     [alert release];
 }
 
++ (void)webView:(UIWebView *)webView dispatchHTMLEvent:(NSString *)event {
+    [Utils webView:webView dispatchHTMLEvent:event withParams:[NSDictionary dictionary]];
+}
++ (void)webView:(UIWebView *)webView dispatchHTMLEvent:(NSString *)event withParams:(NSDictionary *)params {
+    __block NSMutableString *jsDispatchEvent = [NSMutableString stringWithFormat:
+                                                @"var bakerDispatchedEvent = document.createEvent('Events');\
+                                                bakerDispatchedEvent.initEvent('%@', false, false);", event];
+    [params enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+        NSString *jsParamSet = [NSString stringWithFormat:@"bakerDispatchedEvent.%@='%@';\n", key, obj];
+        [jsDispatchEvent appendString:jsParamSet];
+    }];
+    [jsDispatchEvent appendString:@"window.dispatchEvent(bakerDispatchedEvent);"];
+
+    [webView stringByEvaluatingJavaScriptFromString:jsDispatchEvent];
+}
+
 @end

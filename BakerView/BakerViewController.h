@@ -156,8 +156,6 @@
 #pragma mark - WEBVIEW
 - (void)webView:(UIWebView *)webView hidden:(BOOL)status animating:(BOOL)animating;
 - (void)webViewDidAppear:(UIWebView *)webView animating:(BOOL)animating;
-- (void)webView:(UIWebView *)webView dispatchHTMLEvent:(NSString *)event;
-- (void)webView:(UIWebView *)webView dispatchHTMLEvent:(NSString *)event withParams:(NSDictionary *)params;
 - (void)webView:(UIWebView *)webView setCorrectOrientation:(UIInterfaceOrientation)interfaceOrientation;
 
 #pragma mark - SCREENSHOTS

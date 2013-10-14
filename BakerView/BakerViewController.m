@@ -684,7 +684,7 @@
             // ****** THREE CARD VIEW METHOD
 
             // Dispatch blur event on old current page
-            [self webView:currPage dispatchHTMLEvent:@"blur"];
+            [Utils webView:currPage dispatchHTMLEvent:@"blur"];
 
             // Calculate move direction and normalize tapNumber
             int direction = 1;
@@ -785,7 +785,7 @@
                     currentPageIsDelayingLoading = NO;
 
                     // Dispatch focus event on new current page
-                    [self webView:currPage dispatchHTMLEvent:@"focus"];
+                    [Utils webView:currPage dispatchHTMLEvent:@"focus"];
 
                     // Dispatch BakerViewPage analytics event
                     [[NSNotificationCenter defaultCenter] postNotificationName:@"BakerViewPage" object:self]; // -> Baker Analytics Event
@@ -1159,7 +1159,7 @@
                         [[UIApplication sharedApplication] openURL:url];
                     } else {
                         NSLog(@"[BakerView] ERROR: No installed application to open '%@'. An application to handle the '%@' URL scheme is required.", url, [url scheme]);
-                        [self webView:currPage dispatchHTMLEvent:@"urlnothandled" withParams:[NSDictionary dictionaryWithObject:url forKey:@"url"]];
+                        [Utils webView:currPage dispatchHTMLEvent:@"urlnothandled" withParams:[NSDictionary dictionaryWithObject:url forKey:@"url"]];
                     }
 
                     return NO;
@@ -1290,7 +1290,7 @@
 
     if ([webView isEqual:currPage])
     {
-        [self webView:webView dispatchHTMLEvent:@"focus"];
+        [Utils webView:webView dispatchHTMLEvent:@"focus"];
 
         // If is the first time i load something in the currPage web view...
         if (currentPageFirstLoading)
@@ -1310,21 +1310,7 @@
         }
     }
 }
-- (void)webView:(UIWebView *)webView dispatchHTMLEvent:(NSString *)event {
-    [self webView:webView dispatchHTMLEvent:event withParams:[NSDictionary dictionary]];
-}
-- (void)webView:(UIWebView *)webView dispatchHTMLEvent:(NSString *)event withParams:(NSDictionary *)params {
-    __block NSMutableString *jsDispatchEvent = [NSMutableString stringWithFormat:
-                                                @"var bakerDispatchedEvent = document.createEvent('Events');\
-                                                bakerDispatchedEvent.initEvent('%@', false, false);", event];
-    [params enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
-        NSString *jsParamSet = [NSString stringWithFormat:@"bakerDispatchedEvent.%@='%@';\n", key, obj];
-        [jsDispatchEvent appendString:jsParamSet];
-    }];
-    [jsDispatchEvent appendString:@"window.dispatchEvent(bakerDispatchedEvent);"];
 
-    [webView stringByEvaluatingJavaScriptFromString:jsDispatchEvent];
-}
 - (void)webView:(UIWebView *)webView setCorrectOrientation:(UIInterfaceOrientation)interfaceOrientation {
 
     // Since the UIWebView doesn't handle orientationchange events correctly we have to set the correct value for window.orientation property ourselves
