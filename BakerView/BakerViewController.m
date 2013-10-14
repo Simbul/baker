@@ -1888,9 +1888,12 @@
 
 #pragma mark - MEMORY
 - (void)viewWillDisappear:(BOOL)animated {
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"BakerIssueClose" object:self]; // -> Baker Analytics Event
-    
-    [self saveBookStatusWithScrollIndex];
+    NSArray *viewControllers = self.navigationController.viewControllers;
+    if ([viewControllers indexOfObject:self] == NSNotFound) {
+        // Baker book is disappearing because it was popped from the navigation stack -> Baker book is closing
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"BakerIssueClose" object:self]; // -> Baker Analytics Event
+        [self saveBookStatusWithScrollIndex];
+    }
 }
 - (void)saveBookStatusWithScrollIndex {
     if (currPage != nil) {
