@@ -150,10 +150,6 @@
     // Avoids strange animations when opening
     [self setPageSize:[self getCurrentInterfaceOrientation:self.interfaceOrientation]];
 
-    if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0")) {
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(preferredContentSizeChanged:) name:UIContentSizeCategoryDidChangeNotification object:nil];
-    }
-
 
     // ****** SCROLLVIEW INIT
     self.scrollView = [[[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, pageWidth, pageHeight)] autorelease];
@@ -681,7 +677,7 @@
     NSString *path = [NSString stringWithString:[pages objectAtIndex:currentPageNumber - 1]];
     if ([[NSFileManager defaultManager] fileExistsAtPath:path] && tapNumber != 0) {
 
-        // NSLog(@"[BakerView] Goto page -> %@", [[NSFileManager defaultManager] displayNameAtPath:path]);
+        //NSLog(@"[BakerView] Goto page -> %@", [[NSFileManager defaultManager] displayNameAtPath:path]);
 
         if ([book.bakerRendering isEqualToString:@"three-cards"])
         {
@@ -793,11 +789,6 @@
 
                     // Dispatch BakerViewPage analytics event
                     [[NSNotificationCenter defaultCenter] postNotificationName:@"BakerViewPage" object:self]; // -> Baker Analytics Event
-
-                    // Send preferred content size to current page
-                    if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0")) {
-                        [self webView:currPage dispatchHTMLEvent:@"contentsizechange" withParams:[NSDictionary dictionaryWithObject:[[UIApplication sharedApplication] preferredContentSizeCategory] forKey:@"sizecategory"]];
-                    }
                 }
 
                 [self setCurrentPageHeight];
@@ -1300,9 +1291,6 @@
     if ([webView isEqual:currPage])
     {
         [self webView:webView dispatchHTMLEvent:@"focus"];
-        if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0")) {
-            [self webView:currPage dispatchHTMLEvent:@"contentsizechange" withParams:[NSDictionary dictionaryWithObject:[[UIApplication sharedApplication] preferredContentSizeCategory] forKey:@"sizecategory"]];
-        }
 
         // If is the first time i load something in the currPage web view...
         if (currentPageFirstLoading)
@@ -1981,12 +1969,6 @@
     } else {
         return NO;
     }
-}
-
-#pragma mark - CONTENT SIZE
-- (void)preferredContentSizeChanged:(NSNotification *)notification {
-    NSString *sizeCategory = [notification.userInfo objectForKey:UIContentSizeCategoryNewValueKey];
-    [self webView:currPage dispatchHTMLEvent:@"contentsizechange" withParams:[NSDictionary dictionaryWithObject:sizeCategory forKey:@"sizecategory"]];
 }
 
 @end
