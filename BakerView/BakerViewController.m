@@ -791,6 +791,9 @@
                     // Dispatch focus event on new current page
                     [self webView:currPage dispatchHTMLEvent:@"focus"];
 
+                    // Dispatch BakerViewPage analytics event
+                    [[NSNotificationCenter defaultCenter] postNotificationName:@"BakerViewPage" object:self]; // -> Baker Analytics Event
+
                     // Send preferred content size to current page
                     if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0")) {
                         [self webView:currPage dispatchHTMLEvent:@"contentsizechange" withParams:[NSDictionary dictionaryWithObject:[[UIApplication sharedApplication] preferredContentSizeCategory] forKey:@"sizecategory"]];
