@@ -711,6 +711,14 @@
     }
 }
 
+- (void)webViewDidFinishLoad:(UIWebView *)webView {
+    // Inject user_id
+    [Utils webView:webView dispatchHTMLEvent:@"init" withParams:[NSDictionary dictionaryWithObjectsAndKeys:
+                                                                [BakerAPI UUID], @"user_id",
+                                                                [Utils appID], @"app_id",
+                                                                nil]];
+}
+
 - (void)handleInfoButtonPressed:(id)sender {
     
     // If the button is pressed when the info box is open, close it
@@ -727,6 +735,7 @@
     UIViewController *popoverContent = [[UIViewController alloc] init];
     UIWebView *popoverView = [[UIWebView alloc] init];
     popoverView.backgroundColor = [UIColor blackColor];
+    popoverView.delegate = self;
     popoverContent.view = popoverView;
     
     // Load HTML file
