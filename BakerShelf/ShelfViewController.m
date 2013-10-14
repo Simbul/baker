@@ -271,9 +271,9 @@
     }
 
     if (size.height == 568) {
-        image = [NSString stringWithFormat:@"%@-568h.png", image];
+        image = [NSString stringWithFormat:@"%@-568h", image];
     } else {
-        image = [NSString stringWithFormat:@"%@.png", image];
+        image = [NSString stringWithFormat:@"%@", image];
     }
 
     int bannerHeight = [ShelfViewController getBannerHeight];

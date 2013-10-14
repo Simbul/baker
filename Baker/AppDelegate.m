@@ -132,12 +132,12 @@
         // Background is 64px high: in iOS7, it will be used as the background for the status bar as well.
         [navigationBar setTintColor:[UIColor colorWithHexString:ISSUES_ACTION_BUTTON_BACKGROUND_COLOR]];
         [navigationBar setBarTintColor:[UIColor colorWithHexString:@"ffffff"]];
-        [navigationBar setBackgroundImage:[UIImage imageNamed:@"navigation-bar-bg.png"] forBarMetrics:UIBarMetricsDefault];
+        [navigationBar setBackgroundImage:[UIImage imageNamed:@"navigation-bar-bg"] forBarMetrics:UIBarMetricsDefault];
         navigationBar.titleTextAttributes = [NSDictionary dictionaryWithObject:[UIColor colorWithHexString:@"000000"] forKey:UITextAttributeTextColor];
     } else {
         // Background is 44px: in iOS6 and below, a higher background image would make the navigation bar
         // appear higher than it should be.
-        [navigationBar setBackgroundImage:[UIImage imageNamed:@"navigation-bar-bg-ios6.png"] forBarMetrics:UIBarMetricsDefault];
+        [navigationBar setBackgroundImage:[UIImage imageNamed:@"navigation-bar-bg-ios6"] forBarMetrics:UIBarMetricsDefault];
         [navigationBar setTintColor:[UIColor colorWithHexString:@"333333"]]; // black will not trigger a pushed status
     }
 
