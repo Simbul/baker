@@ -1884,17 +1884,21 @@
     [super didReceiveMemoryWarning];
     // Release any cached data, images, etc that aren't in use.
 }
-- (void)viewDidUnload {
-
-    [super viewDidUnload];
-
+- (void)dealloc {
+    
     // Set web views delegates to nil, mandatory before releasing UIWebview instances
     currPage.delegate = nil;
     nextPage.delegate = nil;
     prevPage.delegate = nil;
-}
-- (void)dealloc {
+    
+    // Retained background images
+    [backgroundImageLandscape release];
+    [backgroundImagePortrait release];
+    
+    [attachedScreenshotLandscape release];
+    [attachedScreenshotPortrait release];
 
+    // Release the kra... objects
     [supportedOrientation release];
 
     [cachedScreenshotsPath release];
