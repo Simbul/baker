@@ -14,8 +14,7 @@
 		<dict>
 			<key>CFBundleIconFiles</key>
 			<array>
-				<string>ios-icon-iphone</string>
-				<string>ios-icon-ipad</string>
+				<string>newsstand-app-icon</string>
 			</array>
 			<key>UINewsstandBindingEdge</key>
 			<string>UINewsstandBindingEdgeLeft</string>
