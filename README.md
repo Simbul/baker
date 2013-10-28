@@ -124,7 +124,20 @@ BUGS AND FEEDBACK
 CHANGELOG
 ---------
 
-* **4.1** (06/05/2012)
+* **4.2** (28/10/2013)
+  * iOS 7 support
+  * Text Kit support
+  * Support for analytics/tracking frameworks
+  * Info box in shelf
+  * `init` JS event for Info box with `user_id` and `app_id`
+  * Asset Catalog support
+  * Added `environment` parameter to Baker API calls
+  * Made most remote calls asynchronous
+  * Support for removing issues from `shelf.json`
+  * Replaced AQGridView with UICollectionView
+  * Minor improvements and bugfixes
+
+* **4.1** (06/05/2013)
   * In-App Purchases for your magazine issues (server required)
   * Paid Subscriptions support (server required)
   * Push notifications capabilit (server required)
