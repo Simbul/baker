@@ -185,10 +185,18 @@
 
     BakerAPI *api = [BakerAPI sharedInstance];
     if ([api canPostPurchaseReceipt]) {
-        NSString *receipt = [transaction.transactionReceipt base64EncodedString];
+        NSData *receipt = nil;
+        if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0")) {
+            NSBundle *bundle = [NSBundle mainBundle];
+            NSURL *receiptURL = [bundle performSelector:@selector(appStoreReceiptURL)];
+            receipt = [NSData dataWithContentsOfURL:receiptURL];
+        } else {
+            receipt = transaction.transactionReceipt;
+        }
+        NSString *base64Receipt = [receipt base64EncodedString];
         NSString *type = [self transactionType:transaction];
 
-        return [api postPurchaseReceipt:receipt ofType:type];
+        return [api postPurchaseReceipt:base64Receipt ofType:type];
     }
 
     return YES;
