@@ -35,15 +35,15 @@ It's easier done than said! ;)
    * Create a Hpub book.json file: title, author, pages, etc. (see below)
    * All the assets must be contained within the publication folder or its subfolders
    * Check the example book from the website for an hands-on example
-   * See either [Standalone tutorial](https://github.com/Simbul/baker/wiki/Tutorial-for-Standalone-App) or [Newsstand tutorial](https://github.com/Simbul/baker/wiki/Tutorial-for-Newsstand-with-Free-issues) for more info
+   * See either [Standalone tutorial](https://github.com/bakerframework/baker/wiki/Tutorial-for-Standalone-App) or [Newsstand tutorial](https://github.com/bakerframework/baker/wiki/Tutorial-for-Newsstand-with-Free-issues) for more info
 
 3. PUBLISH
    * Download the Baker Framework Xcode project from http://bakerframework.com (or GitHub).
    * Download Xcode from the Mac App Store or from the Apple Developer website.
-   * Decide if you want to release using the [Standalone tutorial](https://github.com/Simbul/baker/wiki/Tutorial-for-Standalone-App) or [Newsstand tutorial](https://github.com/Simbul/baker/wiki/Tutorial-for-Newsstand-with-Free-issues) mode and follow the tutorial accordingly.
+   * Decide if you want to release using the [Standalone tutorial](https://github.com/bakerframework/baker/wiki/Tutorial-for-Standalone-App) or [Newsstand tutorial](https://github.com/bakerframework/baker/wiki/Tutorial-for-Newsstand-with-Free-issues) mode and follow the tutorial accordingly.
    * Select the Baker Scheme (Simulator or Device) from the toolbar dropdown.
    * Run and check that everything works correctly _both_ on simulator and device.
-   * Check [this page](https://github.com/Simbul/baker/wiki/Problems-and-Debugging) if you encounter any problem.
+   * Check [this page](https://github.com/bakerframework/baker/wiki/Problems-and-Debugging) if you encounter any problem.
    * Create an Apple iPhone Developer account to publish on the App Store.
    * If you are using Newsstand, follow the instruction on the Apple iPhone Developer website to create a new free subscription.
    * Follow the instructions on the Apple iPhone Developer website to submit your book to the app store.
@@ -70,7 +70,7 @@ This is an example of a minimal book.json file:
 }
 ```
 
-For all the details and the advanced options, check the [Hpub specification on the wiki](https://github.com/Simbul/baker/wiki/hpub-specification).
+For all the details and the advanced options, check the [Hpub specification on the wiki](https://github.com/bakerframework/baker/wiki/hpub-specification).
 
 
 SHELF.JSON
@@ -92,7 +92,7 @@ This is an example of the shelf.json file that is downloaded by Baker in Newssta
 ]
 ```
 
-For all the details on how to create and use it, check the [Newsstand publications](https://github.com/Simbul/baker/wiki/4.0-tutorial-for-Newsstand).
+For all the details on how to create and use it, check the [Newsstand publications](https://github.com/bakerframework/baker/wiki/4.0-tutorial-for-Newsstand).
 
 
 CREATE A BOOK FOR BOTH IPAD AND IPHONE
