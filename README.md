@@ -115,7 +115,7 @@ To compile your application for iPhone follow these steps:
 BUGS AND FEEDBACK
 -----------------
 
-* Submit your bugs here: <http://github.com/simbul/baker/issues>
+* Submit your bugs here: <http://github.com/bakerframework/baker/issues>
 * Give us your feedback at: <info@bakerframework.com>
 * Follow us on Twitter: <http://twitter.com/BakerFramework>
 
