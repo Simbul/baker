@@ -35,7 +35,7 @@ It's easier done than said! ;)
    * Create a Hpub book.json file: title, author, pages, etc. (see below)
    * All the assets must be contained within the publication folder or its subfolders
    * Check the example book from the website for an hands-on example
-   * See either [Standalone tutorial](https://github.com/bakerframework/baker/wiki/Tutorial-for-Standalone-App) or [Newsstand tutorial](https://github.com/bakerframework/baker/wiki/Tutorial-for-Newsstand-with-Free-issues) for more info
+   * See either [Standalone tutorial](https://github.com/bakerframework/baker/wiki/Tutorial-for-Standalone-App) or [Newsstand tutorial for free subscriptions](https://github.com/bakerframework/baker/wiki/Tutorial-for-Newsstand-with-Free-issues) or [Newsstand tutorial for paid subscriptions](https://github.com/bakerframework/baker/wiki/Tutorial-for-Newsstand-with-In-App-Purchase) for more information
 
 3. PUBLISH
    * Download the Baker Framework Xcode project from http://bakerframework.com (or GitHub).
@@ -45,7 +45,7 @@ It's easier done than said! ;)
    * Run and check that everything works correctly _both_ on simulator and device.
    * Check [this page](https://github.com/bakerframework/baker/wiki/Problems-and-Debugging) if you encounter any problem.
    * Create an Apple iPhone Developer account to publish on the App Store.
-   * If you are using Newsstand, follow the instruction on the Apple iPhone Developer website to create a new free subscription.
+   * If you are using Newsstand, follow the instructions on the Apple iPhone Developer website to create either your free subscription or paid subscription / issue In App Purchases
    * Follow the instructions on the Apple iPhone Developer website to submit your book to the app store.
 
 
