@@ -135,14 +135,23 @@
 
     UIBarButtonItem *spacer = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease];
 
+
     // ****** Add Toolbar
     self.toolbar = [[UIToolbar new] autorelease];
     toolbar.barStyle = UIBarStyleDefault;
 
 
     // ****** Add items to toolbar
-    NSArray *items = [NSArray arrayWithObjects: btnClose, btnGoBack, btnGoForward, btnReload, btnSpinner, spacer, btnAction, nil];
-    [toolbar setItems:items animated:NO];
+    if ([[myUrl scheme] isEqualToString:@"file"])
+    {
+        NSArray *items = [NSArray arrayWithObjects: btnClose, btnGoBack, btnGoForward, btnSpinner, spacer, nil];
+        [toolbar setItems:items animated:NO];
+    }
+    else
+    {
+        NSArray *items = [NSArray arrayWithObjects: btnClose, btnGoBack, btnGoForward, btnReload, btnSpinner, spacer, btnAction, nil];
+        [toolbar setItems:items animated:NO];
+    }
 
 
     // ****** Add WebView

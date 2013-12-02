@@ -1069,6 +1069,24 @@
                     int page = [pages indexOfObject:file];
                     if (page == NSNotFound)
                     {
+                        NSString *params = [url query];
+                        NSLog(@"[BakerView]     Opening a relative URL: %@", [url absoluteString]);
+                        
+                        if (params != nil)
+                        {
+                            NSRegularExpression *referrerModalRegex = [NSRegularExpression regularExpressionWithPattern:URL_OPEN_MODALLY options:NSRegularExpressionCaseInsensitive error:NULL];
+                            NSUInteger matchesModal = [referrerModalRegex numberOfMatchesInString:params options:0 range:NSMakeRange(0, [params length])];
+                            
+                            if (matchesModal)
+                            {
+                                NSLog(@"[BakerView]     Link contain param '%@' --> open link modally", URL_OPEN_MODALLY);
+                                
+                                NSLog(@"[BakerView]     Opening in Modal Panel with URL: %@", [url absoluteString]);
+                                [self loadModalWebView:[NSURL URLWithString:[url absoluteString]]];
+                                
+                                return NO;
+                            }
+                        }
                         // ****** Internal link, but not one of the book pages --> load page anyway
                         return YES;
                     }
