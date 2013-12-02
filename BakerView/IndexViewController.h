@@ -46,6 +46,7 @@
     int actualIndexWidth;
     int actualIndexHeight;
 
+    BOOL fullscreen;
     BOOL disabled;
     BOOL loadedFromBundle;
 
@@ -59,6 +60,7 @@
 - (void)setBounceForWebView:(UIWebView *)webView bounces:(BOOL)bounces;
 - (void)setPageSizeForOrientation:(UIInterfaceOrientation)orientation;
 - (BOOL)isIndexViewHidden;
+- (BOOL)isFullscreen;
 - (BOOL)isDisabled;
 - (void)setIndexViewHidden:(BOOL)hidden withAnimation:(BOOL)animation;
 - (void)willRotate;

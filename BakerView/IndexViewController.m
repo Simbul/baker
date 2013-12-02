@@ -46,6 +46,7 @@
         webViewDelegate = delegate;
 
         disabled = NO;
+        fullscreen = [self isFullscreen];
         indexWidth = 0;
         indexHeight = 0;
 
@@ -106,12 +107,22 @@
 }
 
 - (void)setActualSize {
-    actualIndexWidth = MIN(indexWidth, pageWidth);
-    actualIndexHeight = MIN(indexHeight, pageHeight);
+    if (fullscreen) {
+        actualIndexWidth = pageWidth;
+        actualIndexHeight = pageHeight;
+    } else {
+        actualIndexWidth = MIN(indexWidth, pageWidth);
+        actualIndexHeight = MIN(indexHeight, pageHeight);
+    }
+    
 }
 
 - (BOOL)isIndexViewHidden {
     return ((BakerViewController*) webViewDelegate).barsHidden;
+}
+
+- (BOOL)isFullscreen {
+    return (BOOL)[book.bakerIndexFullscreen boolValue];
 }
 
 - (BOOL)isDisabled {
@@ -130,7 +141,7 @@
         if ([self stickToLeft]) {
             frame = CGRectMake(0, [self trueY] + pageHeight - actualIndexHeight, actualIndexWidth, actualIndexHeight);
         } else {
-            frame = CGRectMake(0, [self trueY] + pageHeight - indexHeight, actualIndexWidth, actualIndexHeight);
+            frame = CGRectMake(0, [self trueY] + pageHeight - actualIndexHeight, actualIndexWidth, actualIndexHeight);
         }
 
     }
@@ -222,18 +233,20 @@
     }
 }
 -(void)webViewDidFinishLoad:(UIWebView *)webView {
-    id width = book.bakerIndexWidth;
-    id height = book.bakerIndexHeight;
+    if (!fullscreen) {
+        id width = book.bakerIndexWidth;
+        id height = book.bakerIndexHeight;
 
-    if (width != nil) {
-        indexWidth = (int)[width integerValue];
-    } else {
-        indexWidth = [self sizeFromContentOf:webView].width;
-    }
-    if (height != nil) {
-        indexHeight = (int)[height integerValue];
-    } else {
-        indexHeight = [self sizeFromContentOf:webView].height;
+        if (width != nil) {
+            indexWidth = (int)[width integerValue];
+        } else {
+            indexWidth = [self sizeFromContentOf:webView].width;
+        }
+        if (height != nil) {
+            indexHeight = (int)[height integerValue];
+        } else {
+            indexHeight = [self sizeFromContentOf:webView].height;
+        }
     }
 
     cachedContentSize = indexScrollView.contentSize;
@@ -252,6 +265,9 @@
 }
 
 - (BOOL)stickToLeft {
+    if (fullscreen) {
+        return NO;
+    }
     return (actualIndexHeight > actualIndexWidth);
 }
 

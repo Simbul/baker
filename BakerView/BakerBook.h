@@ -67,6 +67,7 @@
 @property (copy, nonatomic) NSNumber *bakerPageTurnSwipe;
 @property (copy, nonatomic) NSNumber *bakerMediaAutoplay;
 
+@property (copy, nonatomic) NSNumber *bakerIndexFullscreen;
 @property (copy, nonatomic) NSNumber *bakerIndexWidth;
 @property (copy, nonatomic) NSNumber *bakerIndexHeight;
 @property (copy, nonatomic) NSNumber *bakerIndexBounce;
