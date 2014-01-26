@@ -5,6 +5,7 @@
 //  ==========================================================================================
 //
 //  Copyright (c) 2010-2013, Davide Casali, Marco Colombo, Alessandro Morandi
+//  Copyright (c) 2014, Andrew Krowczyk, Cédric Mériau
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without modification, are
@@ -75,7 +76,7 @@
     [BakerAPI generateUUIDOnce];
 
     // Let the device know we want to handle Newsstand push notifications
-    [application registerForRemoteNotificationTypes:UIRemoteNotificationTypeNewsstandContentAvailability];
+    [application registerForRemoteNotificationTypes:(UIRemoteNotificationTypeNewsstandContentAvailability |UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
 
     #ifdef DEBUG
     // For debug only... so that you can download multiple issues per day during development
