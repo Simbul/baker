@@ -43,7 +43,7 @@ strong {
 }
 
 h1 {
-  color: #b50303;
+  color: #bc242a;
   font-size: 25px;
   padding: 0;
   margin: 15px 0 15px 0;
@@ -88,7 +88,7 @@ h2 {
  */
 .button {
   display: inline-block;
-  background: #b50303;
+  background: #bc242a;
   color: #ffffff;
   padding: 8px 14px;
   text-decoration: none;
