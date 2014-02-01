@@ -165,6 +165,13 @@
     #else
         [requestParams setObject:@"production" forKey:@"environment"];
     #endif
+    
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad){
+        [requestParams setObject:@"tablet" forKey:@"devicetype"];
+    }
+    else{
+        [requestParams setObject:@"phone" forKey:@"devicetype"];
+    }
 
     NSURL *requestURL = [self replaceParameters:requestParams inURL:url];
     NSMutableURLRequest *request = nil;
