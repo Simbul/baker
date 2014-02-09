@@ -65,8 +65,11 @@
                 titleFont = [UIFont fontWithName:@"Helvetica" size:15.0];
             }
 
-            CGSize titleTextSize = [titleText sizeWithFont:titleFont constrainedToSize:titleDimension lineBreakMode:NSLineBreakByTruncatingTail];
-
+            CGSize titleTextSize = [titleText boundingRectWithSize:titleDimension
+                                options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingTruncatesLastVisibleLine
+                                attributes:@{NSFontAttributeName: titleFont}
+                                context:nil].size;
+            
             self.frame = CGRectMake(0, 0, titleTextSize.width, titleTextSize.height);
             self.backgroundColor = [UIColor clearColor];
             self.textAlignment = NSTextAlignmentCenter;

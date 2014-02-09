@@ -249,7 +249,10 @@
 
     UI ui = [IssueViewController getIssueContentMeasures];
     int heightOffset = ui.cellPadding;
-    uint textLineheight = [@"The brown fox jumps over the lazy dog" sizeWithFont:infoFont constrainedToSize:CGSizeMake(MAXFLOAT, MAXFLOAT)].height;
+    uint textLineheight = [@"The brown fox jumps over the lazy dog" boundingRectWithSize:CGSizeMake(MAXFLOAT,MAXFLOAT)
+                            options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingTruncatesLastVisibleLine
+                            attributes:@{NSFontAttributeName: infoFont}
+                            context:nil].size.height;
 
     // SETUP COVER IMAGE
     [self.issue getCoverWithCache:cache andBlock:^(UIImage *image) {
