@@ -134,7 +134,7 @@
         [navigationBar setTintColor:[UIColor colorWithHexString:ISSUES_ACTION_BUTTON_BACKGROUND_COLOR]];
         [navigationBar setBarTintColor:[UIColor colorWithHexString:@"ffffff"]];
         [navigationBar setBackgroundImage:[UIImage imageNamed:@"navigation-bar-bg"] forBarMetrics:UIBarMetricsDefault];
-        navigationBar.titleTextAttributes = [NSDictionary dictionaryWithObject:[UIColor colorWithHexString:@"000000"] forKey:UITextAttributeTextColor];
+        navigationBar.titleTextAttributes = [NSDictionary dictionaryWithObject:[UIColor colorWithHexString:@"000000"] forKey:NSForegroundColorAttributeName];
     } else {
         // Background is 44px: in iOS6 and below, a higher background image would make the navigation bar
         // appear higher than it should be.
