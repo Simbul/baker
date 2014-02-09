@@ -157,7 +157,6 @@
 
     // ****** Add WebView
     self.webView = [[[UIWebView alloc] initWithFrame:CGRectMake(0, 44, 1, 1)] autorelease];
-    webView.backgroundColor = nil;
     webView.contentMode = UIViewContentModeScaleToFill;
     webView.scalesPageToFit = YES;
     webView.delegate = self;
