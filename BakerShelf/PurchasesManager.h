@@ -53,7 +53,7 @@
 - (BOOL)isMarkedAsPurchased:(NSString *)productID;
 - (void)markAsPurchased:(NSString *)productID;
 
-#pragma mark - Prices
+#pragma mark - Prices and display information
 
 - (void)retrievePricesFor:(NSSet *)productIDs;
 - (void)retrievePricesFor:(NSSet *)productIDs andEnableFailureNotifications:(BOOL)enable;
@@ -62,6 +62,7 @@
 - (void)retrievePriceFor:(NSString *)productID andEnableFailureNotification:(BOOL)enable;
 
 - (NSString *)priceFor:(NSString *)productID;
+- (NSString *)displayTitleFor:(NSString*)productID;
 
 #pragma mark - Purchases
 
