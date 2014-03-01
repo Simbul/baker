@@ -461,7 +461,7 @@
         }
 
         for (NSString *productId in AUTO_RENEWABLE_SUBSCRIPTION_PRODUCT_IDS) {
-            NSString *title = NSLocalizedString(productId, nil);
+            NSString *title = [purchasesManager displayTitleFor:productId];
             NSString *price = [purchasesManager priceFor:productId];
             if (price) {
                 [sheet addButtonWithTitle:[NSString stringWithFormat:@"%@ %@", title, price]];

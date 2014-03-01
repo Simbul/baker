@@ -156,6 +156,16 @@
     return nil;
 }
 
+- (NSString *)displayTitleFor:(NSString *)productID {
+    SKProduct *product = [products objectForKey:productID];
+    if(product) {
+        return product.localizedTitle;
+    }
+    // If for some reason we can't find the product, then fallback to the old
+    // behaviour of looking for a localized string
+    return NSLocalizedString(productID, nil);
+}
+
 #pragma mark - Purchases
 
 - (BOOL)purchase:(NSString *)productID {
