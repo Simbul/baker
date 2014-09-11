@@ -1348,6 +1348,7 @@
             jsOrientationGetter = @"window.__defineGetter__('orientation', function() { return -90; });";
             break;
         default:
+            jsOrientationGetter = nil;
             break;
     }
 
@@ -1873,7 +1874,11 @@
             //NSLog(@"[BakerView] Device and book orientations are out of sync, force orientation update");
 
             // Present and dismiss a vanilla view controller to trigger the orientation update
-            [self presentViewController:[UIViewController new] animated:NO completion:^{ [self dismissViewControllerAnimated:NO completion:nil]; }];
+            [self presentViewController:[UIViewController new] animated:NO completion:^{
+                dispatch_after(0, dispatch_get_main_queue(), ^{
+                    [self dismissViewControllerAnimated:NO completion:nil];
+                });
+            }];
             return YES;
         }
 
