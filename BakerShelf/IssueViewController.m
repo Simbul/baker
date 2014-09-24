@@ -732,11 +732,14 @@
 }
 + (CGSize)getIssueCellSize
 {
+    
+    //iOS 8 update: the screenBounds actual width value is now always 'width', while it used to be 'height' in Landscape mode on iOS7. To keep the code working for both iOS8 and iOS7, use the higher/lower of width/height depending on orientation.
+
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
-        return CGSizeMake((screenRect.size.width - 10) / 2, [IssueViewController getIssueCellHeight]);
+        return CGSizeMake((MIN(screenRect.size.width, screenRect.size.height) - 10) / 2, [IssueViewController getIssueCellHeight]);
     } else {
-        return CGSizeMake(screenRect.size.width - 10, [IssueViewController getIssueCellHeight]);
+        return CGSizeMake(MIN(screenRect.size.width, screenRect.size.height) - 10, [IssueViewController getIssueCellHeight]);
     }
 }
 
