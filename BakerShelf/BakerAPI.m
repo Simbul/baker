@@ -179,7 +179,7 @@
     if ([method isEqualToString:@"GET"]) {
         NSString *queryString = [self queryStringFromParameters:requestParams];
         requestURL = [requestURL URLByAppendingQueryString:queryString];
-        request = [NSURLRequest requestWithURL:requestURL cachePolicy:cachePolicy timeoutInterval:REQUEST_TIMEOUT];
+        request = [[NSURLRequest requestWithURL:requestURL cachePolicy:cachePolicy timeoutInterval:REQUEST_TIMEOUT] mutableCopy];
     } else if ([method isEqualToString:@"POST"]) {
         request = [[[NSMutableURLRequest alloc] initWithURL:requestURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:REQUEST_TIMEOUT] autorelease];
         [request setHTTPMethod:@"POST"];
