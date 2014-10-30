@@ -37,6 +37,8 @@
 
 #pragma mark - HPub parameters synthesis
 
+@synthesize bookData = _bookData;
+
 @synthesize hpub;
 @synthesize title;
 @synthesize date;
@@ -158,6 +160,8 @@
         return NO;
     }
 
+    self.bookData = bookData;
+    
     self.hpub  = [bookData objectForKey:@"hpub"];
     self.title = [bookData objectForKey:@"title"];
     self.date  = [bookData objectForKey:@"date"];
@@ -432,6 +436,9 @@
 
 - (void)dealloc
 {
+    
+    [_bookData release];
+    
     [hpub release];
     [title release];
     [date release];

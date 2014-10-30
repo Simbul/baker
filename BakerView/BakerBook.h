@@ -36,6 +36,8 @@
 
 #pragma mark - HPub Parameters Properties
 
+@property (strong, nonatomic) NSDictionary *bookData;
+
 @property (copy, nonatomic) NSNumber *hpub;
 @property (copy, nonatomic) NSString *title;
 @property (copy, nonatomic) NSString *date;
