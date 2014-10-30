@@ -59,8 +59,10 @@
             CGSize titleDimension = CGSizeMake(672, 330);
             UIFont *titleFont = [UIFont fontWithName:@"Helvetica" size:24.0];
 
+            //iOS 8 update: the screenBounds width value is now always 'width', while it used to be 'height' in Landscape mode on iOS7. To keep the code working for both iOS8 and iOS7, use the higher/lower of width/height depending on orientation.
+
             CGRect screenBounds = [[UIScreen mainScreen] bounds];
-            if (screenBounds.size.width < 768) {
+            if (MIN(screenBounds.size.width, screenBounds.size.height) < 768) {
                 titleDimension = CGSizeMake(280, 134);
                 titleFont = [UIFont fontWithName:@"Helvetica" size:15.0];
             }

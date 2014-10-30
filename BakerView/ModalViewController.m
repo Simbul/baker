@@ -238,8 +238,11 @@
         errorLabel.text = NSLocalizedString(@"WEB_MODAL_FAILURE_MESSAGE", nil);
         errorLabel.numberOfLines = 1;
 
+        //iOS 8 update: the screenBounds width value is now always 'width', while it used to be 'height' in Landscape mode on iOS7. To keep the code working for both iOS8 and iOS7, use the higher/lower of width/height depending on orientation.
+
+        
         CGRect screenBounds = [[UIScreen mainScreen] bounds];
-        if (screenBounds.size.width < 768) {
+        if (MIN(screenBounds.size.width, screenBounds.size.height) < 768) {
             errorLabel.font = [UIFont fontWithName:@"Helvetica" size:14.0];
         } else {
             errorLabel.font = [UIFont fontWithName:@"Helvetica" size:18.0];
@@ -302,16 +305,18 @@
 {
     uint screenWidth  = 0;
     uint screenHeight = 0;
+    
+    //iOS 8 update: the screenBounds width value is now always 'width', while it used to be 'height' in Landscape mode on iOS7. To keep the code working for both iOS8 and iOS7, use the higher/lower of width/height depending on orientation.
 
     if (UIInterfaceOrientationIsPortrait(toInterfaceOrientation))
     {
-        screenWidth  = [[UIScreen mainScreen] bounds].size.width;
-        screenHeight = [[UIScreen mainScreen] bounds].size.height;
+        screenWidth  = MIN([[UIScreen mainScreen] bounds].size.height,[[UIScreen mainScreen] bounds].size.width);
+        screenHeight = MAX([[UIScreen mainScreen] bounds].size.height,[[UIScreen mainScreen] bounds].size.width);
     }
     else if (UIInterfaceOrientationIsLandscape(toInterfaceOrientation))
     {
-        screenWidth  = [[UIScreen mainScreen] bounds].size.height;
-        screenHeight = [[UIScreen mainScreen] bounds].size.width;
+        screenWidth  = MAX([[UIScreen mainScreen] bounds].size.height,[[UIScreen mainScreen] bounds].size.width);
+        screenHeight = MIN([[UIScreen mainScreen] bounds].size.height,[[UIScreen mainScreen] bounds].size.width);
     }
 
     self.view.frame = CGRectMake(0, 0, screenWidth, screenHeight);

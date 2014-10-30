@@ -492,12 +492,14 @@
 - (void)setPageSize:(NSString *)orientation {
     NSLog(@"[BakerView] Set size for orientation: %@", orientation);
 
-    pageWidth  = screenBounds.size.width;
-    pageHeight = screenBounds.size.height;
+    //iOS 8 update: the screenBounds width value is now always 'width', while it used to be 'height' in Landscape mode on iOS7. To keep the code working for both iOS8 and iOS7, use the higher/lower of width/height depending on orientation.
+    
+    pageWidth  = MIN(screenBounds.size.height,screenBounds.size.width);
+    pageHeight  = MAX(screenBounds.size.height,screenBounds.size.width);
 
     if ([orientation isEqualToString:@"landscape"]) {
-        pageWidth  = screenBounds.size.height;
-        pageHeight = screenBounds.size.width;
+        pageWidth  = MAX(screenBounds.size.height,screenBounds.size.width);
+        pageHeight  = MIN(screenBounds.size.height,screenBounds.size.width);
     }
 
     [self setTappableAreaSize];
@@ -507,9 +509,11 @@
 - (void)setTappableAreaSize {
     //NSLog(@"[BakerView] Set tappable area size");
 
-    int tappableAreaSize = screenBounds.size.width/16;
+    //iOS 8 update: the screenBounds width value is now always 'width', while it used to be 'height' in Landscape mode on iOS7. To keep the code working for both iOS8 and iOS7, use the higher/lower of width/height depending on orientation.
+    
+    int tappableAreaSize = MIN(screenBounds.size.width, screenBounds.size.height)/16;
     if (screenBounds.size.width < 768) {
-        tappableAreaSize = screenBounds.size.width/8;
+        tappableAreaSize = MIN(screenBounds.size.width, screenBounds.size.height)/8;
     }
 
     upTapArea    = CGRectMake(tappableAreaSize, 0, pageWidth - (tappableAreaSize * 2), tappableAreaSize);
@@ -1477,12 +1481,21 @@
     NSString    *screenshotFile = [cachedScreenshotsPath stringByAppendingPathComponent:[NSString stringWithFormat:@"screenshot-%@-%i.jpg", interfaceOrientation, pageNumber]];
     UIImageView *screenshotView = [[UIImageView alloc] initWithImage:[UIImage imageWithContentsOfFile:screenshotFile]];
 
+     //iOS 8 update: the screenBounds width value is now always 'width', while it used to be 'height' in Landscape mode on iOS7. To keep the code working for both iOS8 and iOS7, use the higher/lower of width/height depending on orientation.
+    
     NSMutableDictionary *attachedScreenshot = attachedScreenshotPortrait;
-    CGSize pageSize = CGSizeMake(screenBounds.size.width, screenBounds.size.height);
+    int pageSizeWidth = MIN(screenBounds.size.height,screenBounds.size.width);
+    int pageSizeHeight = MAX(screenBounds.size.height,screenBounds.size.width);
+    
+    CGSize pageSize = CGSizeMake(pageSizeWidth, pageSizeHeight);
 
     if ([interfaceOrientation isEqualToString:@"landscape"]) {
         attachedScreenshot = attachedScreenshotLandscape;
-        pageSize = CGSizeMake(screenBounds.size.height, screenBounds.size.width);
+        
+        int pageSizeWidth = MAX(screenBounds.size.height,screenBounds.size.width);
+        int pageSizeHeight = MIN(screenBounds.size.height,screenBounds.size.width);
+        
+        pageSize = CGSizeMake(pageSizeWidth, pageSizeHeight);
     }
 
     screenshotView.frame = CGRectMake(pageSize.width * i, 0, pageSize.width, pageSize.height);

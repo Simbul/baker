@@ -94,13 +94,15 @@
 
 - (void)setPageSizeForOrientation:(UIInterfaceOrientation)orientation {
     CGRect screenBounds = [[UIScreen mainScreen] bounds];
+    
+    //iOS 8 update: the screenBounds width value is now always 'width', while it used to be 'height' in Landscape mode on iOS7. To keep the code working for both iOS8 and iOS7, use the higher/lower of width/height depending on orientation.
 
     if (orientation == UIInterfaceOrientationLandscapeLeft || orientation == UIInterfaceOrientationLandscapeRight) {
-        pageWidth = screenBounds.size.height;
-        pageHeight = screenBounds.size.width;
+        pageWidth = MAX(screenBounds.size.height, screenBounds.size.width);
+        pageHeight = MIN(screenBounds.size.height, screenBounds.size.width);
     } else {
-        pageWidth = screenBounds.size.width;
-        pageHeight = screenBounds.size.height;
+        pageWidth = MIN(screenBounds.size.height, screenBounds.size.width);
+        pageHeight = MAX(screenBounds.size.height, screenBounds.size.width);
     }
 
     NSLog(@"[IndexView] Set IndexView size to %dx%d", pageWidth, pageHeight);

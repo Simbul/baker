@@ -266,14 +266,16 @@
     NSString *image = @"";
     CGSize size = [UIScreen mainScreen].bounds.size;
     int landscapePadding = 0;
+    
+    //iOS 8 update: the screenBounds width value is now always 'width', while it used to be 'height' in Landscape mode on iOS7. To keep the code working for both iOS8 and iOS7, use the higher/lower of width/height depending on orientation.
 
     if (UIInterfaceOrientationIsPortrait(toInterfaceOrientation)) {
-        width  = size.width;
-        height = size.height - 64;
+        width  = MIN(size.width, size.height);
+        height = MAX(size.width, size.height) - 64;
         image  = @"shelf-bg-portrait";
     } else if (UIInterfaceOrientationIsLandscape(toInterfaceOrientation)) {
-        width  = size.height;
-        height = size.width - 64;
+        width  = MAX(size.width, size.height);
+        height = MIN(size.width, size.height) - 64;
         if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
             height = height + 12;
         }
