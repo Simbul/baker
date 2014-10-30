@@ -214,6 +214,17 @@
         [buttonItems addObject:self.subscribeButton];
     }
     self.navigationItem.leftBarButtonItems = buttonItems;
+    
+    // Remove limbo transactions
+    // take current payment queue
+    SKPaymentQueue* currentQueue = [SKPaymentQueue defaultQueue];
+    // finish ALL transactions in queue
+    [currentQueue.transactions enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        [currentQueue finishTransaction:(SKPaymentTransaction *)obj];
+    }];
+    
+    [[SKPaymentQueue defaultQueue] addTransactionObserver:purchasesManager];
+
     #endif
     
     UIBarButtonItem *infoButton = [[[UIBarButtonItem alloc]
