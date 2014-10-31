@@ -229,7 +229,7 @@
     btnReload.enabled = YES;
 }
 - (void)webView:(UIWebView *)webViewIn didFailLoadWithError:(NSError *)error {
-    NSLog(@"[Modal] Failed to load '%@', error code %i", [webViewIn.request.URL absoluteString], [error code]);
+    NSLog(@"[Modal] Failed to load '%@', error code %li", [webViewIn.request.URL absoluteString], (long)[error code]);
     if ([error code] == -1009) {
         UILabel *errorLabel = [[[UILabel alloc] initWithFrame:self.webView.frame] autorelease];
         errorLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;

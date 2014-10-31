@@ -42,7 +42,7 @@
     const char *src = [self UTF8String];
     unsigned char result[CC_SHA1_DIGEST_LENGTH];
 
-    CC_SHA1(src, strlen(src), result);
+    CC_SHA1(src, (int)strlen(src), result);
     NSMutableString *sha = [NSMutableString stringWithCapacity:CC_SHA1_DIGEST_LENGTH * 2];
 
     for (int i = 0; i < 8; i++) {

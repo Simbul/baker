@@ -203,9 +203,9 @@
     } else if ([response statusCode] == 200) {
         return YES;
     } else {
-        NSLog(@"[ERROR] Failed POST request to %@: response was %d %@",
+        NSLog(@"[ERROR] Failed POST request to %@: response was %ld %@",
               [request URL],
-              [response statusCode],
+              (long)[response statusCode],
               [NSHTTPURLResponse localizedStringForStatusCode:[response statusCode]]);
         return NO;
     }
@@ -224,9 +224,9 @@
     } else if ([response statusCode] == 200) {
         return data;
     } else {
-        NSLog(@"[ERROR] Failed GET request to %@: response was %d %@",
+        NSLog(@"[ERROR] Failed GET request to %@: response was %ld %@",
               [request URL],
-              [response statusCode],
+              (long)[response statusCode],
               [NSHTTPURLResponse localizedStringForStatusCode:[response statusCode]]);
         return nil;
     }

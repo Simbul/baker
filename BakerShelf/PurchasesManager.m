@@ -130,7 +130,7 @@
 }
 
 - (void)logProducts:(NSArray *)skProducts {
-    NSLog(@"Received %d products from App Store", [skProducts count]);
+    NSLog(@"Received %lu products from App Store", (unsigned long)[skProducts count]);
     for (SKProduct *skProduct in skProducts) {
         NSLog(@"- %@", skProduct.productIdentifier);
     }
@@ -196,9 +196,9 @@
 
     BakerAPI *api = [BakerAPI sharedInstance];
     if ([api canPostPurchaseReceipt]) {
-        NSString *receipt = [transaction.transactionReceipt base64EncodedString];
+        NSURL *receiptURL = [[NSBundle mainBundle] appStoreReceiptURL];
+        NSString *receipt = [[NSData dataWithContentsOfURL:receiptURL] base64EncodedString];
         NSString *type = [self transactionType:transaction];
-
         return [api postPurchaseReceipt:receipt ofType:type];
     }
 
@@ -290,7 +290,7 @@
 }
 
 - (void)logTransactions:(NSArray *)transactions {
-    NSLog(@"Received %d transactions from App Store", [transactions count]);
+    NSLog(@"Received %lu transactions from App Store", (unsigned long)[transactions count]);
     for(SKPaymentTransaction *transaction in transactions) {
         switch (transaction.transactionState) {
             case SKPaymentTransactionStatePurchasing:
