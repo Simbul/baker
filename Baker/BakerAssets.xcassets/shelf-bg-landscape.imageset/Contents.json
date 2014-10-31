@@ -17,6 +17,10 @@
       "scale" : "2x"
     },
     {
+      "idiom" : "iphone",
+      "scale" : "3x"
+    },
+    {
       "idiom" : "ipad",
       "scale" : "1x",
       "filename" : "shelf-bg-landscape~ipad.png"

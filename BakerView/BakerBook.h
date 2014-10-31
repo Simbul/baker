@@ -96,9 +96,9 @@
 #pragma mark - HPub validation
 
 - (BOOL)validateBookJSON:(NSDictionary *)bookData withRequirements:(NSArray *)requirements;
-- (BOOL)validateArray:(NSArray *)array forParam:(NSString *)param;
-- (BOOL)validateString:(NSString *)string forParam:(NSString *)param;
-- (BOOL)validateNumber:(NSNumber *)number forParam:(NSString *)param;
+- (BOOL)validateArray:(NSArray *)array forParam:(NSString *)param withParamsArray:(NSArray*)paramsArray;
+- (BOOL)validateString:(NSString *)string forParam:(NSString *)param withParamsArray:(NSArray*)paramsArray;
+- (BOOL)validateNumber:(NSNumber *)number forParam:(NSString *)param withParamsArray:(NSArray*)paramsArray;
 - (BOOL)matchParam:(NSString *)param againstParamsArray:(NSArray *)paramsArray;
 
 #pragma mark - Book status management
