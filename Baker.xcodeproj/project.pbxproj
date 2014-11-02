@@ -352,19 +352,11 @@
 			isa = PBXGroup;
 			children = (
 				20CC551F16AD346900DEFB5C /* Localizable.strings */,
-				BF3CCC9D15D080560087B9CA /* icon */,
 				ABAFB59315AB9A2E002FA498 /* Baker-Info.plist */,
 				ABAFB59715AB9A2E002FA498 /* main.m */,
 				ABAFB59915AB9A2E002FA498 /* Baker-Prefix.pch */,
 			);
 			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		BF3CCC9D15D080560087B9CA /* icon */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = icon;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

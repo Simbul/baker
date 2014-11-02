@@ -32,9 +32,7 @@
 
 #import "BakerAnalyticsEvents.h"
 
-
 @implementation BakerAnalyticsEvents
-
 
 #pragma mark - Singleton
 
@@ -48,16 +46,16 @@
 }
 
 - (id)init {
-    
     self = [super init];
+    if (self) {
     
-    // ****** Add here your analytics code
-    // tracker = [[GAI sharedInstance] trackerWithTrackingId:@"ADD_HERE_YOUR_TRACKING_CODE"];
+        // ****** Add here your analytics code
+        // tracker = [[GAI sharedInstance] trackerWithTrackingId:@"ADD_HERE_YOUR_TRACKING_CODE"];
     
-    
-    // ****** Register to handle events
-    [self registerEvents];
-    
+        // ****** Register to handle events
+        [self registerEvents];
+
+    }
     return self;
 }
 
@@ -65,12 +63,11 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-
 #pragma mark - Events
 
 - (void)registerEvents {
+
     // Register the analytics event that are going to be tracked by Baker.
-    
     NSArray *analyticEvents = @[@"BakerApplicationStart",
                                @"BakerIssueDownload",
                                @"BakerIssueOpen",
@@ -89,39 +86,37 @@
                                                    object:nil];
     }
     
-
 }
 
-- (void)receiveEvent:(NSNotification *)notification {
-    //NSLog(@"[BakerAnalyticsEvent] Received event %@", [notification name]); // Uncomment this to debug
+- (void)receiveEvent:(NSNotification*)notification {
+    //NSLog(@"[BakerAnalyticsEvent] Received event %@", notification.name); // Uncomment this to debug
     
     // If you want, you can handle differently the various events
-    if ([[notification name] isEqualToString:@"BakerApplicationStart"]) {
+    if ([notification.name isEqualToString:@"BakerApplicationStart"]) {
         // Track here when the Baker app opens
-    } else if ([[notification name] isEqualToString:@"BakerIssueDownload"]) {
+    } else if ([notification.name isEqualToString:@"BakerIssueDownload"]) {
         // Track here when a issue download is requested
-    } else if ([[notification name] isEqualToString:@"BakerIssueOpen"]) {
+    } else if ([notification.name isEqualToString:@"BakerIssueOpen"]) {
         // Track here when a issue is opened to be read
-    } else if ([[notification name] isEqualToString:@"BakerIssueClose"]) {
+    } else if ([notification.name isEqualToString:@"BakerIssueClose"]) {
         // Track here when a issue that was being read is closed
-    } else if ([[notification name] isEqualToString:@"BakerIssuePurchase"]) {
+    } else if ([notification.name isEqualToString:@"BakerIssuePurchase"]) {
         // Track here when a issue purchase is requested
-    } else if ([[notification name] isEqualToString:@"BakerIssueArchive"]) {
+    } else if ([notification.name isEqualToString:@"BakerIssueArchive"]) {
         // Track here when a issue archival is requested
-    } else if ([[notification name] isEqualToString:@"BakerSubscriptionPurchase"]) {
+    } else if ([notification.name isEqualToString:@"BakerSubscriptionPurchase"]) {
         // Track here when a subscription purchased is requested
-    } else if ([[notification name] isEqualToString:@"BakerViewPage"]) {
+    } else if ([notification.name isEqualToString:@"BakerViewPage"]) {
         // Track here when a specific page is opened
         // BakerViewController *bakerview = [notification object]; // Uncomment this to get the BakerViewController object and get its properties
         //NSLog(@" - Tracking page %d", bakerview.currentPageNumber); // This is useful to check if it works
-    } else if ([[notification name] isEqualToString:@"BakerViewIndexOpen"]) {
+    } else if ([notification.name isEqualToString:@"BakerViewIndexOpen"]) {
         // Track here the opening of the index and status bar
-    } else if ([[notification name] isEqualToString:@"BakerViewModalBrowser"]) {
+    } else if ([notification.name isEqualToString:@"BakerViewModalBrowser"]) {
         // Track here the opening of the modal view
     } else {
-        
     }
-}
 
+}
 
 @end

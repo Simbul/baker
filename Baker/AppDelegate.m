@@ -46,10 +46,6 @@
 
 @implementation AppDelegate
 
-@synthesize window;
-@synthesize rootViewController;
-@synthesize rootNavigationController;
-
 + (void)initialize {
     // Set user agent (the only problem is that we can't modify the User-Agent later in the program)
     // We use a more browser-like User-Agent in order to allow browser detection scripts to run (like Tumult Hype).
@@ -57,17 +53,15 @@
     [[NSUserDefaults standardUserDefaults] registerDefaults:userAgent];
 }
 
+- (BOOL)application:(UIApplication*)application didFinishLaunchingWithOptions:(NSDictionary*)launchOptions {
 
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-{
-
-    #ifdef BAKER_NEWSSTAND
+#ifdef BAKER_NEWSSTAND
 
     NSLog(@"====== Baker Newsstand Mode enabled ======");
     [BakerAPI generateUUIDOnce];
 
     // Let the device know we want to handle Newsstand push notifications
-    [application registerForRemoteNotificationTypes:(UIRemoteNotificationTypeNewsstandContentAvailability |UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
+    [application registerForRemoteNotificationTypes:(UIRemoteNotificationTypeNewsstandContentAvailability|UIRemoteNotificationTypeBadge|UIRemoteNotificationTypeSound|UIRemoteNotificationTypeAlert)];
 
     #ifdef DEBUG
     // For debug only... so that you can download multiple issues per day during development
@@ -104,40 +98,39 @@
 
     self.rootViewController = [[ShelfViewController alloc] init];
 
-    #else
+#else
 
     NSLog(@"====== Baker Standalone Mode enabled ======");
     NSArray *books = [IssuesManager localBooksList];
-    if ([books count] == 1) {
-        self.rootViewController = [[[BakerViewController alloc] initWithBook:[[books objectAtIndex:0] bakerBook]] autorelease];
+    if (books.count == 1) {
+        self.rootViewController = [[BakerViewController alloc] initWithBook:books[0].bakerBook];
     } else  {
-        self.rootViewController = [[[ShelfViewController alloc] initWithBooks:books] autorelease];
+        self.rootViewController = [[ShelfViewController alloc] initWithBooks:books];
     }
 
-    #endif
+#endif
 
     self.rootNavigationController = [[UICustomNavigationController alloc] initWithRootViewController:self.rootViewController];
-    UICustomNavigationBar *navigationBar = (UICustomNavigationBar *)self.rootNavigationController.navigationBar;
+    UICustomNavigationBar *navigationBar = (UICustomNavigationBar*)self.rootNavigationController.navigationBar;
 
     if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0")) {
         // Background is 64px high: in iOS7, it will be used as the background for the status bar as well.
-        [navigationBar setTintColor:[UIColor colorWithHexString:ISSUES_ACTION_BUTTON_BACKGROUND_COLOR]];
-        [navigationBar setBarTintColor:[UIColor colorWithHexString:@"ffffff"]];
+        navigationBar.tintColor = [UIColor colorWithHexString:ISSUES_ACTION_BUTTON_BACKGROUND_COLOR];
+        navigationBar.barTintColor = [UIColor colorWithHexString:@"ffffff"];
         [navigationBar setBackgroundImage:[UIImage imageNamed:@"navigation-bar-bg"] forBarMetrics:UIBarMetricsDefault];
         navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName: [UIColor colorWithHexString:@"000000"]};
     } else {
         // Background is 44px: in iOS6 and below, a higher background image would make the navigation bar
         // appear higher than it should be.
         [navigationBar setBackgroundImage:[UIImage imageNamed:@"navigation-bar-bg-ios6"] forBarMetrics:UIBarMetricsDefault];
-        [navigationBar setTintColor:[UIColor colorWithHexString:@"333333"]]; // black will not trigger a pushed status
+        navigationBar.tintColor = [UIColor colorWithHexString:@"333333"]; // black will not trigger a pushed status
     }
 
-    self.window = [[InterceptorWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    self.window = [[InterceptorWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
     self.window.backgroundColor = [UIColor whiteColor];
 
     self.window.rootViewController = self.rootNavigationController;
     [self.window makeKeyAndVisible];
-
     
     // ****** Analytics Setup
     [BakerAnalyticsEvents sharedInstance]; // Initialization
@@ -146,9 +139,12 @@
     return YES;
 }
 
+- (void)application:(UIApplication*)application didFailToRegisterForRemoteNotificationsWithError:(NSError*)error {
+    NSLog(@"[AppDelegate] Push Notification - Device Token, review: %@", error);
+}
+
+- (void)application:(UIApplication*)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)deviceToken {
 #ifdef BAKER_NEWSSTAND
-- (void)application:(UIApplication*)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)deviceToken
-{
     NSString *apnsToken = [[deviceToken description] stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"<>"]];
     apnsToken = [apnsToken stringByReplacingOccurrencesOfString:@" " withString:@""];
 
@@ -160,35 +156,29 @@
 
     BakerAPI *api = [BakerAPI sharedInstance];
     [api postAPNSToken:apnsToken];
-}
 #endif
-
-- (void)application:(UIApplication*)application didFailToRegisterForRemoteNotificationsWithError:(NSError*)error
-{
-	NSLog(@"[AppDelegate] Push Notification - Device Token, review: %@", error);
 }
 
-- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo
-{
-    #ifdef BAKER_NEWSSTAND
+- (void)application:(UIApplication*)application didReceiveRemoteNotification:(NSDictionary*)userInfo {
+#ifdef BAKER_NEWSSTAND
     NSDictionary *aps = userInfo[@"aps"];
     if (aps && aps[@"content-available"]) {
         [self applicationWillHandleNewsstandNotificationOfContent:userInfo[@"content-name"]];
     }
-    #endif
+#endif
 }
-- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))handler
-{
-    #ifdef BAKER_NEWSSTAND
+
+- (void)application:(UIApplication*)application didReceiveRemoteNotification:(NSDictionary*)userInfo fetchCompletionHandler:(void(^)(UIBackgroundFetchResult result))handler {
+#ifdef BAKER_NEWSSTAND
     NSDictionary *aps = userInfo[@"aps"];
     if (aps && aps[@"content-available"]) {
         [self applicationWillHandleNewsstandNotificationOfContent:userInfo[@"content-name"]];
     }
-    #endif
+#endif
 }
-- (void)applicationWillHandleNewsstandNotificationOfContent:(NSString *)contentName
-{
-    #ifdef BAKER_NEWSSTAND
+
+- (void)applicationWillHandleNewsstandNotificationOfContent:(NSString*)contentName {
+#ifdef BAKER_NEWSSTAND
     IssuesManager *issuesManager = [IssuesManager sharedInstance];
     PurchasesManager *purchasesManager = [PurchasesManager sharedInstance];
     __block BakerIssue *targetIssue = nil;
@@ -205,7 +195,7 @@
             targetIssue = (issuesManager.issues)[0];
         }
 
-        [purchasesManager retrievePurchasesFor:[issuesManager productIDs] withCallback:^(NSDictionary *_purchases) {
+        [purchasesManager retrievePurchasesFor:issuesManager.productIDs withCallback:^(NSDictionary *_purchases) {
 
             NSString *targetStatus = [targetIssue getStatus];
             NSLog(@"[AppDelegate] Push Notification - Target status: %@", targetStatus);
@@ -219,44 +209,25 @@
             }
         }];
     }];
-    #endif
+#endif
 }
-- (void)applicationWillResignActive:(UIApplication *)application
-{
-    // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
-    // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
+
+- (void)applicationWillResignActive:(UIApplication*)application {
     [[NSNotificationCenter defaultCenter] postNotificationName:@"applicationWillResignActiveNotification" object:nil];
 }
 
-- (void)applicationDidEnterBackground:(UIApplication *)application
-{
-    // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
-    // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
-
-    #ifdef BAKER_NEWSSTAND
+- (void)applicationDidEnterBackground:(UIApplication*)application {
+#ifdef BAKER_NEWSSTAND
     // Everything that happened while the application was opened can be considered as "seen"
     [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
-    #endif
+#endif
 }
 
-- (void)applicationWillEnterForeground:(UIApplication *)application
-{
-    // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
-}
-
-- (void)applicationDidBecomeActive:(UIApplication *)application
-{
-    // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
-
-    #ifdef BAKER_NEWSSTAND
+- (void)applicationDidBecomeActive:(UIApplication*)application {
+#ifdef BAKER_NEWSSTAND
     // Opening the application means all new items can be considered as "seen".
     [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
-    #endif
-}
-
-- (void)applicationWillTerminate:(UIApplication *)application
-{
-    // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+#endif
 }
 
 @end
