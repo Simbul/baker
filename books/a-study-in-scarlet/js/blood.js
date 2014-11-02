@@ -44,7 +44,7 @@ var Blood = {
       // event.rotationRate and event.interval
       self.accelerometer.x = parseInt(e.accelerationIncludingGravity.x * self.accelerometerSensitivity);
       self.accelerometer.y = parseInt(-e.accelerationIncludingGravity.y * self.accelerometerSensitivity);
-      if (oldX != null && self.accelerometer.x != self.accelerometer.oldX && self.accelerometer.y != self.accelerometer.oldY) {
+      if (self.accelerometer.oldX != null && self.accelerometer.x != self.accelerometer.oldX && self.accelerometer.y != self.accelerometer.oldY) {
         self.drop();
       }
       self.accelerometer.oldX = self.accelerometer.x;

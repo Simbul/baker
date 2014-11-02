@@ -87,6 +87,9 @@
                 return [second compare:first];
             }];
             
+            // Update Newsstand Icon
+            [self updateNewsstandIcon];
+            
             if (callback) {
                 callback(YES);
             }
@@ -97,6 +100,33 @@
             }
         }
     }];
+}
+
+-(void)updateNewsstandIcon {
+    
+    #ifdef SET_NEWSSTAND_LATEST_ISSUE_COVER
+        // Get latest issue
+        BakerIssue *latestIssue = nil;
+        for (BakerIssue *issue in self.issues) {
+            // Return if an issue has already been downloaded (in this case the cover image has already been set)
+            if([[issue getStatus] isEqualToString:@"downloaded"]) { return; }
+            // Update latest issue
+            latestIssue = issue;
+            break;
+        }
+        // Set newsstand icon from latest issue
+        NSLog(@"Setting newsstand cover icon from latest issue: %@ at %@", latestIssue.title, latestIssue.date);
+        [latestIssue getCoverWithCache:YES andBlock:^(UIImage *image) {
+            if (image) {
+                [[UIApplication sharedApplication] setNewsstandIconImage:image];
+            }
+        }];
+    #else
+        // Set newsstand icon from newsstand-app-icon
+        UIImage *image = [UIImage imageNamed:@"newsstand-app-icon"];
+        [[UIApplication sharedApplication] setNewsstandIconImage:image];
+    #endif
+    
 }
 
 -(void)getShelfJSON:(void (^)(NSData*)) callback {

@@ -85,6 +85,9 @@
         #define AUTO_RENEWABLE_SUBSCRIPTION_PRODUCT_IDS [NSArray arrayWithObjects: \
             nil]
 
+        // Set newsstand app icon from latest issue
+        // #define SET_NEWSSTAND_LATEST_ISSUE_COVER
+
     #endif
 
     // Timeout for most network requests (in seconds)
