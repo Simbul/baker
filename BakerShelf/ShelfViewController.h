@@ -42,7 +42,7 @@
 #import "PurchasesManager.h"
 #endif
 
-@interface ShelfViewController : UIViewController <UICollectionViewDataSource, UICollectionViewDelegate, UIActionSheetDelegate, UIWebViewDelegate, UITextFieldDelegate, MLBarDropdownItemDelegate> {
+@interface ShelfViewController : UIViewController <UICollectionViewDataSource, UICollectionViewDelegate, UIActionSheetDelegate, UIWebViewDelegate, MLBarDropdownItemDelegate> {
     BakerAPI *api;
     IssuesManager *issuesManager;
     NSMutableArray *notRecognisedTransactions;
