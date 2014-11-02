@@ -59,11 +59,5 @@
     [super save:jsonDict];
 }
 
-- (void)dealloc {
-    [page release];
-    [scrollIndex release];
-
-    [super dealloc];
-}
 
 @end

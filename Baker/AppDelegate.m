@@ -55,17 +55,8 @@
     // We use a more browser-like User-Agent in order to allow browser detection scripts to run (like Tumult Hype).
     NSDictionary *userAgent = [[NSDictionary alloc] initWithObjectsAndKeys:@"Mozilla/5.0 (compatible; BakerFramework) AppleWebKit/533.00+ (KHTML, like Gecko) Mobile", @"UserAgent", nil];
     [[NSUserDefaults standardUserDefaults] registerDefaults:userAgent];
-    [userAgent release];
 }
 
-- (void)dealloc
-{
-    [window release];
-    [rootViewController release];
-    [rootNavigationController release];
-
-    [super dealloc];
-}
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
@@ -108,11 +99,10 @@
             });
 
             dispatch_semaphore_wait(sema, DISPATCH_TIME_FOREVER);
-            dispatch_release(sema);
         }
     }
 
-    self.rootViewController = [[[ShelfViewController alloc] init] autorelease];
+    self.rootViewController = [[ShelfViewController alloc] init];
 
     #else
 
@@ -126,7 +116,7 @@
 
     #endif
 
-    self.rootNavigationController = [[[UICustomNavigationController alloc] initWithRootViewController:self.rootViewController] autorelease];
+    self.rootNavigationController = [[UICustomNavigationController alloc] initWithRootViewController:self.rootViewController];
     UICustomNavigationBar *navigationBar = (UICustomNavigationBar *)self.rootNavigationController.navigationBar;
 
     if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0")) {
@@ -142,7 +132,7 @@
         [navigationBar setTintColor:[UIColor colorWithHexString:@"333333"]]; // black will not trigger a pushed status
     }
 
-    self.window = [[[InterceptorWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]] autorelease];
+    self.window = [[InterceptorWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.backgroundColor = [UIColor whiteColor];
 
     self.window.rootViewController = self.rootNavigationController;

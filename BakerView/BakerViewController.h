@@ -112,8 +112,8 @@
 
 #pragma mark - PROPERTIES
 @property (strong, nonatomic) BakerBook *book;
-@property (nonatomic, retain) UIScrollView *scrollView;
-@property (nonatomic, retain) UIWebView *currPage;
+@property (nonatomic, strong) UIScrollView *scrollView;
+@property (nonatomic, strong) UIWebView *currPage;
 
 @property int currentPageNumber;
 @property BOOL barsHidden;

@@ -36,11 +36,11 @@
 
 @interface ModalViewController : UIViewController <UIWebViewDelegate>
 {
-    id <modalWebViewDelegate> delegate;
+    id <modalWebViewDelegate> __weak delegate;
     NSURL *myUrl;
 }
 
-@property (assign, nonatomic) id <modalWebViewDelegate> delegate;
+@property (weak, nonatomic) id <modalWebViewDelegate> delegate;
 @property (strong, nonatomic) UIWebView *webView;
 @property (strong, nonatomic) UIToolbar *toolbar;
 @property (strong, nonatomic) UIBarButtonItem *btnGoBack;

@@ -437,56 +437,5 @@
 
 #pragma mark - Memory management
 
-- (void)dealloc
-{
-    
-    [_bookData release];
-    
-    [hpub release];
-    [title release];
-    [date release];
-
-    [author release];
-    [creator release];
-    [publisher release];
-
-    [url release];
-    [cover release];
-
-    [orientation release];
-    [zoomable release];
-
-    [contents release];
-
-    [bakerBackground release];
-    [bakerBackgroundImagePortrait release];
-    [bakerBackgroundImageLandscape release];
-    [bakerPageNumbersColor release];
-    [bakerPageNumbersAlpha release];
-    [bakerPageScreenshots release];
-
-    [bakerRendering release];
-    [bakerVerticalBounce release];
-    [bakerVerticalPagination release];
-    [bakerPageTurnTap release];
-    [bakerPageTurnSwipe release];
-    [bakerMediaAutoplay release];
-
-    [bakerIndexWidth release];
-    [bakerIndexHeight release];
-    [bakerIndexBounce release];
-    [bakerStartAtPage release];
-
-    [ID release];
-    [path release];
-    [isBundled release];
-    [screenshotsPath release];
-    [screenshotsWritable release];
-    [currentPage release];
-    [lastScrollIndex release];
-    [lastOpenedDate release];
-
-    [super dealloc];
-}
 
 @end

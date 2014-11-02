@@ -40,10 +40,10 @@
     NSString *uuidString = nil;
     CFUUIDRef uuid = CFUUIDCreate(NULL);
     if (uuid) {
-        uuidString = (NSString *)CFUUIDCreateString(NULL, uuid);
+        uuidString = (NSString *)CFBridgingRelease(CFUUIDCreateString(NULL, uuid));
         CFRelease(uuid);
     }
-    return [uuidString autorelease];
+    return uuidString;
 }
 
 @end

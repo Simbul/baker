@@ -87,11 +87,11 @@
         #endif
 
         api = [BakerAPI sharedInstance];
-        issuesManager = [[IssuesManager sharedInstance] retain];
+        issuesManager = [IssuesManager sharedInstance];
         notRecognisedTransactions = [[NSMutableArray alloc] init];
 
-        self.shelfStatus = [[[ShelfStatus alloc] init] autorelease];
-        self.issueViewControllers = [[[NSMutableArray alloc] init] autorelease];
+        self.shelfStatus = [[ShelfStatus alloc] init];
+        self.issueViewControllers = [[NSMutableArray alloc] init];
         self.supportedOrientation = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"UISupportedInterfaceOrientations"];
         self.bookToBeProcessed = nil;
 
@@ -120,27 +120,6 @@
 
 #pragma mark - Memory management
 
-- (void)dealloc
-{
-    [gridView release];
-    [issueViewControllers release];
-    [issues release];
-    [subscribeButton release];
-    [refreshButton release];
-    [shelfStatus release];
-    [subscriptionsActionSheet release];
-    [supportedOrientation release];
-    [blockingProgressView release];
-    [issuesManager release];
-    [notRecognisedTransactions release];
-    [bookToBeProcessed release];
-
-    #ifdef BAKER_NEWSSTAND
-    [purchasesManager release];
-    #endif
-
-    [super dealloc];
-}
 
 #pragma mark - View lifecycle
 
@@ -150,9 +129,9 @@
 
     self.navigationItem.title = NSLocalizedString(@"SHELF_NAVIGATION_TITLE", nil);
 
-    self.background = [[[UIImageView alloc] init] autorelease];
+    self.background = [[UIImageView alloc] init];
 
-    self.gridView = [[UICollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:[[[UICollectionViewFlowLayout alloc] init] autorelease]];
+    self.gridView = [[UICollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:[[UICollectionViewFlowLayout alloc] init]];
     self.gridView.dataSource = self;
     self.gridView.delegate = self;
     self.gridView.backgroundColor = [UIColor clearColor];
@@ -165,18 +144,16 @@
     [self.gridView reloadData];
 
     #ifdef BAKER_NEWSSTAND
-    self.refreshButton = [[[UIBarButtonItem alloc]
+    self.refreshButton = [[UIBarButtonItem alloc]
                                        initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh
                                        target:self
-                                       action:@selector(handleRefresh:)]
-                                      autorelease];
+                                       action:@selector(handleRefresh:)];
 
-    self.subscribeButton = [[[UIBarButtonItem alloc]
+    self.subscribeButton = [[UIBarButtonItem alloc]
                              initWithTitle: NSLocalizedString(@"SUBSCRIBE_BUTTON_TEXT", nil)
                              style:UIBarButtonItemStylePlain
                              target:self
-                             action:@selector(handleSubscribeButtonPressed:)]
-                            autorelease];
+                             action:@selector(handleSubscribeButtonPressed:)];
 
     self.blockingProgressView = [[UIAlertView alloc]
                                  initWithTitle:@"Processing..."
@@ -188,7 +165,6 @@
     spinner.center = CGPointMake(139.5, 75.5); // .5 so it doesn't blur
     [self.blockingProgressView addSubview:spinner];
     [spinner startAnimating];
-    [spinner release];
 
     NSMutableSet *subscriptions = [NSMutableSet setWithArray:AUTO_RENEWABLE_SUBSCRIPTION_PRODUCT_IDS];
     if ([FREE_SUBSCRIPTION_PRODUCT_ID length] > 0 && ![purchasesManager isPurchased:FREE_SUBSCRIPTION_PRODUCT_ID]) {
@@ -227,12 +203,11 @@
 
     #endif
     
-    UIBarButtonItem *infoButton = [[[UIBarButtonItem alloc]
+    UIBarButtonItem *infoButton = [[UIBarButtonItem alloc]
                                     initWithTitle: NSLocalizedString(@"INFO_BUTTON_TEXT", nil)
                                     style:UIBarButtonItemStylePlain
                                     target:self
-                                    action:@selector(handleInfoButtonPressed:)]
-                                   autorelease];
+                                    action:@selector(handleInfoButtonPressed:)];
 
     // Remove file info.html if you don't want the info button to be added to the shelf navigation bar
     NSString *infoPath = [[NSBundle mainBundle] pathForResource:@"info" ofType:@"html" inDirectory:@"info"];
@@ -242,6 +217,7 @@
 }
 - (void)viewDidAppear:(BOOL)animated
 {
+    [super viewDidAppear:animated];
     if (self.bookToBeProcessed) {
         [self handleBookToBeProcessed];
     }
@@ -299,7 +275,7 @@
 }
 - (IssueViewController *)createIssueViewControllerWithIssue:(BakerIssue *)issue
 {
-    IssueViewController *controller = [[[IssueViewController alloc] initWithBakerIssue:issue] autorelease];
+    IssueViewController *controller = [[IssueViewController alloc] initWithBakerIssue:issue];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleReadIssue:) name:@"read_issue_request" object:controller];
     return controller;
 }
@@ -322,7 +298,7 @@
     UICollectionViewCell* cell = [self.gridView dequeueReusableCellWithReuseIdentifier:cellIdentifier forIndexPath:indexPath];
 	if (cell == nil)
 	{
-		UICollectionViewCell* cell = [[[UICollectionViewCell alloc] initWithFrame:cellFrame] autorelease];
+		UICollectionViewCell* cell = [[UICollectionViewCell alloc] initWithFrame:cellFrame];
 
         cell.contentView.backgroundColor = [UIColor clearColor];
         cell.backgroundColor = [UIColor clearColor];
@@ -357,7 +333,7 @@
 
             void (^updateIssues)() = ^{
                 // Step 1: remove controllers for issues that no longer exist
-                __block NSMutableArray *discardedControllers = [NSMutableArray array];
+                __weak NSMutableArray *discardedControllers = [NSMutableArray array];
                 [self.issueViewControllers enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
                     IssueViewController *ivc = (IssueViewController *)obj;
 
@@ -660,7 +636,7 @@
 
     #ifdef BAKER_NEWSSTAND
     if ([status isEqual:@"opening"]) {
-        book = [[[BakerBook alloc] initWithBookPath:issue.path bundled:NO] autorelease];
+        book = [[BakerBook alloc] initWithBookPath:issue.path bundled:NO];
         if (book) {
             [self pushViewControllerWithBook:book];
         } else {
@@ -707,7 +683,6 @@
 {
     BakerViewController *bakerViewController = [[BakerViewController alloc] initWithBook:book];
     [self.navigationController pushViewController:bakerViewController animated:YES];
-    [bakerViewController release];
 }
 
 #pragma mark - Buttons management
@@ -770,8 +745,6 @@
         [self.navigationController pushViewController:popoverContent animated:YES];
     }
     
-    [popoverView release];
-    [popoverContent release];
 }
 
 #pragma mark - Helper methods

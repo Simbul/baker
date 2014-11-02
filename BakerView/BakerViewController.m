@@ -78,7 +78,7 @@
 
 
         // ****** SUPPORTED ORIENTATION FROM PLIST
-        supportedOrientation = [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"UISupportedInterfaceOrientations"] retain];
+        supportedOrientation = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"UISupportedInterfaceOrientations"];
 
 
         NSString *cachePath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0];
@@ -88,7 +88,7 @@
 
 
         // ****** SCREENSHOTS DIRECTORY //TODO: set in load book only if is necessary
-        defaultScreeshotsPath = [[[cachePath stringByAppendingPathComponent:@"screenshots"] stringByAppendingPathComponent:book.ID] retain];
+        defaultScreeshotsPath = [[cachePath stringByAppendingPathComponent:@"screenshots"] stringByAppendingPathComponent:book.ID];
 
 
         // ****** STATUS FILE
@@ -107,13 +107,13 @@
         }
 
         // ****** BOOK ENVIRONMENT
-        pages  = [[NSMutableArray array] retain];
-        toLoad = [[NSMutableArray array] retain];
+        pages  = [NSMutableArray array];
+        toLoad = [NSMutableArray array];
 
-        pageDetails = [[NSMutableArray array] retain];
+        pageDetails = [NSMutableArray array];
 
-        attachedScreenshotPortrait  = [[NSMutableDictionary dictionary] retain];
-        attachedScreenshotLandscape = [[NSMutableDictionary dictionary] retain];
+        attachedScreenshotPortrait  = [NSMutableDictionary dictionary];
+        attachedScreenshotLandscape = [NSMutableDictionary dictionary];
 
         tapNumber = 0;
         stackedScrollingAnimations = 0; // TODO: CHECK IF STILL USED!
@@ -153,7 +153,7 @@
 
 
     // ****** SCROLLVIEW INIT
-    self.scrollView = [[[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, pageWidth, pageHeight)] autorelease];
+    self.scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, pageWidth, pageHeight)];
     scrollView.showsHorizontalScrollIndicator = YES;
     scrollView.showsVerticalScrollIndicator = NO;
     scrollView.delaysContentTouches = NO;
@@ -173,13 +173,13 @@
     NSString *backgroundPathLandscape = book.bakerBackgroundImageLandscape;
     if (backgroundPathLandscape != nil) {
         backgroundPathLandscape  = [book.path stringByAppendingPathComponent:backgroundPathLandscape];
-        backgroundImageLandscape = [[UIImage imageWithContentsOfFile:backgroundPathLandscape] retain];
+        backgroundImageLandscape = [UIImage imageWithContentsOfFile:backgroundPathLandscape];
     }
 
     NSString *backgroundPathPortrait = book.bakerBackgroundImagePortrait;
     if (backgroundPathPortrait != nil) {
         backgroundPathPortrait  = [book.path stringByAppendingPathComponent:backgroundPathPortrait];
-        backgroundImagePortrait = [[UIImage imageWithContentsOfFile:backgroundPathPortrait] retain];
+        backgroundImagePortrait = [UIImage imageWithContentsOfFile:backgroundPathPortrait];
     }
 }
 - (void)viewWillAppear:(BOOL)animated {
@@ -284,7 +284,6 @@
     }
     NSLog(@"[BakerView] Screenshots stored at: %@", cachedScreenshotsPath);
 
-    [cachedScreenshotsPath retain];
 
     return YES;
 }
@@ -302,17 +301,14 @@
     if (currPage) {
         [currPage setDelegate:nil];
         [currPage removeFromSuperview];
-        [currPage release];
     }
     if (nextPage) {
         [nextPage setDelegate:nil];
         [nextPage removeFromSuperview];
-        [nextPage release];
     }
     if (prevPage) {
         [prevPage setDelegate:nil];
         [prevPage removeFromSuperview];
-        [prevPage release];
     }
 
     currPage = nil;
@@ -341,7 +337,7 @@
             pageFile = [book.path stringByAppendingPathComponent:[page objectForKey:@"url"]];
         }
 
-        if ([[NSFileManager defaultManager] fileExistsAtPath:pageFile]) {
+        if (pageFile != nil && [[NSFileManager defaultManager] fileExistsAtPath:pageFile]) {
             [pages addObject:pageFile];
         } else {
             NSLog(@"[BakerView] ERROR: Page %@ does not exist in %@.", page, book.path);
@@ -363,7 +359,6 @@
     if (indexViewController != nil) {
         // first of all, we need to clean the indexview if it exists.
         [indexViewController.view removeFromSuperview];
-        [indexViewController release];
     }
     indexViewController = [[IndexViewController alloc] initWithBook:book fileName:INDEX_FILE_NAME webViewDelegate:self];
     [self.view addSubview:indexViewController.view];
@@ -397,7 +392,6 @@
         UIImageView *backgroundView = [[UIImageView alloc] initWithFrame:CGRectMake(pageWidth * i, 0, pageWidth, pageHeight)];
         [self setImageFor:backgroundView];
         [scrollView addSubview:backgroundView];
-        [backgroundView release];
 
 
         // ****** Spinners
@@ -413,7 +407,6 @@
 
         [scrollView addSubview:spinner];
         [spinner startAnimating];
-        [spinner release];
 
 
         // ****** Numbers
@@ -430,14 +423,12 @@
         }
 
         [scrollView addSubview:number];
-        [number release];
 
 
         // ****** Title
         PageTitleLabel *title = [[PageTitleLabel alloc]initWithFile:[pages objectAtIndex: i] color:foregroundColor alpha:[book.bakerPageNumbersAlpha floatValue]];
         [title setX:(pageWidth * i + ((pageWidth - title.frame.size.width) / 2)) Y:(pageHeight / 2 + 20)];
         [scrollView addSubview:title];
-        [title release];
 
 
         // ****** Store instances for later use
@@ -596,7 +587,6 @@
     if (webViewBackground == nil)
     {
         webViewBackground = webView.backgroundColor;
-        [webViewBackground retain];
     }
 
     webView.backgroundColor = [UIColor clearColor];
@@ -892,7 +882,7 @@
 - (void)loadSlot:(int)slot withPage:(int)page {
     //NSLog(@"[BakerView] Setting up slot %d with page %d.", slot, page);
 
-    UIWebView *webView = [[[UIWebView alloc] init] autorelease];
+    UIWebView *webView = [[UIWebView alloc] init];
     [self setupWebView:webView];
 
     webView.frame = [self frameForPage:page];
@@ -910,9 +900,8 @@
             if ([currPage isLoading]) {
                 [currPage stopLoading];
             }
-            [currPage release];
         }
-        currPage = [webView retain];
+        currPage = webView;
         currentPageHasChanged = YES;
 
     } else if (slot == +1) {
@@ -922,9 +911,8 @@
             if ([nextPage isLoading]) {
                 [nextPage stopLoading];
             }
-            [nextPage release];
         }
-        nextPage = [webView retain];
+        nextPage = webView;
 
     } else if (slot == -1) {
 
@@ -933,9 +921,8 @@
             if ([prevPage isLoading]) {
                 [prevPage stopLoading];
             }
-            [prevPage release];
         }
-        prevPage = [webView retain];
+        prevPage = webView;
     }
 
 
@@ -966,7 +953,7 @@
     //NSLog(@"[BakerView] Loading a Modal WebView with URL: %@", url.absoluteString);
     [[NSNotificationCenter defaultCenter] postNotificationName:@"BakerViewModalBrowser" object:self]; // -> Baker Analytics Event
 
-    myModalViewController = [[[ModalViewController alloc] initWithUrl:url] autorelease];
+    myModalViewController = [[ModalViewController alloc] initWithUrl:url];
     myModalViewController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
     myModalViewController.delegate = self;
 
@@ -1068,7 +1055,7 @@
                     // ****** Handle: file://
                     NSLog(@"[BakerView]     Page is a link with scheme file:// --> load internal link");
 
-                    anchorFromURL  = [[url fragment] retain];
+                    anchorFromURL  = [url fragment];
                     NSString *file = [[url relativePath] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 
                     NSUInteger page = [pages indexOfObject:file];
@@ -1137,7 +1124,6 @@
                     NSString *subject = [queryDictionary objectForKey:@"subject"];
                     NSString *body = [queryDictionary objectForKey:@"body"];
 
-                    [queryDictionary release];
 
                     if ([MFMailComposeViewController canSendMail])
                     {
@@ -1155,7 +1141,6 @@
 
                         currentPageWillAppearUnderModal = YES;
 
-                        [mailer release];
                     }
                     else
                     {
@@ -1211,7 +1196,7 @@
 
                             // Generate new URL without
                             // We are regexp-ing three things: the string alone, the string first with other content, the string with other content in any other position
-                            NSString *pattern = [[[NSString alloc] initWithFormat:@"\\?%@$|(?<=\\?)%@&?|()&?%@", URL_OPEN_EXTERNAL, URL_OPEN_EXTERNAL, URL_OPEN_EXTERNAL] autorelease];
+                            NSString *pattern = [[NSString alloc] initWithFormat:@"\\?%@$|(?<=\\?)%@&?|()&?%@", URL_OPEN_EXTERNAL, URL_OPEN_EXTERNAL, URL_OPEN_EXTERNAL];
                             NSRegularExpression *replacerRegexp = [NSRegularExpression regularExpressionWithPattern:pattern options:NSRegularExpressionCaseInsensitive error:NULL];
                             NSString *oldURL = [url absoluteString];
                             //NSLog(@"[BakerView]     replacement pattern: %@", [replacerRegexp pattern]);
@@ -1228,7 +1213,7 @@
 
                             // Generate new URL without
                             // We are regexp-ing three things: the string alone, the string first with other content, the string with other content in any other position
-                            NSString *pattern = [[[NSString alloc] initWithFormat:@"\\?%@$|(?<=\\?)%@&?|()&?%@", URL_OPEN_MODALLY, URL_OPEN_MODALLY, URL_OPEN_MODALLY] autorelease];
+                            NSString *pattern = [[NSString alloc] initWithFormat:@"\\?%@$|(?<=\\?)%@&?|()&?%@", URL_OPEN_MODALLY, URL_OPEN_MODALLY, URL_OPEN_MODALLY];
                             NSRegularExpression *replacerRegexp = [NSRegularExpression regularExpressionWithPattern:pattern options:NSRegularExpressionCaseInsensitive error:NULL];
                             NSString *oldURL = [url absoluteString];
                             //NSLog(@"[BakerView]     replacement pattern: %@", [replacerRegexp pattern]);
@@ -1425,8 +1410,6 @@
         [attachedScreenshot removeObjectForKey:num];
     }
 
-    [completeSet release];
-    [supportSet release];
 }
 - (BOOL)checkScreeshotForPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation {
 
@@ -1537,7 +1520,6 @@
         }
     }
 
-    [screenshotView release];
 }
 
 #pragma mark - GESTURES
@@ -1902,6 +1884,7 @@
 
 #pragma mark - MEMORY
 - (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
     NSArray *viewControllers = self.navigationController.viewControllers;
     if ([viewControllers indexOfObject:self] == NSNotFound) {
         // Baker book is disappearing because it was popped from the navigation stack -> Baker book is closing
@@ -1929,34 +1912,15 @@
     prevPage.delegate = nil;
     
     // Retained background images
-    [backgroundImageLandscape release];
-    [backgroundImagePortrait release];
     
-    [attachedScreenshotLandscape release];
-    [attachedScreenshotPortrait release];
 
     // Release the kra... objects
-    [supportedOrientation release];
 
-    [cachedScreenshotsPath release];
-    [defaultScreeshotsPath release];
 
-    [pageDetails release];
-    [toLoad release];
-    [pages release];
 
-    [indexViewController release];
 
-    [book release];
-    [bookStatus release];
-    [scrollView release];
-    [currPage release];
-    [nextPage release];
-    [prevPage release];
 
-    [webViewBackground release];
 
-    [super dealloc];
 }
 
 #pragma mark - MF MAIL COMPOSER

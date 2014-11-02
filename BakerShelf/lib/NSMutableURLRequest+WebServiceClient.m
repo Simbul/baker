@@ -36,13 +36,13 @@
 @implementation NSMutableURLRequest (WebServiceClient)
 
 + (NSString *) encodeFormPostParameters: (NSDictionary *) parameters {
-    NSMutableString *formPostParams = [[[NSMutableString alloc] init] autorelease];
+    NSMutableString *formPostParams = [[NSMutableString alloc] init];
 
     NSEnumerator *keys = [parameters keyEnumerator];
 
     NSString *name = [keys nextObject];
     while (nil != name) {
-        NSString *encodedValue = [((NSString *) CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef) [parameters objectForKey: name], NULL, CFSTR("=/:"), kCFStringEncodingUTF8)) autorelease];
+        NSString *encodedValue = ((NSString *) CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef) [parameters objectForKey: name], NULL, CFSTR("=/:"), kCFStringEncodingUTF8)));
 
         [formPostParams appendString: name];
         [formPostParams appendString: @"="];
