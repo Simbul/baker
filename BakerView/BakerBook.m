@@ -45,6 +45,7 @@
 
 @synthesize author;
 @synthesize creator;
+@synthesize categories;
 @synthesize publisher;
 
 @synthesize url;
@@ -165,6 +166,7 @@
     self.hpub  = bookData[@"hpub"];
     self.title = bookData[@"title"];
     self.date  = bookData[@"date"];
+    self.categories = bookData[@"categories"];
 
     if ([bookData[@"author"] isKindOfClass:[NSArray class]]) {
         self.author = bookData[@"author"];

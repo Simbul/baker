@@ -37,11 +37,12 @@
 #import "IssuesManager.h"
 #import "ShelfStatus.h"
 #import "BakerAPI.h"
+#import "MLBarDropdownItem.h"
 #ifdef BAKER_NEWSSTAND
 #import "PurchasesManager.h"
 #endif
 
-@interface ShelfViewController : UIViewController <UICollectionViewDataSource, UICollectionViewDelegate, UIActionSheetDelegate, UIWebViewDelegate> {
+@interface ShelfViewController : UIViewController <UICollectionViewDataSource, UICollectionViewDelegate, UIActionSheetDelegate, UIWebViewDelegate, UITextFieldDelegate, MLBarDropdownItemDelegate> {
     BakerAPI *api;
     IssuesManager *issuesManager;
     NSMutableArray *notRecognisedTransactions;
@@ -62,6 +63,8 @@
 @property (strong, nonatomic) UIImageView *background;
 @property (strong, nonatomic) UIBarButtonItem *refreshButton;
 @property (strong, nonatomic) UIBarButtonItem *subscribeButton;
+@property (strong, nonatomic) UIBarButtonItem *infoItem;
+@property (strong, nonatomic) MLBarDropdownItem *categoryButton;
 
 @property (strong, nonatomic) UIActionSheet *subscriptionsActionSheet;
 @property (strong, nonatomic) NSArray *subscriptionsActionSheetActions;
@@ -91,6 +94,7 @@
 #pragma mark - Buttons management
 -(void)setrefreshButtonEnabled:(BOOL)enabled;
 -(void)setSubscribeButtonEnabled:(BOOL)enabled;
+-(void)handleSubscribeButtonPressed:(NSNotification *)notification;
 
 #pragma mark - Helper methods
 + (int)getBannerHeight;

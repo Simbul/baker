@@ -46,6 +46,7 @@
 @synthesize date;
 @synthesize url;
 @synthesize path;
+@synthesize categories;
 @synthesize bakerBook;
 @synthesize coverPath;
 @synthesize coverURL;
@@ -68,6 +69,7 @@
         self.date = book.date;
         self.url = [NSURL URLWithString:book.url];
         self.path = book.path;
+        self.categories = book.categories;
         self.productID = @"";
         self.price = nil;
 
@@ -104,6 +106,7 @@
         self.title = issueData[@"title"];
         self.info = issueData[@"info"];
         self.date = issueData[@"date"];
+        self.categories = issueData[@"categories"];
         self.coverURL = [NSURL URLWithString:issueData[@"cover"]];
         self.url = [NSURL URLWithString:issueData[@"url"]];
         if (issueData[@"product_id"] != [NSNull null]) {

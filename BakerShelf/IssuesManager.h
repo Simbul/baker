@@ -38,6 +38,7 @@
 
 @property (copy, nonatomic) NSArray *issues;
 @property (strong, nonatomic) NSString *shelfManifestPath;
+@property (retain, nonatomic) NSArray *categories;
 
 #pragma mark - Singleton
 

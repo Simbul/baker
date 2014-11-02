@@ -44,6 +44,7 @@
 
 @property (copy, nonatomic) NSArray *author;
 @property (copy, nonatomic) NSArray *creator;
+@property (copy, nonatomic) NSArray *categories;
 @property (copy, nonatomic) NSString *publisher;
 
 @property (copy, nonatomic) NSString *url;
