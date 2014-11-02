@@ -100,20 +100,20 @@
 -(id)initWithIssueData:(NSDictionary *)issueData {
     self = [super init];
     if (self) {
-        self.ID = [issueData objectForKey:@"name"];
-        self.title = [issueData objectForKey:@"title"];
-        self.info = [issueData objectForKey:@"info"];
-        self.date = [issueData objectForKey:@"date"];
-        self.coverURL = [NSURL URLWithString:[issueData objectForKey:@"cover"]];
-        self.url = [NSURL URLWithString:[issueData objectForKey:@"url"]];
-        if ([issueData objectForKey:@"product_id"] != [NSNull null]) {
-            self.productID = [issueData objectForKey:@"product_id"];
+        self.ID = issueData[@"name"];
+        self.title = issueData[@"title"];
+        self.info = issueData[@"info"];
+        self.date = issueData[@"date"];
+        self.coverURL = [NSURL URLWithString:issueData[@"cover"]];
+        self.url = [NSURL URLWithString:issueData[@"url"]];
+        if (issueData[@"product_id"] != [NSNull null]) {
+            self.productID = issueData[@"product_id"];
         }
         self.price = nil;
 
         purchasesManager = [PurchasesManager sharedInstance];
 
-        NSString *cachePath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+        NSString *cachePath = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES)[0];
         self.coverPath = [cachePath stringByAppendingPathComponent:self.ID];
 
         NKLibrary *nkLib = [NKLibrary sharedLibrary];
@@ -166,10 +166,8 @@
 #pragma mark - Newsstand download management
 
 - (void)connection:(NSURLConnection *)connection didWriteData:(long long)bytesWritten totalBytesWritten:(long long)totalBytesWritten expectedTotalBytes:(long long)expectedTotalBytes {
-    NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-                              [NSNumber numberWithLongLong:totalBytesWritten], @"totalBytesWritten",
-                              [NSNumber numberWithLongLong:expectedTotalBytes], @"expectedTotalBytes",
-                              nil];
+    NSDictionary *userInfo = @{@"totalBytesWritten": @(totalBytesWritten),
+                              @"expectedTotalBytes": @(expectedTotalBytes)};
     [[NSNotificationCenter defaultCenter] postNotificationName:notificationDownloadProgressingName object:self userInfo:userInfo];
 }
 
@@ -241,7 +239,7 @@
 
     [connection cancel];
 
-    NSDictionary *userInfo = [NSDictionary dictionaryWithObject:error forKey:@"error"];
+    NSDictionary *userInfo = @{@"error": error};
     [[NSNotificationCenter defaultCenter] postNotificationName:notificationDownloadErrorName object:self userInfo:userInfo];
 }
 
@@ -302,23 +300,5 @@
 #endif
 }
 
--(void)dealloc {
-    [ID release];
-    [title release];
-    [info release];
-    [date release];
-    [url release];
-    [path release];
-    [bakerBook release];
-    [coverPath release];
-    [coverURL release];
-
-    [notificationUnzipErrorName release];
-    [notificationDownloadErrorName release];
-    [notificationDownloadFinishedName release];
-    [notificationDownloadProgressingName release];
-
-    [super dealloc];
-}
 
 @end

@@ -63,7 +63,6 @@
 
 - (void) dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [super dealloc];
 }
 
 
@@ -72,8 +71,7 @@
 - (void)registerEvents {
     // Register the analytics event that are going to be tracked by Baker.
     
-    NSArray *analyticEvents = [NSArray arrayWithObjects:
-                               @"BakerApplicationStart",
+    NSArray *analyticEvents = @[@"BakerApplicationStart",
                                @"BakerIssueDownload",
                                @"BakerIssueOpen",
                                @"BakerIssueClose",
@@ -82,8 +80,7 @@
                                @"BakerSubscriptionPurchase",
                                @"BakerViewPage",
                                @"BakerViewIndexOpen",
-                               @"BakerViewModalBrowser",
-                               nil];
+                               @"BakerViewModalBrowser"];
     
     for (NSString *eventName in analyticEvents) {
         [[NSNotificationCenter defaultCenter] addObserver:self

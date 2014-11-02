@@ -119,7 +119,7 @@
     [self.view addSubview:issueCover];
 
     // SETUP TITLE LABEL
-    self.titleLabel = [[[UILabel alloc] init] autorelease];
+    self.titleLabel = [[UILabel alloc] init];
     titleLabel.textColor = [UIColor colorWithHexString:ISSUES_TITLE_COLOR];
     titleLabel.backgroundColor = [UIColor clearColor];
     titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
@@ -128,7 +128,7 @@
     [self.view addSubview:titleLabel];
 
     // SETUP INFO LABEL
-    self.infoLabel = [[[UILabel alloc] init] autorelease];
+    self.infoLabel = [[UILabel alloc] init];
     infoLabel.textColor = [UIColor colorWithHexString:ISSUES_INFO_COLOR];
     infoLabel.backgroundColor = [UIColor clearColor];
     infoLabel.lineBreakMode = NSLineBreakByTruncatingTail;
@@ -137,7 +137,7 @@
     [self.view addSubview:infoLabel];
 
     // SETUP PRICE LABEL
-    self.priceLabel = [[[UILabel alloc] init] autorelease];
+    self.priceLabel = [[UILabel alloc] init];
     priceLabel.textColor = [UIColor colorWithHexString:ISSUES_PRICE_COLOR];
     priceLabel.backgroundColor = [UIColor clearColor];
     priceLabel.lineBreakMode = NSLineBreakByTruncatingTail;
@@ -168,12 +168,12 @@
     #endif
 
     // SETUP DOWN/LOADING SPINNER AND LABEL
-    self.spinner = [[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray] autorelease];
+    self.spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
     spinner.color = [UIColor colorWithHexString:ISSUES_LOADING_SPINNER_COLOR];
     spinner.backgroundColor = [UIColor clearColor];
     spinner.hidesWhenStopped = YES;
 
-    self.loadingLabel = [[[UILabel alloc] init] autorelease];
+    self.loadingLabel = [[UILabel alloc] init];
     loadingLabel.textColor = [UIColor colorWithHexString:ISSUES_LOADING_LABEL_COLOR];
     loadingLabel.backgroundColor = [UIColor clearColor];
     loadingLabel.textAlignment = NSTextAlignmentLeft;
@@ -183,7 +183,7 @@
     [self.view addSubview:loadingLabel];
 
     // SETUP PROGRESS BAR
-    self.progressBar = [[[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleDefault] autorelease];
+    self.progressBar = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleDefault];
     self.progressBar.progressTintColor = [UIColor colorWithHexString:ISSUES_PROGRESSBAR_TINT_COLOR];
 
     [self.view addSubview:progressBar];
@@ -458,22 +458,6 @@
 
 #pragma mark - Memory management
 
-- (void)dealloc
-{
-    [issue release];
-    [actionButton release];
-    [archiveButton release];
-    [progressBar release];
-    [spinner release];
-    [loadingLabel release];
-    [priceLabel release];
-    [issueCover release];
-    [titleLabel release];
-    [infoLabel release];
-    [currentStatus release];
-
-    [super dealloc];
-}
 
 #pragma mark - Issue management
 
@@ -522,7 +506,7 @@
     }
 }
 - (void)handleIssuePurchased:(NSNotification *)notification {
-    SKPaymentTransaction *transaction = [notification.userInfo objectForKey:@"transaction"];
+    SKPaymentTransaction *transaction = (notification.userInfo)[@"transaction"];
 
     if ([transaction.payment.productIdentifier isEqualToString:issue.productID]) {
 
@@ -552,7 +536,7 @@
     }
 }
 - (void)handleIssuePurchaseFailed:(NSNotification *)notification {
-    SKPaymentTransaction *transaction = [notification.userInfo objectForKey:@"transaction"];
+    SKPaymentTransaction *transaction = (notification.userInfo)[@"transaction"];
 
     if ([transaction.payment.productIdentifier isEqualToString:issue.productID]) {
         // Show an error, unless it was the user who cancelled the transaction
@@ -571,7 +555,7 @@
 }
 
 - (void)handleIssueRestored:(NSNotification *)notification {
-    SKPaymentTransaction *transaction = [notification.userInfo objectForKey:@"transaction"];
+    SKPaymentTransaction *transaction = (notification.userInfo)[@"transaction"];
 
     if ([transaction.payment.productIdentifier isEqualToString:issue.productID]) {
         [purchasesManager markAsPurchased:transaction.payment.productIdentifier];
@@ -608,8 +592,8 @@
     [self refresh];
 }
 - (void)handleDownloadProgressing:(NSNotification *)notification {
-    float bytesWritten = [[notification.userInfo objectForKey:@"totalBytesWritten"] floatValue];
-    float bytesExpected = [[notification.userInfo objectForKey:@"expectedTotalBytes"] floatValue];
+    float bytesWritten = [(notification.userInfo)[@"totalBytesWritten"] floatValue];
+    float bytesExpected = [(notification.userInfo)[@"expectedTotalBytes"] floatValue];
 
     if ([self.currentStatus isEqualToString:@"connecting"]) {
         self.issue.transientStatus = BakerIssueTransientStatusDownloading;
@@ -650,7 +634,6 @@
                                 cancelButtonTitle: NSLocalizedString(@"ARCHIVE_ALERT_BUTTON_CANCEL", nil)
                                 otherButtonTitles: NSLocalizedString(@"ARCHIVE_ALERT_BUTTON_OK", nil), nil];
     [updateAlert show];
-    [updateAlert release];
 }
 
 - (void) alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex

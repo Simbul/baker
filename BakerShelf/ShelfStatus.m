@@ -37,12 +37,12 @@
 @synthesize prices;
 
 - (id)init {
-    NSString *cachePath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+    NSString *cachePath = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES)[0];
     NSString *statusPath = [[cachePath stringByAppendingPathComponent:@"shelf-status"] stringByAppendingPathExtension:@"json"];
 
     self = [super initWithJSONPath:statusPath];
     if (self) {
-        self.prices = [[[NSMutableDictionary alloc] init] autorelease];
+        self.prices = [[NSMutableDictionary alloc] init];
     }
     return self;
 }
@@ -50,7 +50,7 @@
 - (NSDictionary *)load {
     NSDictionary *jsonDict = [super load];
 
-    NSDictionary *jsonPrices = [jsonDict objectForKey:@"prices"];
+    NSDictionary *jsonPrices = jsonDict[@"prices"];
     [jsonPrices enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
         [self setPrice:obj for:key];
     }];
@@ -59,23 +59,18 @@
 }
 
 - (void)save {
-    NSDictionary *jsonDict = [NSDictionary dictionaryWithObjectsAndKeys:prices, @"prices", nil];
+    NSDictionary *jsonDict = @{@"prices": prices};
 
     [super save:jsonDict];
 }
 
 - (NSString *)priceFor:(NSString *)productID {
-    return [prices objectForKey:productID];
+    return prices[productID];
 }
 
 - (void)setPrice:(NSString *)price for:(NSString *)productID {
-    [prices setObject:price forKey:productID];
+    prices[productID] = price;
 }
 
-- (void)dealloc {
-    [prices release];
-
-    [super dealloc];
-}
 
 @end

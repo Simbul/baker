@@ -40,8 +40,8 @@
     BOOL _enableProductRequestFailureNotifications;
 }
 
-@property (retain, nonatomic) NSMutableDictionary *products;
-@property (retain, nonatomic) NSNumberFormatter *numberFormatter;
+@property (strong, nonatomic) NSMutableDictionary *products;
+@property (strong, nonatomic) NSNumberFormatter *numberFormatter;
 @property (nonatomic) BOOL subscribed;
 
 #pragma mark - Singleton

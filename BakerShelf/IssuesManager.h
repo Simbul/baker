@@ -37,7 +37,7 @@
 @interface IssuesManager : NSObject
 
 @property (copy, nonatomic) NSArray *issues;
-@property (retain, nonatomic) NSString *shelfManifestPath;
+@property (strong, nonatomic) NSString *shelfManifestPath;
 
 #pragma mark - Singleton
 
