@@ -145,12 +145,12 @@
     // ****** Add items to toolbar
     if ([[myUrl scheme] isEqualToString:@"file"])
     {
-        NSArray *items = [NSArray arrayWithObjects: btnClose, btnGoBack, btnGoForward, btnSpinner, spacer, nil];
+        NSArray *items = @[btnClose, btnGoBack, btnGoForward, btnSpinner, spacer];
         [toolbar setItems:items animated:NO];
     }
     else
     {
-        NSArray *items = [NSArray arrayWithObjects: btnClose, btnGoBack, btnGoForward, btnReload, btnSpinner, spacer, btnAction, nil];
+        NSArray *items = @[btnClose, btnGoBack, btnGoForward, btnReload, btnSpinner, spacer, btnAction];
         [toolbar setItems:items animated:NO];
     }
 

@@ -38,7 +38,7 @@
 @synthesize scrollIndex;
 
 - (id)initWithBookId:(NSString *)bookId {
-    NSString *cachePath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+    NSString *cachePath = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES)[0];
     NSString *statusPath = [[[cachePath stringByAppendingPathComponent:@"statuses"] stringByAppendingPathComponent:bookId] stringByAppendingPathExtension:@"json"];
 
     return [super initWithJSONPath:statusPath];
@@ -47,14 +47,14 @@
 - (NSDictionary *)load {
     NSDictionary *jsonDict = [super load];
 
-    self.page        = [jsonDict objectForKey:@"page"];
-    self.scrollIndex = [jsonDict objectForKey:@"scroll-index"];
+    self.page        = jsonDict[@"page"];
+    self.scrollIndex = jsonDict[@"scroll-index"];
 
     return jsonDict;
 }
 
 - (void)save {
-    NSDictionary *jsonDict = [NSDictionary dictionaryWithObjectsAndKeys:page, @"page", scrollIndex, @"scroll-index", nil];
+    NSDictionary *jsonDict = @{@"page": page, @"scroll-index": scrollIndex};
 
     [super save:jsonDict];
 }

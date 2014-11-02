@@ -166,7 +166,7 @@
     [self.blockingProgressView addSubview:spinner];
     [spinner startAnimating];
 
-    NSMutableSet *subscriptions = [NSMutableSet setWithArray:AUTO_RENEWABLE_SUBSCRIPTION_PRODUCT_IDS];
+    NSMutableSet *subscriptions = [NSMutableSet setWithArray:@[]];
     if ([FREE_SUBSCRIPTION_PRODUCT_ID length] > 0 && ![purchasesManager isPurchased:FREE_SUBSCRIPTION_PRODUCT_ID]) {
         [subscriptions addObject:FREE_SUBSCRIPTION_PRODUCT_ID];
     }
@@ -304,7 +304,7 @@
         cell.backgroundColor = [UIColor clearColor];
 	}
 
-    IssueViewController *controller = [self.issueViewControllers objectAtIndex:indexPath.row];
+    IssueViewController *controller = (self.issueViewControllers)[indexPath.row];
     UIView *removableIssueView = [cell.contentView viewWithTag:42];
     if (removableIssueView) {
         [removableIssueView removeFromSuperview];
@@ -339,7 +339,7 @@
 
                     if (![self bakerIssueWithID:ivc.issue.ID]) {
                         [discardedControllers addObject:ivc];
-                        [self.gridView deleteItemsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForItem:idx inSection:0]]];
+                        [self.gridView deleteItemsAtIndexPaths:@[[NSIndexPath indexPathForItem:idx inSection:0]]];
                     }
                 }];
                 [self.issueViewControllers removeObjectsInArray:discardedControllers];
@@ -356,7 +356,7 @@
                     } else {
                         IssueViewController *newIvc = [self createIssueViewControllerWithIssue:issue];
                         [self.issueViewControllers insertObject:newIvc atIndex:idx];
-                        [self.gridView insertItemsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForItem:idx inSection:0] ] ];
+                        [self.gridView insertItemsAtIndexPaths:@[[NSIndexPath indexPathForItem:idx inSection:0]] ];
                     }
                 }];
 
@@ -449,7 +449,7 @@
             [actions addObject:FREE_SUBSCRIPTION_PRODUCT_ID];
         }
 
-        for (NSString *productId in AUTO_RENEWABLE_SUBSCRIPTION_PRODUCT_IDS) {
+        for (NSString *productId in @[]) {
             NSString *title = [purchasesManager displayTitleFor:productId];
             NSString *price = [purchasesManager priceFor:productId];
             if (price) {
@@ -475,7 +475,7 @@
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
     if (actionSheet == subscriptionsActionSheet) {
-        NSString *action = [self.subscriptionsActionSheetActions objectAtIndex:buttonIndex];
+        NSString *action = (self.subscriptionsActionSheetActions)[buttonIndex];
         if ([action isEqualToString:@"cancel"]) {
             NSLog(@"Action sheet: cancel");
             [self setSubscribeButtonEnabled:YES];
@@ -498,7 +498,7 @@
 }
 
 - (void)handleRestoreFailed:(NSNotification *)notification {
-    NSError *error = [notification.userInfo objectForKey:@"error"];
+    NSError *error = (notification.userInfo)[@"error"];
     [Utils showAlertWithTitle:NSLocalizedString(@"RESTORE_FAILED_TITLE", nil)
                       message:[error localizedDescription]
                   buttonTitle:NSLocalizedString(@"RESTORE_FAILED_CLOSE", nil)];
@@ -529,7 +529,7 @@
 }
 
 - (void)handleRestoredIssueNotRecognised:(NSNotification *)notification {
-    SKPaymentTransaction *transaction = [notification.userInfo objectForKey:@"transaction"];
+    SKPaymentTransaction *transaction = (notification.userInfo)[@"transaction"];
     [notRecognisedTransactions addObject:transaction];
 }
 
@@ -540,7 +540,7 @@
 }
 
 - (void)handleSubscriptionPurchased:(NSNotification *)notification {
-    SKPaymentTransaction *transaction = [notification.userInfo objectForKey:@"transaction"];
+    SKPaymentTransaction *transaction = (notification.userInfo)[@"transaction"];
 
     [purchasesManager markAsPurchased:transaction.payment.productIdentifier];
     [self setSubscribeButtonEnabled:YES];
@@ -561,7 +561,7 @@
 }
 
 - (void)handleSubscriptionFailed:(NSNotification *)notification {
-    SKPaymentTransaction *transaction = [notification.userInfo objectForKey:@"transaction"];
+    SKPaymentTransaction *transaction = (notification.userInfo)[@"transaction"];
 
     // Show an error, unless it was the user who cancelled the transaction
     if (transaction.error.code != SKErrorPaymentCancelled) {
@@ -574,7 +574,7 @@
 }
 
 - (void)handleSubscriptionRestored:(NSNotification *)notification {
-    SKPaymentTransaction *transaction = [notification.userInfo objectForKey:@"transaction"];
+    SKPaymentTransaction *transaction = (notification.userInfo)[@"transaction"];
 
     [purchasesManager markAsPurchased:transaction.payment.productIdentifier];
 
@@ -584,14 +584,14 @@
 }
 
 - (void)handleProductsRetrieved:(NSNotification *)notification {
-    NSSet *ids = [notification.userInfo objectForKey:@"ids"];
+    NSSet *ids = (notification.userInfo)[@"ids"];
     BOOL issuesRetrieved = NO;
 
     for (NSString *productId in ids) {
         if ([productId isEqualToString:FREE_SUBSCRIPTION_PRODUCT_ID]) {
             // ID is for a free subscription
             [self setSubscribeButtonEnabled:YES];
-        } else if ([AUTO_RENEWABLE_SUBSCRIPTION_PRODUCT_IDS containsObject:productId]) {
+        } else if ([@[] containsObject:productId]) {
             // ID is for an auto-renewable subscription
             [self setSubscribeButtonEnabled:YES];
         } else {
@@ -614,7 +614,7 @@
 }
 
 - (void)handleProductsRequestFailed:(NSNotification *)notification {
-    NSError *error = [notification.userInfo objectForKey:@"error"];
+    NSError *error = (notification.userInfo)[@"error"];
 
     [Utils showAlertWithTitle:NSLocalizedString(@"PRODUCTS_REQUEST_FAILED_TITLE", nil)
                       message:[error localizedDescription]
@@ -665,7 +665,7 @@
 }
 - (void)receiveBookProtocolNotification:(NSNotification *)notification
 {
-    self.bookToBeProcessed = [notification.userInfo objectForKey:@"ID"];
+    self.bookToBeProcessed = (notification.userInfo)[@"ID"];
     [self.navigationController popToRootViewControllerAnimated:YES];
 }
 - (void)handleBookToBeProcessed
@@ -702,10 +702,8 @@
 
 - (void)webViewDidFinishLoad:(UIWebView *)webView {
     // Inject user_id
-    [Utils webView:webView dispatchHTMLEvent:@"init" withParams:[NSDictionary dictionaryWithObjectsAndKeys:
-                                                                [BakerAPI UUID], @"user_id",
-                                                                [Utils appID], @"app_id",
-                                                                nil]];
+    [Utils webView:webView dispatchHTMLEvent:@"init" withParams:@{@"user_id": [BakerAPI UUID],
+                                                                @"app_id": [Utils appID]}];
 }
 
 - (void)handleInfoButtonPressed:(id)sender {
