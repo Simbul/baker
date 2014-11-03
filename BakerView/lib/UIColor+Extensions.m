@@ -12,8 +12,7 @@
 
 #pragma mark - Hex color management
 
-+ (UIColor *)colorWithRGBHex:(UInt32)hex
-{
++ (UIColor*)colorWithRGBHex:(UInt32)hex {
 	int r = (hex >> 16) & 0xFF;
 	int g = (hex >> 8) & 0xFF;
 	int b = (hex) & 0xFF;
@@ -23,9 +22,9 @@
 							blue:b / 255.0f
 						   alpha:1.0f];
 }
-+ (UIColor *)colorWithHexString:(NSString *)stringToConvert
-{
-    // Returns a UIColor by scanning the string for a hex number and passing that to (UIColor *)colorWithRGBHex:(UInt32)hex
+
++ (UIColor*)colorWithHexString:(NSString*)stringToConvert {
+    // Returns a UIColor by scanning the string for a hex number and passing that to (UIColor*)colorWithRGBHex:(UInt32)hex
     // Skips any leading whitespace and ignores any trailing characters
     
     NSString *hexString = [stringToConvert stringByReplacingOccurrencesOfString:@"#" withString:@""];

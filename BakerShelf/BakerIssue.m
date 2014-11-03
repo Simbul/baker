@@ -5,7 +5,7 @@
 //  ==========================================================================================
 //
 //  Copyright (c) 2010-2013, Davide Casali, Marco Colombo, Alessandro Morandi
-//  Copyright (c) 2014, Andrew Krowczyk, Cédric Mériau
+//  Copyright (c) 2014, Andrew Krowczyk, Cédric Mériau, Pieter Claerhout
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without modification, are
@@ -37,51 +37,34 @@
 #import "Reachability.h"
 #import "Utils.h"
 #import "NSURL+Extensions.h"
+#import "NSObject+Extensions.h"
 
 @implementation BakerIssue
 
-@synthesize ID;
-@synthesize title;
-@synthesize info;
-@synthesize date;
-@synthesize url;
-@synthesize path;
-@synthesize bakerBook;
-@synthesize coverPath;
-@synthesize coverURL;
-@synthesize productID;
-@synthesize price;
-@synthesize transientStatus;
+#pragma mark - Initialization
 
-@synthesize notificationDownloadStartedName;
-@synthesize notificationDownloadProgressingName;
-@synthesize notificationDownloadFinishedName;
-@synthesize notificationDownloadErrorName;
-@synthesize notificationUnzipErrorName;
-
--(id)initWithBakerBook:(BakerBook *)book {
+- (id)initWithBakerBook:(BakerBook*)book {
     self = [super init];
     if (self) {
-        self.ID = book.ID;
-        self.title = book.title;
-        self.info = @"";
-        self.date = book.date;
-        self.url = [NSURL URLWithString:book.url];
-        self.path = book.path;
-        self.productID = @"";
-        self.price = nil;
+        _ID        = book.ID;
+        _title     = book.title;
+        _info      = @"";
+        _date      = book.date;
+        _url       = [NSURL URLWithString:book.url];
+        _path      = book.path;
+        _productID = @"";
+        _price     = nil;
+        _bakerBook = book;
 
-        self.bakerBook = book;
-
-        self.coverPath = @"";
+        _coverPath = @"";
         if (book.cover == nil) {
             // TODO: set path to a default cover (right now a blank box will be displayed)
             NSLog(@"Cover not specified for %@, probably missing from book.json", book.ID);
         } else {
-            self.coverPath = [book.path stringByAppendingPathComponent:book.cover];
+            _coverPath = [book.path stringByAppendingPathComponent:book.cover];
         }
 
-        self.transientStatus = BakerIssueTransientStatusNone;
+        _transientStatus = BakerIssueTransientStatusNone;
 
         [self setNotificationDownloadNames];
     }
@@ -89,23 +72,25 @@
 }
 
 - (void)setNotificationDownloadNames {
-    self.notificationDownloadStartedName = [NSString stringWithFormat:@"notification_download_started_%@", self.ID];
+    self.notificationDownloadStartedName     = [NSString stringWithFormat:@"notification_download_started_%@", self.ID];
     self.notificationDownloadProgressingName = [NSString stringWithFormat:@"notification_download_progressing_%@", self.ID];
-    self.notificationDownloadFinishedName = [NSString stringWithFormat:@"notification_download_finished_%@", self.ID];
-    self.notificationDownloadErrorName = [NSString stringWithFormat:@"notification_download_error_%@", self.ID];
-    self.notificationUnzipErrorName = [NSString stringWithFormat:@"notification_unzip_error_%@", self.ID];
+    self.notificationDownloadFinishedName    = [NSString stringWithFormat:@"notification_download_finished_%@", self.ID];
+    self.notificationDownloadErrorName       = [NSString stringWithFormat:@"notification_download_error_%@", self.ID];
+    self.notificationUnzipErrorName          = [NSString stringWithFormat:@"notification_unzip_error_%@", self.ID];
 }
 
+#pragma mark - Newsstand
+
 #ifdef BAKER_NEWSSTAND
--(id)initWithIssueData:(NSDictionary *)issueData {
+- (id)initWithIssueData:(NSDictionary*)issueData {
     self = [super init];
     if (self) {
-        self.ID = issueData[@"name"];
-        self.title = issueData[@"title"];
-        self.info = issueData[@"info"];
-        self.date = issueData[@"date"];
+        self.ID       = issueData[@"name"];
+        self.title    = issueData[@"title"];
+        self.info     = issueData[@"info"];
+        self.date     = issueData[@"date"];
         self.coverURL = [NSURL URLWithString:issueData[@"cover"]];
-        self.url = [NSURL URLWithString:issueData[@"url"]];
+        self.url      = [NSURL URLWithString:issueData[@"url"]];
         if (issueData[@"product_id"] != [NSNull null]) {
             self.productID = issueData[@"product_id"];
         }
@@ -113,8 +98,7 @@
 
         purchasesManager = [PurchasesManager sharedInstance];
 
-        NSString *cachePath = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES)[0];
-        self.coverPath = [cachePath stringByAppendingPathComponent:self.ID];
+        self.coverPath = [self.cachePath stringByAppendingPathComponent:self.ID];
 
         NKLibrary *nkLib = [NKLibrary sharedLibrary];
         NKIssue *nkIssue = [nkLib issueWithName:self.ID];
@@ -133,7 +117,7 @@
     return self;
 }
 
--(NSString *)nkIssueContentStatusToString:(NKIssueContentStatus) contentStatus{
+- (NSString*)nkIssueContentStatusToString:(NKIssueContentStatus) contentStatus{
     if (contentStatus == NKIssueContentStatusNone) {
         return @"remote";
     } else if (contentStatus == NKIssueContentStatusDownloading) {
@@ -143,8 +127,9 @@
     }
     return @"";
 }
+
 - (void)download {
-    Reachability* reach = [Reachability reachabilityWithHostname:@"www.google.com"];
+    Reachability *reach = [Reachability reachabilityWithHostname:@"www.google.com"];
     if ([reach isReachable]) {
         BakerAPI *api = [BakerAPI sharedInstance];
         NSURLRequest *req = [api requestForURL:self.url method:@"GET"];
@@ -155,34 +140,35 @@
         NKAssetDownload *assetDownload = [nkIssue addAssetWithRequest:req];
         [self downloadWithAsset:assetDownload];
     } else {
-        [[NSNotificationCenter defaultCenter] postNotificationName:notificationDownloadErrorName object:self userInfo:nil];
+        [[NSNotificationCenter defaultCenter] postNotificationName:self.notificationDownloadErrorName object:self userInfo:nil];
     }
 }
-- (void)downloadWithAsset:(NKAssetDownload *)asset {
+
+- (void)downloadWithAsset:(NKAssetDownload*)asset {
     [asset downloadWithDelegate:self];
-    [[NSNotificationCenter defaultCenter] postNotificationName:notificationDownloadStartedName object:self userInfo:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:self.notificationDownloadStartedName object:self userInfo:nil];
 }
 
 #pragma mark - Newsstand download management
 
-- (void)connection:(NSURLConnection *)connection didWriteData:(long long)bytesWritten totalBytesWritten:(long long)totalBytesWritten expectedTotalBytes:(long long)expectedTotalBytes {
+- (void)connection:(NSURLConnection*)connection didWriteData:(long long)bytesWritten totalBytesWritten:(long long)totalBytesWritten expectedTotalBytes:(long long)expectedTotalBytes {
     NSDictionary *userInfo = @{@"totalBytesWritten": @(totalBytesWritten),
                               @"expectedTotalBytes": @(expectedTotalBytes)};
-    [[NSNotificationCenter defaultCenter] postNotificationName:notificationDownloadProgressingName object:self userInfo:userInfo];
+    [[NSNotificationCenter defaultCenter] postNotificationName:self.notificationDownloadProgressingName object:self userInfo:userInfo];
 }
 
-- (void)connectionDidFinishDownloading:(NSURLConnection *)connection destinationURL:(NSURL *)destinationURL {
+- (void)connectionDidFinishDownloading:(NSURLConnection*)connection destinationURL:(NSURL*)destinationURL {
     #ifdef BAKER_NEWSSTAND
     [self unpackAssetDownload:connection.newsstandAssetDownload toURL:destinationURL];
     #endif
 }
 
 #ifdef BAKER_NEWSSTAND
-- (void)unpackAssetDownload:(NKAssetDownload *)newsstandAssetDownload toURL:(NSURL *)destinationURL {
+- (void)unpackAssetDownload:(NKAssetDownload*)newsstandAssetDownload toURL:(NSURL*)destinationURL {
 
     UIApplication *application = [UIApplication sharedApplication];
-    NKIssue *nkIssue = newsstandAssetDownload.issue;
-    NSString *destinationPath = [[nkIssue contentURL] path];
+    NKIssue *nkIssue           = newsstandAssetDownload.issue;
+    NSString *destinationPath  = [[nkIssue contentURL] path];
 
     __block UIBackgroundTaskIdentifier backgroundTask = [application beginBackgroundTaskWithExpirationHandler:^{
         [application endBackgroundTask:backgroundTask];
@@ -196,7 +182,7 @@
         if (!unzipSuccessful) {
             NSLog(@"[BakerShelf] Newsstand - Unable to unzip file: %@. The file may not be a valid HPUB archive.", [destinationURL path]);
             dispatch_async(dispatch_get_main_queue(), ^(void) {
-                [[NSNotificationCenter defaultCenter] postNotificationName:notificationUnzipErrorName object:self userInfo:nil];
+                [[NSNotificationCenter defaultCenter] postNotificationName:self.notificationUnzipErrorName object:self userInfo:nil];
             });
         }
 
@@ -210,7 +196,7 @@
         if (unzipSuccessful) {
             // Notification and UI update have to be handled on the main thread
             dispatch_async(dispatch_get_main_queue(), ^(void) {
-                [[NSNotificationCenter defaultCenter] postNotificationName:notificationDownloadFinishedName object:self userInfo:nil];
+                [[NSNotificationCenter defaultCenter] postNotificationName:self.notificationDownloadFinishedName object:self userInfo:nil];
             });
         }
 
@@ -220,6 +206,7 @@
         backgroundTask = UIBackgroundTaskInvalid;
     });
 }
+
 - (void)updateNewsstandIcon {
     [[UIApplication sharedApplication] setApplicationIconBadgeNumber:1];
 
@@ -230,22 +217,21 @@
 }
 #endif
 
-- (void)connectionDidResumeDownloading:(NSURLConnection *)connection totalBytesWritten:(long long)totalBytesWritten expectedTotalBytes:(long long)expectedTotalBytes {
-    // Nothing to do for now
+- (void)connectionDidResumeDownloading:(NSURLConnection*)connection totalBytesWritten:(long long)totalBytesWritten expectedTotalBytes:(long long)expectedTotalBytes {
 }
 
-- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
+- (void)connection:(NSURLConnection*)connection didFailWithError:(NSError*)error {
     NSLog(@"Connection error when trying to download %@: %@", [connection currentRequest].URL, [error localizedDescription]);
 
     [connection cancel];
 
     NSDictionary *userInfo = @{@"error": error};
-    [[NSNotificationCenter defaultCenter] postNotificationName:notificationDownloadErrorName object:self userInfo:userInfo];
+    [[NSNotificationCenter defaultCenter] postNotificationName:self.notificationDownloadErrorName object:self userInfo:userInfo];
 }
 
 #endif
 
--(void)getCoverWithCache:(bool)cache andBlock:(void(^)(UIImage *img))completionBlock {
+- (void)getCoverWithCache:(bool)cache andBlock:(void(^)(UIImage *img))completionBlock {
     UIImage *image = [UIImage imageWithContentsOfFile:self.coverPath];
     if (cache && image) {
         completionBlock(image);
@@ -265,7 +251,7 @@
     }
 }
 
--(NSString *)getStatus {
+- (NSString*)getStatus {
 #ifdef BAKER_NEWSSTAND
     switch (self.transientStatus) {
         case BakerIssueTransientStatusDownloading:
@@ -299,6 +285,5 @@
     return @"bundled";
 #endif
 }
-
 
 @end

@@ -56,37 +56,37 @@ typedef enum transientStates {
 @interface BakerIssue : NSObject
 #endif
 
-@property (copy, nonatomic) NSString *ID;
-@property (copy, nonatomic) NSString *title;
-@property (copy, nonatomic) NSString *info;
-@property (copy, nonatomic) NSString *date;
-@property (copy, nonatomic) NSURL *url;
-@property (copy, nonatomic) NSString *path;
+@property (nonatomic, copy) NSString *ID;
+@property (nonatomic, copy) NSString *title;
+@property (nonatomic, copy) NSString *info;
+@property (nonatomic, copy) NSString *date;
+@property (nonatomic, copy) NSURL *url;
+@property (nonatomic, copy) NSString *path;
 
-@property (copy, nonatomic) NSString *coverPath;
-@property (copy, nonatomic) NSURL *coverURL;
+@property (nonatomic, copy) NSString *coverPath;
+@property (nonatomic, copy) NSURL *coverURL;
 
-@property (copy, nonatomic) NSString *productID;
-@property (copy, nonatomic) NSString *price;
+@property (nonatomic, copy) NSString *productID;
+@property (nonatomic, copy) NSString *price;
 
-@property (strong, nonatomic) BakerBook *bakerBook;
+@property (nonatomic, strong) BakerBook *bakerBook;
 
-@property (assign, nonatomic) BakerIssueTransientStatus transientStatus;
+@property (nonatomic, assign) BakerIssueTransientStatus transientStatus;
 
-@property (copy, nonatomic) NSString *notificationDownloadStartedName;
-@property (copy, nonatomic) NSString *notificationDownloadProgressingName;
-@property (copy, nonatomic) NSString *notificationDownloadFinishedName;
-@property (copy, nonatomic) NSString *notificationDownloadErrorName;
-@property (copy, nonatomic) NSString *notificationUnzipErrorName;
+@property (nonatomic, copy) NSString *notificationDownloadStartedName;
+@property (nonatomic, copy) NSString *notificationDownloadProgressingName;
+@property (nonatomic, copy) NSString *notificationDownloadFinishedName;
+@property (nonatomic, copy) NSString *notificationDownloadErrorName;
+@property (nonatomic, copy) NSString *notificationUnzipErrorName;
 
--(id)initWithBakerBook:(BakerBook *)bakerBook;
--(void)getCoverWithCache:(bool)cache andBlock:(void(^)(UIImage *img))completionBlock;
--(NSString *)getStatus;
+- (id)initWithBakerBook:(BakerBook*)bakerBook;
+- (void)getCoverWithCache:(bool)cache andBlock:(void(^)(UIImage *img))completionBlock;
+- (NSString*)getStatus;
 
 #ifdef BAKER_NEWSSTAND
--(id)initWithIssueData:(NSDictionary *)issueData;
--(void)download;
--(void)downloadWithAsset:(NKAssetDownload *)asset;
+- (id)initWithIssueData:(NSDictionary*)issueData;
+- (void)download;
+- (void)downloadWithAsset:(NKAssetDownload*)asset;
 #endif
 
 @end

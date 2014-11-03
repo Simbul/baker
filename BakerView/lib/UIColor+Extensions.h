@@ -11,7 +11,8 @@
 @interface UIColor (UIColor_Extensions)
 
 #pragma mark - Hex color management
-+ (UIColor *)colorWithRGBHex:(UInt32)hex;
-+ (UIColor *)colorWithHexString:(NSString *)stringToConvert;
+
++ (UIColor*)colorWithRGBHex:(UInt32)hex;
++ (UIColor*)colorWithHexString:(NSString*)stringToConvert;
 
 @end

@@ -5,7 +5,7 @@
 //  ==========================================================================================
 //
 //  Copyright (c) 2010-2013, Davide Casali, Marco Colombo, Alessandro Morandi
-//  Copyright (c) 2014, Andrew Krowczyk, Cédric Mériau
+//  Copyright (c) 2014, Andrew Krowczyk, Cédric Mériau, Pieter Claerhout
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without modification, are
@@ -44,6 +44,8 @@
 #import "BakerViewController.h"
 #import "BakerAnalyticsEvents.h"
 
+#pragma mark - Initialization
+
 @implementation AppDelegate
 
 + (void)initialize {
@@ -56,63 +58,85 @@
 - (BOOL)application:(UIApplication*)application didFinishLaunchingWithOptions:(NSDictionary*)launchOptions {
 
 #ifdef BAKER_NEWSSTAND
+    [self configureNewsstandApp:application options:launchOptions];
+#else
+    [self configureStandAloneApp:application options:launchOptions];
+#endif
 
+    self.rootNavigationController = [[UICustomNavigationController alloc] initWithRootViewController:self.rootViewController];
+
+    [self configureNavigationBar];
+    [self configureAnalytics];
+
+    self.window = [[InterceptorWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
+    self.window.backgroundColor    = [UIColor whiteColor];
+    self.window.rootViewController = self.rootNavigationController;
+    [self.window makeKeyAndVisible];
+    
+    return YES;
+}
+
+- (void)configureNewsstandApp:(UIApplication*)application options:(NSDictionary*)launchOptions {
+    
     NSLog(@"====== Baker Newsstand Mode enabled ======");
     [BakerAPI generateUUIDOnce];
-
+    
     // Let the device know we want to handle Newsstand push notifications
     [application registerForRemoteNotificationTypes:(UIRemoteNotificationTypeNewsstandContentAvailability|UIRemoteNotificationTypeBadge|UIRemoteNotificationTypeSound|UIRemoteNotificationTypeAlert)];
-
-    #ifdef DEBUG
+    
+#ifdef DEBUG
     // For debug only... so that you can download multiple issues per day during development
     [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"NKDontThrottleNewsstandContentNotifications"];
     [[NSUserDefaults standardUserDefaults] synchronize];
-    #endif
+#endif
     
     // Check if the app is runnig in response to a notification
     NSDictionary *payload = launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey];
     if (payload) {
         NSDictionary *aps = payload[@"aps"];
         if (aps && aps[@"content-available"]) {
-
+            
             __block UIBackgroundTaskIdentifier backgroundTask = [application beginBackgroundTaskWithExpirationHandler:^{
                 [application endBackgroundTask:backgroundTask];
                 backgroundTask = UIBackgroundTaskInvalid;
             }];
-
+            
             // Credit where credit is due. This semaphore solution found here:
             // http://stackoverflow.com/a/4326754/2998
             dispatch_semaphore_t sema = NULL;
             sema = dispatch_semaphore_create(0);
-
+            
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
                 [self applicationWillHandleNewsstandNotificationOfContent:payload[@"content-name"]];
                 [application endBackgroundTask:backgroundTask];
                 backgroundTask = UIBackgroundTaskInvalid;
                 dispatch_semaphore_signal(sema);
             });
-
+            
             dispatch_semaphore_wait(sema, DISPATCH_TIME_FOREVER);
         }
     }
-
+    
     self.rootViewController = [[ShelfViewController alloc] init];
 
-#else
+}
 
+- (void)configureStandAloneApp:(UIApplication*)application options:(NSDictionary*)launchOptions {
+    
     NSLog(@"====== Baker Standalone Mode enabled ======");
     NSArray *books = [IssuesManager localBooksList];
     if (books.count == 1) {
-        self.rootViewController = [[BakerViewController alloc] initWithBook:books[0].bakerBook];
+        BakerBook *book = [books[0] bakerBook];
+        self.rootViewController = [[BakerViewController alloc] initWithBook:book];
     } else  {
         self.rootViewController = [[ShelfViewController alloc] initWithBooks:books];
     }
 
-#endif
+}
 
-    self.rootNavigationController = [[UICustomNavigationController alloc] initWithRootViewController:self.rootViewController];
+- (void)configureNavigationBar {
+    
     UICustomNavigationBar *navigationBar = (UICustomNavigationBar*)self.rootNavigationController.navigationBar;
-
     if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0")) {
         // Background is 64px high: in iOS7, it will be used as the background for the status bar as well.
         navigationBar.tintColor = [UIColor colorWithHexString:ISSUES_ACTION_BUTTON_BACKGROUND_COLOR];
@@ -126,18 +150,14 @@
         navigationBar.tintColor = [UIColor colorWithHexString:@"333333"]; // black will not trigger a pushed status
     }
 
-    self.window = [[InterceptorWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-    self.window.backgroundColor = [UIColor whiteColor];
+}
 
-    self.window.rootViewController = self.rootNavigationController;
-    [self.window makeKeyAndVisible];
-    
-    // ****** Analytics Setup
+- (void)configureAnalytics {
     [BakerAnalyticsEvents sharedInstance]; // Initialization
     [[NSNotificationCenter defaultCenter] postNotificationName:@"BakerApplicationStart" object:self]; // -> Baker Analytics Event
-    
-    return YES;
 }
+
+#pragma mark - Push Notifications
 
 - (void)application:(UIApplication*)application didFailToRegisterForRemoteNotificationsWithError:(NSError*)error {
     NSLog(@"[AppDelegate] Push Notification - Device Token, review: %@", error);
@@ -211,6 +231,8 @@
     }];
 #endif
 }
+
+#pragma mark - Application Lifecycle
 
 - (void)applicationWillResignActive:(UIApplication*)application {
     [[NSNotificationCenter defaultCenter] postNotificationName:@"applicationWillResignActiveNotification" object:nil];

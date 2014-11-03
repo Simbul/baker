@@ -1,11 +1,11 @@
 //
-//  Utils.h
+//  NSString+Extensions.h
 //  Baker
 //
 //  ==========================================================================================
 //
 //  Copyright (c) 2010-2013, Davide Casali, Marco Colombo, Alessandro Morandi
-//  Copyright (c) 2014, Andrew Krowczyk, Cédric Mériau
+//  Copyright (c) 2014, Andrew Krowczyk, Cédric Mériau, Pieter Claerhout
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without modification, are
@@ -40,18 +40,16 @@
 #define SYSTEM_VERSION_LESS_THAN(version)                 ([[[UIDevice currentDevice] systemVersion] compare:version options:NSNumericSearch] == NSOrderedAscending)
 #define SYSTEM_VERSION_LESS_THAN_OR_EQUAL_TO(version)     ([[[UIDevice currentDevice] systemVersion] compare:version options:NSNumericSearch] != NSOrderedDescending)
 
-@interface Utils : NSObject {
+@interface Utils : NSObject
 
-}
-
-+ (UIColor *)colorWithRGBHex:(UInt32)hex;
-+ (UIColor *)colorWithHexString:(NSString *)stringToConvert;
-+ (NSString *)stringFromInterfaceOrientation:(UIInterfaceOrientation)orientation;
-+ (BOOL)webViewShouldBePaged:(UIWebView*)webView forBook:(BakerBook *)book;
-+ (NSString *)appID;
-+ (NSDate *)dateWithFormattedString:(NSString *)string;
-+ (void)showAlertWithTitle:(NSString *)title message:(NSString *)message buttonTitle:(NSString *)buttonTitle;
-+ (void)webView:(UIWebView *)webView dispatchHTMLEvent:(NSString *)event;
-+ (void)webView:(UIWebView *)webView dispatchHTMLEvent:(NSString *)event withParams:(NSDictionary *)params;
++ (UIColor*)colorWithRGBHex:(UInt32)hex;
++ (UIColor*)colorWithHexString:(NSString*)stringToConvert;
++ (NSString*)stringFromInterfaceOrientation:(UIInterfaceOrientation)orientation;
++ (BOOL)webViewShouldBePaged:(UIWebView*)webView forBook:(BakerBook*)book;
++ (NSString*)appID;
++ (NSDate*)dateWithFormattedString:(NSString*)string;
++ (void)showAlertWithTitle:(NSString*)title message:(NSString*)message buttonTitle:(NSString*)buttonTitle;
++ (void)webView:(UIWebView*)webView dispatchHTMLEvent:(NSString*)event;
++ (void)webView:(UIWebView*)webView dispatchHTMLEvent:(NSString*)event withParams:(NSDictionary*)params;
 
 @end

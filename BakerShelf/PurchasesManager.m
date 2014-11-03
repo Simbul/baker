@@ -5,7 +5,7 @@
 //  ==========================================================================================
 //
 //  Copyright (c) 2010-2013, Davide Casali, Marco Colombo, Alessandro Morandi
-//  Copyright (c) 2014, Andrew Krowczyk, Cédric Mériau
+//  Copyright (c) 2014, Andrew Krowczyk, Cédric Mériau, Pieter Claerhout
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without modification, are
@@ -41,15 +41,12 @@
 #ifdef BAKER_NEWSSTAND
 @implementation PurchasesManager
 
-@synthesize products;
-@synthesize subscribed;
-
--(id)init {
+- (id)init {
     self = [super init];
 
     if (self) {
-        self.products = [[NSMutableDictionary alloc] init];
-        self.subscribed = NO;
+        _products = [[NSMutableDictionary alloc] init];
+        _subscribed = NO;
 
         _purchases = [[NSMutableDictionary alloc] init];
 
@@ -65,7 +62,7 @@
 
 #pragma mark - Singleton
 
-+ (PurchasesManager *)sharedInstance {
++ (PurchasesManager*)sharedInstance {
     static dispatch_once_t once;
     static PurchasesManager *sharedInstance;
     dispatch_once(&once, ^{
@@ -76,21 +73,21 @@
 
 #pragma mark - Purchased flag
 
-- (BOOL)isMarkedAsPurchased:(NSString *)productID {
+- (BOOL)isMarkedAsPurchased:(NSString*)productID {
     return [[NSUserDefaults standardUserDefaults] boolForKey:productID];
 }
 
-- (void)markAsPurchased:(NSString *)productID {
+- (void)markAsPurchased:(NSString*)productID {
     [[NSUserDefaults standardUserDefaults] setBool:YES forKey:productID];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 #pragma mark - Prices
 
-- (void)retrievePricesFor:(NSSet *)productIDs {
+- (void)retrievePricesFor:(NSSet*)productIDs {
     [self retrievePricesFor:productIDs andEnableFailureNotifications:YES];
 }
-- (void)retrievePricesFor:(NSSet *)productIDs andEnableFailureNotifications:(BOOL)enable {
+- (void)retrievePricesFor:(NSSet*)productIDs andEnableFailureNotifications:(BOOL)enable {
     if ([productIDs count] > 0) {
         _enableProductRequestFailureNotifications = enable;
 
@@ -102,15 +99,15 @@
     }
 }
 
-- (void)retrievePriceFor:(NSString *)productID {
+- (void)retrievePriceFor:(NSString*)productID {
     [self retrievePriceFor:productID andEnableFailureNotification:YES];
 }
-- (void)retrievePriceFor:(NSString *)productID andEnableFailureNotification:(BOOL)enable {
+- (void)retrievePriceFor:(NSString*)productID andEnableFailureNotification:(BOOL)enable {
     NSSet *productIDs = [NSSet setWithObject:productID];
     [self retrievePricesFor:productIDs andEnableFailureNotifications:enable];
 }
 
-- (void)productsRequest:(SKProductsRequest *)request didReceiveResponse:(SKProductsResponse *)response {
+- (void)productsRequest:(SKProductsRequest*)request didReceiveResponse:(SKProductsResponse*)response {
     [self logProducts:response.products];
 
     for (NSString *productID in response.invalidProductIdentifiers) {
@@ -128,14 +125,14 @@
 
 }
 
-- (void)logProducts:(NSArray *)skProducts {
+- (void)logProducts:(NSArray*)skProducts {
     NSLog(@"Received %lu products from App Store", (unsigned long)[skProducts count]);
     for (SKProduct *skProduct in skProducts) {
         NSLog(@"- %@", skProduct.productIdentifier);
     }
 }
 
-- (void)request:(SKRequest *)request didFailWithError:(NSError *)error {
+- (void)request:(SKRequest*)request didFailWithError:(NSError*)error {
     NSLog(@"App Store request failure: %@", error);
 
     if (_enableProductRequestFailureNotifications) {
@@ -145,8 +142,8 @@
 
 }
 
-- (NSString *)priceFor:(NSString *)productID {
-    SKProduct *product = products[productID];
+- (NSString*)priceFor:(NSString*)productID {
+    SKProduct *product = self.products[productID];
     if (product) {
         [_numberFormatter setLocale:product.priceLocale];
         return [_numberFormatter stringFromNumber:product.price];
@@ -154,8 +151,8 @@
     return nil;
 }
 
-- (NSString *)displayTitleFor:(NSString *)productID {
-    SKProduct *product = products[productID];
+- (NSString*)displayTitleFor:(NSString*)productID {
+    SKProduct *product = self.products[productID];
     if(product) {
         return product.localizedTitle;
     }
@@ -166,7 +163,7 @@
 
 #pragma mark - Purchases
 
-- (BOOL)purchase:(NSString *)productID {
+- (BOOL)purchase:(NSString*)productID {
     SKProduct *product = [self productFor:productID];
     if (product) {
         SKPayment *payment = [SKPayment paymentWithProduct:product];
@@ -180,7 +177,7 @@
     }
 }
 
-- (BOOL)finishTransaction:(SKPaymentTransaction *)transaction {
+- (BOOL)finishTransaction:(SKPaymentTransaction*)transaction {
     if ([self recordTransaction:transaction]) {
         [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
         return YES;
@@ -189,7 +186,7 @@
     }
 }
 
-- (BOOL)recordTransaction:(SKPaymentTransaction *)transaction {
+- (BOOL)recordTransaction:(SKPaymentTransaction*)transaction {
     [[NSUserDefaults standardUserDefaults] setObject:transaction.transactionIdentifier forKey:@"receipt"];
 
     BakerAPI *api = [BakerAPI sharedInstance];
@@ -203,7 +200,7 @@
     return YES;
 }
 
-- (NSString *)transactionType:(SKPaymentTransaction *)transaction {
+- (NSString*)transactionType:(SKPaymentTransaction*)transaction {
     NSString *productID = transaction.payment.productIdentifier;
     if ([productID isEqualToString:FREE_SUBSCRIPTION_PRODUCT_ID]) {
         return @"free-subscription";
@@ -214,7 +211,7 @@
     }
 }
 
-- (void)retrievePurchasesFor:(NSSet *)productIDs withCallback:(void (^)(NSDictionary*))callback {
+- (void)retrievePurchasesFor:(NSSet*)productIDs withCallback:(void (^)(NSDictionary*))callback {
     BakerAPI *api = [BakerAPI sharedInstance];
 
     if ([api canGetPurchasesJSON]) {
@@ -247,7 +244,7 @@
     }
 }
 
-- (BOOL)isPurchased:(NSString *)productID {
+- (BOOL)isPurchased:(NSString*)productID {
     id purchased = _purchases[productID];
     if (purchased) {
         return [purchased boolValue];
@@ -258,7 +255,7 @@
 
 #pragma mark - Payment queue
 
-- (void)paymentQueue:(SKPaymentQueue *)queue updatedTransactions:(NSArray *)transactions {
+- (void)paymentQueue:(SKPaymentQueue*)queue updatedTransactions:(NSArray*)transactions {
     [self logTransactions:transactions];
 
     BOOL isRestoring = NO;
@@ -287,7 +284,7 @@
     }
 }
 
-- (void)logTransactions:(NSArray *)transactions {
+- (void)logTransactions:(NSArray*)transactions {
     NSLog(@"Received %lu transactions from App Store", (unsigned long)[transactions count]);
     for(SKPaymentTransaction *transaction in transactions) {
         switch (transaction.transactionState) {
@@ -310,7 +307,7 @@
     }
 }
 
-- (void)completeTransaction:(SKPaymentTransaction *)transaction {
+- (void)completeTransaction:(SKPaymentTransaction*)transaction {
     NSDictionary *userInfo = @{@"transaction": transaction};
     NSString *productId = transaction.payment.productIdentifier;
 
@@ -323,7 +320,7 @@
     }
 }
 
-- (void)restoreTransaction:(SKPaymentTransaction *)transaction {
+- (void)restoreTransaction:(SKPaymentTransaction*)transaction {
     NSDictionary *userInfo = @{@"transaction": transaction};
     NSString *productId = transaction.payment.productIdentifier;
 
@@ -337,7 +334,7 @@
     }
 }
 
--(void)failedTransaction:(SKPaymentTransaction *)transaction {
+- (void)failedTransaction:(SKPaymentTransaction*)transaction {
     NSLog(@"Payment transaction failure: %@", transaction.error);
 
     NSDictionary *userInfo = @{@"transaction": transaction};
@@ -356,11 +353,11 @@
     [[SKPaymentQueue defaultQueue] restoreCompletedTransactions];
 }
 
-- (void)paymentQueueRestoreCompletedTransactionsFinished:(SKPaymentQueue *)queue {
+- (void)paymentQueueRestoreCompletedTransactionsFinished:(SKPaymentQueue*)queue {
     [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_restore_finished" object:self userInfo:nil];
 }
 
-- (void)paymentQueue:(SKPaymentQueue *)queue restoreCompletedTransactionsFailedWithError:(NSError *)error {
+- (void)paymentQueue:(SKPaymentQueue*)queue restoreCompletedTransactionsFailedWithError:(NSError*)error {
     NSLog(@"Transaction restore failure: %@", error);
 
     NSDictionary *userInfo = @{@"error": error};
@@ -370,7 +367,7 @@
 
 #pragma mark - Products
 
-- (SKProduct *)productFor:(NSString *)productID {
+- (SKProduct*)productFor:(NSString*)productID {
     return (self.products)[productID];
 }
 

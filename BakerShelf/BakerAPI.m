@@ -5,7 +5,7 @@
 //  ==========================================================================================
 //
 //  Copyright (c) 2010-2013, Davide Casali, Marco Colombo, Alessandro Morandi
-//  Copyright (c) 2014, Andrew Krowczyk, Cédric Mériau
+//  Copyright (c) 2014, Andrew Krowczyk, Cédric Mériau, Pieter Claerhout
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without modification, are
@@ -42,7 +42,7 @@
 
 #pragma mark - Singleton
 
-+ (BakerAPI *)sharedInstance {
++ (BakerAPI*)sharedInstance {
     static dispatch_once_t once;
     static BakerAPI *sharedInstance;
     dispatch_once(&once, ^{
@@ -108,7 +108,7 @@
 - (BOOL)canPostPurchaseReceipt {
     return ([self purchaseConfirmationURL] != nil);
 }
-- (BOOL)postPurchaseReceipt:(NSString *)receipt ofType:(NSString *)type {
+- (BOOL)postPurchaseReceipt:(NSString*)receipt ofType:(NSString*)type {
     if ([self canPostPurchaseReceipt]) {
         NSDictionary *params = @{@"type": type,
                                 @"receipt_data": receipt};
@@ -123,7 +123,7 @@
 - (BOOL)canPostAPNSToken {
     return ([self postAPNSTokenURL] != nil);
 }
-- (BOOL)postAPNSToken:(NSString *)apnsToken {
+- (BOOL)postAPNSToken:(NSString*)apnsToken {
     if ([self canPostAPNSToken]) {
         NSDictionary *params = @{@"apns_token": apnsToken};
 
@@ -144,16 +144,16 @@
     }
 }
 
-+ (NSString *)UUID {
++ (NSString*)UUID {
     return [[NSUserDefaults standardUserDefaults] stringForKey:@"UUID"];
 }
 
 #pragma mark - Helpers
 
-- (NSURLRequest *)requestForURL:(NSURL *)url method:(NSString *)method {
+- (NSURLRequest*)requestForURL:(NSURL*)url method:(NSString*)method {
     return [self requestForURL:url parameters:@{} method:method cachePolicy:NSURLRequestUseProtocolCachePolicy];
 }
-- (NSURLRequest *)requestForURL:(NSURL *)url parameters:(NSDictionary *)parameters method:(NSString *)method cachePolicy:(NSURLRequestCachePolicy)cachePolicy {
+- (NSURLRequest*)requestForURL:(NSURL*)url parameters:(NSDictionary*)parameters method:(NSString*)method cachePolicy:(NSURLRequestCachePolicy)cachePolicy {
     NSMutableDictionary *requestParams = [NSMutableDictionary dictionaryWithDictionary:parameters];
     requestParams[@"app_id"] = [Utils appID];
     requestParams[@"user_id"] = [BakerAPI UUID];
@@ -188,7 +188,7 @@
     return request;
 }
 
-- (BOOL)postParams:(NSDictionary *)params toURL:(NSURL *)url {
+- (BOOL)postParams:(NSDictionary*)params toURL:(NSURL*)url {
     NSError *error = nil;
     NSHTTPURLResponse *response = nil;
     NSURLRequest *request = [self requestForURL:url parameters:params method:@"POST" cachePolicy:NSURLRequestUseProtocolCachePolicy];
@@ -209,7 +209,7 @@
     }
 }
 
-- (NSData *)getFromURL:(NSURL *)url cachePolicy:(NSURLRequestCachePolicy)cachePolicy {
+- (NSData*)getFromURL:(NSURL*)url cachePolicy:(NSURLRequestCachePolicy)cachePolicy {
     NSError *error = nil;
     NSHTTPURLResponse *response = nil;
     NSURLRequest *request = [self requestForURL:url parameters:@{} method:@"GET" cachePolicy:cachePolicy];
@@ -230,7 +230,7 @@
     }
 }
 
-- (NSURL *)replaceParameters:(NSMutableDictionary *)parameters inURL:(NSURL *)url {
+- (NSURL*)replaceParameters:(NSMutableDictionary*)parameters inURL:(NSURL*)url {
     __weak NSMutableString *urlString = [NSMutableString stringWithString:[url absoluteString]];
     NSDictionary *allParameters = [NSDictionary dictionaryWithDictionary:parameters];
     [allParameters enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
@@ -244,7 +244,7 @@
     return [NSURL URLWithString:urlString];
 }
 
-- (NSString *)queryStringFromParameters:(NSDictionary *)parameters {
+- (NSString*)queryStringFromParameters:(NSDictionary*)parameters {
     __weak NSMutableString *queryString = [NSMutableString stringWithString:@""];
     if ([parameters count] > 0) {
         [parameters enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
@@ -257,7 +257,7 @@
     return queryString;
 }
 
-- (NSURL *)manifestURL {
+- (NSURL*)manifestURL {
     #ifdef BAKER_NEWSSTAND
     if ([NEWSSTAND_MANIFEST_URL length] > 0) {
         return [NSURL URLWithString:NEWSSTAND_MANIFEST_URL];
@@ -265,7 +265,7 @@
     #endif
     return nil;
 }
-- (NSURL *)purchasesURL {
+- (NSURL*)purchasesURL {
     #ifdef BAKER_NEWSSTAND
     if ([PURCHASES_URL length] > 0) {
         return [NSURL URLWithString:PURCHASES_URL];
@@ -273,7 +273,7 @@
     #endif
     return nil;
 }
-- (NSURL *)purchaseConfirmationURL {
+- (NSURL*)purchaseConfirmationURL {
     #ifdef BAKER_NEWSSTAND
     if ([PURCHASE_CONFIRMATION_URL length] > 0) {
         return [NSURL URLWithString:PURCHASE_CONFIRMATION_URL];
@@ -281,7 +281,7 @@
     #endif
     return nil;
 }
-- (NSURL *)postAPNSTokenURL {
+- (NSURL*)postAPNSTokenURL {
     #ifdef BAKER_NEWSSTAND
     if ([POST_APNS_TOKEN_URL length] > 0) {
         return [NSURL URLWithString:POST_APNS_TOKEN_URL];

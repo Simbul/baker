@@ -5,7 +5,7 @@
 //  ==========================================================================================
 //
 //  Copyright (c) 2010-2013, Davide Casali, Marco Colombo, Alessandro Morandi
-//  Copyright (c) 2014, Andrew Krowczyk, Cédric Mériau
+//  Copyright (c) 2014, Andrew Krowczyk, Cédric Mériau, Pieter Claerhout
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without modification, are
@@ -34,16 +34,14 @@
 
 @implementation UICustomNavigationBar
 
-
-- (NSMutableDictionary *)backgroundImages
-{
+- (NSMutableDictionary*)backgroundImages {
     if (!backgroundImages) {
         backgroundImages = [[NSMutableDictionary alloc] init];
     }
     return backgroundImages;
 }
-- (UIImageView *)backgroundImageView
-{
+
+- (UIImageView*)backgroundImageView {
     if (!backgroundImageView) {
         backgroundImageView = [[UIImageView alloc] initWithFrame:[self bounds]];
         [backgroundImageView setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
@@ -51,8 +49,8 @@
     }
     return backgroundImageView;
 }
-- (void)setBackgroundImage:(UIImage *)backgroundImage forBarMetrics:(UIBarMetrics)barMetrics
-{
+
+- (void)setBackgroundImage:(UIImage*)backgroundImage forBarMetrics:(UIBarMetrics)barMetrics {
     if ([UINavigationBar instancesRespondToSelector:@selector(setBackgroundImage:forBarMetrics:)]) {
         [super setBackgroundImage:backgroundImage forBarMetrics:barMetrics];
     } else {
@@ -60,8 +58,8 @@
         [self updateBackgroundImage];
     }
 }
-- (void)updateBackgroundImage
-{
+
+- (void)updateBackgroundImage {
     UIBarMetrics metrics = UIBarMetricsLandscapePhone;
     if ([self bounds].size.height > 40) {
         metrics = UIBarMetricsDefault;
@@ -77,10 +75,8 @@
     }
 }
 
-- (void)layoutSubviews
-{
+- (void)layoutSubviews {
     [super layoutSubviews];
-
     if (backgroundImageView) {
         [self updateBackgroundImage];
         [self sendSubviewToBack:backgroundImageView];

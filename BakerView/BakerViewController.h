@@ -5,7 +5,7 @@
 //  ==========================================================================================
 //
 //  Copyright (c) 2010-2013, Davide Casali, Marco Colombo, Alessandro Morandi
-//  Copyright (c) 2014, Andrew Krowczyk, Cédric Mériau
+//  Copyright (c) 2014, Andrew Krowczyk, Cédric Mériau, Pieter Claerhout
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without modification, are
@@ -34,14 +34,13 @@
 #import <UIKit/UIKit.h>
 #import <MessageUI/MessageUI.h>
 #import "IndexViewController.h"
-#import "ModalViewController.h"
+#import "ModalWebViewController.h"
 #import "BakerBook.h"
 #import "BakerBookStatus.h"
 
-
 @class Downloader;
 
-@interface BakerViewController : UIViewController <UIWebViewDelegate, UIScrollViewDelegate, MFMailComposeViewControllerDelegate, modalWebViewDelegate> {
+@interface BakerViewController : UIViewController <UIWebViewDelegate, UIScrollViewDelegate, MFMailComposeViewControllerDelegate, ModalWebViewControllerDelegate> {
 
     CGRect screenBounds;
 
@@ -80,9 +79,9 @@
 
     BOOL adjustViewsOnAppDidBecomeActive;
 
-    UIScrollView *scrollView;
+    //UIScrollView *scrollView;
     UIWebView *prevPage;
-    UIWebView *currPage;
+    //UIWebView *currPage;
     UIWebView *nextPage;
 
     UIColor *webViewBackground;
@@ -94,7 +93,7 @@
 
     int totalPages;
     int lastPageNumber;
-    int currentPageNumber;
+    //int currentPageNumber;
 
     int pageWidth;
     int pageHeight;
@@ -105,92 +104,104 @@
     UIAlertView *feedbackAlert;
 
     IndexViewController *indexViewController;
-    ModalViewController *myModalViewController;
+    ModalWebViewController *myModalViewController;
 
     BakerBookStatus *bookStatus;
 }
 
-#pragma mark - PROPERTIES
-@property (strong, nonatomic) BakerBook *book;
+#pragma mark - Properties
+
+@property (nonatomic, strong) BakerBook *book;
 @property (nonatomic, strong) UIScrollView *scrollView;
 @property (nonatomic, strong) UIWebView *currPage;
 
-@property int currentPageNumber;
-@property BOOL barsHidden;
+@property (nonatomic, assign) int currentPageNumber;
+@property (nonatomic, assign) BOOL barsHidden;
 
-#pragma mark - INIT
-- (id)initWithBook:(BakerBook *)bakerBook;
-- (BOOL)loadBookWithBookPath:(NSString *)bookPath;
+#pragma mark - Initialization
+
+- (id)initWithBook:(BakerBook*)bakerBook;
+- (BOOL)loadBookWithBookPath:(NSString*)bookPath;
 - (void)cleanupBookEnvironment;
 - (void)resetPageSlots;
 - (void)resetPageDetails;
 - (void)buildPageArray;
 - (void)startReading;
 - (void)buildPageDetails;
-- (void)setImageFor:(UIImageView *)view;
+- (void)setImageFor:(UIImageView*)view;
 - (void)updateBookLayout;
 - (void)adjustScrollViewPosition;
-- (void)setPageSize:(NSString *)orientation;
+- (void)setPageSize:(NSString*)orientation;
 - (void)setTappableAreaSize;
 - (void)showPageDetails;
-- (void)setFrame:(CGRect)frame forPage:(UIWebView *)page;
-- (void)setupWebView:(UIWebView *)webView;
-- (void)removeWebViewDoubleTapGestureRecognizer:(UIView *)view;
+- (void)setFrame:(CGRect)frame forPage:(UIWebView*)page;
+- (void)setupWebView:(UIWebView*)webView;
+- (void)removeWebViewDoubleTapGestureRecognizer:(UIView*)view;
 
-#pragma mark - LOADING
+#pragma mark - Loading
+
 - (BOOL)changePage:(int)page;
 - (void)gotoPageDelayer;
 - (void)gotoPage;
-- (void)lockPage:(NSNumber *)lock;
+- (void)lockPage:(NSNumber*)lock;
 - (void)addPageLoading:(int)slot;
 - (void)handlePageLoading;
 - (void)loadSlot:(int)slot withPage:(int)page;
-- (BOOL)loadWebView:(UIWebView *)webview withPage:(int)page;
+- (BOOL)loadWebView:(UIWebView*)webview withPage:(int)page;
 
-#pragma mark - MODAL WEBVIEW
-- (void)loadModalWebView:(NSURL *)url;
+#pragma mark - Modal Webview
+
+- (void)loadModalWebView:(NSURL*)url;
 - (void)closeModalWebView;
 
-#pragma mark - SCROLLVIEW
+#pragma mark - Scroll View
+
 - (CGRect)frameForPage:(int)page;
 
-#pragma mark - WEBVIEW
-- (void)webView:(UIWebView *)webView hidden:(BOOL)status animating:(BOOL)animating;
-- (void)webViewDidAppear:(UIWebView *)webView animating:(BOOL)animating;
-- (void)webView:(UIWebView *)webView setCorrectOrientation:(UIInterfaceOrientation)interfaceOrientation;
+#pragma mark - UIWebViewDelegate
 
-#pragma mark - SCREENSHOTS
+- (void)webView:(UIWebView*)webView hidden:(BOOL)status animating:(BOOL)animating;
+- (void)webViewDidAppear:(UIWebView*)webView animating:(BOOL)animating;
+- (void)webView:(UIWebView*)webView setCorrectOrientation:(UIInterfaceOrientation)interfaceOrientation;
+
+#pragma mark - Screenshots
+
 - (void)removeScreenshots;
 - (void)updateScreenshots;
-- (BOOL)checkScreeshotForPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation;
-- (void)takeScreenshotFromView:(UIWebView *)webView forPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation;
-- (void)placeScreenshotForView:(UIWebView *)webView andPage:(int)pageNumber andOrientation:(NSString *)interfaceOrientation;
+- (BOOL)checkScreeshotForPage:(int)pageNumber andOrientation:(NSString*)interfaceOrientation;
+- (void)takeScreenshotFromView:(UIWebView*)webView forPage:(int)pageNumber andOrientation:(NSString*)interfaceOrientation;
+- (void)placeScreenshotForView:(UIWebView*)webView andPage:(int)pageNumber andOrientation:(NSString*)interfaceOrientation;
 
-#pragma mark - GESTURES
-- (void)handleInterceptedTouch:(NSNotification *)notification;
-- (void)userDidTap:(UITouch *)touch;
-- (void)userDidScroll:(UITouch *)touch;
+#pragma mark - UIGestureRecognizer
 
-#pragma mark - PAGE SCROLLING
+- (void)handleInterceptedTouch:(NSNotification*)notification;
+- (void)userDidTap:(UITouch*)touch;
+- (void)userDidScroll:(UITouch*)touch;
+
+#pragma mark - Page Scrolling
+
 - (void)setCurrentPageHeight;
 - (int)getCurrentPageOffset;
 - (void)scrollUpCurrentPage:(int)offset animating:(BOOL)animating;
 - (void)scrollDownCurrentPage:(int)offset animating:(BOOL)animating;
-- (void)scrollPage:(UIWebView *)webView to:(NSString *)offset animating:(BOOL)animating;
+- (void)scrollPage:(UIWebView*)webView to:(NSString*)offset animating:(BOOL)animating;
 - (void)handleAnchor:(BOOL)animating;
 
-#pragma mark - BARS VISIBILITY
+#pragma mark - Navigation Bars
+
 - (CGRect)getNewNavigationFrame:(BOOL)hidden;
 - (void)toggleBars;
 - (void)showBars;
 - (void)showNavigationBar;
-- (void)hideBars:(NSNumber *)animated;
-- (void)handleBookProtocol:(NSURL *)url;
+- (void)hideBars:(NSNumber*)animated;
+- (void)handleBookProtocol:(NSURL*)url;
 
-#pragma mark - ORIENTATION
-- (NSString *)getCurrentInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation;
+#pragma mark - Orientation
 
-#pragma mark - INDEX VIEW
-- (BOOL)isIndexView:(UIWebView *)webView;
+- (NSString*)getCurrentInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation;
+
+#pragma mark - Index View
+
+- (BOOL)isIndexView:(UIWebView*)webView;
 
 @end

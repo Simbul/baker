@@ -1,11 +1,11 @@
 //
-//  UIConstants.h
+//  NSString+Extensions.h
 //  Baker
 //
 //  ==========================================================================================
 //
 //  Copyright (c) 2010-2013, Davide Casali, Marco Colombo, Alessandro Morandi
-//  Copyright (c) 2014, Andrew Krowczyk, Cédric Mériau
+//  Copyright (c) 2014, Andrew Krowczyk, Cédric Mériau, Pieter Claerhout
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without modification, are
@@ -30,42 +30,14 @@
 //  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
+#import <Foundation/Foundation.h>
 
-#ifndef Baker_UIConstants_h
-#define Baker_UIConstants_h
+@interface NSString (Extensions)
 
-    // Background color for issues cover (before downloading the actual cover)
-    #define ISSUES_COVER_BACKGROUND_COLOR @"#ffffff"
+#pragma mark - SHA management
 
-    // Title for issues in the shelf
-    // #define ISSUES_TITLE_FONT @"Helvetica"
-    // #define ISSUES_TITLE_FONT_SIZE 15
-    #define ISSUES_TITLE_COLOR @"#000000"
+- (NSString*)stringSHAEncoded;
++ (NSString*)encodeSHAString:(NSString*)str;
++ (NSString*)stringFromInterfaceOrientation:(UIInterfaceOrientation)orientation;
 
-    // Info text for issues in the shelf
-    // #define ISSUES_INFO_FONT @"Helvetica"
-    // #define ISSUES_INFO_FONT_SIZE 15
-    #define ISSUES_INFO_COLOR @"#929292"
-
-    #define ISSUES_PRICE_COLOR @"#bc242a"
-
-    // Download/read button for issues in the shelf
-    // #define ISSUES_ACTION_BUTTON_FONT @"Helvetica-Bold"
-    // #define ISSUES_ACTION_BUTTON_FONT_SIZE 11
-    #define ISSUES_ACTION_BUTTON_BACKGROUND_COLOR @"#bc242a"
-    #define ISSUES_ACTION_BUTTON_COLOR @"#ffffff"
-
-    // Archive button for issues in the shelf
-    // #define ISSUES_ARCHIVE_BUTTON_FONT @"Helvetica-Bold"
-    // #define ISSUES_ARCHIVE_BUTTON_FONT_SIZE 11
-    #define ISSUES_ARCHIVE_BUTTON_COLOR @"#bc242a"
-    #define ISSUES_ARCHIVE_BUTTON_BACKGROUND_COLOR @"#ffffff"
-
-    // Text and spinner for issues that are being loaded in the shelf
-    #define ISSUES_LOADING_LABEL_COLOR @"#bc242a"
-    #define ISSUES_LOADING_SPINNER_COLOR @"#929292"
-
-    // Progress bar for issues that are being downloaded in the shelf
-    #define ISSUES_PROGRESSBAR_TINT_COLOR @"#bc242a"
-
-#endif
+@end

@@ -5,7 +5,7 @@
 //  ==========================================================================================
 //
 //  Copyright (c) 2010-2013, Davide Casali, Marco Colombo, Alessandro Morandi
-//  Copyright (c) 2014, Andrew Krowczyk, Cédric Mériau
+//  Copyright (c) 2014, Andrew Krowczyk, Cédric Mériau, Pieter Claerhout
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without modification, are
@@ -31,33 +31,25 @@
 //
 
 #import "BakerBookStatus.h"
+#import "NSObject+Extensions.h"
 
 @implementation BakerBookStatus
 
-@synthesize page;
-@synthesize scrollIndex;
-
-- (id)initWithBookId:(NSString *)bookId {
-    NSString *cachePath = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES)[0];
-    NSString *statusPath = [[[cachePath stringByAppendingPathComponent:@"statuses"] stringByAppendingPathComponent:bookId] stringByAppendingPathExtension:@"json"];
-
+- (id)initWithBookId:(NSString*)bookId {
+    NSString *statusPath = [[[self.cachePath stringByAppendingPathComponent:@"statuses"] stringByAppendingPathComponent:bookId] stringByAppendingPathExtension:@"json"];
     return [super initWithJSONPath:statusPath];
 }
 
-- (NSDictionary *)load {
+- (NSDictionary*)load {
     NSDictionary *jsonDict = [super load];
-
     self.page        = jsonDict[@"page"];
     self.scrollIndex = jsonDict[@"scroll-index"];
-
     return jsonDict;
 }
 
 - (void)save {
-    NSDictionary *jsonDict = @{@"page": page, @"scroll-index": scrollIndex};
-
+    NSDictionary *jsonDict = @{@"page": self.page, @"scroll-index": self.scrollIndex};
     [super save:jsonDict];
 }
-
 
 @end

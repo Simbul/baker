@@ -5,7 +5,7 @@
 //  ==========================================================================================
 //
 //  Copyright (c) 2010-2013, Davide Casali, Marco Colombo, Alessandro Morandi
-//  Copyright (c) 2014, Andrew Krowczyk, Cédric Mériau
+//  Copyright (c) 2014, Andrew Krowczyk, Cédric Mériau, Pieter Claerhout
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without modification, are
@@ -35,75 +35,24 @@
 
 @implementation BakerBook
 
-#pragma mark - HPub parameters synthesis
+#pragma mark - Initialization
 
-@synthesize bookData = _bookData;
-
-@synthesize hpub;
-@synthesize title;
-@synthesize date;
-
-@synthesize author;
-@synthesize creator;
-@synthesize publisher;
-
-@synthesize url;
-@synthesize cover;
-
-@synthesize orientation;
-@synthesize zoomable;
-
-@synthesize contents;
-
-#pragma mark - Baker HPub extensions synthesis
-
-@synthesize bakerBackground;
-@synthesize bakerBackgroundImagePortrait;
-@synthesize bakerBackgroundImageLandscape;
-@synthesize bakerPageNumbersColor;
-@synthesize bakerPageNumbersAlpha;
-@synthesize bakerPageScreenshots;
-
-@synthesize bakerRendering;
-@synthesize bakerVerticalBounce;
-@synthesize bakerVerticalPagination;
-@synthesize bakerPageTurnTap;
-@synthesize bakerPageTurnSwipe;
-@synthesize bakerMediaAutoplay;
-
-@synthesize bakerIndexWidth;
-@synthesize bakerIndexHeight;
-@synthesize bakerIndexBounce;
-@synthesize bakerStartAtPage;
-
-#pragma mark - Book status synthesis
-
-@synthesize ID;
-@synthesize path;
-@synthesize isBundled;
-@synthesize screenshotsPath;
-@synthesize screenshotsWritable;
-@synthesize currentPage;
-@synthesize lastScrollIndex;
-@synthesize lastOpenedDate;
-
-#pragma mark - Init
-
-- (id)initWithBookPath:(NSString *)bookPath bundled:(BOOL)bundled
-{
+- (id)initWithBookPath:(NSString*)bookPath bundled:(BOOL)bundled {
+    
     if (![[NSFileManager defaultManager] fileExistsAtPath:bookPath]) {
         return nil;
     }
-
+    
     self = [self initWithBookJSONPath:[bookPath stringByAppendingPathComponent:@"book.json"]];
     if (self) {
         [self updateBookPath:bookPath bundled:bundled];
     }
-
     return self;
+
 }
-- (id)initWithBookJSONPath:(NSString *)bookJSONPath
-{
+
+- (id)initWithBookJSONPath:(NSString*)bookJSONPath {
+    
     if (![[NSFileManager defaultManager] fileExistsAtPath:bookJSONPath]) {
         return nil;
     }
@@ -124,38 +73,39 @@
     }
 
     return [self initWithBookData:bookData];
+    
 }
-- (id)initWithBookData:(NSDictionary *)bookData
-{
+
+- (id)initWithBookData:(NSDictionary*)bookData {
     self = [super init];
     if (self && [self loadBookData:bookData]) {
         NSString *baseID = [self.title stringByAppendingFormat:@" %@", [self.url stringSHAEncoded]];
         self.ID = [self sanitizeForPath:baseID];
-
         NSLog(@"[BakerBook] 'book.json' parsed successfully. Book '%@' created with id '%@'.", self.title, self.ID);
         return self;
     }
-
     return nil;
 }
-- (NSString *)sanitizeForPath:(NSString *)string
-{
+
+- (NSString*)sanitizeForPath:(NSString*)string {
+    
     NSError *error = nil;
     NSString *newString;
     NSRegularExpression *regex;
 
     // Strip everything except numbers, ASCII letters and spaces
-    regex = [NSRegularExpression regularExpressionWithPattern:@"[^1-9a-z ]" options:NSRegularExpressionCaseInsensitive error:&error];
+    regex     = [NSRegularExpression regularExpressionWithPattern:@"[^1-9a-z ]" options:NSRegularExpressionCaseInsensitive error:&error];
     newString = [regex stringByReplacingMatchesInString:string options:0 range:NSMakeRange(0, [string length]) withTemplate:@""];
 
     // Replace spaces with dashes
-    regex = [NSRegularExpression regularExpressionWithPattern:@" +" options:NSRegularExpressionCaseInsensitive error:&error];
+    regex     = [NSRegularExpression regularExpressionWithPattern:@" +" options:NSRegularExpressionCaseInsensitive error:&error];
     newString = [regex stringByReplacingMatchesInString:newString options:0 range:NSMakeRange(0, [newString length]) withTemplate:@"-"];
 
     return [newString lowercaseString];
+    
 }
-- (BOOL)loadBookData:(NSDictionary *)bookData
-{
+
+- (BOOL)loadBookData:(NSDictionary*)bookData {
     if (![self validateBookJSON:bookData withRequirements:@[@"title", @"author", @"url", @"contents"]]) {
         return NO;
     }
@@ -212,8 +162,9 @@
 
     return YES;
 }
-- (void)loadBookJSONDefault
-{
+
+- (void)loadBookJSONDefault {
+    
     if (self.hpub == nil) {
         self.hpub = @1;
     }
@@ -255,13 +206,13 @@
     if (self.bakerStartAtPage == nil) {
         self.bakerStartAtPage = @1;
     }
+    
 }
 
 
 #pragma mark - HPub validation
 
-- (BOOL)validateBookJSON:(NSDictionary *)bookData withRequirements:(NSArray *)requirements
-{
+- (BOOL)validateBookJSON:(NSDictionary*)bookData withRequirements:(NSArray*)requirements {
     for (NSString *param in requirements) {
         if (bookData[param] == nil) {
             NSLog(@"[BakerBook] ERROR: param '%@' is missing. Add it to 'book.json'.", param);
@@ -304,7 +255,6 @@
     NSArray *knownParams = [[shouldBeArray arrayByAddingObjectsFromArray:shouldBeString] arrayByAddingObjectsFromArray:shouldBeNumber];
     
     for (NSString *param in bookData) {
-        //NSLog(@"[BakerBook] Validating 'book.json' param: '%@'.", param);
 
         if (![self matchParam:param againstParamsArray:knownParams]) {
             continue;
@@ -318,12 +268,14 @@
         } else if ([obj isKindOfClass:[NSNumber class]] && ![self validateNumber:(NSNumber *)obj forParam:param withParamsArray:shouldBeNumber]) {
             return NO;
         }
+        
     }
 
     return YES;
 }
-- (BOOL)validateArray:(NSArray *)array forParam:(NSString *)param withParamsArray:(NSArray*)paramsArray
-{
+
+- (BOOL)validateArray:(NSArray*)array forParam:(NSString*)param withParamsArray:(NSArray*)paramsArray {
+    
     if (![self matchParam:param againstParamsArray:paramsArray]) {
         NSLog(@"[BakerBook] ERROR: param '%@' should not be an Array. Check it in 'book.json'.", param);
         return NO;
@@ -350,9 +302,11 @@
     }
 
     return YES;
+    
 }
-- (BOOL)validateString:(NSString *)string forParam:(NSString *)param withParamsArray:(NSArray*)paramsArray
-{
+
+- (BOOL)validateString:(NSString*)string forParam:(NSString *)param withParamsArray:(NSArray*)paramsArray {
+    
     if (![self matchParam:param againstParamsArray:paramsArray]) {
         NSLog(@"[BakerBook] ERROR: param '%@' should not be a String. Check it in 'book.json'.", param);
         return NO;
@@ -363,10 +317,6 @@
         return NO;
     }
 
-    if (([param isEqualToString:@"-baker-background"] || [param isEqualToString:@"-baker-page-numbers-color"]) /*&& TODO: not a valid hex*/) {
-        // return NO;
-    }
-
     if ([param isEqualToString:@"-baker-rendering"] && (![string isEqualToString:@"screenshots"] && ![string isEqualToString:@"three-cards"])) {
         NSLog(@"Error: param \"-baker-rendering\" should be equal to \"screenshots\" or \"three-cards\" but it's not");
         NSLog(@"[BakerBook] ERROR: param '-baker-rendering' must be equal to 'screenshots' or 'three-cards'. Check it in 'book.json'.");
@@ -374,40 +324,39 @@
     }
 
     return YES;
+    
 }
-- (BOOL)validateNumber:(NSNumber *)number forParam:(NSString *)param withParamsArray:(NSArray*)paramsArray
-{
+
+- (BOOL)validateNumber:(NSNumber*)number forParam:(NSString*)param withParamsArray:(NSArray*)paramsArray {
     if (![self matchParam:param againstParamsArray:paramsArray]) {
         NSLog(@"[BakerBook] ERROR: param '%@' should not be a Number. Check it in 'book.json'.", param);
         return NO;
     }
-
     return YES;
 }
-- (BOOL)matchParam:(NSString *)param againstParamsArray:(NSArray *)paramsArray
-{
+
+- (BOOL)matchParam:(NSString*)param againstParamsArray:(NSArray*)paramsArray {
     for (NSString *match in paramsArray) {
         if ([param isEqualToString:match]) {
             return YES;
         }
     }
-
     return NO;
 }
 
 #pragma mark - Book status management
 
-- (BOOL)updateBookPath:(NSString *)bookPath bundled:(BOOL)bundled
-{
+- (BOOL)updateBookPath:(NSString*)bookPath bundled:(BOOL)bundled {
+    
     NSFileManager *fileManager = [NSFileManager defaultManager];
     if (![fileManager fileExistsAtPath:bookPath]) {
         return NO;
     }
 
-    self.path = bookPath;
+    self.path      = bookPath;
     self.isBundled = @(bundled);
 
-    self.screenshotsPath = [bookPath stringByAppendingPathComponent:self.bakerPageScreenshots];
+    self.screenshotsPath     = [bookPath stringByAppendingPathComponent:self.bakerPageScreenshots];
     self.screenshotsWritable = @YES;
 
     if (bundled) {
@@ -426,16 +375,5 @@
 
     return YES;
 }
-- (void)openBook
-{
-    // TODO: restore book status from app private documents/statuses/self.ID.json
-}
-- (void)closeBook
-{
-    // TODO: serialize with JSONKit and save in app private documents/statuses/self.ID.json
-}
-
-#pragma mark - Memory management
-
 
 @end

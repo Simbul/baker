@@ -5,7 +5,7 @@
 //  ==========================================================================================
 //
 //  Copyright (c) 2010-2013, Davide Casali, Marco Colombo, Alessandro Morandi
-//  Copyright (c) 2014, Andrew Krowczyk, Cédric Mériau
+//  Copyright (c) 2014, Andrew Krowczyk, Cédric Mériau, Pieter Claerhout
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without modification, are
@@ -52,45 +52,45 @@
     #endif
 }
 
-@property (copy, nonatomic) NSArray *issues;
-@property (copy, nonatomic) NSArray *supportedOrientation;
+@property (nonatomic, copy) NSArray *issues;
+@property (nonatomic, copy) NSArray *supportedOrientation;
 
-@property (strong, nonatomic) NSMutableArray *issueViewControllers;
-@property (strong, nonatomic) ShelfStatus *shelfStatus;
+@property (nonatomic, strong) NSMutableArray *issueViewControllers;
+@property (nonatomic, strong) ShelfStatus *shelfStatus;
 
-@property (strong, nonatomic) UICollectionView *gridView;
-@property (strong, nonatomic) UIImageView *background;
-@property (strong, nonatomic) UIBarButtonItem *refreshButton;
-@property (strong, nonatomic) UIBarButtonItem *subscribeButton;
+@property (nonatomic, strong) UICollectionView *gridView;
+@property (nonatomic, strong) UIImageView *background;
+@property (nonatomic, strong) UIBarButtonItem *refreshButton;
+@property (nonatomic, strong) UIBarButtonItem *subscribeButton;
 
-@property (strong, nonatomic) UIActionSheet *subscriptionsActionSheet;
-@property (strong, nonatomic) NSArray *subscriptionsActionSheetActions;
-@property (strong, nonatomic) UIAlertView *blockingProgressView;
+@property (nonatomic, strong) UIActionSheet *subscriptionsActionSheet;
+@property (nonatomic, strong) NSArray *subscriptionsActionSheetActions;
+@property (nonatomic, strong) UIAlertView *blockingProgressView;
 
-@property (copy, nonatomic) NSString *bookToBeProcessed;
+@property (nonatomic, copy) NSString *bookToBeProcessed;
 
 #pragma mark - Init
 - (id)init;
-- (id)initWithBooks:(NSArray *)currentBooks;
+- (id)initWithBooks:(NSArray*)currentBooks;
 
 #pragma mark - Shelf data source
 #ifdef BAKER_NEWSSTAND
-- (void)handleRefresh:(NSNotification *)notification;
+- (void)handleRefresh:(NSNotification*)notification;
 
 #pragma mark - Store Kit
-- (void)handleSubscription:(NSNotification *)notification;
+- (void)handleSubscription:(NSNotification*)notification;
 #endif
 
 #pragma mark - Navigation management
-- (void)readIssue:(BakerIssue *)issue;
-- (void)handleReadIssue:(NSNotification *)notification;
-- (void)receiveBookProtocolNotification:(NSNotification *)notification;
+- (void)readIssue:(BakerIssue*)issue;
+- (void)handleReadIssue:(NSNotification*)notification;
+- (void)receiveBookProtocolNotification:(NSNotification*)notification;
 - (void)handleBookToBeProcessed;
-- (void)pushViewControllerWithBook:(BakerBook *)book;
+- (void)pushViewControllerWithBook:(BakerBook*)book;
 
 #pragma mark - Buttons management
--(void)setrefreshButtonEnabled:(BOOL)enabled;
--(void)setSubscribeButtonEnabled:(BOOL)enabled;
+- (void)setrefreshButtonEnabled:(BOOL)enabled;
+- (void)setSubscribeButtonEnabled:(BOOL)enabled;
 
 #pragma mark - Helper methods
 + (int)getBannerHeight;

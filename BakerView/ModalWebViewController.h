@@ -5,7 +5,7 @@
 //  ==========================================================================================
 //
 //  Copyright (c) 2010-2013, Davide Casali, Marco Colombo, Alessandro Morandi
-//  Copyright (c) 2014, Andrew Krowczyk, Cédric Mériau
+//  Copyright (c) 2014, Andrew Krowczyk, Cédric Mériau, Pieter Claerhout
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without modification, are
@@ -32,23 +32,20 @@
 
 #import <UIKit/UIKit.h>
 
-@protocol modalWebViewDelegate;
+@protocol ModalWebViewControllerDelegate;
 
-@interface ModalViewController : UIViewController <UIWebViewDelegate>
-{
-    id <modalWebViewDelegate> __weak delegate;
-    NSURL *myUrl;
-}
+@interface ModalWebViewController : UIViewController <UIWebViewDelegate>
 
-@property (weak, nonatomic) id <modalWebViewDelegate> delegate;
-@property (strong, nonatomic) UIWebView *webView;
-@property (strong, nonatomic) UIToolbar *toolbar;
-@property (strong, nonatomic) UIBarButtonItem *btnGoBack;
-@property (strong, nonatomic) UIBarButtonItem *btnGoForward;
-@property (strong, nonatomic) UIBarButtonItem *btnReload;
-@property (strong, nonatomic) UIActivityIndicatorView *spinner;
+@property (nonatomic, strong) NSURL *initialURL;
+@property (nonatomic, weak) id <ModalWebViewControllerDelegate> delegate;
+@property (nonatomic, strong) UIWebView *webView;
+@property (nonatomic, strong) UIToolbar *toolbar;
+@property (nonatomic, strong) UIBarButtonItem *btnGoBack;
+@property (nonatomic, strong) UIBarButtonItem *btnGoForward;
+@property (nonatomic, strong) UIBarButtonItem *btnReload;
+@property (nonatomic, strong) UIActivityIndicatorView *spinner;
 
-- (id)initWithUrl:(NSURL *)url;
+- (id)initWithURL:(NSURL*)url;
 - (void)dismissAction;
 - (void)goBack;
 - (void)goForward;
@@ -57,7 +54,7 @@
 
 @end
 
-@protocol modalWebViewDelegate <NSObject>
+@protocol ModalWebViewControllerDelegate <NSObject>
 
 - (void)closeModalWebView;
 - (void)webView:(UIWebView *)webView setCorrectOrientation:(UIInterfaceOrientation)interfaceOrientation;

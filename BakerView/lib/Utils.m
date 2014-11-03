@@ -1,11 +1,11 @@
 //
-//  Utils.m
+//  NSString+Extensions.h
 //  Baker
 //
 //  ==========================================================================================
 //
 //  Copyright (c) 2010-2013, Davide Casali, Marco Colombo, Alessandro Morandi
-//  Copyright (c) 2014, Andrew Krowczyk, Cédric Mériau
+//  Copyright (c) 2014, Andrew Krowczyk, Cédric Mériau, Pieter Claerhout
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without modification, are
@@ -41,7 +41,7 @@
 
 @implementation Utils
 
-+ (UIColor *)colorWithRGBHex:(UInt32)hex {
++ (UIColor*)colorWithRGBHex:(UInt32)hex {
 	int r = (hex >> 16) & 0xFF;
 	int g = (hex >> 8) & 0xFF;
 	int b = (hex) & 0xFF;
@@ -51,8 +51,9 @@
 							blue:b / 255.0f
 						   alpha:1.0f];
 }
-+ (UIColor *)colorWithHexString:(NSString *)stringToConvert {
-    // Returns a UIColor by scanning the string for a hex number and passing that to (UIColor *)colorWithRGBHex:(UInt32)hex
+
++ (UIColor*)colorWithHexString:(NSString*)stringToConvert {
+    // Returns a UIColor by scanning the string for a hex number and passing that to (UIColor*)colorWithRGBHex:(UInt32)hex
     // Skips any leading whitespace and ignores any trailing characters
 
     NSString *hexString = [stringToConvert stringByReplacingOccurrencesOfString:@"#" withString:@""];
@@ -64,7 +65,8 @@
     }
 	return [Utils colorWithRGBHex:hexNum];
 }
-+ (NSString *)stringFromInterfaceOrientation:(UIInterfaceOrientation)orientation {
+
++ (NSString*)stringFromInterfaceOrientation:(UIInterfaceOrientation)orientation {
     switch (orientation) {
 		case UIInterfaceOrientationPortrait:           return @"UIInterfaceOrientationPortrait";
 		case UIInterfaceOrientationPortraitUpsideDown: return @"UIInterfaceOrientationPortraitUpsideDown";
@@ -74,7 +76,8 @@
 	}
 	return nil;
 }
-+ (BOOL)webViewShouldBePaged:(UIWebView*)webView forBook:(BakerBook *)book {
+
++ (BOOL)webViewShouldBePaged:(UIWebView*)webView forBook:(BakerBook*)book {
     BOOL shouldBePaged = NO;
 
     NSString *pagePagination = [webView stringByEvaluatingJavaScriptFromString:ISPAGED_JS_SNIPPET];
@@ -87,11 +90,12 @@
 
     return shouldBePaged;
 }
-+ (NSString *)appID {
+
++ (NSString*)appID {
     return [[NSBundle mainBundle] bundleIdentifier];
 }
 
-+ (NSDate *)dateWithFormattedString:(NSString *)string {
++ (NSDate*)dateWithFormattedString:(NSString*)string {
     static NSDateFormatter *dateFormat = nil;
     if (dateFormat == nil) {
         dateFormat = [[NSDateFormatter alloc] init];
@@ -103,7 +107,7 @@
     return [dateFormat dateFromString:string];
 }
 
-+ (void)showAlertWithTitle:(NSString *)title message:(NSString *)message buttonTitle:(NSString *)buttonTitle {
++ (void)showAlertWithTitle:(NSString*)title message:(NSString*)message buttonTitle:(NSString*)buttonTitle {
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title
                                                     message:message
                                                    delegate:nil
@@ -112,10 +116,11 @@
     [alert show];
 }
 
-+ (void)webView:(UIWebView *)webView dispatchHTMLEvent:(NSString *)event {
++ (void)webView:(UIWebView*)webView dispatchHTMLEvent:(NSString*)event {
     [Utils webView:webView dispatchHTMLEvent:event withParams:[NSDictionary dictionary]];
 }
-+ (void)webView:(UIWebView *)webView dispatchHTMLEvent:(NSString *)event withParams:(NSDictionary *)params {
+
++ (void)webView:(UIWebView*)webView dispatchHTMLEvent:(NSString*)event withParams:(NSDictionary*)params {
     __weak NSMutableString *jsDispatchEvent = [NSMutableString stringWithFormat:
                                                 @"var bakerDispatchedEvent = document.createEvent('Events');\
                                                 bakerDispatchedEvent.initEvent('%@', false, false);", event];

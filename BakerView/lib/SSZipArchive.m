@@ -16,7 +16,7 @@
 #define CHUNK 16384
 
 @interface SSZipArchive ()
-+ (NSDate *)_dateWithMSDOSFormat:(UInt32)msdosDateTime;
++ (NSDate*)_dateWithMSDOSFormat:(UInt32)msdosDateTime;
 @end
 
 
@@ -29,22 +29,22 @@
 
 #pragma mark - Unzipping
 
-+ (BOOL)unzipFileAtPath:(NSString *)path toDestination:(NSString *)destination {
++ (BOOL)unzipFileAtPath:(NSString*)path toDestination:(NSString*)destination {
 	return [self unzipFileAtPath:path toDestination:destination delegate:nil];
 }
 
 
-+ (BOOL)unzipFileAtPath:(NSString *)path toDestination:(NSString *)destination overwrite:(BOOL)overwrite password:(NSString *)password error:(NSError **)error {
++ (BOOL)unzipFileAtPath:(NSString*)path toDestination:(NSString*)destination overwrite:(BOOL)overwrite password:(NSString*)password error:(NSError **)error {
 	return [self unzipFileAtPath:path toDestination:destination overwrite:overwrite password:password error:error delegate:nil];
 }
 
 
-+ (BOOL)unzipFileAtPath:(NSString *)path toDestination:(NSString *)destination delegate:(id<SSZipArchiveDelegate>)delegate {
++ (BOOL)unzipFileAtPath:(NSString*)path toDestination:(NSString*)destination delegate:(id<SSZipArchiveDelegate>)delegate {
 	return [self unzipFileAtPath:path toDestination:destination overwrite:YES password:nil error:nil delegate:delegate];
 }
 
 
-+ (BOOL)unzipFileAtPath:(NSString *)path toDestination:(NSString *)destination overwrite:(BOOL)overwrite password:(NSString *)password error:(NSError **)error delegate:(id<SSZipArchiveDelegate>)delegate {
++ (BOOL)unzipFileAtPath:(NSString*)path toDestination:(NSString*)destination overwrite:(BOOL)overwrite password:(NSString*)password error:(NSError **)error delegate:(id<SSZipArchiveDelegate>)delegate {
 	// Begin opening
 	zipFile zip = unzOpen((const char*)[path UTF8String]);	
 	if (zip == NULL) {
@@ -109,7 +109,7 @@
 											 archivePath:path fileInfo:fileInfo];
 			}
 	        
-			char *filename = (char *)malloc(fileInfo.size_filename + 1);
+			char *filename = (char*)malloc(fileInfo.size_filename + 1);
 			unzGetCurrentFileInfo(zip, &fileInfo, filename, fileInfo.size_filename + 1, NULL, 0, NULL, 0);
 			filename[fileInfo.size_filename] = '\0';
 	        
@@ -296,7 +296,7 @@
 
 #pragma mark - Zipping
 
-+ (BOOL)createZipFileAtPath:(NSString *)path withFilesAtPaths:(NSArray *)paths {
++ (BOOL)createZipFileAtPath:(NSString*)path withFilesAtPaths:(NSArray*)paths {
 	BOOL success = NO;
 	SSZipArchive *zipArchive = [[SSZipArchive alloc] initWithPath:path];
 	if ([zipArchive open]) {
@@ -314,7 +314,7 @@
 }
 
 
-+ (BOOL)createZipFileAtPath:(NSString *)path withContentsOfDirectory:(NSString *)directoryPath {
++ (BOOL)createZipFileAtPath:(NSString*)path withContentsOfDirectory:(NSString*)directoryPath {
     BOOL success = NO;
     
     NSFileManager *fileManager = nil;
@@ -346,7 +346,7 @@
 }
 
 
-- (id)initWithPath:(NSString *)path {
+- (id)initWithPath:(NSString*)path {
 	if ((self = [super init])) {
 		_path = [path copy];
 	}
@@ -382,7 +382,7 @@
 }
 
 
-- (BOOL)writeFile:(NSString *)path
+- (BOOL)writeFile:(NSString*)path
 {
     return [self writeFileAtPath:path withFileName:nil];
 }
@@ -390,7 +390,7 @@
 // supports writing files with logical folder/directory structure
 // *path* is the absolute path of the file that will be compressed
 // *fileName* is the relative name of the file how it is stored within the zip e.g. /folder/subfolder/text1.txt
-- (BOOL)writeFileAtPath:(NSString *)path withFileName:(NSString *)fileName {
+- (BOOL)writeFileAtPath:(NSString*)path withFileName:(NSString*)fileName {
     NSAssert((_zip != NULL), @"Attempting to write to an archive which was never opened");
     
 	FILE *input = fopen([path UTF8String], "r");
@@ -411,7 +411,7 @@
     NSDictionary *attr = [[NSFileManager defaultManager] attributesOfItemAtPath:path error: nil];
     if( attr )
     {
-        NSDate *fileDate = (NSDate *)[attr objectForKey:NSFileModificationDate];
+        NSDate *fileDate = (NSDate*)[attr objectForKey:NSFileModificationDate];
         if( fileDate )
         {
             [self zipInfo:&zipInfo setDate: fileDate ];
@@ -419,7 +419,7 @@
         
         // Write permissions into the external attributes, for details on this see here: http://unix.stackexchange.com/a/14727
         // Get the permissions value from the files attributes
-        NSNumber *permissionsValue = (NSNumber *)[attr objectForKey:NSFilePosixPermissions];
+        NSNumber *permissionsValue = (NSNumber*)[attr objectForKey:NSFilePosixPermissions];
         if (permissionsValue) {
             // Get the short value for the permissions
             short permissionsShort = permissionsValue.shortValue;
@@ -452,7 +452,7 @@
 }
 
 
-- (BOOL)writeData:(NSData *)data filename:(NSString *)filename {
+- (BOOL)writeData:(NSData*)data filename:(NSString*)filename {
     if (!_zip) {
 		return NO;
     }
@@ -487,7 +487,7 @@
 //
 // 3658 = 0011 0110 0101 1000 = 0011011 0010 11000 = 27 2 24 = 2007-02-24
 // 7423 = 0111 0100 0010 0011 - 01110 100001 00011 = 14 33 2 = 14:33:06
-+ (NSDate *)_dateWithMSDOSFormat:(UInt32)msdosDateTime {
++ (NSDate*)_dateWithMSDOSFormat:(UInt32)msdosDateTime {
 	static const UInt32 kYearMask = 0xFE000000;
 	static const UInt32 kMonthMask = 0x1E00000;
 	static const UInt32 kDayMask = 0x1F0000;

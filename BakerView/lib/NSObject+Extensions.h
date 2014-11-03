@@ -1,11 +1,11 @@
 //
-//  NSString+Extensions.m
+//  NSString+Extensions.h
 //  Baker
 //
 //  ==========================================================================================
 //
 //  Copyright (c) 2010-2013, Davide Casali, Marco Colombo, Alessandro Morandi
-//  Copyright (c) 2014, Andrew Krowczyk, Cédric Mériau
+//  Copyright (c) 2014, Andrew Krowczyk, Cédric Mériau, Pieter Claerhout
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without modification, are
@@ -30,41 +30,10 @@
 //  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-#import <CommonCrypto/CommonDigest.h>
-#import "NSString+Extensions.h"
+#import <Foundation/Foundation.h>
 
-@implementation NSString (Extensions)
+@interface NSObject (Extensions)
 
-#pragma mark - SHA management
-
-- (NSString *)stringSHAEncoded
-{
-    const char *src = [self UTF8String];
-    unsigned char result[CC_SHA1_DIGEST_LENGTH];
-
-    CC_SHA1(src, (int)strlen(src), result);
-    NSMutableString *sha = [NSMutableString stringWithCapacity:CC_SHA1_DIGEST_LENGTH * 2];
-
-    for (int i = 0; i < 8; i++) {
-        if (result[i]) [sha appendFormat:@"%02X", result[i]];
-    }
-
-    return sha;
-}
-+ (NSString *)encodeSHAString:(NSString *)str
-{
-    return [str stringSHAEncoded];
-}
-+ (NSString *)stringFromInterfaceOrientation:(UIInterfaceOrientation)orientation
-{
-    switch (orientation) {
-		case UIInterfaceOrientationPortrait:           return @"UIInterfaceOrientationPortrait";
-		case UIInterfaceOrientationPortraitUpsideDown: return @"UIInterfaceOrientationPortraitUpsideDown";
-		case UIInterfaceOrientationLandscapeLeft:      return @"UIInterfaceOrientationLandscapeLeft";
-		case UIInterfaceOrientationLandscapeRight:     return @"UIInterfaceOrientationLandscapeRight";
-        case UIInterfaceOrientationUnknown:            return @"UIInterfaceOrientationUnknown";
-	}
-	return nil;
-}
+- (NSString*)cachePath;
 
 @end

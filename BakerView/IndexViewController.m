@@ -5,7 +5,7 @@
 //  ==========================================================================================
 //
 //  Copyright (c) 2010-2013, Davide Casali, Marco Colombo, Alessandro Morandi
-//  Copyright (c) 2014, Andrew Krowczyk, Cédric Mériau
+//  Copyright (c) 2014, Andrew Krowczyk, Cédric Mériau, Pieter Claerhout
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without modification, are
@@ -35,39 +35,37 @@
 
 @implementation IndexViewController
 
-@synthesize book;
+#pragma mark - Initialization
 
-- (id)initWithBook:(BakerBook *)bakerBook fileName:(NSString *)name webViewDelegate:(UIViewController<UIWebViewDelegate> *)delegate {
+- (id)initWithBook:(BakerBook*)bakerBook fileName:(NSString*)name webViewDelegate:(UIViewController<UIWebViewDelegate>*)delegate {
     self = [super init];
     if (self) {
 
-        self.book = bakerBook;
+        _book = bakerBook;
 
-        fileName = name;
+        fileName        = name;
         webViewDelegate = delegate;
 
-        disabled = NO;
-        indexWidth = 0;
+        disabled    = NO;
+        indexWidth  = 0;
         indexHeight = 0;
 
         [self setPageSizeForOrientation:[UIApplication sharedApplication].statusBarOrientation];
+        
     }
     return self;
 }
 
 #pragma mark - View lifecycle
 
-// Implement loadView to create a view hierarchy programmatically, without using a nib.
-- (void)loadView
-{
+- (void)loadView {
+
     // Initialization to 1x1px is required to get sizeThatFits to work
     UIWebView *webView = [[UIWebView alloc] initWithFrame:CGRectMake(0, 1024, 1, 1)];
     webView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
-    webView.delegate = self;
-
-    webView.backgroundColor = [UIColor clearColor];
-    [webView setOpaque:NO];
-
+    webView.delegate         = self;
+    webView.backgroundColor  = [UIColor clearColor];
+    webView.opaque           = NO;
 
     self.view = webView;
     for (UIView *subView in webView.subviews) {
@@ -78,30 +76,27 @@
     }
 
     [self loadContent];
+    
 }
 
-- (void)setBounceForWebView:(UIWebView *)webView bounces:(BOOL)bounces {
+- (void)setBounceForWebView:(UIWebView*)webView bounces:(BOOL)bounces {
     indexScrollView.bounces = bounces;
 }
 
 - (void)setPageSizeForOrientation:(UIInterfaceOrientation)orientation {
     CGRect screenBounds = [[UIScreen mainScreen] bounds];
-    
-    //iOS 8 update: the screenBounds width value is now always 'width', while it used to be 'height' in Landscape mode on iOS7. To keep the code working for both iOS8 and iOS7, use the higher/lower of width/height depending on orientation.
-
     if (orientation == UIInterfaceOrientationLandscapeLeft || orientation == UIInterfaceOrientationLandscapeRight) {
-        pageWidth = MAX(screenBounds.size.height, screenBounds.size.width);
+        pageWidth  = MAX(screenBounds.size.height, screenBounds.size.width);
         pageHeight = MIN(screenBounds.size.height, screenBounds.size.width);
     } else {
-        pageWidth = MIN(screenBounds.size.height, screenBounds.size.width);
+        pageWidth  = MIN(screenBounds.size.height, screenBounds.size.width);
         pageHeight = MAX(screenBounds.size.height, screenBounds.size.width);
     }
-
     NSLog(@"[IndexView] Set IndexView size to %dx%d", pageWidth, pageHeight);
 }
 
 - (void)setActualSize {
-    actualIndexWidth = MIN(indexWidth, pageWidth);
+    actualIndexWidth  = MIN(indexWidth, pageWidth);
     actualIndexHeight = MIN(indexHeight, pageHeight);
 }
 
@@ -127,19 +122,18 @@
         } else {
             frame = CGRectMake(0, [self trueY] + pageHeight - indexHeight, actualIndexWidth, actualIndexHeight);
         }
-
     }
 
     if (animation) {
         [UIView beginAnimations:@"slideIndexView" context:nil]; {
             [UIView setAnimationDuration:0.3];
-
             [self setViewFrame:frame];
         }
         [UIView commitAnimations];
     } else {
         [self setViewFrame:frame];
     }
+    
 }
 
 - (int)trueY {
@@ -147,7 +141,6 @@
     // compensates for it, by exploiting the fact that the superview height is
     // slightly smaller then the viewport height when the origin's y needs to be adjusted.
     int height = self.view.superview.frame.size.height;
-
     if (height == 320 || height == 480 || height == 568 || height == 768 || height == 1024) {
         return 0;
     } else {
@@ -157,16 +150,12 @@
 
 - (void)setViewFrame:(CGRect)frame {
     self.view.frame = frame;
-
-    // Orientation changes tend to screw the content size detection performed by the scrollView embedded in the webView.
-    // Let's show the scrollView who's boss.
     indexScrollView.contentSize = cachedContentSize;
 }
 
 - (void)fadeOut {
     [UIView beginAnimations:@"fadeOutIndexView" context:nil]; {
         [UIView setAnimationDuration:0.0];
-
         self.view.alpha = 0.0;
     }
     [UIView commitAnimations];
@@ -175,7 +164,6 @@
 - (void)fadeIn {
     [UIView beginAnimations:@"fadeInIndexView" context:nil]; {
         [UIView setAnimationDuration:0.2];
-
         self.view.alpha = 1.0;
     }
     [UIView commitAnimations];
@@ -201,11 +189,11 @@
 }
 
 - (void)loadContent {
-    NSString* path = [self indexPath];
+    NSString* path = self.indexPath;
 
-    UIWebView *webView = (UIWebView*) self.view;
-    webView.mediaPlaybackRequiresUserAction = ![book.bakerMediaAutoplay boolValue];
-    [self setBounceForWebView:webView bounces:[book.bakerIndexBounce boolValue]];
+    UIWebView *webView = (UIWebView*)self.view;
+    webView.mediaPlaybackRequiresUserAction = ![self.book.bakerMediaAutoplay boolValue];
+    [self setBounceForWebView:webView bounces:[self.book.bakerIndexBounce boolValue]];
 
     //NSLog(@"[IndexView] Path to index view is %@", path);
     if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
@@ -216,15 +204,17 @@
         disabled = YES;
     }
 }
--(void)webViewDidFinishLoad:(UIWebView *)webView {
-    id width = book.bakerIndexWidth;
-    id height = book.bakerIndexHeight;
+
+- (void)webViewDidFinishLoad:(UIWebView*)webView {
+    id width  = self.book.bakerIndexWidth;
+    id height = self.book.bakerIndexHeight;
 
     if (width != nil) {
         indexWidth = (int)[width integerValue];
     } else {
         indexWidth = [self sizeFromContentOf:webView].width;
     }
+    
     if (height != nil) {
         indexHeight = (int)[height integerValue];
     } else {
@@ -232,7 +222,6 @@
     }
 
     cachedContentSize = indexScrollView.contentSize;
-    // get correct contentsize
     if (cachedContentSize.width < indexWidth) {
         cachedContentSize = CGSizeMake(indexWidth, indexHeight);
     }
@@ -250,20 +239,19 @@
     return (actualIndexHeight > actualIndexWidth);
 }
 
-- (CGSize)sizeFromContentOf:(UIView *)view {
+- (CGSize)sizeFromContentOf:(UIView*)view {
     // Setting the frame to 1x1 is required to get meaningful results from sizeThatFits when
     // the orientation of the is anything but Portrait.
     // See: http://stackoverflow.com/questions/3936041/how-to-determine-the-content-size-of-a-uiwebview/3937599#3937599
     CGRect frame = view.frame;
-    frame.size.width = 1;
+    frame.size.width  = 1;
     frame.size.height = 1;
     view.frame = frame;
-
     return [view sizeThatFits:CGSizeZero];
 }
 
-- (NSString *)indexPath {
-    return [book.path stringByAppendingPathComponent:fileName];
+- (NSString*)indexPath {
+    return [self.book.path stringByAppendingPathComponent:fileName];
 }
 
 @end

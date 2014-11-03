@@ -5,7 +5,7 @@
 //  ==========================================================================================
 //
 //  Copyright (c) 2010-2013, Davide Casali, Marco Colombo, Alessandro Morandi
-//  Copyright (c) 2014, Andrew Krowczyk, Cédric Mériau
+//  Copyright (c) 2014, Andrew Krowczyk, Cédric Mériau, Pieter Claerhout
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without modification, are
@@ -36,55 +36,55 @@
 
 #pragma mark - HPub Parameters Properties
 
-@property (strong, nonatomic) NSDictionary *bookData;
+@property (nonatomic, strong) NSDictionary *bookData;
 
-@property (copy, nonatomic) NSNumber *hpub;
-@property (copy, nonatomic) NSString *title;
-@property (copy, nonatomic) NSString *date;
+@property (nonatomic, copy) NSNumber *hpub;
+@property (nonatomic, copy) NSString *title;
+@property (nonatomic, copy) NSString *date;
 
-@property (copy, nonatomic) NSArray *author;
-@property (copy, nonatomic) NSArray *creator;
-@property (copy, nonatomic) NSString *publisher;
+@property (nonatomic, copy) NSArray *author;
+@property (nonatomic, copy) NSArray *creator;
+@property (nonatomic, copy) NSString *publisher;
 
-@property (copy, nonatomic) NSString *url;
-@property (copy, nonatomic) NSString *cover;
+@property (nonatomic, copy) NSString *url;
+@property (nonatomic, copy) NSString *cover;
 
-@property (copy, nonatomic) NSString *orientation;
-@property (copy, nonatomic) NSNumber *zoomable;
+@property (nonatomic, copy) NSString *orientation;
+@property (nonatomic, copy) NSNumber *zoomable;
 
-@property (strong, nonatomic) NSMutableArray *contents;
+@property (nonatomic, strong) NSMutableArray *contents;
 
 #pragma mark - Baker HPub Extensions Properties
 
-@property (copy, nonatomic) NSString *bakerBackground;
-@property (copy, nonatomic) NSString *bakerBackgroundImagePortrait;
-@property (copy, nonatomic) NSString *bakerBackgroundImageLandscape;
-@property (copy, nonatomic) NSString *bakerPageNumbersColor;
-@property (copy, nonatomic) NSNumber *bakerPageNumbersAlpha;
-@property (copy, nonatomic) NSString *bakerPageScreenshots;
+@property (nonatomic, copy) NSString *bakerBackground;
+@property (nonatomic, copy) NSString *bakerBackgroundImagePortrait;
+@property (nonatomic, copy) NSString *bakerBackgroundImageLandscape;
+@property (nonatomic, copy) NSString *bakerPageNumbersColor;
+@property (nonatomic, copy) NSNumber *bakerPageNumbersAlpha;
+@property (nonatomic, copy) NSString *bakerPageScreenshots;
 
-@property (copy, nonatomic) NSString *bakerRendering;
-@property (copy, nonatomic) NSNumber *bakerVerticalBounce;
-@property (copy, nonatomic) NSNumber *bakerVerticalPagination;
-@property (copy, nonatomic) NSNumber *bakerPageTurnTap;
-@property (copy, nonatomic) NSNumber *bakerPageTurnSwipe;
-@property (copy, nonatomic) NSNumber *bakerMediaAutoplay;
+@property (nonatomic, copy) NSString *bakerRendering;
+@property (nonatomic, copy) NSNumber *bakerVerticalBounce;
+@property (nonatomic, copy) NSNumber *bakerVerticalPagination;
+@property (nonatomic, copy) NSNumber *bakerPageTurnTap;
+@property (nonatomic, copy) NSNumber *bakerPageTurnSwipe;
+@property (nonatomic, copy) NSNumber *bakerMediaAutoplay;
 
-@property (copy, nonatomic) NSNumber *bakerIndexWidth;
-@property (copy, nonatomic) NSNumber *bakerIndexHeight;
-@property (copy, nonatomic) NSNumber *bakerIndexBounce;
-@property (copy, nonatomic) NSNumber *bakerStartAtPage;
+@property (nonatomic, copy) NSNumber *bakerIndexWidth;
+@property (nonatomic, copy) NSNumber *bakerIndexHeight;
+@property (nonatomic, copy) NSNumber *bakerIndexBounce;
+@property (nonatomic, copy) NSNumber *bakerStartAtPage;
 
 #pragma mark - Book Status Properties
 
-@property (copy, nonatomic) NSString *ID;
-@property (copy, nonatomic) NSString *path;
-@property (copy, nonatomic) NSNumber *isBundled;
-@property (copy, nonatomic) NSString *screenshotsPath;
-@property (copy, nonatomic) NSNumber *screenshotsWritable;
-@property (copy, nonatomic) NSNumber *currentPage;
-@property (copy, nonatomic) NSNumber *lastScrollIndex;
-@property (copy, nonatomic) NSDate *lastOpenedDate;
+@property (nonatomic, copy) NSString *ID;
+@property (nonatomic, copy) NSString *path;
+@property (nonatomic, copy) NSNumber *isBundled;
+@property (nonatomic, copy) NSString *screenshotsPath;
+@property (nonatomic, copy) NSNumber *screenshotsWritable;
+@property (nonatomic, copy) NSNumber *currentPage;
+@property (nonatomic, copy) NSNumber *lastScrollIndex;
+@property (nonatomic, copy) NSDate *lastOpenedDate;
 
 #pragma mark - Init
 
@@ -104,7 +104,5 @@
 #pragma mark - Book status management
 
 - (BOOL)updateBookPath:(NSString *)bookPath bundled:(BOOL)bundled;
-- (void)openBook;
-- (void)closeBook;
 
 @end

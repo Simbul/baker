@@ -5,7 +5,7 @@
 //  ==========================================================================================
 //
 //  Copyright (c) 2010-2013, Davide Casali, Marco Colombo, Alessandro Morandi
-//  Copyright (c) 2014, Andrew Krowczyk, Cédric Mériau
+//  Copyright (c) 2014, Andrew Krowczyk, Cédric Mériau, Pieter Claerhout
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without modification, are
@@ -44,30 +44,13 @@
 
 @implementation IssueViewController
 
-#pragma mark - Synthesis
-
-@synthesize issue;
-@synthesize actionButton;
-@synthesize archiveButton;
-@synthesize progressBar;
-@synthesize spinner;
-@synthesize loadingLabel;
-@synthesize priceLabel;
-
-@synthesize issueCover;
-@synthesize titleLabel;
-@synthesize infoLabel;
-
-@synthesize currentStatus;
-
 #pragma mark - Init
 
-- (id)initWithBakerIssue:(BakerIssue *)bakerIssue
-{
+- (id)initWithBakerIssue:(BakerIssue*)bakerIssue {
     self = [super init];
     if (self) {
-        self.issue = bakerIssue;
-        self.currentStatus = nil;
+        _issue = bakerIssue;
+        _currentStatus = nil;
 
         purchaseDelayed = NO;
 
@@ -87,8 +70,7 @@
 
 #pragma mark - View Lifecycle
 
-- (void)viewDidLoad
-{
+- (void)viewDidLoad {
     [super viewDidLoad];
 
     CGSize cellSize = [IssueViewController getIssueCellSize];
@@ -104,89 +86,89 @@
     UI ui = [IssueViewController getIssueContentMeasures];
 
     self.issueCover = [UIButton buttonWithType:UIButtonTypeCustom];
-    issueCover.frame = CGRectMake(ui.cellPadding, ui.cellPadding, ui.thumbWidth, ui.thumbHeight);
+    self.issueCover.frame = CGRectMake(ui.cellPadding, ui.cellPadding, ui.thumbWidth, ui.thumbHeight);
 
-    issueCover.backgroundColor = [UIColor colorWithHexString:ISSUES_COVER_BACKGROUND_COLOR];
-    issueCover.adjustsImageWhenHighlighted = NO;
-    issueCover.adjustsImageWhenDisabled = NO;
+    self.issueCover.backgroundColor = [UIColor colorWithHexString:ISSUES_COVER_BACKGROUND_COLOR];
+    self.issueCover.adjustsImageWhenHighlighted = NO;
+    self.issueCover.adjustsImageWhenDisabled = NO;
 
-    issueCover.layer.shadowOpacity = 0.5;
-    issueCover.layer.shadowOffset = CGSizeMake(0, 2);
-    issueCover.layer.shouldRasterize = YES;
-    issueCover.layer.rasterizationScale = [UIScreen mainScreen].scale;
+    self.issueCover.layer.shadowOpacity = 0.5;
+    self.issueCover.layer.shadowOffset = CGSizeMake(0, 2);
+    self.issueCover.layer.shouldRasterize = YES;
+    self.issueCover.layer.rasterizationScale = [UIScreen mainScreen].scale;
 
-    [issueCover addTarget:self action:@selector(actionButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:issueCover];
+    [self.issueCover addTarget:self action:@selector(actionButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:self.issueCover];
 
     // SETUP TITLE LABEL
     self.titleLabel = [[UILabel alloc] init];
-    titleLabel.textColor = [UIColor colorWithHexString:ISSUES_TITLE_COLOR];
-    titleLabel.backgroundColor = [UIColor clearColor];
-    titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
-    titleLabel.textAlignment = NSTextAlignmentLeft;
+    self.titleLabel.textColor = [UIColor colorWithHexString:ISSUES_TITLE_COLOR];
+    self.titleLabel.backgroundColor = [UIColor clearColor];
+    self.titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
+    self.titleLabel.textAlignment = NSTextAlignmentLeft;
 
-    [self.view addSubview:titleLabel];
+    [self.view addSubview:self.titleLabel];
 
     // SETUP INFO LABEL
     self.infoLabel = [[UILabel alloc] init];
-    infoLabel.textColor = [UIColor colorWithHexString:ISSUES_INFO_COLOR];
-    infoLabel.backgroundColor = [UIColor clearColor];
-    infoLabel.lineBreakMode = NSLineBreakByTruncatingTail;
-    infoLabel.textAlignment = NSTextAlignmentLeft;
+    self.infoLabel.textColor = [UIColor colorWithHexString:ISSUES_INFO_COLOR];
+    self.infoLabel.backgroundColor = [UIColor clearColor];
+    self.infoLabel.lineBreakMode = NSLineBreakByTruncatingTail;
+    self.infoLabel.textAlignment = NSTextAlignmentLeft;
 
-    [self.view addSubview:infoLabel];
+    [self.view addSubview:self.infoLabel];
 
     // SETUP PRICE LABEL
     self.priceLabel = [[UILabel alloc] init];
-    priceLabel.textColor = [UIColor colorWithHexString:ISSUES_PRICE_COLOR];
-    priceLabel.backgroundColor = [UIColor clearColor];
-    priceLabel.lineBreakMode = NSLineBreakByTruncatingTail;
-    priceLabel.textAlignment = NSTextAlignmentLeft;
+    self.priceLabel.textColor = [UIColor colorWithHexString:ISSUES_PRICE_COLOR];
+    self.priceLabel.backgroundColor = [UIColor clearColor];
+    self.priceLabel.lineBreakMode = NSLineBreakByTruncatingTail;
+    self.priceLabel.textAlignment = NSTextAlignmentLeft;
 
-    [self.view addSubview:priceLabel];
+    [self.view addSubview:self.priceLabel];
 
     // SETUP ACTION BUTTON
     self.actionButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    actionButton.backgroundColor = [UIColor colorWithHexString:ISSUES_ACTION_BUTTON_BACKGROUND_COLOR];
+    self.actionButton.backgroundColor = [UIColor colorWithHexString:ISSUES_ACTION_BUTTON_BACKGROUND_COLOR];
 
-    [actionButton setTitle:NSLocalizedString(@"ACTION_DOWNLOADED_TEXT", nil) forState:UIControlStateNormal];
-    [actionButton setTitleColor:[UIColor colorWithHexString:ISSUES_ACTION_BUTTON_COLOR] forState:UIControlStateNormal];
-    [actionButton addTarget:self action:@selector(actionButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    [self.actionButton setTitle:NSLocalizedString(@"ACTION_DOWNLOADED_TEXT", nil) forState:UIControlStateNormal];
+    [self.actionButton setTitleColor:[UIColor colorWithHexString:ISSUES_ACTION_BUTTON_COLOR] forState:UIControlStateNormal];
+    [self.actionButton addTarget:self action:@selector(actionButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
 
-    [self.view addSubview:actionButton];
+    [self.view addSubview:self.actionButton];
 
     // SETUP ARCHIVE BUTTON
     self.archiveButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    archiveButton.backgroundColor = [UIColor colorWithHexString:ISSUES_ARCHIVE_BUTTON_BACKGROUND_COLOR];
+    self.archiveButton.backgroundColor = [UIColor colorWithHexString:ISSUES_ARCHIVE_BUTTON_BACKGROUND_COLOR];
 
-    [archiveButton setTitle:NSLocalizedString(@"ARCHIVE_TEXT", nil) forState:UIControlStateNormal];
-    [archiveButton setTitleColor:[UIColor colorWithHexString:ISSUES_ARCHIVE_BUTTON_COLOR] forState:UIControlStateNormal];
+    [self.archiveButton setTitle:NSLocalizedString(@"ARCHIVE_TEXT", nil) forState:UIControlStateNormal];
+    [self.archiveButton setTitleColor:[UIColor colorWithHexString:ISSUES_ARCHIVE_BUTTON_COLOR] forState:UIControlStateNormal];
 
     #ifdef BAKER_NEWSSTAND
-    [archiveButton addTarget:self action:@selector(archiveButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:archiveButton];
+    [self.archiveButton addTarget:self action:@selector(archiveButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:self.archiveButton];
     #endif
 
     // SETUP DOWN/LOADING SPINNER AND LABEL
     self.spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-    spinner.color = [UIColor colorWithHexString:ISSUES_LOADING_SPINNER_COLOR];
-    spinner.backgroundColor = [UIColor clearColor];
-    spinner.hidesWhenStopped = YES;
+    self.spinner.color = [UIColor colorWithHexString:ISSUES_LOADING_SPINNER_COLOR];
+    self.spinner.backgroundColor = [UIColor clearColor];
+    self.spinner.hidesWhenStopped = YES;
 
     self.loadingLabel = [[UILabel alloc] init];
-    loadingLabel.textColor = [UIColor colorWithHexString:ISSUES_LOADING_LABEL_COLOR];
-    loadingLabel.backgroundColor = [UIColor clearColor];
-    loadingLabel.textAlignment = NSTextAlignmentLeft;
-    loadingLabel.text = NSLocalizedString(@"DOWNLOADING_TEXT", nil);
+    self.loadingLabel.textColor = [UIColor colorWithHexString:ISSUES_LOADING_LABEL_COLOR];
+    self.loadingLabel.backgroundColor = [UIColor clearColor];
+    self.loadingLabel.textAlignment = NSTextAlignmentLeft;
+    self.loadingLabel.text = NSLocalizedString(@"DOWNLOADING_TEXT", nil);
 
-    [self.view addSubview:spinner];
-    [self.view addSubview:loadingLabel];
+    [self.view addSubview:self.spinner];
+    [self.view addSubview:self.loadingLabel];
 
     // SETUP PROGRESS BAR
     self.progressBar = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleDefault];
     self.progressBar.progressTintColor = [UIColor colorWithHexString:ISSUES_PROGRESSBAR_TINT_COLOR];
 
-    [self.view addSubview:progressBar];
+    [self.view addSubview:self.progressBar];
 
     #ifdef BAKER_NEWSSTAND
     // RESUME PENDING NEWSSTAND DOWNLOAD
@@ -201,6 +183,7 @@
 
     [self refreshContentWithCache:NO];
 }
+
 - (void)refreshContentWithCache:(bool)cache {
     UIFont *titleFont;
     UIFont *infoFont;
@@ -256,50 +239,50 @@
 
     // SETUP COVER IMAGE
     [self.issue getCoverWithCache:cache andBlock:^(UIImage *image) {
-        [issueCover setBackgroundImage:image forState:UIControlStateNormal];
+        [self.issueCover setBackgroundImage:image forState:UIControlStateNormal];
     }];
 
     // SETUP TITLE LABEL
-    titleLabel.font = titleFont;
-    titleLabel.frame = CGRectMake(ui.contentOffset, heightOffset, 170, 60);
-    titleLabel.numberOfLines = 3;
-    titleLabel.text = self.issue.title;
-    [titleLabel sizeToFit];
+    self.titleLabel.font = titleFont;
+    self.titleLabel.frame = CGRectMake(ui.contentOffset, heightOffset, 170, 60);
+    self.titleLabel.numberOfLines = 3;
+    self.titleLabel.text = self.issue.title;
+    [self.titleLabel sizeToFit];
 
-    heightOffset = heightOffset + titleLabel.frame.size.height + 5;
+    heightOffset = heightOffset + self.titleLabel.frame.size.height + 5;
 
     // SETUP INFO LABEL
-    infoLabel.font = infoFont;
-    infoLabel.frame = CGRectMake(ui.contentOffset, heightOffset, 170, 60);
-    infoLabel.numberOfLines = 3;
-    infoLabel.text = self.issue.info;
-    [infoLabel sizeToFit];
+    self.infoLabel.font = infoFont;
+    self.infoLabel.frame = CGRectMake(ui.contentOffset, heightOffset, 170, 60);
+    self.infoLabel.numberOfLines = 3;
+    self.infoLabel.text = self.issue.info;
+    [self.infoLabel sizeToFit];
 
-    heightOffset = heightOffset + infoLabel.frame.size.height + 5;
+    heightOffset = heightOffset + self.infoLabel.frame.size.height + 5;
 
     // SETUP PRICE LABEL
     self.priceLabel.frame = CGRectMake(ui.contentOffset, heightOffset, 170, textLineheight);
-    priceLabel.font = infoFont;
+    self.priceLabel.font = infoFont;
 
-    heightOffset = heightOffset + priceLabel.frame.size.height + 10;
+    heightOffset = heightOffset + self.priceLabel.frame.size.height + 10;
 
     // SETUP ACTION BUTTON
     NSString *status = [self.issue getStatus];
     if ([status isEqualToString:@"remote"] || [status isEqualToString:@"purchasable"] || [status isEqualToString:@"purchased"]) {
-        actionButton.frame = CGRectMake(ui.contentOffset, heightOffset, 110, 30);
+        self.actionButton.frame = CGRectMake(ui.contentOffset, heightOffset, 110, 30);
     } else if ([status isEqualToString:@"downloaded"] || [status isEqualToString:@"bundled"]) {
-        actionButton.frame = CGRectMake(ui.contentOffset, heightOffset, 80, 30);
+        self.actionButton.frame = CGRectMake(ui.contentOffset, heightOffset, 80, 30);
     }
-    actionButton.titleLabel.font = actionFont;
+    self.actionButton.titleLabel.font = actionFont;
 
     // SETUP ARCHIVE BUTTON
-    archiveButton.frame = CGRectMake(ui.contentOffset + 80 + 10, heightOffset, 80, 30);
-    archiveButton.titleLabel.font = archiveFont;
+    self.archiveButton.frame = CGRectMake(ui.contentOffset + 80 + 10, heightOffset, 80, 30);
+    self.archiveButton.titleLabel.font = archiveFont;
 
     // SETUP DOWN/LOADING SPINNER AND LABEL
-    spinner.frame = CGRectMake(ui.contentOffset, heightOffset, 30, 30);
+    self.spinner.frame = CGRectMake(ui.contentOffset, heightOffset, 30, 30);
     self.loadingLabel.frame = CGRectMake(ui.contentOffset + self.spinner.frame.size.width + 10, heightOffset, 135, 30);
-    loadingLabel.font = actionFont;
+    self.loadingLabel.font = actionFont;
 
     heightOffset = heightOffset + self.loadingLabel.frame.size.height + 5;
 
@@ -307,148 +290,128 @@
     self.progressBar.frame = CGRectMake(ui.contentOffset, heightOffset, 170, 30);
 }
 
-- (void)preferredContentSizeChanged:(NSNotification *)notification {
+- (void)preferredContentSizeChanged:(NSNotification*)notification {
     [self refreshContentWithCache:YES];
 }
 
-- (void)viewWillAppear:(BOOL)animated
-{
+- (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [self refresh];
 }
-- (void)refresh
-{
+
+- (void)refresh {
     [self refresh:[self.issue getStatus]];
 }
-- (void)refresh:(NSString *)status
-{
+
+- (void)refresh:(NSString*)status {
     //NSLog(@"[BakerShelf] Shelf UI - Refreshing %@ item with status from <%@> to <%@>", self.issue.ID, self.currentStatus, status);
-    if ([status isEqualToString:@"remote"])
-    {
+    if ([status isEqualToString:@"remote"]) {
         [self.priceLabel setText:NSLocalizedString(@"FREE_TEXT", nil)];
 
         [self.actionButton setTitle:NSLocalizedString(@"ACTION_REMOTE_TEXT", nil) forState:UIControlStateNormal];
         [self.spinner stopAnimating];
 
-        self.actionButton.hidden = NO;
+        self.actionButton.hidden  = NO;
         self.archiveButton.hidden = YES;
-        self.progressBar.hidden = YES;
-        self.loadingLabel.hidden = YES;
-        self.priceLabel.hidden = NO;
-    }
-    else if ([status isEqualToString:@"connecting"])
-    {
+        self.progressBar.hidden   = YES;
+        self.loadingLabel.hidden  = YES;
+        self.priceLabel.hidden    = NO;
+    } else if ([status isEqualToString:@"connecting"]) {
         NSLog(@"[BakerShelf] '%@' is Connecting...", self.issue.ID);
         [self.spinner startAnimating];
 
-        self.actionButton.hidden = YES;
+        self.actionButton.hidden  = YES;
         self.archiveButton.hidden = YES;
         self.progressBar.progress = 0;
-        self.loadingLabel.text = NSLocalizedString(@"CONNECTING_TEXT", nil);
-        self.loadingLabel.hidden = NO;
-        self.progressBar.hidden = YES;
-        self.priceLabel.hidden = YES;
-    }
-    else if ([status isEqualToString:@"downloading"])
-    {
+        self.loadingLabel.text    = NSLocalizedString(@"CONNECTING_TEXT", nil);
+        self.loadingLabel.hidden  = NO;
+        self.progressBar.hidden   = YES;
+        self.priceLabel.hidden    = YES;
+    } else if ([status isEqualToString:@"downloading"]) {
         NSLog(@"[BakerShelf] '%@' is Downloading...", self.issue.ID);
         [self.spinner startAnimating];
 
-        self.actionButton.hidden = YES;
+        self.actionButton.hidden  = YES;
         self.archiveButton.hidden = YES;
         self.progressBar.progress = 0;
-        self.loadingLabel.text = NSLocalizedString(@"DOWNLOADING_TEXT", nil);
-        self.loadingLabel.hidden = NO;
-        self.progressBar.hidden = NO;
-        self.priceLabel.hidden = YES;
-    }
-    else if ([status isEqualToString:@"downloaded"])
-    {
+        self.loadingLabel.text    = NSLocalizedString(@"DOWNLOADING_TEXT", nil);
+        self.loadingLabel.hidden  = NO;
+        self.progressBar.hidden   = NO;
+        self.priceLabel.hidden    = YES;
+    } else if ([status isEqualToString:@"downloaded"]) {
         NSLog(@"[BakerShelf] '%@' is Ready to be Read.", self.issue.ID);
         [self.actionButton setTitle:NSLocalizedString(@"ACTION_DOWNLOADED_TEXT", nil) forState:UIControlStateNormal];
         [self.spinner stopAnimating];
 
-        self.actionButton.hidden = NO;
+        self.actionButton.hidden  = NO;
         self.archiveButton.hidden = NO;
-        self.loadingLabel.hidden = YES;
-        self.progressBar.hidden = YES;
-        self.priceLabel.hidden = YES;
-    }
-    else if ([status isEqualToString:@"bundled"])
-    {
+        self.loadingLabel.hidden  = YES;
+        self.progressBar.hidden   = YES;
+        self.priceLabel.hidden    = YES;
+    } else if ([status isEqualToString:@"bundled"]) {
         [self.actionButton setTitle:NSLocalizedString(@"ACTION_DOWNLOADED_TEXT", nil) forState:UIControlStateNormal];
         [self.spinner stopAnimating];
 
-        self.actionButton.hidden = NO;
+        self.actionButton.hidden  = NO;
         self.archiveButton.hidden = YES;
-        self.loadingLabel.hidden = YES;
-        self.progressBar.hidden = YES;
-        self.priceLabel.hidden = YES;
-    }
-    else if ([status isEqualToString:@"opening"])
-    {
+        self.loadingLabel.hidden  = YES;
+        self.progressBar.hidden   = YES;
+        self.priceLabel.hidden    = YES;
+    } else if ([status isEqualToString:@"opening"]) {
         [self.spinner startAnimating];
 
-        self.actionButton.hidden = YES;
+        self.actionButton.hidden  = YES;
         self.archiveButton.hidden = YES;
-        self.loadingLabel.text = NSLocalizedString(@"OPENING_TEXT", nil);
-        self.loadingLabel.hidden = NO;
-        self.progressBar.hidden = YES;
-        self.priceLabel.hidden = YES;
-    }
-    else if ([status isEqualToString:@"purchasable"])
-    {
+        self.loadingLabel.text    = NSLocalizedString(@"OPENING_TEXT", nil);
+        self.loadingLabel.hidden  = NO;
+        self.progressBar.hidden   = YES;
+        self.priceLabel.hidden    = YES;
+    } else if ([status isEqualToString:@"purchasable"]) {
         [self.actionButton setTitle:NSLocalizedString(@"ACTION_BUY_TEXT", nil) forState:UIControlStateNormal];
         [self.spinner stopAnimating];
 
         if (self.issue.price) {
-            [self.priceLabel setText:self.issue.price];
+            self.priceLabel.text = self.issue.price;
         }
 
-        self.actionButton.hidden = NO;
+        self.actionButton.hidden  = NO;
         self.archiveButton.hidden = YES;
-        self.progressBar.hidden = YES;
-        self.loadingLabel.hidden = YES;
-        self.priceLabel.hidden = NO;
-    }
-    else if ([status isEqualToString:@"purchasing"])
-    {
+        self.progressBar.hidden   = YES;
+        self.loadingLabel.hidden  = YES;
+        self.priceLabel.hidden    = NO;
+    } else if ([status isEqualToString:@"purchasing"]) {
         NSLog(@"[BakerShelf] '%@' is being Purchased...", self.issue.ID);
         [self.spinner startAnimating];
 
         self.loadingLabel.text = NSLocalizedString(@"BUYING_TEXT", nil);
 
-        self.actionButton.hidden = YES;
+        self.actionButton.hidden  = YES;
         self.archiveButton.hidden = YES;
-        self.progressBar.hidden = YES;
-        self.loadingLabel.hidden = NO;
-        self.priceLabel.hidden = NO;
-    }
-    else if ([status isEqualToString:@"purchased"])
-    {
+        self.progressBar.hidden   = YES;
+        self.loadingLabel.hidden  = NO;
+        self.priceLabel.hidden    = NO;
+    } else if ([status isEqualToString:@"purchased"]) {
         NSLog(@"[BakerShelf] '%@' is Purchased.", self.issue.ID);
         [self.priceLabel setText:NSLocalizedString(@"PURCHASED_TEXT", nil)];
 
         [self.actionButton setTitle:NSLocalizedString(@"ACTION_REMOTE_TEXT", nil) forState:UIControlStateNormal];
         [self.spinner stopAnimating];
 
-        self.actionButton.hidden = NO;
+        self.actionButton.hidden  = NO;
         self.archiveButton.hidden = YES;
-        self.progressBar.hidden = YES;
-        self.loadingLabel.hidden = YES;
-        self.priceLabel.hidden = NO;
-    }
-    else if ([status isEqualToString:@"unpriced"])
-    {
+        self.progressBar.hidden   = YES;
+        self.loadingLabel.hidden  = YES;
+        self.priceLabel.hidden    = NO;
+    } else if ([status isEqualToString:@"unpriced"]) {
         [self.spinner startAnimating];
 
         self.loadingLabel.text = NSLocalizedString(@"RETRIEVING_TEXT", nil);
 
-        self.actionButton.hidden = YES;
+        self.actionButton.hidden  = YES;
         self.archiveButton.hidden = YES;
-        self.progressBar.hidden = YES;
-        self.loadingLabel.hidden = NO;
-        self.priceLabel.hidden = YES;
+        self.progressBar.hidden   = YES;
+        self.loadingLabel.hidden  = NO;
+        self.priceLabel.hidden    = YES;
     }
 
     [self refreshContentWithCache:YES];
@@ -456,13 +419,9 @@
     self.currentStatus = status;
 }
 
-#pragma mark - Memory management
-
-
 #pragma mark - Issue management
 
-- (void)actionButtonPressed:(UIButton *)sender
-{
+- (void)actionButtonPressed:(UIButton*)sender {
     NSString *status = [self.issue getStatus];
     if ([status isEqualToString:@"remote"] || [status isEqualToString:@"purchased"]) {
     #ifdef BAKER_NEWSSTAND
@@ -481,10 +440,12 @@
     #endif
     }
 }
+
 #ifdef BAKER_NEWSSTAND
 - (void)download {
     [self.issue download];
 }
+
 - (void)buy {
     [self addPurchaseObserver:@selector(handleIssuePurchased:) name:@"notification_issue_purchased"];
     [self addPurchaseObserver:@selector(handleIssuePurchaseFailed:) name:@"notification_issue_purchase_failed"];
@@ -505,10 +466,11 @@
         [self refresh];
     }
 }
-- (void)handleIssuePurchased:(NSNotification *)notification {
-    SKPaymentTransaction *transaction = (notification.userInfo)[@"transaction"];
 
-    if ([transaction.payment.productIdentifier isEqualToString:issue.productID]) {
+- (void)handleIssuePurchased:(NSNotification*)notification {
+    SKPaymentTransaction *transaction = notification.userInfo[@"transaction"];
+
+    if ([transaction.payment.productIdentifier isEqualToString:self.issue.productID]) {
 
         [self removePurchaseObserver:@"notification_issue_purchased"];
         [self removePurchaseObserver:@"notification_issue_purchase_failed"];
@@ -535,10 +497,11 @@
         }];
     }
 }
-- (void)handleIssuePurchaseFailed:(NSNotification *)notification {
+
+- (void)handleIssuePurchaseFailed:(NSNotification*)notification {
     SKPaymentTransaction *transaction = (notification.userInfo)[@"transaction"];
 
-    if ([transaction.payment.productIdentifier isEqualToString:issue.productID]) {
+    if ([transaction.payment.productIdentifier isEqualToString:self.issue.productID]) {
         // Show an error, unless it was the user who cancelled the transaction
         if (transaction.error.code != SKErrorPaymentCancelled) {
             [Utils showAlertWithTitle:NSLocalizedString(@"ISSUE_PURCHASE_FAILED_TITLE", nil)
@@ -554,10 +517,10 @@
     }
 }
 
-- (void)handleIssueRestored:(NSNotification *)notification {
+- (void)handleIssueRestored:(NSNotification*)notification {
     SKPaymentTransaction *transaction = (notification.userInfo)[@"transaction"];
 
-    if ([transaction.payment.productIdentifier isEqualToString:issue.productID]) {
+    if ([transaction.payment.productIdentifier isEqualToString:self.issue.productID]) {
         [purchasesManager markAsPurchased:transaction.payment.productIdentifier];
 
         if (![purchasesManager finishTransaction:transaction]) {
@@ -569,7 +532,7 @@
     }
 }
 
-- (void)setPrice:(NSString *)price {
+- (void)setPrice:(NSString*)price {
     self.issue.price = price;
     if (purchaseDelayed) {
         purchaseDelayed = NO;
@@ -579,8 +542,8 @@
     }
 }
 #endif
-- (void)read
-{
+
+- (void)read {
     self.issue.transientStatus = BakerIssueTransientStatusOpening;
     [self refresh];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"read_issue_request" object:self];
@@ -588,10 +551,11 @@
 
 #pragma mark - Newsstand download management
 
-- (void)handleDownloadStarted:(NSNotification *)notification {
+- (void)handleDownloadStarted:(NSNotification*)notification {
     [self refresh];
 }
-- (void)handleDownloadProgressing:(NSNotification *)notification {
+
+- (void)handleDownloadProgressing:(NSNotification*)notification {
     float bytesWritten = [(notification.userInfo)[@"totalBytesWritten"] floatValue];
     float bytesExpected = [(notification.userInfo)[@"expectedTotalBytes"] floatValue];
 
@@ -601,11 +565,13 @@
     }
     [self.progressBar setProgress:(bytesWritten / bytesExpected) animated:YES];
 }
-- (void)handleDownloadFinished:(NSNotification *)notification {
+
+- (void)handleDownloadFinished:(NSNotification*)notification {
     self.issue.transientStatus = BakerIssueTransientStatusNone;
     [self refresh];
 }
-- (void)handleDownloadError:(NSNotification *)notification {
+
+- (void)handleDownloadError:(NSNotification*)notification {
     [Utils showAlertWithTitle:NSLocalizedString(@"DOWNLOAD_FAILED_TITLE", nil)
                       message:NSLocalizedString(@"DOWNLOAD_FAILED_MESSAGE", nil)
                   buttonTitle:NSLocalizedString(@"DOWNLOAD_FAILED_CLOSE", nil)];
@@ -613,7 +579,8 @@
     self.issue.transientStatus = BakerIssueTransientStatusNone;
     [self refresh];
 }
-- (void)handleUnzipError:(NSNotification *)notification {
+
+- (void)handleUnzipError:(NSNotification*)notification {
     [Utils showAlertWithTitle:NSLocalizedString(@"UNZIP_FAILED_TITLE", nil)
                       message:NSLocalizedString(@"UNZIP_FAILED_MESSAGE", nil)
                   buttonTitle:NSLocalizedString(@"UNZIP_FAILED_CLOSE", nil)];
@@ -625,26 +592,24 @@
 #pragma mark - Newsstand archive management
 
 #ifdef BAKER_NEWSSTAND
-- (void)archiveButtonPressed:(UIButton *)sender
-{
-    UIAlertView *updateAlert = [[UIAlertView alloc]
-                                initWithTitle: NSLocalizedString(@"ARCHIVE_ALERT_TITLE", nil)
-                                message: NSLocalizedString(@"ARCHIVE_ALERT_MESSAGE", nil)
-                                delegate: self
-                                cancelButtonTitle: NSLocalizedString(@"ARCHIVE_ALERT_BUTTON_CANCEL", nil)
-                                otherButtonTitles: NSLocalizedString(@"ARCHIVE_ALERT_BUTTON_OK", nil), nil];
+- (void)archiveButtonPressed:(UIButton*)sender {
+    UIAlertView *updateAlert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"ARCHIVE_ALERT_TITLE", nil)
+                                                          message:NSLocalizedString(@"ARCHIVE_ALERT_MESSAGE", nil)
+                                                         delegate:self
+                                                cancelButtonTitle:NSLocalizedString(@"ARCHIVE_ALERT_BUTTON_CANCEL", nil)
+                                                otherButtonTitles:NSLocalizedString(@"ARCHIVE_ALERT_BUTTON_OK", nil), nil
+                                ];
     [updateAlert show];
 }
 
-- (void) alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
-{
-    if(buttonIndex == 1){
+- (void)alertView:(UIAlertView*)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    if (buttonIndex == 1){
         [[NSNotificationCenter defaultCenter] postNotificationName:@"BakerIssueArchive" object:self]; // -> Baker Analytics Event
         
         NKLibrary *nkLib = [NKLibrary sharedLibrary];
         NKIssue *nkIssue = [nkLib issueWithName:self.issue.ID];
-        NSString *name = nkIssue.name;
-        NSDate *date = nkIssue.date;
+        NSString *name   = nkIssue.name;
+        NSDate *date     = nkIssue.date;
 
         [nkLib removeIssue:nkIssue];
 
@@ -658,7 +623,7 @@
 
 #pragma mark - Helper methods
 
-- (void)addPurchaseObserver:(SEL)notificationSelector name:(NSString *)notificationName {
+- (void)addPurchaseObserver:(SEL)notificationSelector name:(NSString*)notificationName {
     #ifdef BAKER_NEWSSTAND
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:notificationSelector
@@ -667,7 +632,7 @@
     #endif
 }
 
-- (void)removePurchaseObserver:(NSString *)notificationName {
+- (void)removePurchaseObserver:(NSString*)notificationName {
     #ifdef BAKER_NEWSSTAND
     [[NSNotificationCenter defaultCenter] removeObserver:self
                                                     name:notificationName
@@ -675,7 +640,7 @@
     #endif
 }
 
-- (void)addIssueObserver:(SEL)notificationSelector name:(NSString *)notificationName {
+- (void)addIssueObserver:(SEL)notificationSelector name:(NSString*)notificationName {
     #ifdef BAKER_NEWSSTAND
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:notificationSelector
@@ -684,8 +649,7 @@
     #endif
 }
 
-+ (UI)getIssueContentMeasures
-{
++ (UI)getIssueContentMeasures {
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
         UI iPad = {
             .cellPadding   = 30,
@@ -705,20 +669,16 @@
     }
 }
 
-+ (int)getIssueCellHeight
-{
++ (int)getIssueCellHeight {
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
         return 240;
     } else {
         return 190;
     }
 }
-+ (CGSize)getIssueCellSize
-{
-    
-    //iOS 8 update: the screenBounds actual width value is now always 'width', while it used to be 'height' in Landscape mode on iOS7. To keep the code working for both iOS8 and iOS7, use the higher/lower of width/height depending on orientation.
 
-    CGRect screenRect = [[UIScreen mainScreen] bounds];
++ (CGSize)getIssueCellSize {
+    CGRect screenRect = [UIScreen mainScreen].bounds;
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
         return CGSizeMake((MIN(screenRect.size.width, screenRect.size.height) - 10) / 2, [IssueViewController getIssueCellHeight]);
     } else {

@@ -5,7 +5,7 @@
 //  ==========================================================================================
 //
 //  Copyright (c) 2010-2013, Davide Casali, Marco Colombo, Alessandro Morandi
-//  Copyright (c) 2014, Andrew Krowczyk, Cédric Mériau
+//  Copyright (c) 2014, Andrew Krowczyk, Cédric Mériau, Pieter Claerhout
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without modification, are
@@ -38,25 +38,18 @@
 #import "SSZipArchive.h"
 #import "PageTitleLabel.h"
 #import "Utils.h"
+#import "NSObject+Extensions.h"
 
 #define INDEX_FILE_NAME         @"index.html"
 
 #define URL_OPEN_MODALLY        @"referrer=Baker"
 #define URL_OPEN_EXTERNAL       @"referrer=Safari"
 
-
-// SCREENSHOT
+// Screenshots
 #define MAX_SCREENSHOT_AFTER_CP  10
 #define MAX_SCREENSHOT_BEFORE_CP 10
 
 @implementation BakerViewController
-
-#pragma mark - SYNTHESIS
-@synthesize book;
-@synthesize scrollView;
-@synthesize currPage;
-@synthesize currentPageNumber;
-@synthesize barsHidden;
 
 #pragma mark - INIT
 - (id)initWithBook:(BakerBook *)bakerBook {
@@ -64,37 +57,31 @@
     self = [super init];
     if (self) {
         NSLog(@"[BakerView] Init book view...");
-        self.book = bakerBook;
+        
+        _book = bakerBook;
 
         if ([self respondsToSelector:@selector(automaticallyAdjustsScrollViewInsets)]) {
             // Only available in iOS 7 +
             self.automaticallyAdjustsScrollViewInsets = NO;
         }
 
-
         // ****** DEVICE SCREEN BOUNDS
         screenBounds = [[UIScreen mainScreen] bounds];
         NSLog(@"[BakerView]     Device Screen (WxH): %fx%f.", screenBounds.size.width, screenBounds.size.height);
 
-
         // ****** SUPPORTED ORIENTATION FROM PLIST
         supportedOrientation = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"UISupportedInterfaceOrientations"];
 
-
-        NSString *cachePath = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES)[0];
-        if (![[NSFileManager defaultManager] fileExistsAtPath:cachePath]) {
-            [[NSFileManager defaultManager] createDirectoryAtPath:cachePath withIntermediateDirectories:YES attributes:nil error:nil];
+        if (![[NSFileManager defaultManager] fileExistsAtPath:self.cachePath]) {
+            [[NSFileManager defaultManager] createDirectoryAtPath:self.cachePath withIntermediateDirectories:YES attributes:nil error:nil];
         }
 
-
         // ****** SCREENSHOTS DIRECTORY //TODO: set in load book only if is necessary
-        defaultScreeshotsPath = [[cachePath stringByAppendingPathComponent:@"screenshots"] stringByAppendingPathComponent:book.ID];
-
+        defaultScreeshotsPath = [[self.cachePath stringByAppendingPathComponent:@"screenshots"] stringByAppendingPathComponent:bakerBook.ID];
 
         // ****** STATUS FILE
-        bookStatus = [[BakerBookStatus alloc] initWithBookId:book.ID];
+        bookStatus = [[BakerBookStatus alloc] initWithBookId:bakerBook.ID];
         NSLog(@"[BakerView]     Status: page %@ @ scrollIndex %@px.", bookStatus.page, bookStatus.scrollIndex);
-
 
         // ****** Initialize audio session for html5 audio
         AVAudioSession *audioSession = [AVAudioSession sharedInstance];
@@ -129,7 +116,7 @@
         shouldForceOrientationUpdate = YES;
 
         adjustViewsOnAppDidBecomeActive = NO;
-        barsHidden = NO;
+        _barsHidden = NO;
 
         webViewBackground = nil;
 
@@ -137,14 +124,14 @@
         anchorFromURL = nil;
 
         // TODO: LOAD BOOK METHOD IN VIEW DID LOAD
-        [self loadBookWithBookPath:book.path];
+        [self loadBookWithBookPath:bakerBook.path];
     }
     return self;
 }
 - (void)viewDidLoad {
 
     [super viewDidLoad];
-    self.navigationItem.title = book.title;
+    self.navigationItem.title = self.book.title;
     
     
     // ****** SET THE INITIAL SIZE FOR EVERYTHING
@@ -154,34 +141,36 @@
 
     // ****** SCROLLVIEW INIT
     self.scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, pageWidth, pageHeight)];
-    scrollView.showsHorizontalScrollIndicator = YES;
-    scrollView.showsVerticalScrollIndicator = NO;
-    scrollView.delaysContentTouches = NO;
-    scrollView.pagingEnabled = YES;
-    scrollView.delegate = self;
+    self.scrollView.showsHorizontalScrollIndicator = YES;
+    self.scrollView.showsVerticalScrollIndicator   = NO;
+    self.scrollView.delaysContentTouches           = NO;
+    self.scrollView.pagingEnabled                  = YES;
+    self.scrollView.delegate                       = self;
 
-    scrollView.scrollEnabled = [book.bakerPageTurnSwipe boolValue];
-    scrollView.backgroundColor = [Utils colorWithHexString:book.bakerBackground];
+    self.scrollView.scrollEnabled   = [self.book.bakerPageTurnSwipe boolValue];
+    self.scrollView.backgroundColor = [Utils colorWithHexString:self.book.bakerBackground];
 
-    [self.view addSubview:scrollView];
+    [self.view addSubview:self.scrollView];
 
 
     // ****** BAKER BACKGROUND
     backgroundImageLandscape   = nil;
     backgroundImagePortrait    = nil;
 
-    NSString *backgroundPathLandscape = book.bakerBackgroundImageLandscape;
+    NSString *backgroundPathLandscape = self.book.bakerBackgroundImageLandscape;
     if (backgroundPathLandscape != nil) {
-        backgroundPathLandscape  = [book.path stringByAppendingPathComponent:backgroundPathLandscape];
+        backgroundPathLandscape  = [self.book.path stringByAppendingPathComponent:backgroundPathLandscape];
         backgroundImageLandscape = [UIImage imageWithContentsOfFile:backgroundPathLandscape];
     }
 
-    NSString *backgroundPathPortrait = book.bakerBackgroundImagePortrait;
+    NSString *backgroundPathPortrait = self.book.bakerBackgroundImagePortrait;
     if (backgroundPathPortrait != nil) {
-        backgroundPathPortrait  = [book.path stringByAppendingPathComponent:backgroundPathPortrait];
+        backgroundPathPortrait  = [self.book.path stringByAppendingPathComponent:backgroundPathPortrait];
         backgroundImagePortrait = [UIImage imageWithContentsOfFile:backgroundPathPortrait];
     }
+    
 }
+
 - (void)viewWillAppear:(BOOL)animated {
     
     if (!currentPageWillAppearUnderModal) {
@@ -223,7 +212,7 @@
 
             // Condition to make sure we only call startReading the first time this callback is invoked
             // Fixes page reload on coming back from fullscreen video (#611)
-            if (currPage == nil) {
+            if (self.currPage == nil) {
                 [self startReading];
             }
 
@@ -259,20 +248,20 @@
 
     // ****** SET STARTING PAGE
     int lastPageViewed = [bookStatus.page intValue];
-    int bakerStartAtPage = [book.bakerStartAtPage intValue];
-    currentPageNumber = 1;
+    int bakerStartAtPage = [self.book.bakerStartAtPage intValue];
+    self.currentPageNumber = 1;
 
     if (currentPageFirstLoading && lastPageViewed != 0) {
-        currentPageNumber = lastPageViewed;
+        self.currentPageNumber = lastPageViewed;
     } else if (bakerStartAtPage < 0) {
-        currentPageNumber = MAX(1, totalPages + bakerStartAtPage + 1);
+        self.currentPageNumber = MAX(1, totalPages + bakerStartAtPage + 1);
     } else if (bakerStartAtPage > 0) {
-        currentPageNumber = MIN(totalPages, bakerStartAtPage);
+        self.currentPageNumber = MIN(totalPages, bakerStartAtPage);
     }
-    bookStatus.page = @(currentPageNumber);
+    bookStatus.page = @(self.currentPageNumber);
 
     // ****** SET SCREENSHOTS FOLDER
-    NSString *screenshotFolder = book.bakerPageScreenshots;
+    NSString *screenshotFolder = self.book.bakerPageScreenshots;
     if (screenshotFolder) {
         // When a screenshots folder is specified in book.json
         cachedScreenshotsPath = [bookPath stringByAppendingPathComponent:screenshotFolder];
@@ -298,9 +287,9 @@
 - (void)resetPageSlots {
     //NSLog(@"[BakerView] Reset leftover page slot");
 
-    if (currPage) {
-        [currPage setDelegate:nil];
-        [currPage removeFromSuperview];
+    if (self.currPage) {
+        [self.currPage setDelegate:nil];
+        [self.currPage removeFromSuperview];
     }
     if (nextPage) {
         [nextPage setDelegate:nil];
@@ -311,7 +300,7 @@
         [prevPage removeFromSuperview];
     }
 
-    currPage = nil;
+    self.currPage = nil;
     nextPage = nil;
     prevPage = nil;
 }
@@ -328,19 +317,19 @@
     [pageDetails removeAllObjects];
 }
 - (void)buildPageArray {
-    for (id page in book.contents) {
+    for (id page in self.book.contents) {
 
         NSString *pageFile = nil;
         if ([page isKindOfClass:[NSString class]]) {
-            pageFile = [book.path stringByAppendingPathComponent:page];
+            pageFile = [self.book.path stringByAppendingPathComponent:page];
         } else if ([page isKindOfClass:[NSDictionary class]]) {
-            pageFile = [book.path stringByAppendingPathComponent:page[@"url"]];
+            pageFile = [self.book.path stringByAppendingPathComponent:page[@"url"]];
         }
 
         if (pageFile != nil && [[NSFileManager defaultManager] fileExistsAtPath:pageFile]) {
             [pages addObject:pageFile];
         } else {
-            NSLog(@"[BakerView] ERROR: Page %@ does not exist in %@.", page, book.path);
+            NSLog(@"[BakerView] ERROR: Page %@ does not exist in %@.", page, self.book.path);
         }
     }
 
@@ -360,7 +349,7 @@
         // first of all, we need to clean the indexview if it exists.
         [indexViewController.view removeFromSuperview];
     }
-    indexViewController = [[IndexViewController alloc] initWithBook:book fileName:INDEX_FILE_NAME webViewDelegate:self];
+    indexViewController = [[IndexViewController alloc] initWithBook:self.book fileName:INDEX_FILE_NAME webViewDelegate:self];
     [self.view addSubview:indexViewController.view];
     [indexViewController loadContent];
 
@@ -368,12 +357,12 @@
 
     [self addPageLoading:0];
 
-    if ([book.bakerRendering isEqualToString:@"three-cards"]) {
-        if (currentPageNumber != totalPages) {
+    if ([self.book.bakerRendering isEqualToString:@"three-cards"]) {
+        if (self.currentPageNumber != totalPages) {
             [self addPageLoading:+1];
         }
 
-        if (currentPageNumber != 1) {
+        if (self.currentPageNumber != 1) {
             [self addPageLoading:-1];
         }
     }
@@ -385,27 +374,27 @@
 
     for (int i = 0; i < totalPages; i++) {
 
-        UIColor *foregroundColor = [Utils colorWithHexString:book.bakerPageNumbersColor];
+        UIColor *foregroundColor = [Utils colorWithHexString:self.book.bakerPageNumbersColor];
 
 
         // ****** Background
         UIImageView *backgroundView = [[UIImageView alloc] initWithFrame:CGRectMake(pageWidth * i, 0, pageWidth, pageHeight)];
         [self setImageFor:backgroundView];
-        [scrollView addSubview:backgroundView];
+        [self.scrollView addSubview:backgroundView];
 
 
         // ****** Spinners
         UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
         spinner.backgroundColor = [UIColor clearColor];
         spinner.color = foregroundColor;
-        spinner.alpha = [book.bakerPageNumbersAlpha floatValue];
+        spinner.alpha = [self.book.bakerPageNumbersAlpha floatValue];
 
         CGRect frame = spinner.frame;
         frame.origin.x = pageWidth * i + (pageWidth - frame.size.width) / 2;
         frame.origin.y = (pageHeight - frame.size.height) / 2;
         spinner.frame = frame;
 
-        [scrollView addSubview:spinner];
+        [self.scrollView addSubview:spinner];
         [spinner startAnimating];
 
 
@@ -415,20 +404,20 @@
         number.font = [UIFont fontWithName:@"Helvetica" size:40.0];
         number.textColor = foregroundColor;
         number.textAlignment = NSTextAlignmentCenter;
-        number.alpha = [book.bakerPageNumbersAlpha floatValue];
+        number.alpha = [self.book.bakerPageNumbersAlpha floatValue];
 
         number.text = [NSString stringWithFormat:@"%d", i + 1];
-        if ([book.bakerStartAtPage intValue] < 0) {
+        if ([self.book.bakerStartAtPage intValue] < 0) {
             number.text = [NSString stringWithFormat:@"%d", totalPages - i];
         }
 
-        [scrollView addSubview:number];
+        [self.scrollView addSubview:number];
 
 
         // ****** Title
-        PageTitleLabel *title = [[PageTitleLabel alloc]initWithFile:pages[i] color:foregroundColor alpha:[book.bakerPageNumbersAlpha floatValue]];
+        PageTitleLabel *title = [[PageTitleLabel alloc]initWithFile:pages[i] color:foregroundColor alpha:[self.book.bakerPageNumbersAlpha floatValue]];
         [title setX:(pageWidth * i + ((pageWidth - title.frame.size.width) / 2)) Y:(pageHeight / 2 + 20)];
-        [scrollView addSubview:title];
+        [self.scrollView addSubview:title];
 
 
         // ****** Store instances for later use
@@ -452,7 +441,7 @@
     [self lockPage:@YES];
     [self showPageDetails];
 
-    if ([book.bakerRendering isEqualToString:@"screenshots"]) {
+    if ([self.book.bakerRendering isEqualToString:@"screenshots"]) {
         // TODO: BE SURE TO KNOW THE CORRECT CURRENT PAGE!
         [self removeScreenshots];
         [self updateScreenshots];
@@ -460,11 +449,11 @@
 
     [self adjustScrollViewPosition];
 
-    [self setFrame:[self frameForPage:currentPageNumber] forPage:currPage];
-    [self setFrame:[self frameForPage:currentPageNumber + 1] forPage:nextPage];
-    [self setFrame:[self frameForPage:currentPageNumber - 1] forPage:prevPage];
+    [self setFrame:[self frameForPage:self.currentPageNumber] forPage:self.currPage];
+    [self setFrame:[self frameForPage:self.currentPageNumber + 1] forPage:nextPage];
+    [self setFrame:[self frameForPage:self.currentPageNumber - 1] forPage:prevPage];
 
-    [scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:NO];
+    [self.scrollView scrollRectToVisible:[self frameForPage:self.currentPageNumber] animated:NO];
 
     //NSLog(@"[BakerView]     Unlock page changing");
     [self lockPage:@NO];
@@ -472,12 +461,12 @@
 - (void)adjustScrollViewPosition {
     int scrollViewY = 0;
     
-    if (SYSTEM_VERSION_LESS_THAN(@"7.0") && !barsHidden) {
+    if (SYSTEM_VERSION_LESS_THAN(@"7.0") && !self.barsHidden) {
         scrollViewY = -20;
     }
 
     [UIView animateWithDuration:UINavigationControllerHideShowBarDuration
-                     animations:^{ scrollView.frame = CGRectMake(0, scrollViewY, pageWidth, pageHeight); }
+                     animations:^{ self.scrollView.frame = CGRectMake(0, scrollViewY, pageWidth, pageHeight); }
                      completion:^(BOOL finished) {}];
 }
 - (void)setPageSize:(NSString *)orientation {
@@ -495,7 +484,7 @@
 
     [self setTappableAreaSize];
 
-    scrollView.contentSize = CGSizeMake(pageWidth * totalPages, pageHeight);
+    self.scrollView.contentSize = CGSizeMake(pageWidth * totalPages, pageHeight);
 }
 - (void)setTappableAreaSize {
     //NSLog(@"[BakerView] Set tappable area size");
@@ -575,9 +564,9 @@
     }
 }
 - (void)setFrame:(CGRect)frame forPage:(UIWebView *)page {
-    if (page && [page.superview isEqual:scrollView]) {
+    if (page && [page.superview isEqual:self.scrollView]) {
         page.frame = frame;
-        [scrollView bringSubviewToFront:page];
+        [self.scrollView bringSubviewToFront:page];
     }
 }
 
@@ -594,10 +583,10 @@
 
     webView.delegate = self;
 
-    webView.mediaPlaybackRequiresUserAction = ![book.bakerMediaAutoplay boolValue];
+    webView.mediaPlaybackRequiresUserAction = ![self.book.bakerMediaAutoplay boolValue];
     webView.allowsInlineMediaPlayback = YES;
-    webView.scalesPageToFit = [book.zoomable boolValue];
-    BOOL verticalBounce = [book.bakerVerticalBounce boolValue];
+    webView.scalesPageToFit = [self.book.zoomable boolValue];
+    BOOL verticalBounce = [self.book.bakerVerticalBounce boolValue];
 
     for (UIView *subview in webView.subviews) {
         if ([subview isKindOfClass:[UIScrollView class]]) {
@@ -629,31 +618,31 @@
 
     if (page < 1)
     {
-        currentPageNumber = 1;
+        self.currentPageNumber = 1;
     }
     else if (page > totalPages)
     {
-        currentPageNumber = totalPages;
+        self.currentPageNumber = totalPages;
     }
-    else if (page != currentPageNumber)
+    else if (page != self.currentPageNumber)
     {
         // While we are tapping, we don't want scrolling event to get in the way
-        scrollView.scrollEnabled = NO;
+        self.scrollView.scrollEnabled = NO;
         stackedScrollingAnimations++;
 
-        lastPageNumber = currentPageNumber;
-        currentPageNumber = page;
+        lastPageNumber = self.currentPageNumber;
+        self.currentPageNumber = page;
 
-        tapNumber = tapNumber + (lastPageNumber - currentPageNumber);
+        tapNumber = tapNumber + (lastPageNumber - self.currentPageNumber);
 
         [self hideBars:@YES];
-        [scrollView scrollRectToVisible:[self frameForPage:currentPageNumber] animated:YES];
+        [self.scrollView scrollRectToVisible:[self frameForPage:self.currentPageNumber] animated:YES];
 
         [self gotoPageDelayer];
 
         pageChanged = YES;
     }
-    bookStatus.page = @(currentPageNumber);
+    bookStatus.page = @(self.currentPageNumber);
 
     return pageChanged;
 }
@@ -670,17 +659,17 @@
 }
 - (void)gotoPage {
 
-    NSString *path = [NSString stringWithString:pages[currentPageNumber - 1]];
+    NSString *path = [NSString stringWithString:pages[self.currentPageNumber - 1]];
     if ([[NSFileManager defaultManager] fileExistsAtPath:path] && tapNumber != 0) {
 
         //NSLog(@"[BakerView] Goto page -> %@", [[NSFileManager defaultManager] displayNameAtPath:path]);
 
-        if ([book.bakerRendering isEqualToString:@"three-cards"])
+        if ([self.book.bakerRendering isEqualToString:@"three-cards"])
         {
             // ****** THREE CARD VIEW METHOD
 
             // Dispatch blur event on old current page
-            [Utils webView:currPage dispatchHTMLEvent:@"blur"];
+            [Utils webView:self.currPage dispatchHTMLEvent:@"blur"];
 
             // Calculate move direction and normalize tapNumber
             int direction = 1;
@@ -696,15 +685,17 @@
                 // Moved away for more than 2 pages: RELOAD ALL pages
                 [toLoad removeAllObjects];
 
-                [currPage removeFromSuperview];
+                [self.currPage removeFromSuperview];
                 [nextPage removeFromSuperview];
                 [prevPage removeFromSuperview];
 
                 [self addPageLoading:0];
-                if (currentPageNumber < totalPages)
+                if (self.currentPageNumber < totalPages) {
                     [self addPageLoading:+1];
-                if (currentPageNumber > 1)
+                }
+                if (self.currentPageNumber > 1) {
                     [self addPageLoading:-1];
+                }
 
             } else {
 
@@ -732,7 +723,7 @@
                         toLoad[i][@"slot"] = @(tmpSlot);
                     }
 
-                    [currPage removeFromSuperview];
+                    [self.currPage removeFromSuperview];
                     [self addPageLoading:0];
 
                 } else if (tapNumber == 1) {
@@ -741,16 +732,16 @@
                         // ****** Move LEFT <<<
                         [prevPage removeFromSuperview];
                         UIWebView *tmpView = prevPage;
-                        prevPage = currPage;
-                        currPage = nextPage;
+                        prevPage = self.currPage;
+                        self.currPage = nextPage;
                         nextPage = tmpView;
 
                     } else {
                         // ****** Move RIGHT >>>
                         [nextPage removeFromSuperview];
                         UIWebView *tmpView = nextPage;
-                        nextPage = currPage;
-                        currPage = prevPage;
+                        nextPage = self.currPage;
+                        self.currPage = prevPage;
                         prevPage = tmpView;
                     }
 
@@ -781,7 +772,7 @@
                     currentPageIsDelayingLoading = NO;
 
                     // Dispatch focus event on new current page
-                    [Utils webView:currPage dispatchHTMLEvent:@"focus"];
+                    [Utils webView:self.currPage dispatchHTMLEvent:@"focus"];
 
                     // Dispatch BakerViewPage analytics event
                     [[NSNotificationCenter defaultCenter] postNotificationName:@"BakerViewPage" object:self]; // -> Baker Analytics Event
@@ -800,7 +791,7 @@
                     }
 
                     // PRELOAD NEXT page
-                    if (currentPageNumber < totalPages) {
+                    if (self.currentPageNumber < totalPages) {
                         [self addPageLoading:+1];
                     }
 
@@ -814,7 +805,7 @@
                     }
 
                     // PRELOAD PREV page
-                    if (currentPageNumber > 1) {
+                    if (self.currentPageNumber > 1) {
                         [self addPageLoading:-1];
                     }
                 }
@@ -827,11 +818,11 @@
             tapNumber = 0;
 
             [toLoad removeAllObjects];
-            [currPage removeFromSuperview];
+            [self.currPage removeFromSuperview];
 
             [self updateScreenshots];
 
-            if (![self checkScreeshotForPage:currentPageNumber andOrientation:[self getCurrentInterfaceOrientation:self.interfaceOrientation]]) {
+            if (![self checkScreeshotForPage:self.currentPageNumber andOrientation:[self getCurrentInterfaceOrientation:self.interfaceOrientation]]) {
                 [self lockPage:@YES];
             }
 
@@ -843,15 +834,15 @@
 - (void)lockPage:(NSNumber *)lock {
     if ([lock boolValue])
     {
-        if (scrollView.scrollEnabled) {
-            scrollView.scrollEnabled = NO;
+        if (self.scrollView.scrollEnabled) {
+            self.scrollView.scrollEnabled = NO;
         }
         currentPageIsLocked = YES;
     }
     else
     {
         if (stackedScrollingAnimations == 0) {
-            scrollView.scrollEnabled = [book.bakerPageTurnSwipe boolValue]; // YES by default, NO if specified
+            self.scrollView.scrollEnabled = [self.book.bakerPageTurnSwipe boolValue]; // YES by default, NO if specified
         }
         currentPageIsLocked = NO;
     }
@@ -859,7 +850,7 @@
 - (void)addPageLoading:(int)slot {
     //NSLog(@"[BakerView] Add page to the loding queue");
 
-    NSArray *objs = @[@(slot), @(currentPageNumber + slot)];
+    NSArray *objs = @[@(slot), @(self.currentPageNumber + slot)];
     NSArray *keys = @[@"slot", @"page"];
 
     if (slot == 0) {
@@ -893,16 +884,16 @@
     // Since pointers can change at any time we've got to handle them directly on a slot basis.
     // Save the page pointer to a temp view to avoid code redundancy make Baker go apeshit.
     if (slot == 0) {
-        if (page == currentPageNumber)
+        if (page == self.currentPageNumber)
             [[NSNotificationCenter defaultCenter] postNotificationName:@"BakerViewPage" object:self]; // -> Baker Analytics Event
 
-        if (currPage) {
-            currPage.delegate = nil;
-            if ([currPage isLoading]) {
-                [currPage stopLoading];
+        if (self.currPage) {
+            self.currPage.delegate = nil;
+            if ([self.currPage isLoading]) {
+                [self.currPage stopLoading];
             }
         }
-        currPage = webView;
+        self.currPage = webView;
         currentPageHasChanged = YES;
 
     } else if (slot == +1) {
@@ -927,9 +918,9 @@
     }
 
 
-    ((UIScrollView *)[webView subviews][0]).pagingEnabled = [book.bakerVerticalPagination boolValue];
+    ((UIScrollView *)[webView subviews][0]).pagingEnabled = [self.book.bakerVerticalPagination boolValue];
 
-    [scrollView addSubview:webView];
+    [self.scrollView addSubview:webView];
     [self loadWebView:webView withPage:page];
 }
 - (BOOL)loadWebView:(UIWebView*)webView withPage:(int)page {
@@ -954,7 +945,7 @@
     //NSLog(@"[BakerView] Loading a Modal WebView with URL: %@", url.absoluteString);
     [[NSNotificationCenter defaultCenter] postNotificationName:@"BakerViewModalBrowser" object:self]; // -> Baker Analytics Event
 
-    myModalViewController = [[ModalViewController alloc] initWithUrl:url];
+    myModalViewController = [[ModalWebViewController alloc] initWithURL:url];
     myModalViewController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
     myModalViewController.delegate = self;
 
@@ -992,12 +983,12 @@
     int page = (int)(scroll.contentOffset.x / pageWidth) + 1;
     NSLog(@"[BakerView] Swiping to page: %d", page);
 
-    if (currentPageNumber != page) {
+    if (self.currentPageNumber != page) {
 
-        lastPageNumber = currentPageNumber;
-        currentPageNumber = page;
+        lastPageNumber = self.currentPageNumber;
+        self.currentPageNumber = page;
 
-        tapNumber = tapNumber + (lastPageNumber - currentPageNumber);
+        tapNumber = tapNumber + (lastPageNumber - self.currentPageNumber);
 
         currentPageIsDelayingLoading = YES;
         [self gotoPage];
@@ -1009,7 +1000,7 @@
     stackedScrollingAnimations--;
     if (stackedScrollingAnimations == 0) {
         //NSLog(@"[BakerView]     Scroll enabled");
-        scroll.scrollEnabled = [book.bakerPageTurnSwipe boolValue]; // YES by default, NO if specified
+        scroll.scrollEnabled = [self.book.bakerPageTurnSwipe boolValue]; // YES by default, NO if specified
     }
 }
 
@@ -1168,7 +1159,7 @@
                         [[UIApplication sharedApplication] openURL:url];
                     } else {
                         NSLog(@"[BakerView] ERROR: No installed application to open '%@'. An application to handle the '%@' URL scheme is required.", url, [url scheme]);
-                        [Utils webView:currPage dispatchHTMLEvent:@"urlnothandled" withParams:@{@"url": url}];
+                        [Utils webView:self.currPage dispatchHTMLEvent:@"urlnothandled" withParams:@{@"url": url}];
                     }
 
                     return NO;
@@ -1242,7 +1233,7 @@
 }
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
     // Sent if a web view failed to load content.
-    if ([webView isEqual:currPage]) {
+    if ([webView isEqual:self.currPage]) {
         NSLog(@"[BakerView] ERROR: CurrPage failed to load content with error: %@", error);
     } else if ([webView isEqual:prevPage]) {
         NSLog(@"[BakerView] ERROR: PrevPage failed to load content with error: %@", error);
@@ -1256,7 +1247,7 @@
 
     if (webView.hidden == YES)
     {
-        if ([webView isEqual:currPage]) {
+        if ([webView isEqual:self.currPage]) {
             currentPageHasChanged = NO;
             [self setCurrentPageHeight];
         }
@@ -1264,17 +1255,17 @@
         [webView removeFromSuperview];
         webView.hidden = NO;
 
-        if ([book.bakerRendering isEqualToString:@"three-cards"]) {
+        if ([self.book.bakerRendering isEqualToString:@"three-cards"]) {
             [self webView:webView hidden:NO animating:YES];
         } else {
-            [self takeScreenshotFromView:webView forPage:currentPageNumber andOrientation:[self getCurrentInterfaceOrientation:self.interfaceOrientation]];
+            [self takeScreenshotFromView:webView forPage:self.currentPageNumber andOrientation:[self getCurrentInterfaceOrientation:self.interfaceOrientation]];
         }
 
         [self handlePageLoading];
     }
 
     /** CHECK IF META TAG SAYS HTML FILE SHOULD BE PAGED **/
-    [webView.scrollView setPagingEnabled:[Utils webViewShouldBePaged:webView forBook:book]];
+    [webView.scrollView setPagingEnabled:[Utils webViewShouldBePaged:webView forBook:self.book]];
 }
 - (void)webView:(UIWebView *)webView hidden:(BOOL)status animating:(BOOL)animating {
 
@@ -1285,19 +1276,19 @@
         webView.hidden = NO;
         webView.alpha = 0.0;
 
-        [scrollView addSubview:webView];
+        [self.scrollView addSubview:webView];
         [UIView animateWithDuration:0.5
                          animations:^{ webView.alpha = 1.0; }
                          completion:^(BOOL finished) { [self webViewDidAppear:webView animating:animating]; }];
     } else {
 
-        [scrollView addSubview:webView];
+        [self.scrollView addSubview:webView];
         [self webViewDidAppear:webView animating:animating];
     }
 }
 - (void)webViewDidAppear:(UIWebView *)webView animating:(BOOL)animating {
 
-    if ([webView isEqual:currPage])
+    if ([webView isEqual:self.currPage])
     {
         [Utils webView:webView dispatchHTMLEvent:@"focus"];
 
@@ -1393,7 +1384,7 @@
 
     for (NSNumber *num in attachedScreenshot) [completeSet addObject:num];
 
-    for (int i = MAX(1, currentPageNumber - MAX_SCREENSHOT_BEFORE_CP); i <= MIN(totalPages, currentPageNumber + MAX_SCREENSHOT_AFTER_CP); i++)
+    for (int i = MAX(1, self.currentPageNumber - MAX_SCREENSHOT_BEFORE_CP); i <= MIN(totalPages, self.currentPageNumber + MAX_SCREENSHOT_AFTER_CP); i++)
     {
         NSNumber *num = @(i);
         [supportSet addObject:num];
@@ -1488,7 +1479,7 @@
     UIImageView *oldScreenshot = attachedScreenshot[num];
 
     if (oldScreenshot) {
-        [scrollView addSubview:screenshotView];
+        [self.scrollView addSubview:screenshotView];
         [attachedScreenshot removeObjectForKey:num];
         [oldScreenshot removeFromSuperview];
 
@@ -1501,7 +1492,7 @@
     {
         screenshotView.alpha = 0.0;
 
-        [scrollView addSubview:screenshotView];
+        [self.scrollView addSubview:screenshotView];
         [UIView animateWithDuration:0.5 animations:^{ screenshotView.alpha = 1.0; }];
     }
     else if (webView != nil)
@@ -1514,7 +1505,7 @@
         {
             screenshotView.alpha = 0.0;
 
-            [scrollView addSubview:screenshotView];
+            [self.scrollView addSubview:screenshotView];
             [UIView animateWithDuration:0.5
                              animations:^{ screenshotView.alpha = 1.0; }
                              completion:^(BOOL finished) { if (!currentPageHasChanged) { [self webView:webView hidden:NO animating:NO]; }}];
@@ -1532,7 +1523,7 @@
 
     if (touch.phase == UITouchPhaseBegan) {
         userIsScrolling = NO;
-        shouldPropagateInterceptedTouch = ([touch.view isDescendantOfView:scrollView]);
+        shouldPropagateInterceptedTouch = ([touch.view isDescendantOfView:self.scrollView]);
         shouldPropagateIndexInterceptedTouch = [touch.view isDescendantOfView:indexViewController.view];
     } else if (touch.phase == UITouchPhaseMoved) {
         userIsScrolling = YES;
@@ -1573,13 +1564,13 @@
             int page = 0;
             if (CGRectContainsPoint(leftTapArea, tapPoint)) {
                 NSLog(@"[BakerView]    Tap LEFT >>>");
-                page = currentPageNumber - 1;
+                page = self.currentPageNumber - 1;
             } else if (CGRectContainsPoint(rightTapArea, tapPoint)) {
                 NSLog(@"[BakerView]    Tap RIGHT <<<");
-                page = currentPageNumber + 1;
+                page = self.currentPageNumber + 1;
             }
 
-            if ([book.bakerPageTurnTap boolValue]) [self changePage:page];
+            if ([self.book.bakerPageTurnTap boolValue]) [self changePage:page];
         }
         else if (touch.tapCount == 2) {
             //NSLog(@"[BakerView]     Index Double Tap: Bars Toggled");
@@ -1591,13 +1582,13 @@
     //NSLog(@"[BakerView] User scroll");
     [self hideBars:@YES];
 
-    currPage.backgroundColor = webViewBackground;
-    currPage.opaque = YES;
+    self.currPage.backgroundColor = webViewBackground;
+    self.currPage.opaque = YES;
 }
 
 #pragma mark - PAGE SCROLLING
 - (void)setCurrentPageHeight {
-    for (UIView *subview in currPage.subviews) {
+    for (UIView *subview in self.currPage.subviews) {
         if ([subview isKindOfClass:[UIScrollView class]]) {
             CGSize size = ((UIScrollView *)subview).contentSize;
             //NSLog(@"[BakerView] Setting current page height from %d to %f", currentPageHeight, size.height);
@@ -1607,7 +1598,7 @@
 }
 - (int)getCurrentPageOffset {
 
-    int currentPageOffset = [[currPage stringByEvaluatingJavaScriptFromString:@"window.scrollY;"] intValue];
+    int currentPageOffset = [[self.currPage stringByEvaluatingJavaScriptFromString:@"window.scrollY;"] intValue];
     if (currentPageOffset < 0) return 0;
 
     int currentPageMaxScroll = currentPageHeight - pageHeight;
@@ -1622,7 +1613,7 @@
         if (targetOffset < 0) targetOffset = 0;
 
         //NSLog(@"[BakerView] Scrolling page up to %d", targetOffset);
-        [self scrollPage:currPage to:[NSString stringWithFormat:@"%d", targetOffset] animating:animating];
+        [self scrollPage:self.currPage to:[NSString stringWithFormat:@"%d", targetOffset] animating:animating];
     }
 }
 - (void)scrollDownCurrentPage:(int)targetOffset animating:(BOOL)animating {
@@ -1633,7 +1624,7 @@
         if (targetOffset > currentPageMaxScroll) targetOffset = currentPageMaxScroll;
 
         //NSLog(@"[BakerView] Scrolling page down to %d", targetOffset);
-        [self scrollPage:currPage to:[NSString stringWithFormat:@"%d", targetOffset] animating:animating];
+        [self scrollPage:self.currPage to:[NSString stringWithFormat:@"%d", targetOffset] animating:animating];
     }
 
 }
@@ -1656,7 +1647,7 @@
                                      return elem.offsetTop;\
                                      })();", anchorFromURL];
 
-        NSString *offsetString = [currPage stringByEvaluatingJavaScriptFromString:jsAnchorHandler];
+        NSString *offsetString = [self.currPage stringByEvaluatingJavaScriptFromString:jsAnchorHandler];
         if (![offsetString isEqualToString:@""])
         {
             int offset = [offsetString intValue];
@@ -1688,7 +1679,7 @@
     }
 }
 - (BOOL)prefersStatusBarHidden {
-    return barsHidden;
+    return self.barsHidden;
 }
 - (UIStatusBarAnimation)preferredStatusBarUpdateAnimation {
     return UIStatusBarAnimationSlide;
@@ -1698,7 +1689,7 @@
     if (!self.presentedViewController) {
         NSLog(@"[BakerView] Toggle bars visibility");
 
-        if (barsHidden) {
+        if (self.barsHidden) {
             [self showBars];
         } else {
             [self hideBars:@YES];
@@ -1707,7 +1698,7 @@
 }
 - (void)showBars {
 
-    barsHidden = NO;
+    self.barsHidden = NO;
 
     if (SYSTEM_VERSION_LESS_THAN(@"7.0")) {
         [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationSlide];
@@ -1742,7 +1733,7 @@
 }
 - (void)hideBars:(NSNumber *)animated {
 
-    barsHidden = YES;
+    self.barsHidden = YES;
 
     BOOL animateHiding = [animated boolValue];
 
@@ -1803,8 +1794,8 @@
 
 #pragma mark - ORIENTATION
 - (NSString *)getCurrentInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    if ([book.orientation isEqualToString:@"portrait"] || [book.orientation isEqualToString:@"landscape"]) {
-        return book.orientation;
+    if ([self.book.orientation isEqualToString:@"portrait"] || [self.book.orientation isEqualToString:@"landscape"]) {
+        return self.book.orientation;
     } else {
         if (UIInterfaceOrientationIsLandscape(interfaceOrientation)) {
             return @"landscape";
@@ -1817,9 +1808,9 @@
 
     BOOL appOrientation = [supportedOrientation indexOfObject:[Utils stringFromInterfaceOrientation:interfaceOrientation]] != NSNotFound;
 
-    if ([book.orientation isEqualToString:@"portrait"]) {
+    if ([self.book.orientation isEqualToString:@"portrait"]) {
         return appOrientation && UIInterfaceOrientationIsPortrait(interfaceOrientation);
-    } else if ([book.orientation isEqualToString:@"landscape"]) {
+    } else if ([self.book.orientation isEqualToString:@"landscape"]) {
         return appOrientation && UIInterfaceOrientationIsLandscape(interfaceOrientation);
     } else {
         return appOrientation;
@@ -1829,9 +1820,9 @@
     return YES;
 }
 - (NSUInteger)supportedInterfaceOrientations {
-    if ([book.orientation isEqualToString:@"portrait"]) {
+    if ([self.book.orientation isEqualToString:@"portrait"]) {
         return (UIInterfaceOrientationMaskPortrait | UIInterfaceOrientationMaskPortraitUpsideDown);
-    } else if ([book.orientation isEqualToString:@"landscape"]) {
+    } else if ([self.book.orientation isEqualToString:@"landscape"]) {
         return UIInterfaceOrientationMaskLandscape;
     } else {
         return UIInterfaceOrientationMaskAll;
@@ -1842,7 +1833,7 @@
     [indexViewController willRotate];
 
     // Notify the current loaded views
-    [self webView:currPage setCorrectOrientation:toInterfaceOrientation];
+    [self webView:self.currPage setCorrectOrientation:toInterfaceOrientation];
     if (nextPage) [self webView:nextPage setCorrectOrientation:toInterfaceOrientation];
     if (prevPage) [self webView:prevPage setCorrectOrientation:toInterfaceOrientation];
 
@@ -1860,9 +1851,9 @@
         shouldForceOrientationUpdate = NO;
         UIInterfaceOrientation interfaceOrientation = [[UIApplication sharedApplication] statusBarOrientation];
 
-        if ( (UIInterfaceOrientationIsLandscape(interfaceOrientation) && [book.orientation isEqualToString:@"landscape"])
+        if ( (UIInterfaceOrientationIsLandscape(interfaceOrientation) && [self.book.orientation isEqualToString:@"landscape"])
             ||
-            (UIInterfaceOrientationIsPortrait(interfaceOrientation) && [book.orientation isEqualToString:@"portrait"]) ) {
+            (UIInterfaceOrientationIsPortrait(interfaceOrientation) && [self.book.orientation isEqualToString:@"portrait"]) ) {
 
             //NSLog(@"[BakerView] Device and book orientations are in sync");
             return NO;
@@ -1894,8 +1885,8 @@
     }
 }
 - (void)saveBookStatusWithScrollIndex {
-    if (currPage != nil) {
-        bookStatus.scrollIndex = [currPage stringByEvaluatingJavaScriptFromString:@"window.scrollY;"];
+    if (self.currPage != nil) {
+        bookStatus.scrollIndex = [self.currPage stringByEvaluatingJavaScriptFromString:@"window.scrollY;"];
     }
     [bookStatus save];
     //NSLog(@"[BakerView] Saved status");
@@ -1908,19 +1899,9 @@
 - (void)dealloc {
     
     // Set web views delegates to nil, mandatory before releasing UIWebview instances
-    currPage.delegate = nil;
+    self.currPage.delegate = nil;
     nextPage.delegate = nil;
     prevPage.delegate = nil;
-    
-    // Retained background images
-    
-
-    // Release the kra... objects
-
-
-
-
-
 
 }
 

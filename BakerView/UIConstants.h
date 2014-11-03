@@ -1,5 +1,5 @@
 //
-//  InterceptorWindow.m
+//  UIConstants.h
 //  Baker
 //
 //  ==========================================================================================
@@ -30,27 +30,42 @@
 //  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-#import "InterceptorWindow.h"
 
-@implementation InterceptorWindow
+#ifndef Baker_UIConstants_h
+#define Baker_UIConstants_h
 
-#pragma mark - Events management
+    // Background color for issues cover (before downloading the actual cover)
+    #define ISSUES_COVER_BACKGROUND_COLOR @"#ffffff"
 
-- (void)sendEvent:(UIEvent*)event {
-    [super sendEvent:event];
-    [self interceptEvent:event];
-}
+    // Title for issues in the shelf
+    // #define ISSUES_TITLE_FONT @"Helvetica"
+    // #define ISSUES_TITLE_FONT_SIZE 15
+    #define ISSUES_TITLE_COLOR @"#000000"
 
-- (void)interceptEvent:(UIEvent*)event {
-    if (event.type == UIEventTypeTouches) {
-        NSSet *touches = event.allTouches;
-        if (touches.count == 1) {
-            [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_touch_intercepted"
-                                                                object:nil
-                                                              userInfo:@{@"touch": touches.anyObject}
-             ];
-        }
-    }
-}
+    // Info text for issues in the shelf
+    // #define ISSUES_INFO_FONT @"Helvetica"
+    // #define ISSUES_INFO_FONT_SIZE 15
+    #define ISSUES_INFO_COLOR @"#929292"
 
-@end
+    #define ISSUES_PRICE_COLOR @"#bc242a"
+
+    // Download/read button for issues in the shelf
+    // #define ISSUES_ACTION_BUTTON_FONT @"Helvetica-Bold"
+    // #define ISSUES_ACTION_BUTTON_FONT_SIZE 11
+    #define ISSUES_ACTION_BUTTON_BACKGROUND_COLOR @"#bc242a"
+    #define ISSUES_ACTION_BUTTON_COLOR @"#ffffff"
+
+    // Archive button for issues in the shelf
+    // #define ISSUES_ARCHIVE_BUTTON_FONT @"Helvetica-Bold"
+    // #define ISSUES_ARCHIVE_BUTTON_FONT_SIZE 11
+    #define ISSUES_ARCHIVE_BUTTON_COLOR @"#bc242a"
+    #define ISSUES_ARCHIVE_BUTTON_BACKGROUND_COLOR @"#ffffff"
+
+    // Text and spinner for issues that are being loaded in the shelf
+    #define ISSUES_LOADING_LABEL_COLOR @"#bc242a"
+    #define ISSUES_LOADING_SPINNER_COLOR @"#929292"
+
+    // Progress bar for issues that are being downloaded in the shelf
+    #define ISSUES_PROGRESSBAR_TINT_COLOR @"#bc242a"
+
+#endif

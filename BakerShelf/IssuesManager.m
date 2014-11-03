@@ -5,7 +5,7 @@
 //  ==========================================================================================
 //
 //  Copyright (c) 2010-2013, Davide Casali, Marco Colombo, Alessandro Morandi
-//  Copyright (c) 2014, Andrew Krowczyk, Cédric Mériau
+//  Copyright (c) 2014, Andrew Krowczyk, Cédric Mériau, Pieter Claerhout
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without modification, are
@@ -34,20 +34,16 @@
 #import "BakerIssue.h"
 #import "Utils.h"
 #import "BakerAPI.h"
+#import "NSObject+Extensions.h"
 
 @implementation IssuesManager
 
-@synthesize issues;
-@synthesize shelfManifestPath;
-
--(id)init {
+- (id)init {
     self = [super init];
 
     if (self) {
-        self.issues = nil;
-
-        NSString *cachePath = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES)[0];
-        self.shelfManifestPath = [cachePath stringByAppendingPathComponent:@"shelf.json"];
+        _issues            = nil;
+        _shelfManifestPath = [self.cachePath stringByAppendingPathComponent:@"shelf.json"];
     }
 
     return self;
@@ -55,7 +51,7 @@
 
 #pragma mark - Singleton
 
-+ (IssuesManager *)sharedInstance {
++ (IssuesManager*)sharedInstance {
     static dispatch_once_t once;
     static IssuesManager *sharedInstance;
     dispatch_once(&once, ^{
@@ -65,8 +61,8 @@
 }
 
 #ifdef BAKER_NEWSSTAND
--(void)refresh:(void (^)(BOOL)) callback {
-    [self getShelfJSON:^(NSData* json) {
+- (void)refresh:(void (^)(BOOL))callback {
+    [self getShelfJSON:^(NSData *json) {
         if (json) {
             NSError* error = nil;
             NSArray* jsonArr = [NSJSONSerialization JSONObjectWithData:json
@@ -87,7 +83,6 @@
                 return [second compare:first];
             }];
             
-            // Update Newsstand Icon
             [self updateNewsstandIcon];
             
             if (callback) {
@@ -102,19 +97,18 @@
     }];
 }
 
--(void)updateNewsstandIcon {
+- (void)updateNewsstandIcon {
     
     #ifdef SET_NEWSSTAND_LATEST_ISSUE_COVER
-        // Get latest issue
         BakerIssue *latestIssue = nil;
         for (BakerIssue *issue in self.issues) {
-            // Return if an issue has already been downloaded (in this case the cover image has already been set)
-            if([[issue getStatus] isEqualToString:@"downloaded"]) { return; }
-            // Update latest issue
+            if ([[issue getStatus] isEqualToString:@"downloaded"]) {
+                return;
+            }
             latestIssue = issue;
             break;
         }
-        // Set newsstand icon from latest issue
+
         NSLog(@"Setting newsstand cover icon from latest issue: %@ at %@", latestIssue.title, latestIssue.date);
         [latestIssue getCoverWithCache:YES andBlock:^(UIImage *image) {
             if (image) {
@@ -122,22 +116,21 @@
             }
         }];
     #else
-        // Set newsstand icon from newsstand-app-icon
         UIImage *image = [UIImage imageNamed:@"newsstand-app-icon"];
         [[UIApplication sharedApplication] setNewsstandIconImage:image];
     #endif
     
 }
 
--(void)getShelfJSON:(void (^)(NSData*)) callback {
+- (void)getShelfJSON:(void(^)(NSData*))callback {
     BakerAPI *api = [BakerAPI sharedInstance];
-    [api getShelfJSON:^(NSData* json) {
+    [api getShelfJSON:^(NSData *json) {
         NSError *cachedShelfError = nil;
         
         if (json) {
             // Cache the shelf manifest
             [[NSFileManager defaultManager] createFileAtPath:self.shelfManifestPath contents:nil attributes:nil];
-            NSError* error = nil;
+            NSError *error = nil;
             [json writeToFile:self.shelfManifestPath
                       options:NSDataWritingAtomic
                         error:&error];
@@ -163,7 +156,7 @@
     }];
 }
 
--(void)updateNewsstandIssuesList:(NSArray *)issuesList {
+- (void)updateNewsstandIssuesList:(NSArray*)issuesList {
     NKLibrary *nkLib = [NKLibrary sharedLibrary];
     NSMutableArray *discardedIssues = [NSMutableArray arrayWithArray:[nkLib issues]];
 
@@ -192,7 +185,7 @@
     }
 }
 
--(NSSet *)productIDs {
+- (NSSet*)productIDs {
     NSMutableSet *set = [NSMutableSet set];
     for (BakerIssue *issue in self.issues) {
         if (issue.productID) {
@@ -203,18 +196,18 @@
 }
 
 - (BOOL)hasProductIDs {
-    return [[self productIDs] count] > 0;
+    return self.productIDs.count > 0;
 }
 
-- (BakerIssue *)latestIssue {
-    return issues[0];
+- (BakerIssue*)latestIssue {
+    return self.issues[0];
 }
 #endif
 
-+ (NSArray *)localBooksList {
-    NSMutableArray *booksList = [NSMutableArray array];
++ (NSArray*)localBooksList {
+    NSMutableArray *booksList       = [NSMutableArray array];
     NSFileManager *localFileManager = [NSFileManager defaultManager];
-    NSString *booksDir = [[NSBundle mainBundle] pathForResource:@"books" ofType:nil];
+    NSString *booksDir              = [[NSBundle mainBundle] pathForResource:@"books" ofType:nil];
 
     NSArray *dirContents = [localFileManager contentsOfDirectoryAtPath:booksDir error:nil];
     for (NSString *file in dirContents) {
@@ -234,6 +227,5 @@
 
     return [NSArray arrayWithArray:booksList];
 }
-
 
 @end

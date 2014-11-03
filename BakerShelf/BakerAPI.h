@@ -5,7 +5,7 @@
 //  ==========================================================================================
 //
 //  Copyright (c) 2010-2013, Davide Casali, Marco Colombo, Alessandro Morandi
-//  Copyright (c) 2014, Andrew Krowczyk, Cédric Mériau
+//  Copyright (c) 2014, Andrew Krowczyk, Cédric Mériau, Pieter Claerhout
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without modification, are
@@ -36,7 +36,7 @@
 
 #pragma mark - Singleton
 
-+ (BakerAPI *)sharedInstance;
++ (BakerAPI*)sharedInstance;
 
 #pragma mark - Shelf
 
@@ -49,21 +49,21 @@
 - (void)getPurchasesJSON:(void (^)(NSData*)) callback ;
 
 - (BOOL)canPostPurchaseReceipt;
-- (BOOL)postPurchaseReceipt:(NSString *)receipt ofType:(NSString *)type;
+- (BOOL)postPurchaseReceipt:(NSString*)receipt ofType:(NSString*)type;
 
 #pragma mark - APNS
 
 - (BOOL)canPostAPNSToken;
-- (BOOL)postAPNSToken:(NSString *)apnsToken;
+- (BOOL)postAPNSToken:(NSString*)apnsToken;
 
 #pragma mark - User ID
 
 + (BOOL)generateUUIDOnce;
-+ (NSString *)UUID;
++ (NSString*)UUID;
 
 #pragma mark - Helpers
 
-- (NSURLRequest *)requestForURL:(NSURL *)url method:(NSString *)method;
-- (NSURLRequest *)requestForURL:(NSURL *)url parameters:(NSDictionary *)parameters method:(NSString *)method cachePolicy:(NSURLRequestCachePolicy)cachePolicy;
+- (NSURLRequest*)requestForURL:(NSURL*)url method:(NSString*)method;
+- (NSURLRequest*)requestForURL:(NSURL*)url parameters:(NSDictionary*)parameters method:(NSString*)method cachePolicy:(NSURLRequestCachePolicy)cachePolicy;
 
 @end

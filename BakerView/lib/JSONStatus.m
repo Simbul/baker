@@ -1,11 +1,11 @@
 //
-//  JSONStatus.m
+//  NSString+Extensions.h
 //  Baker
 //
 //  ==========================================================================================
 //
 //  Copyright (c) 2010-2013, Davide Casali, Marco Colombo, Alessandro Morandi
-//  Copyright (c) 2014, Andrew Krowczyk, Cédric Mériau
+//  Copyright (c) 2014, Andrew Krowczyk, Cédric Mériau, Pieter Claerhout
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without modification, are
@@ -37,7 +37,7 @@
 
 @synthesize path;
 
-- (id)initWithJSONPath:(NSString *)JSONPath
+- (id)initWithJSONPath:(NSString*)JSONPath
 {
     self = [super init];
 
@@ -50,7 +50,7 @@
     return self;
 }
 
-- (NSDictionary *)load {
+- (NSDictionary*)load {
     NSError *error = nil;
     NSData* json = [NSData dataWithContentsOfFile:self.path options:0 error:&error];
     if (error) {
@@ -63,7 +63,7 @@
     return retv;
 }
 
-- (void)save:(NSDictionary *)status {
+- (void)save:(NSDictionary*)status {
     NSError* error = nil;
     NSData* json = [NSJSONSerialization dataWithJSONObject:status
                                                    options:0

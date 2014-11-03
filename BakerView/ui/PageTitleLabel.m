@@ -5,7 +5,7 @@
 //  ==========================================================================================
 //
 //  Copyright (c) 2010-2013, Davide Casali, Marco Colombo, Alessandro Morandi
-//  Copyright (c) 2014, Andrew Krowczyk, Cédric Mériau
+//  Copyright (c) 2014, Andrew Krowczyk, Cédric Mériau, Pieter Claerhout
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without modification, are
@@ -36,18 +36,20 @@
 
 @implementation PageTitleLabel
 
-- (id)initWithFile:(NSString *)path color:(UIColor *)color alpha:(float)alpha {
+#pragma mark - Initialization
+
+- (id)initWithFile:(NSString*)path color:(UIColor*)color alpha:(float)alpha {
     NSError *error = nil;
     NSString *fileContent = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:&error];
     if (error == nil) {
-        return [self initWithFileContent:fileContent color:(UIColor *)color alpha:(float)alpha];
+        return [self initWithFileContent:fileContent color:(UIColor*)color alpha:(float)alpha];
     } else {
         NSLog(@"Error while loading %@ : %@ : Check that encoding is UTF8 for the file.", path, [error localizedDescription]);
         return [super init];
     }
 }
 
-- (id)initWithFileContent:(NSString *)fileContent color:(UIColor *)color alpha:(float)alpha {
+- (id)initWithFileContent:(NSString*)fileContent color:(UIColor*)color alpha:(float)alpha {
 
     self = [super init];
     if (self) {
@@ -58,8 +60,6 @@
 
             CGSize titleDimension = CGSizeMake(672, 330);
             UIFont *titleFont = [UIFont fontWithName:@"Helvetica" size:24.0];
-
-            //iOS 8 update: the screenBounds width value is now always 'width', while it used to be 'height' in Landscape mode on iOS7. To keep the code working for both iOS8 and iOS7, use the higher/lower of width/height depending on orientation.
 
             CGRect screenBounds = [[UIScreen mainScreen] bounds];
             if (MIN(screenBounds.size.width, screenBounds.size.height) < 768) {
@@ -72,19 +72,20 @@
                                                         attributes:@{NSFontAttributeName: titleFont}
                                                            context:nil].size;
 
-            self.frame = CGRectMake(0, 0, titleTextSize.width, titleTextSize.height);
+            self.frame           = CGRectMake(0, 0, titleTextSize.width, titleTextSize.height);
             self.backgroundColor = [UIColor clearColor];
-            self.textAlignment = NSTextAlignmentCenter;
-            self.lineBreakMode = NSLineBreakByTruncatingTail;
-            self.numberOfLines = 0;
-            self.textColor = color;
-            self.alpha = alpha;
-            self.font = titleFont;
-            self.text = titleText;
+            self.textAlignment   = NSTextAlignmentCenter;
+            self.lineBreakMode   = NSLineBreakByTruncatingTail;
+            self.numberOfLines   = 0;
+            self.textColor       = color;
+            self.alpha           = alpha;
+            self.font            = titleFont;
+            self.text            = titleText;
         }
     }
     return self;
 }
+
 - (void)setX:(CGFloat)x Y:(CGFloat)y {
     CGRect titleFrame = self.frame;
     titleFrame.origin.x = x;

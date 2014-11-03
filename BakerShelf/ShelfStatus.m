@@ -31,23 +31,21 @@
 //
 
 #import "ShelfStatus.h"
+#import "NSObject+Extensions.h"
 
 @implementation ShelfStatus
 
-@synthesize prices;
-
 - (id)init {
-    NSString *cachePath = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES)[0];
-    NSString *statusPath = [[cachePath stringByAppendingPathComponent:@"shelf-status"] stringByAppendingPathExtension:@"json"];
+    NSString *statusPath = [[self.cachePath stringByAppendingPathComponent:@"shelf-status"] stringByAppendingPathExtension:@"json"];
 
     self = [super initWithJSONPath:statusPath];
     if (self) {
-        self.prices = [[NSMutableDictionary alloc] init];
+        _prices = [[NSMutableDictionary alloc] init];
     }
     return self;
 }
 
-- (NSDictionary *)load {
+- (NSDictionary*)load {
     NSDictionary *jsonDict = [super load];
 
     NSDictionary *jsonPrices = jsonDict[@"prices"];
@@ -59,18 +57,16 @@
 }
 
 - (void)save {
-    NSDictionary *jsonDict = @{@"prices": prices};
-
+    NSDictionary *jsonDict = @{@"prices": self.prices};
     [super save:jsonDict];
 }
 
-- (NSString *)priceFor:(NSString *)productID {
-    return prices[productID];
+- (NSString*)priceFor:(NSString*)productID {
+    return self.prices[productID];
 }
 
-- (void)setPrice:(NSString *)price for:(NSString *)productID {
-    prices[productID] = price;
+- (void)setPrice:(NSString*)price for:(NSString*)productID {
+    self.prices[productID] = price;
 }
-
 
 @end

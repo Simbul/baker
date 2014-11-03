@@ -98,7 +98,7 @@
 const char zip_copyright[] =" zip 1.01 Copyright 1998-2004 Gilles Vollant - http://www.winimage.com/zLibDll";
 
 
-#define SIZEDATA_INDATABLOCK (4096-(4*4))
+#define SIZEDATA_INDATABLOCK (4096- (4*4))
 
 #define LOCALHEADERMAGIC    (0x04034b50)
 #define CENTRALHEADERMAGIC  (0x02014b50)
