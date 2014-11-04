@@ -123,11 +123,19 @@ BUGS AND FEEDBACK
 
 CHANGELOG
 ---------
+
+* **4.3** (in development)
+  * Added support for iOS 8, iOS 8.1, iPhone 6 and iPhone 6 Plus
+  * The Baker app is now a universal app
+  * Support for iOS 6 is dropped, Baker now requires iOS 7 or newer
+  * The shelf header is now a separate view that can be customized
+  * The embedded book "A Study Of Scarlet" is now responsive
+
 * **4.2.1** (26/01/2014)
   * Branding changes.  New Baker Framework logo assets
   * Open local files in modal view.  Action button not shown.  Useful if you have local documents (html, pdf, etc...) related to the content of your Baker HPub
   * Bugfixes related to iOS 7 app validation (Asset Catalog Errors)
-  
+
 * **4.2** (28/10/2013)
   * iOS 7 support
   * Text Kit support
