@@ -37,6 +37,8 @@
 #import "UIConstants.h"
 #import "Utils.h"
 
+#import "UIScreen+BakerExtensions.h"
+
 @implementation ModalWebViewController
 
 #pragma mark - Initialization
@@ -75,13 +77,11 @@
     self.btnReload.enabled  = NO;
     self.btnGoForward.width = 30;
 
-    if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0")) {
-        btnClose.tintColor          = [UIColor colorWithHexString:ISSUES_ACTION_BUTTON_BACKGROUND_COLOR];
-        btnAction.tintColor         = [UIColor colorWithHexString:ISSUES_ACTION_BUTTON_BACKGROUND_COLOR];
-        self.btnGoBack.tintColor    = [UIColor colorWithHexString:ISSUES_ACTION_BUTTON_BACKGROUND_COLOR];
-        self.btnGoForward.tintColor = [UIColor colorWithHexString:ISSUES_ACTION_BUTTON_BACKGROUND_COLOR];
-        self.btnReload.tintColor    = [UIColor colorWithHexString:ISSUES_ACTION_BUTTON_BACKGROUND_COLOR];
-    }
+    btnClose.tintColor          = [UIColor colorWithHexString:ISSUES_ACTION_BUTTON_BACKGROUND_COLOR];
+    btnAction.tintColor         = [UIColor colorWithHexString:ISSUES_ACTION_BUTTON_BACKGROUND_COLOR];
+    self.btnGoBack.tintColor    = [UIColor colorWithHexString:ISSUES_ACTION_BUTTON_BACKGROUND_COLOR];
+    self.btnGoForward.tintColor = [UIColor colorWithHexString:ISSUES_ACTION_BUTTON_BACKGROUND_COLOR];
+    self.btnReload.tintColor    = [UIColor colorWithHexString:ISSUES_ACTION_BUTTON_BACKGROUND_COLOR];
 
     self.spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
     self.spinner.frame            = CGRectMake(3, 3, 25, 25);
@@ -214,15 +214,8 @@
 
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
     
-    uint screenWidth  = 0;
-    uint screenHeight = 0;
-    if (UIInterfaceOrientationIsPortrait(toInterfaceOrientation)) {
-        screenWidth  = MIN([[UIScreen mainScreen] bounds].size.height,[[UIScreen mainScreen] bounds].size.width);
-        screenHeight = MAX([[UIScreen mainScreen] bounds].size.height,[[UIScreen mainScreen] bounds].size.width);
-    } else if (UIInterfaceOrientationIsLandscape(toInterfaceOrientation)) {
-        screenWidth  = MAX([[UIScreen mainScreen] bounds].size.height,[[UIScreen mainScreen] bounds].size.width);
-        screenHeight = MIN([[UIScreen mainScreen] bounds].size.height,[[UIScreen mainScreen] bounds].size.width);
-    }
+    CGFloat screenWidth  = [[UIScreen mainScreen] bkrWidthForOrientation:toInterfaceOrientation];
+    CGFloat screenHeight = [[UIScreen mainScreen] bkrHeightForOrientation:toInterfaceOrientation];
 
     self.view.frame    = CGRectMake(0, 0, screenWidth, screenHeight);
     self.toolbar.frame = CGRectMake(0, 0, screenWidth, 44);

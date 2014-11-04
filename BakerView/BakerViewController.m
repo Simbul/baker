@@ -39,6 +39,7 @@
 #import "PageTitleLabel.h"
 #import "Utils.h"
 #import "NSObject+Extensions.h"
+#import "UIScreen+BakerExtensions.h"
 
 #define INDEX_FILE_NAME         @"index.html"
 
@@ -458,48 +459,39 @@
     //NSLog(@"[BakerView]     Unlock page changing");
     [self lockPage:@NO];
 }
+
 - (void)adjustScrollViewPosition {
     int scrollViewY = 0;
-    
-    if (SYSTEM_VERSION_LESS_THAN(@"7.0") && !self.barsHidden) {
-        scrollViewY = -20;
-    }
-
     [UIView animateWithDuration:UINavigationControllerHideShowBarDuration
                      animations:^{ self.scrollView.frame = CGRectMake(0, scrollViewY, pageWidth, pageHeight); }
-                     completion:^(BOOL finished) {}];
+                     completion:nil];
 }
-- (void)setPageSize:(NSString *)orientation {
+
+- (void)setPageSize:(NSString*)orientation {
     NSLog(@"[BakerView] Set size for orientation: %@", orientation);
 
-    //iOS 8 update: the screenBounds width value is now always 'width', while it used to be 'height' in Landscape mode on iOS7. To keep the code working for both iOS8 and iOS7, use the higher/lower of width/height depending on orientation.
-    
-    pageWidth  = MIN(screenBounds.size.height,screenBounds.size.width);
-    pageHeight  = MAX(screenBounds.size.height,screenBounds.size.width);
+    pageWidth  = [[UIScreen mainScreen] bkrWidthForOrientationName:orientation];
+    pageHeight = [[UIScreen mainScreen] bkrHeightForOrientationName:orientation];
 
-    if ([orientation isEqualToString:@"landscape"]) {
-        pageWidth  = MAX(screenBounds.size.height,screenBounds.size.width);
-        pageHeight  = MIN(screenBounds.size.height,screenBounds.size.width);
-    }
-
-    [self setTappableAreaSize];
+    [self setTappableAreaSizeForOrientation:orientation];
 
     self.scrollView.contentSize = CGSizeMake(pageWidth * totalPages, pageHeight);
 }
-- (void)setTappableAreaSize {
+- (void)setTappableAreaSizeForOrientation:(NSString*)orientation {
     //NSLog(@"[BakerView] Set tappable area size");
 
-    //iOS 8 update: the screenBounds width value is now always 'width', while it used to be 'height' in Landscape mode on iOS7. To keep the code working for both iOS8 and iOS7, use the higher/lower of width/height depending on orientation.
-    
-    int tappableAreaSize = MIN(screenBounds.size.width, screenBounds.size.height)/16;
-    if (screenBounds.size.width < 768) {
-        tappableAreaSize = MIN(screenBounds.size.width, screenBounds.size.height)/8;
+    CGFloat screenWidth = [[UIScreen mainScreen] bkrWidthForOrientationName:orientation];
+    int tappableAreaSize;
+    if ([orientation isEqualToString:@"portrait"]) {
+        tappableAreaSize = screenWidth / 16;
+    } else {
+        tappableAreaSize = screenWidth / 7;
     }
 
-    upTapArea    = CGRectMake(tappableAreaSize, 0, pageWidth - (tappableAreaSize * 2), tappableAreaSize);
-    downTapArea  = CGRectMake(tappableAreaSize, pageHeight - tappableAreaSize, pageWidth - (tappableAreaSize * 2), tappableAreaSize);
-    leftTapArea  = CGRectMake(0, tappableAreaSize, tappableAreaSize, pageHeight - (tappableAreaSize * 2));
-    rightTapArea = CGRectMake(pageWidth - tappableAreaSize, tappableAreaSize, tappableAreaSize, pageHeight - (tappableAreaSize * 2));
+    upTapArea    = CGRectMake(tappableAreaSize, 0, screenWidth - (tappableAreaSize * 2), tappableAreaSize);
+    downTapArea  = CGRectMake(tappableAreaSize, screenWidth - tappableAreaSize, screenWidth - (tappableAreaSize * 2), tappableAreaSize);
+    leftTapArea  = CGRectMake(0, tappableAreaSize, tappableAreaSize, screenWidth - (tappableAreaSize * 2));
+    rightTapArea = CGRectMake(screenWidth - tappableAreaSize, tappableAreaSize, tappableAreaSize, screenWidth - (tappableAreaSize * 2));
 }
 - (void)showPageDetails {
     //NSLog(@"[BakerView] Show page details for the book pages");
@@ -1455,23 +1447,12 @@
 
     NSString    *screenshotFile = [cachedScreenshotsPath stringByAppendingPathComponent:[NSString stringWithFormat:@"screenshot-%@-%i.jpg", interfaceOrientation, pageNumber]];
     UIImageView *screenshotView = [[UIImageView alloc] initWithImage:[UIImage imageWithContentsOfFile:screenshotFile]];
-
-     //iOS 8 update: the screenBounds width value is now always 'width', while it used to be 'height' in Landscape mode on iOS7. To keep the code working for both iOS8 and iOS7, use the higher/lower of width/height depending on orientation.
     
     NSMutableDictionary *attachedScreenshot = attachedScreenshotPortrait;
-    int pageSizeWidth = MIN(screenBounds.size.height,screenBounds.size.width);
-    int pageSizeHeight = MAX(screenBounds.size.height,screenBounds.size.width);
     
+    int pageSizeWidth  = [[UIScreen mainScreen] bkrWidthForOrientationName:interfaceOrientation];
+    int pageSizeHeight = [[UIScreen mainScreen] bkrHeightForOrientationName:interfaceOrientation];
     CGSize pageSize = CGSizeMake(pageSizeWidth, pageSizeHeight);
-
-    if ([interfaceOrientation isEqualToString:@"landscape"]) {
-        attachedScreenshot = attachedScreenshotLandscape;
-        
-        int pageSizeWidth = MAX(screenBounds.size.height,screenBounds.size.width);
-        int pageSizeHeight = MIN(screenBounds.size.height,screenBounds.size.width);
-        
-        pageSize = CGSizeMake(pageSizeWidth, pageSizeHeight);
-    }
 
     screenshotView.frame = CGRectMake(pageSize.width * i, 0, pageSize.width, pageSize.height);
 
@@ -1700,15 +1681,10 @@
 
     self.barsHidden = NO;
 
-    if (SYSTEM_VERSION_LESS_THAN(@"7.0")) {
-        [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationSlide];
-        [self performSelector:@selector(showNavigationBar) withObject:nil afterDelay:0.1];
-    } else {
-        [UIView animateWithDuration:UINavigationControllerHideShowBarDuration animations:^{
-            [self setNeedsStatusBarAppearanceUpdate];
-        }];
-        [self.navigationController setNavigationBarHidden:NO animated:YES];
-    }
+    [UIView animateWithDuration:UINavigationControllerHideShowBarDuration animations:^{
+        [self setNeedsStatusBarAppearanceUpdate];
+    }];
+    [self.navigationController setNavigationBarHidden:NO animated:YES];
 
     if(![indexViewController isDisabled]) {
         [[NSNotificationCenter defaultCenter] postNotificationName:@"BakerViewIndexOpen" object:self]; // -> Baker Analytics Event
@@ -1737,40 +1713,15 @@
 
     BOOL animateHiding = [animated boolValue];
 
-    if (SYSTEM_VERSION_LESS_THAN(@"7.0")) {
-
-        CGRect newNavigationFrame = [self getNewNavigationFrame:YES];
-        UINavigationBar *navigationBar = self.navigationController.navigationBar;
-
-        if (animateHiding) {
-            [UIView animateWithDuration:0.3
-                                  delay:0
-                                options:UIViewAnimationOptionCurveEaseOut
-                             animations:^{
-                                 navigationBar.frame = newNavigationFrame;
-                             }
-                             completion:^(BOOL finished) {
-                                 navigationBar.hidden = YES;
-                             }];
-        } else {
-            navigationBar.frame = newNavigationFrame;
-            navigationBar.hidden = YES;
-        }
-
-        [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
-
+    if (animateHiding) {
+        [UIView animateWithDuration:UINavigationControllerHideShowBarDuration animations:^{
+            [self setNeedsStatusBarAppearanceUpdate];
+        }];
     } else {
-
-        if (animateHiding) {
-            [UIView animateWithDuration:UINavigationControllerHideShowBarDuration animations:^{
-                [self setNeedsStatusBarAppearanceUpdate];
-            }];
-        } else {
-           [self setNeedsStatusBarAppearanceUpdate];
-        }
-
-        [self.navigationController setNavigationBarHidden:YES animated:animateHiding];
+       [self setNeedsStatusBarAppearanceUpdate];
     }
+
+    [self.navigationController setNavigationBarHidden:YES animated:animateHiding];
 
     if(![indexViewController isDisabled]) {
         [indexViewController setIndexViewHidden:YES withAnimation:YES];

@@ -41,6 +41,8 @@
 #import "PurchasesManager.h"
 #endif
 
+@class BKRShelfHeaderView;
+
 @interface ShelfViewController : UIViewController <UICollectionViewDataSource, UICollectionViewDelegate, UIActionSheetDelegate, UIWebViewDelegate> {
     BakerAPI *api;
     IssuesManager *issuesManager;
@@ -59,7 +61,7 @@
 @property (nonatomic, strong) ShelfStatus *shelfStatus;
 
 @property (nonatomic, strong) UICollectionView *gridView;
-@property (nonatomic, strong) UIImageView *background;
+@property (nonatomic, strong) BKRShelfHeaderView *headerView;
 @property (nonatomic, strong) UIBarButtonItem *refreshButton;
 @property (nonatomic, strong) UIBarButtonItem *subscribeButton;
 

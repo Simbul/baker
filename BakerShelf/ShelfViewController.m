@@ -36,10 +36,17 @@
 
 #import "BakerViewController.h"
 #import "IssueViewController.h"
+#import "BKRShelfHeaderView.h"
 
 #import "NSData+Base64.h"
 #import "NSString+Extensions.h"
 #import "Utils.h"
+
+@interface ShelfViewController ()
+
+@property (nonatomic, strong) UICollectionViewFlowLayout *layout;
+
+@end
 
 @implementation ShelfViewController
 
@@ -91,8 +98,7 @@
     return self;
 }
 
-- (id)initWithBooks:(NSArray*)currentBooks
-{
+- (id)initWithBooks:(NSArray*)currentBooks {
     self = [self init];
     if (self) {
         self.issues = currentBooks;
@@ -107,26 +113,26 @@
     return self;
 }
 
-#pragma mark - Memory management
-
-
 #pragma mark - View lifecycle
 
-- (void)viewDidLoad
-{
+- (void)viewDidLoad {
     [super viewDidLoad];
 
     self.navigationItem.title = NSLocalizedString(@"SHELF_NAVIGATION_TITLE", nil);
-
-    self.background = [[UIImageView alloc] init];
-
-    self.gridView = [[UICollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:[[UICollectionViewFlowLayout alloc] init]];
-    self.gridView.dataSource = self;
-    self.gridView.delegate = self;
-    self.gridView.backgroundColor = [UIColor clearColor];
+    
+    self.layout = [[UICollectionViewFlowLayout alloc] init];
+    self.layout.minimumInteritemSpacing = 0;
+    self.layout.minimumLineSpacing      = 0;
+    
+    self.gridView = [[UICollectionView alloc] initWithFrame:self.view.frame collectionViewLayout:self.layout];
+    self.gridView.dataSource       = self;
+    self.gridView.delegate         = self;
+    self.gridView.backgroundColor  = [UIColor clearColor];
+    self.gridView.autoresizingMask = UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth;
+    
     [self.gridView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:@"cellIdentifier"];
+    [self.gridView registerClass:[BKRShelfHeaderView class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"headerIdentifier"];
 
-    [self.view addSubview:self.background];
     [self.view addSubview:self.gridView];
 
     [self willRotateToInterfaceOrientation:self.interfaceOrientation duration:0];
@@ -162,8 +168,9 @@
     [purchasesManager retrievePricesFor:subscriptions andEnableFailureNotifications:NO];
     #endif
 }
-- (void)viewWillAppear:(BOOL)animated
-{
+
+- (void)viewWillAppear:(BOOL)animated {
+    
     [super viewWillAppear:animated];
     [self.navigationController.navigationBar setTranslucent:NO];
     [self willRotateToInterfaceOrientation:self.interfaceOrientation duration:0];
@@ -204,69 +211,40 @@
         self.navigationItem.rightBarButtonItem = infoButton;
     }
 }
-- (void)viewDidAppear:(BOOL)animated
-{
+
+- (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     if (self.bookToBeProcessed) {
         [self handleBookToBeProcessed];
     }
 }
-- (NSUInteger)supportedInterfaceOrientations
-{
+
+- (NSUInteger)supportedInterfaceOrientations {
     return UIInterfaceOrientationMaskAll;
 }
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-{
+
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
     return [self.supportedOrientation indexOfObject:[NSString stringFromInterfaceOrientation:interfaceOrientation]] != NSNotFound;
 }
-- (BOOL)shouldAutorotate
-{
+
+- (BOOL)shouldAutorotate {
     return YES;
 }
-- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
-{
-    int width  = 0;
-    int height = 0;
 
-    NSString *image = @"";
-    CGSize size = [UIScreen mainScreen].bounds.size;
-    int landscapePadding = 0;
-    
-    //iOS 8 update: the screenBounds width value is now always 'width', while it used to be 'height' in Landscape mode on iOS7. To keep the code working for both iOS8 and iOS7, use the higher/lower of width/height depending on orientation.
-
-    if (UIInterfaceOrientationIsPortrait(toInterfaceOrientation)) {
-        width  = MIN(size.width, size.height);
-        height = MAX(size.width, size.height) - 64;
-        image  = @"shelf-bg-portrait";
-    } else if (UIInterfaceOrientationIsLandscape(toInterfaceOrientation)) {
-        width  = MAX(size.width, size.height);
-        height = MIN(size.width, size.height) - 64;
-        if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
-            height = height + 12;
-        }
-        image  = @"shelf-bg-landscape";
-        CGFloat cellWidth = [IssueViewController getIssueCellSize].width;
-        landscapePadding = width / 4 - cellWidth / 2;
-    }
-
-    if (size.height == 568) {
-        image = [NSString stringWithFormat:@"%@-568h", image];
-    } else {
-        image = [NSString stringWithFormat:@"%@", image];
-    }
-
-    int bannerHeight = [ShelfViewController getBannerHeight];
-
-    self.background.frame = CGRectMake(0, 0, width, height);
-    self.background.image = [UIImage imageNamed:image];
-
-    self.gridView.frame = CGRectMake(landscapePadding, bannerHeight, width - 2 * landscapePadding, height - bannerHeight);
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
+    CGSize itemSize = [IssueViewController getIssueCellSizeForOrientation:toInterfaceOrientation];
+    self.layout.itemSize = itemSize;
+    [self.gridView.collectionViewLayout invalidateLayout];
 }
-- (IssueViewController*)createIssueViewControllerWithIssue:(BakerIssue*)issue
-{
+
+- (IssueViewController*)createIssueViewControllerWithIssue:(BakerIssue*)issue {
     IssueViewController *controller = [[IssueViewController alloc] initWithBakerIssue:issue];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleReadIssue:) name:@"read_issue_request" object:controller];
     return controller;
+}
+
+- (BOOL)prefersStatusBarHidden {
+    return NO;
 }
 
 #pragma mark - Shelf data source
@@ -280,19 +258,17 @@
 }
 
 - (UICollectionViewCell*)collectionView:(UICollectionView*)collectionView cellForItemAtIndexPath:(NSIndexPath*)indexPath {
-    CGSize cellSize = [IssueViewController getIssueCellSize];
+    CGSize cellSize = [IssueViewController getIssueCellSizeForOrientation:self.interfaceOrientation];
     CGRect cellFrame = CGRectMake(0, 0, cellSize.width, cellSize.height);
 
     static NSString *cellIdentifier = @"cellIdentifier";
     UICollectionViewCell* cell = [self.gridView dequeueReusableCellWithReuseIdentifier:cellIdentifier forIndexPath:indexPath];
-	if (cell == nil)
-	{
+	if (cell == nil) {
 		UICollectionViewCell* cell = [[UICollectionViewCell alloc] initWithFrame:cellFrame];
-
         cell.contentView.backgroundColor = [UIColor clearColor];
-        cell.backgroundColor = [UIColor clearColor];
+        cell.backgroundColor             = [UIColor clearColor];
 	}
-
+    
     IssueViewController *controller = (self.issueViewControllers)[indexPath.row];
     UIView *removableIssueView = [cell.contentView viewWithTag:42];
     if (removableIssueView) {
@@ -304,7 +280,18 @@
 }
 
 - (CGSize)collectionView:(UICollectionView*)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath*)indexPath {
-    return [IssueViewController getIssueCellSize];
+    return [IssueViewController getIssueCellSizeForOrientation:self.interfaceOrientation];
+}
+
+- (UICollectionReusableView*)collectionView:(UICollectionView*)collectionView viewForSupplementaryElementOfKind:(NSString*)kind atIndexPath:(NSIndexPath*)indexPath {
+    if (!self.headerView) {
+        self.headerView = [collectionView dequeueReusableSupplementaryViewOfKind:kind withReuseIdentifier:@"headerIdentifier" forIndexPath:indexPath];
+    }
+    return self.headerView;
+}
+
+- (CGSize)collectionView:(UICollectionView*)collectionView layout:(UICollectionViewLayout*)collectionViewLayout referenceSizeForHeaderInSection:(NSInteger)section {
+    return CGSizeMake(self.view.frame.size.width, [ShelfViewController getBannerHeight]);
 }
 
 #ifdef BAKER_NEWSSTAND
@@ -698,10 +685,8 @@
 - (void)handleInfoButtonPressed:(id)sender {
     
     // If the button is pressed when the info box is open, close it
-    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
-    {
-        if ([infoPopover isPopoverVisible])
-        {
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+        if (infoPopover.isPopoverVisible) {
             [infoPopover dismissPopoverAnimated:YES];
             return;
         }
@@ -710,24 +695,23 @@
     // Prepare new view
     UIViewController *popoverContent = [[UIViewController alloc] init];
     UIWebView *popoverView = [[UIWebView alloc] init];
-    popoverView.backgroundColor = [UIColor blackColor];
-    popoverView.delegate = self;
-    popoverContent.view = popoverView;
+    
+    popoverView.backgroundColor = [UIColor whiteColor];
+    popoverView.delegate        = self;
+    popoverContent.view         = popoverView;
     
     // Load HTML file
     NSString *path = [[NSBundle mainBundle] pathForResource:@"info" ofType:@"html" inDirectory:@"info"];
     [popoverView loadRequest:[NSURLRequest requestWithURL:[NSURL fileURLWithPath:path]]];
     
     // Open view
-    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
-    {
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
         // On iPad use the UIPopoverController
         infoPopover = [[UIPopoverController alloc] initWithContentViewController:popoverContent];
         [infoPopover presentPopoverFromBarButtonItem:sender
                             permittedArrowDirections:UIPopoverArrowDirectionUp
                                             animated:YES];
-    }
-    else {
+    } else {
         // On iPhone push the view controller to the navigation
         [self.navigationController pushViewController:popoverContent animated:YES];
     }
@@ -745,12 +729,11 @@
     #endif
 }
 
-+ (int)getBannerHeight
-{
++ (int)getBannerHeight {
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
-        return 240;
+        return 215;
     } else {
-        return 104;
+        return 107;
     }
 }
 

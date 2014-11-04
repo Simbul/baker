@@ -132,7 +132,7 @@
 - (void)updateBookLayout;
 - (void)adjustScrollViewPosition;
 - (void)setPageSize:(NSString*)orientation;
-- (void)setTappableAreaSize;
+- (void)setTappableAreaSizeForOrientation:(NSString*)orientation;
 - (void)showPageDetails;
 - (void)setFrame:(CGRect)frame forPage:(UIWebView*)page;
 - (void)setupWebView:(UIWebView*)webView;

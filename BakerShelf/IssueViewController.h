@@ -92,7 +92,7 @@ typedef struct {
 #pragma mark - Helper methods
 + (UI)getIssueContentMeasures;
 + (int)getIssueCellHeight;
-+ (CGSize)getIssueCellSize;
++ (CGSize)getIssueCellSizeForOrientation:(UIInterfaceOrientation)orientation;
 
 @end
 

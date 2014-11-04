@@ -33,6 +33,8 @@
 #import "IndexViewController.h"
 #import "BakerViewController.h"
 
+#import "UIScreen+BakerExtensions.h"
+
 @implementation IndexViewController
 
 #pragma mark - Initialization
@@ -84,14 +86,8 @@
 }
 
 - (void)setPageSizeForOrientation:(UIInterfaceOrientation)orientation {
-    CGRect screenBounds = [[UIScreen mainScreen] bounds];
-    if (orientation == UIInterfaceOrientationLandscapeLeft || orientation == UIInterfaceOrientationLandscapeRight) {
-        pageWidth  = MAX(screenBounds.size.height, screenBounds.size.width);
-        pageHeight = MIN(screenBounds.size.height, screenBounds.size.width);
-    } else {
-        pageWidth  = MIN(screenBounds.size.height, screenBounds.size.width);
-        pageHeight = MAX(screenBounds.size.height, screenBounds.size.width);
-    }
+    pageWidth  = [[UIScreen mainScreen] bkrWidthForOrientation:orientation];
+    pageHeight = [[UIScreen mainScreen] bkrHeightForOrientation:orientation];
     NSLog(@"[IndexView] Set IndexView size to %dx%d", pageWidth, pageHeight);
 }
 
@@ -141,7 +137,7 @@
     // compensates for it, by exploiting the fact that the superview height is
     // slightly smaller then the viewport height when the origin's y needs to be adjusted.
     int height = self.view.superview.frame.size.height;
-    if (height == 320 || height == 480 || height == 568 || height == 768 || height == 1024) {
+    if (height == 320 || height == 375 || height == 414 || height == 480 || height == 568 || height == 667 || height == 736 || height == 768 || height == 1024) {
         return 0;
     } else {
         return -20;

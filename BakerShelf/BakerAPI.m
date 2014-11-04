@@ -231,7 +231,7 @@
 }
 
 - (NSURL*)replaceParameters:(NSMutableDictionary*)parameters inURL:(NSURL*)url {
-    __weak NSMutableString *urlString = [NSMutableString stringWithString:[url absoluteString]];
+    NSMutableString *urlString = [NSMutableString stringWithString:[url absoluteString]];
     NSDictionary *allParameters = [NSDictionary dictionaryWithDictionary:parameters];
     [allParameters enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
         NSString *keyToReplace = [@":" stringByAppendingString:key];
@@ -245,7 +245,7 @@
 }
 
 - (NSString*)queryStringFromParameters:(NSDictionary*)parameters {
-    __weak NSMutableString *queryString = [NSMutableString stringWithString:@""];
+    NSMutableString *queryString = [NSMutableString stringWithString:@""];
     if ([parameters count] > 0) {
         [parameters enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
             NSString *queryParameter = [NSString stringWithFormat:@"%@=%@&", key, obj];

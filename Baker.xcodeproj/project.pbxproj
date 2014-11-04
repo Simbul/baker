@@ -53,6 +53,8 @@
 		BF0785EB1794AF4000EB988E /* info in Resources */ = {isa = PBXBuildFile; fileRef = BF0785EA1794AF4000EB988E /* info */; };
 		BF78D1B0180C8F070093DFBC /* BakerAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BF78D1AF180C8F070093DFBC /* BakerAssets.xcassets */; };
 		BFAB78D317B2A67E00E91ADE /* BakerAnalyticsEvents.m in Sources */ = {isa = PBXBuildFile; fileRef = BFAB78D217B2A67E00E91ADE /* BakerAnalyticsEvents.m */; };
+		C649F0981A090B6000B02548 /* BKRShelfHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = C649F0971A090B6000B02548 /* BKRShelfHeaderView.m */; };
+		C649F09B1A0912F500B02548 /* UIScreen+BakerExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = C649F09A1A0912F500B02548 /* UIScreen+BakerExtensions.m */; };
 		C66857A01A07D38300776443 /* NSString+Extensions.m in Sources */ = {isa = PBXBuildFile; fileRef = C668579D1A07D38300776443 /* NSString+Extensions.m */; };
 		C66857A11A07D38300776443 /* UIColor+Extensions.m in Sources */ = {isa = PBXBuildFile; fileRef = C668579F1A07D38300776443 /* UIColor+Extensions.m */; };
 		C66857A41A07DDBE00776443 /* NSObject+Extensions.m in Sources */ = {isa = PBXBuildFile; fileRef = C66857A31A07DDBE00776443 /* NSObject+Extensions.m */; };
@@ -142,6 +144,10 @@
 		BF78D1AF180C8F070093DFBC /* BakerAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = BakerAssets.xcassets; path = Baker/BakerAssets.xcassets; sourceTree = "<group>"; };
 		BFAB78D117B2A67E00E91ADE /* BakerAnalyticsEvents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BakerAnalyticsEvents.h; sourceTree = "<group>"; };
 		BFAB78D217B2A67E00E91ADE /* BakerAnalyticsEvents.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BakerAnalyticsEvents.m; sourceTree = "<group>"; };
+		C649F0961A090B6000B02548 /* BKRShelfHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BKRShelfHeaderView.h; sourceTree = "<group>"; };
+		C649F0971A090B6000B02548 /* BKRShelfHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BKRShelfHeaderView.m; sourceTree = "<group>"; };
+		C649F0991A0912F500B02548 /* UIScreen+BakerExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIScreen+BakerExtensions.h"; sourceTree = "<group>"; };
+		C649F09A1A0912F500B02548 /* UIScreen+BakerExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIScreen+BakerExtensions.m"; sourceTree = "<group>"; };
 		C668579B1A07D27C00776443 /* UIConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIConstants.h; sourceTree = "<group>"; };
 		C668579C1A07D38300776443 /* NSString+Extensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Extensions.h"; sourceTree = "<group>"; };
 		C668579D1A07D38300776443 /* NSString+Extensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Extensions.m"; sourceTree = "<group>"; };
@@ -245,6 +251,8 @@
 				C668579F1A07D38300776443 /* UIColor+Extensions.m */,
 				AB40044A15B4B83000D87E2A /* Utils.h */,
 				AB40044B15B4B83000D87E2A /* Utils.m */,
+				C649F0991A0912F500B02548 /* UIScreen+BakerExtensions.h */,
+				C649F09A1A0912F500B02548 /* UIScreen+BakerExtensions.m */,
 			);
 			path = lib;
 			sourceTree = "<group>";
@@ -299,6 +307,8 @@
 				9F58D85015D66E870027902C /* UICustomNavigationController.m */,
 				ABF23B1B1708418E003AA3B0 /* BakerAPI.h */,
 				ABF23B1C1708418E003AA3B0 /* BakerAPI.m */,
+				C649F0961A090B6000B02548 /* BKRShelfHeaderView.h */,
+				C649F0971A090B6000B02548 /* BKRShelfHeaderView.m */,
 			);
 			path = BakerShelf;
 			sourceTree = "<group>";
@@ -440,6 +450,7 @@
 				C66857A41A07DDBE00776443 /* NSObject+Extensions.m in Sources */,
 				AB40046D15B4B83000D87E2A /* zip.c in Sources */,
 				AB40046F15B4B83000D87E2A /* SSZipArchive.m in Sources */,
+				C649F0981A090B6000B02548 /* BKRShelfHeaderView.m in Sources */,
 				AB40047115B4B83000D87E2A /* Utils.m in Sources */,
 				C66857A01A07D38300776443 /* NSString+Extensions.m in Sources */,
 				C66857A11A07D38300776443 /* UIColor+Extensions.m in Sources */,
@@ -456,6 +467,7 @@
 				ABD6FC4016544EAD0032BC44 /* NSData+Base64.m in Sources */,
 				AB2317D4169F808000BE3BE7 /* PurchasesManager.m in Sources */,
 				ABDC05AF16A4C42A00F6B63D /* JSONStatus.m in Sources */,
+				C649F09B1A0912F500B02548 /* UIScreen+BakerExtensions.m in Sources */,
 				ABDC05B216A4CB3900F6B63D /* ShelfStatus.m in Sources */,
 				AB246A3116C5BC6E00715E25 /* NSMutableURLRequest+WebServiceClient.m in Sources */,
 				ABBFD8F216C6614300BA64A4 /* NSString+UUID.m in Sources */,
@@ -555,9 +567,9 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Baker/Baker-Prefix.pch";
 				INFOPLIST_FILE = "Baker/Baker-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TARGETED_DEVICE_FAMILY = 2;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -571,9 +583,9 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Baker/Baker-Prefix.pch";
 				INFOPLIST_FILE = "Baker/Baker-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TARGETED_DEVICE_FAMILY = 2;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

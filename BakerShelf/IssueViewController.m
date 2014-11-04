@@ -40,6 +40,7 @@
 #endif
 
 #import "UIColor+Extensions.h"
+#import "UIScreen+BakerExtensions.h"
 #import "Utils.h"
 
 @implementation IssueViewController
@@ -73,15 +74,13 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    CGSize cellSize = [IssueViewController getIssueCellSize];
+    CGSize cellSize = [IssueViewController getIssueCellSizeForOrientation:self.interfaceOrientation];
 
     self.view.frame = CGRectMake(0, 0, cellSize.width, cellSize.height);
     self.view.backgroundColor = [UIColor clearColor];
     self.view.tag = 42;
 
-    if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0")) {
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(preferredContentSizeChanged:) name:UIContentSizeCategoryDidChangeNotification object:nil];
-    }
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(preferredContentSizeChanged:) name:UIContentSizeCategoryDidChangeNotification object:nil];
 
     UI ui = [IssueViewController getIssueContentMeasures];
 
@@ -193,41 +192,25 @@
     #if defined(ISSUES_TITLE_FONT) && defined(ISSUES_TITLE_FONT_SIZE)
         titleFont = [UIFont fontWithName:ISSUES_TITLE_FONT size:ISSUES_TITLE_FONT_SIZE];
     #else
-        if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0")) {
-            titleFont = [UIFont preferredFontForTextStyle:UIFontTextStyleHeadline];
-        } else {
-            titleFont = [UIFont fontWithName:@"Helvetica" size:15];
-        }
+        titleFont = [UIFont preferredFontForTextStyle:UIFontTextStyleHeadline];
     #endif
 
     #if defined(ISSUES_INFO_FONT) && defined(ISSUES_INFO_FONT_SIZE)
         infoFont = [UIFont fontWithName:ISSUES_INFO_FONT size:ISSUES_INFO_FONT_SIZE];
     #else
-        if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0")) {
-            infoFont = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
-        } else {
-            infoFont = [UIFont fontWithName:@"Helvetica" size:15];
-        }
+        infoFont = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
     #endif
 
     #if defined(ISSUES_ACTION_BUTTON_FONT) && defined(ISSUES_ACTION_BUTTON_FONT_SIZE)
         actionFont = [UIFont fontWithName:ISSUES_ACTION_BUTTON_FONT size:ISSUES_ACTION_BUTTON_FONT_SIZE];
     #else
-        if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0")) {
-            actionFont = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
-        } else {
-            actionFont = [UIFont fontWithName:@"Helvetica-Bold" size:11];
-        }
+        actionFont = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
     #endif
 
     #if defined(ISSUES_ARCHIVE_BUTTON_FONT) && defined(ISSUES_ARCHIVE_BUTTON_FONT_SIZE)
         archiveFont = [UIFont fontWithName:ISSUES_ARCHIVE_BUTTON_FONT size:ISSUES_ARCHIVE_BUTTON_FONT_SIZE];
     #else
-        if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0")) {
-            archiveFont = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
-        } else {
-            archiveFont = [UIFont fontWithName:@"Helvetica-Bold" size:11];
-        }
+        archiveFont = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
     #endif
 
     UI ui = [IssueViewController getIssueContentMeasures];
@@ -242,29 +225,31 @@
         [self.issueCover setBackgroundImage:image forState:UIControlStateNormal];
     }];
 
+    CGFloat labelWidth = self.view.frame.size.width - ui.contentOffset - 60;
+    
     // SETUP TITLE LABEL
-    self.titleLabel.font = titleFont;
-    self.titleLabel.frame = CGRectMake(ui.contentOffset, heightOffset, 170, 60);
+    self.titleLabel.font          = titleFont;
+    self.titleLabel.frame         = CGRectMake(ui.contentOffset, heightOffset, labelWidth, 60);
     self.titleLabel.numberOfLines = 3;
-    self.titleLabel.text = self.issue.title;
+    self.titleLabel.text          = self.issue.title;
     [self.titleLabel sizeToFit];
 
     heightOffset = heightOffset + self.titleLabel.frame.size.height + 5;
 
     // SETUP INFO LABEL
-    self.infoLabel.font = infoFont;
-    self.infoLabel.frame = CGRectMake(ui.contentOffset, heightOffset, 170, 60);
+    self.infoLabel.font          = infoFont;
+    self.infoLabel.frame         = CGRectMake(ui.contentOffset, heightOffset, labelWidth, 60);
     self.infoLabel.numberOfLines = 3;
-    self.infoLabel.text = self.issue.info;
+    self.infoLabel.text          = self.issue.info;
     [self.infoLabel sizeToFit];
 
     heightOffset = heightOffset + self.infoLabel.frame.size.height + 5;
 
     // SETUP PRICE LABEL
-    self.priceLabel.frame = CGRectMake(ui.contentOffset, heightOffset, 170, textLineheight);
-    self.priceLabel.font = infoFont;
+    self.priceLabel.frame = CGRectMake(ui.contentOffset, 130, labelWidth, textLineheight);
+    self.priceLabel.font  = infoFont;
 
-    heightOffset = heightOffset + self.priceLabel.frame.size.height + 10;
+    heightOffset = 130 + textLineheight + 10; //heightOffset + self.priceLabel.frame.size.height + 10;
 
     // SETUP ACTION BUTTON
     NSString *status = [self.issue getStatus];
@@ -287,7 +272,7 @@
     heightOffset = heightOffset + self.loadingLabel.frame.size.height + 5;
 
     // SETUP PROGRESS BAR
-    self.progressBar.frame = CGRectMake(ui.contentOffset, heightOffset, 170, 30);
+    self.progressBar.frame = CGRectMake(ui.contentOffset, 136, labelWidth, 30);
 }
 
 - (void)preferredContentSizeChanged:(NSNotification*)notification {
@@ -677,13 +662,32 @@
     }
 }
 
-+ (CGSize)getIssueCellSize {
-    CGRect screenRect = [UIScreen mainScreen].bounds;
-    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
-        return CGSizeMake((MIN(screenRect.size.width, screenRect.size.height) - 10) / 2, [IssueViewController getIssueCellHeight]);
++ (CGSize)getIssueCellSizeForOrientation:(UIInterfaceOrientation)orientation {
+    
+    CGFloat screenWidth = [[UIScreen mainScreen] bkrWidthForOrientation:orientation];
+    int cellHeight      = [IssueViewController getIssueCellHeight];
+    
+    if (screenWidth > 700) {
+        return CGSizeMake(screenWidth/2, cellHeight);
     } else {
-        return CGSizeMake(MIN(screenRect.size.width, screenRect.size.height) - 10, [IssueViewController getIssueCellHeight]);
+        return CGSizeMake(screenWidth, cellHeight);
     }
+    
+    /*
+    CGRect screenRect   = [UIScreen mainScreen].bounds;
+    CGFloat screenWidth = screenRect.size.width;
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+        return CGSizeMake(screenWidth / 2, [IssueViewController getIssueCellHeight]);
+        //return CGSizeMake((MIN(screenRect.size.width, screenRect.size.height) - 10) / 2, [IssueViewController getIssueCellHeight]);
+    } else {
+        if (screenWidth > 700) {
+            return CGSizeMake((screenWidth - 10) / 2, [IssueViewController getIssueCellHeight]);
+        } else {
+            return CGSizeMake(MIN(screenRect.size.width, screenRect.size.height) - 10, [IssueViewController getIssueCellHeight]);
+        }
+    }
+    */
+    
 }
 
 @end

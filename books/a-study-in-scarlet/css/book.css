@@ -1,9 +1,9 @@
 /*
  * Baker Ebook Framework - Basic Book
  * last update: 2011-10-10
- * 
+ *
  * Copyright (C) 2011 by Davide S. Casali <folletto AT gmail DOT com>
- * 
+ *
  */
 
 /****************************************************************************************************
@@ -11,7 +11,7 @@
  */
 body {
   background: #ffffff url(../gfx/background.jpg);
-    font-family: Helvetica, Arial, sans-serif;
+    font-family: "BodoniSvtyTwoOSITCTT-Book", Georgia, Helvetica, Arial, sans-serif;
     font-size: 16px;
     margin: 0;
     padding: 0;
@@ -33,7 +33,7 @@ h1, h2, h3, h4, h5, h6 {
   font-family: "BodoniSvtyTwoITCTT-Book", Times, serif;
   font-weight: normal;
   text-align: center;
-  
+
   border: 0;
   margin: 0;
   padding: 0;
@@ -43,7 +43,7 @@ h1 {
   border-bottom: 1px solid #cf0000;
   color: #cf0000;
   font-size: 70px;
-  
+
   height: 264px;
   position: relative;
 }
@@ -62,7 +62,7 @@ h2 {
 }
 
 ul, ol {
-  line-height: 1.25em;
+  line-height: 1.8em;
 }
 
 img.right {
@@ -86,11 +86,11 @@ img.right {
   background: transparent url(../gfx/blood.png) no-repeat;
   width: 17px;
   height: 55px;
-  
+
   position: absolute;
   top: 0;
   right: 20px;
-  
+
   -webkit-tap-highlight-color: rgba(0,0,0,0);
 }
 
@@ -115,7 +115,7 @@ img.right {
 }
 
 #page.cover .footer p {
-  font-size: 12px;
+  font-size: 14px;
   padding: 15px 0 5px;
 }
 
@@ -125,7 +125,8 @@ img.right {
  */
 #page.index .menu {
   margin: 30px auto;
-  width: 670px;
+  max-width: 670px;
+  width: 90%;
 }
 
 #page.index .menu small {
@@ -133,6 +134,7 @@ img.right {
   text-align: center;
   width: 400px;
   margin: 0 auto;
+  font-size: 14px;
 }
 
 #page.index .menu ol {
@@ -156,7 +158,7 @@ img.right {
   background: #ffffff url(../gfx/background.jpg);
   color: #000000;
   text-decoration: none;
-  
+
   -webkit-transition: color 0.4s ease;
     -moz-transition: color 0.4s ease;
     -o-transition: color 0.4s ease;
@@ -175,8 +177,9 @@ img.right {
 
 #page.chapter #content {
   min-height: 1024px;
-  width: 530px;
-  
+  max-width: 530px;
+  width: 90%;
+
   margin: 120px auto;
 }
 
@@ -186,7 +189,7 @@ img.right {
   font-size: 22px;
   text-align: justify;
   text-indent: 1em;
-  line-height: 1.6em;
+  line-height: 1.8em;
 }
 
 
@@ -194,23 +197,64 @@ img.right {
  * Media queries
  */
 @media only screen and (max-device-width : 768px) and (orientation : portrait) {
-  /* Rules only for iPad - Portrait */
-  
 }
 
 @media only screen and (max-device-width : 1024px) and (orientation : landscape) {
-  /* Rules only for iPad - Landscape */
+
   #page.cover img.central {
     display: none;
   }
-  
+
   #page {
     min-height: 768px;
   }
-  
+
   #page.cover .footer {
     margin-top: 240px;
   }
+
 }
 
+@media all and (max-width: 768px) {
 
+  img.right {
+    display: block;
+    float: none;
+    margin: 8px auto;
+    padding: 15px 0 15px 0;
+  }
+
+  #page.chapter h1 {
+    font-size: 36px;
+  }
+
+  #page.chapter p,
+  #page.chapter ol,
+  #page.chapter ul {
+    font-size: 18px;
+    text-align: justify;
+    text-indent: 1em;
+    line-height: 1.8em;
+  }
+
+  #page.chapter #content {
+    margin-top: 40px;
+  }
+
+  h1 {
+    border-bottom: 1px solid #cf0000;
+    color: #cf0000;
+    font-size: 52px;
+
+    height: 120px;
+    position: relative;
+  }
+
+  h2 {
+    font-size: 36px;
+    letter-spacing: -2px;
+    margin: 8px 0 2px;
+    padding: 5px 0 2px;
+  }
+
+}

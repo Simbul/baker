@@ -135,21 +135,11 @@
 }
 
 - (void)configureNavigationBar {
-    
     UICustomNavigationBar *navigationBar = (UICustomNavigationBar*)self.rootNavigationController.navigationBar;
-    if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0")) {
-        // Background is 64px high: in iOS7, it will be used as the background for the status bar as well.
-        navigationBar.tintColor = [UIColor colorWithHexString:ISSUES_ACTION_BUTTON_BACKGROUND_COLOR];
-        navigationBar.barTintColor = [UIColor colorWithHexString:@"ffffff"];
-        [navigationBar setBackgroundImage:[UIImage imageNamed:@"navigation-bar-bg"] forBarMetrics:UIBarMetricsDefault];
-        navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName: [UIColor colorWithHexString:@"000000"]};
-    } else {
-        // Background is 44px: in iOS6 and below, a higher background image would make the navigation bar
-        // appear higher than it should be.
-        [navigationBar setBackgroundImage:[UIImage imageNamed:@"navigation-bar-bg-ios6"] forBarMetrics:UIBarMetricsDefault];
-        navigationBar.tintColor = [UIColor colorWithHexString:@"333333"]; // black will not trigger a pushed status
-    }
-
+    navigationBar.tintColor           = [UIColor colorWithHexString:ISSUES_ACTION_BUTTON_BACKGROUND_COLOR];
+    navigationBar.barTintColor        = [UIColor colorWithHexString:@"ffffff"];
+    navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName: [UIColor colorWithHexString:@"000000"]};
+    [navigationBar setBackgroundImage:[UIImage imageNamed:@"navigation-bar-bg"] forBarMetrics:UIBarMetricsDefault];
 }
 
 - (void)configureAnalytics {
