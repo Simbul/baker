@@ -51,8 +51,8 @@
 		ABF23B1D1708418E003AA3B0 /* BKRBakerAPI.m in Sources */ = {isa = PBXBuildFile; fileRef = ABF23B1C1708418E003AA3B0 /* BKRBakerAPI.m */; };
 		BF0785EB1794AF4000EB988E /* info in Resources */ = {isa = PBXBuildFile; fileRef = BF0785EA1794AF4000EB988E /* info */; };
 		BF78D1B0180C8F070093DFBC /* BakerAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BF78D1AF180C8F070093DFBC /* BakerAssets.xcassets */; };
-		BFAB78D317B2A67E00E91ADE /* BKRAnalyticsEvents.m in Sources */ = {isa = PBXBuildFile; fileRef = BFAB78D217B2A67E00E91ADE /* BKRAnalyticsEvents.m */; };
 		C62D23371A0A710B003A26D2 /* BKRSettings.m in Sources */ = {isa = PBXBuildFile; fileRef = C62D23361A0A710B003A26D2 /* BKRSettings.m */; };
+		C62D233F1A0A71DC003A26D2 /* BKRAnalyticsEvents.m in Sources */ = {isa = PBXBuildFile; fileRef = C62D233E1A0A71DC003A26D2 /* BKRAnalyticsEvents.m */; };
 		C649F0981A090B6000B02548 /* BKRShelfHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = C649F0971A090B6000B02548 /* BKRShelfHeaderView.m */; };
 		C649F09B1A0912F500B02548 /* UIScreen+BakerExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = C649F09A1A0912F500B02548 /* UIScreen+BakerExtensions.m */; };
 		C649F09D1A0926CD00B02548 /* settings.plist in Resources */ = {isa = PBXBuildFile; fileRef = C649F09C1A0926CD00B02548 /* settings.plist */; };
@@ -140,10 +140,10 @@
 		ABF23B1C1708418E003AA3B0 /* BKRBakerAPI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BKRBakerAPI.m; sourceTree = "<group>"; };
 		BF0785EA1794AF4000EB988E /* info */ = {isa = PBXFileReference; lastKnownFileType = folder; path = info; sourceTree = "<group>"; };
 		BF78D1AF180C8F070093DFBC /* BakerAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = BakerAssets.xcassets; path = Baker/BakerAssets.xcassets; sourceTree = "<group>"; };
-		BFAB78D117B2A67E00E91ADE /* BKRAnalyticsEvents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BKRAnalyticsEvents.h; sourceTree = "<group>"; };
-		BFAB78D217B2A67E00E91ADE /* BKRAnalyticsEvents.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BKRAnalyticsEvents.m; sourceTree = "<group>"; };
 		C62D23351A0A710B003A26D2 /* BKRSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BKRSettings.h; sourceTree = "<group>"; };
 		C62D23361A0A710B003A26D2 /* BKRSettings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BKRSettings.m; sourceTree = "<group>"; };
+		C62D233D1A0A71DC003A26D2 /* BKRAnalyticsEvents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BKRAnalyticsEvents.h; sourceTree = "<group>"; };
+		C62D233E1A0A71DC003A26D2 /* BKRAnalyticsEvents.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BKRAnalyticsEvents.m; sourceTree = "<group>"; };
 		C649F0961A090B6000B02548 /* BKRShelfHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BKRShelfHeaderView.h; sourceTree = "<group>"; };
 		C649F0971A090B6000B02548 /* BKRShelfHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BKRShelfHeaderView.m; sourceTree = "<group>"; };
 		C649F0991A0912F500B02548 /* UIScreen+BakerExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIScreen+BakerExtensions.h"; sourceTree = "<group>"; };
@@ -203,9 +203,10 @@
 		AB40042915B4B83000D87E2A /* BakerView */ = {
 			isa = PBXGroup;
 			children = (
-				AB40042E15B4B83000D87E2A /* img */,
 				AB40043715B4B83000D87E2A /* lib */,
 				AB40045015B4B83000D87E2A /* ui */,
+				C62D233D1A0A71DC003A26D2 /* BKRAnalyticsEvents.h */,
+				C62D233E1A0A71DC003A26D2 /* BKRAnalyticsEvents.m */,
 				9F8FC1C215C55E8C0065F0A3 /* BKRBook.h */,
 				9F8FC1C315C55E8C0065F0A3 /* BKRBook.m */,
 				AB26004F16011D9D00E9AA66 /* BKRBookStatus.h */,
@@ -222,13 +223,6 @@
 				C62D23361A0A710B003A26D2 /* BKRSettings.m */,
 			);
 			path = BakerView;
-			sourceTree = "<group>";
-		};
-		AB40042E15B4B83000D87E2A /* img */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = img;
 			sourceTree = "<group>";
 		};
 		AB40043715B4B83000D87E2A /* lib */ = {
@@ -355,8 +349,6 @@
 				C649F09C1A0926CD00B02548 /* settings.plist */,
 				ABAFB59A15AB9A2E002FA498 /* BKRAppDelegate.h */,
 				ABAFB59B15AB9A2E002FA498 /* BKRAppDelegate.m */,
-				BFAB78D117B2A67E00E91ADE /* BKRAnalyticsEvents.h */,
-				BFAB78D217B2A67E00E91ADE /* BKRAnalyticsEvents.m */,
 				ABAFB59215AB9A2E002FA498 /* Supporting Files */,
 			);
 			path = Baker;
@@ -474,7 +466,7 @@
 				ABADF3F916C7BAD900F52F3C /* NSURL+BakerExtensions.m in Sources */,
 				AB67F5BA16EE99B2005A04F6 /* BKRReachability.m in Sources */,
 				ABF23B1D1708418E003AA3B0 /* BKRBakerAPI.m in Sources */,
-				BFAB78D317B2A67E00E91ADE /* BKRAnalyticsEvents.m in Sources */,
+				C62D233F1A0A71DC003A26D2 /* BKRAnalyticsEvents.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
