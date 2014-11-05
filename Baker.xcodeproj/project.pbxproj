@@ -19,7 +19,7 @@
 		AB40045315B4B83000D87E2A /* BKRBookViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40042B15B4B83000D87E2A /* BKRBookViewController.m */; };
 		AB40045F15B4B83000D87E2A /* BKRIndexViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40043415B4B83000D87E2A /* BKRIndexViewController.m */; };
 		AB40046115B4B83000D87E2A /* BKRInterceptorWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40043615B4B83000D87E2A /* BKRInterceptorWindow.m */; };
-		AB40046315B4B83000D87E2A /* GTMNSString+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40043A15B4B83000D87E2A /* GTMNSString+HTML.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		AB40046315B4B83000D87E2A /* GTMNSString+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40043A15B4B83000D87E2A /* GTMNSString+HTML.m */; };
 		AB40047115B4B83000D87E2A /* BKRUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40044B15B4B83000D87E2A /* BKRUtils.m */; };
 		AB40047315B4B83000D87E2A /* BKRModalWebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40044D15B4B83000D87E2A /* BKRModalWebViewController.m */; };
 		AB40047715B4B83000D87E2A /* BKRPageTitleLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40045215B4B83000D87E2A /* BKRPageTitleLabel.m */; };

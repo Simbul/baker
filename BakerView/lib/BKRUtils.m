@@ -121,7 +121,7 @@
 }
 
 + (void)webView:(UIWebView*)webView dispatchHTMLEvent:(NSString*)event withParams:(NSDictionary*)params {
-    __weak NSMutableString *jsDispatchEvent = [NSMutableString stringWithFormat:
+    NSMutableString *jsDispatchEvent = [NSMutableString stringWithFormat:
                                                 @"var bakerDispatchedEvent = document.createEvent('Events');\
                                                 bakerDispatchedEvent.initEvent('%@', false, false);", event];
     [params enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
