@@ -35,7 +35,6 @@
 #import <AVFoundation/AVFoundation.h>
 
 #import "BKRBookViewController.h"
-#import "BKRZipArchive.h"
 #import "BKRPageTitleLabel.h"
 #import "BKRUtils.h"
 #import "NSObject+BakerExtensions.h"

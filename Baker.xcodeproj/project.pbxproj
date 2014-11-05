@@ -20,11 +20,6 @@
 		AB40045F15B4B83000D87E2A /* BKRIndexViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40043415B4B83000D87E2A /* BKRIndexViewController.m */; };
 		AB40046115B4B83000D87E2A /* BKRInterceptorWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40043615B4B83000D87E2A /* BKRInterceptorWindow.m */; };
 		AB40046315B4B83000D87E2A /* GTMNSString+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40043A15B4B83000D87E2A /* GTMNSString+HTML.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		AB40046715B4B83000D87E2A /* ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = AB40044015B4B83000D87E2A /* ioapi.c */; };
-		AB40046915B4B83000D87E2A /* mztools.c in Sources */ = {isa = PBXBuildFile; fileRef = AB40044215B4B83000D87E2A /* mztools.c */; };
-		AB40046B15B4B83000D87E2A /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = AB40044415B4B83000D87E2A /* unzip.c */; };
-		AB40046D15B4B83000D87E2A /* zip.c in Sources */ = {isa = PBXBuildFile; fileRef = AB40044615B4B83000D87E2A /* zip.c */; };
-		AB40046F15B4B83000D87E2A /* BKRZipArchive.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40044915B4B83000D87E2A /* BKRZipArchive.m */; };
 		AB40047115B4B83000D87E2A /* BKRUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40044B15B4B83000D87E2A /* BKRUtils.m */; };
 		AB40047315B4B83000D87E2A /* BKRModalWebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40044D15B4B83000D87E2A /* BKRModalWebViewController.m */; };
 		AB40047715B4B83000D87E2A /* BKRPageTitleLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = AB40045215B4B83000D87E2A /* BKRPageTitleLabel.m */; };
@@ -53,6 +48,11 @@
 		BF78D1B0180C8F070093DFBC /* BakerAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BF78D1AF180C8F070093DFBC /* BakerAssets.xcassets */; };
 		C62D23371A0A710B003A26D2 /* BKRSettings.m in Sources */ = {isa = PBXBuildFile; fileRef = C62D23361A0A710B003A26D2 /* BKRSettings.m */; };
 		C62D233F1A0A71DC003A26D2 /* BKRAnalyticsEvents.m in Sources */ = {isa = PBXBuildFile; fileRef = C62D233E1A0A71DC003A26D2 /* BKRAnalyticsEvents.m */; };
+		C62D23541A0A748A003A26D2 /* BKRZipArchive.m in Sources */ = {isa = PBXBuildFile; fileRef = C62D23491A0A748A003A26D2 /* BKRZipArchive.m */; };
+		C62D23551A0A748A003A26D2 /* ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = C62D234C1A0A748A003A26D2 /* ioapi.c */; };
+		C62D23561A0A748A003A26D2 /* mztools.c in Sources */ = {isa = PBXBuildFile; fileRef = C62D234E1A0A748A003A26D2 /* mztools.c */; };
+		C62D23571A0A748A003A26D2 /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = C62D23501A0A748A003A26D2 /* unzip.c */; };
+		C62D23581A0A748A003A26D2 /* zip.c in Sources */ = {isa = PBXBuildFile; fileRef = C62D23521A0A748A003A26D2 /* zip.c */; };
 		C649F0981A090B6000B02548 /* BKRShelfHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = C649F0971A090B6000B02548 /* BKRShelfHeaderView.m */; };
 		C649F09B1A0912F500B02548 /* UIScreen+BakerExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = C649F09A1A0912F500B02548 /* UIScreen+BakerExtensions.m */; };
 		C649F09D1A0926CD00B02548 /* settings.plist in Resources */ = {isa = PBXBuildFile; fileRef = C649F09C1A0926CD00B02548 /* settings.plist */; };
@@ -87,17 +87,6 @@
 		AB40043815B4B83000D87E2A /* GTMDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTMDefines.h; sourceTree = "<group>"; };
 		AB40043915B4B83000D87E2A /* GTMNSString+HTML.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "GTMNSString+HTML.h"; sourceTree = "<group>"; };
 		AB40043A15B4B83000D87E2A /* GTMNSString+HTML.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "GTMNSString+HTML.m"; sourceTree = "<group>"; };
-		AB40043F15B4B83000D87E2A /* crypt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypt.h; sourceTree = "<group>"; };
-		AB40044015B4B83000D87E2A /* ioapi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ioapi.c; sourceTree = "<group>"; };
-		AB40044115B4B83000D87E2A /* ioapi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ioapi.h; sourceTree = "<group>"; };
-		AB40044215B4B83000D87E2A /* mztools.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mztools.c; sourceTree = "<group>"; };
-		AB40044315B4B83000D87E2A /* mztools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mztools.h; sourceTree = "<group>"; };
-		AB40044415B4B83000D87E2A /* unzip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = unzip.c; sourceTree = "<group>"; };
-		AB40044515B4B83000D87E2A /* unzip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = unzip.h; sourceTree = "<group>"; };
-		AB40044615B4B83000D87E2A /* zip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = zip.c; sourceTree = "<group>"; };
-		AB40044715B4B83000D87E2A /* zip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = zip.h; sourceTree = "<group>"; };
-		AB40044815B4B83000D87E2A /* BKRZipArchive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BKRZipArchive.h; sourceTree = "<group>"; };
-		AB40044915B4B83000D87E2A /* BKRZipArchive.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BKRZipArchive.m; sourceTree = "<group>"; };
 		AB40044A15B4B83000D87E2A /* BKRUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BKRUtils.h; sourceTree = "<group>"; };
 		AB40044B15B4B83000D87E2A /* BKRUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BKRUtils.m; sourceTree = "<group>"; };
 		AB40044C15B4B83000D87E2A /* BKRModalWebViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BKRModalWebViewController.h; sourceTree = "<group>"; };
@@ -145,6 +134,17 @@
 		C62D233D1A0A71DC003A26D2 /* BKRAnalyticsEvents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BKRAnalyticsEvents.h; sourceTree = "<group>"; };
 		C62D233E1A0A71DC003A26D2 /* BKRAnalyticsEvents.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BKRAnalyticsEvents.m; sourceTree = "<group>"; };
 		C62D23451A0A73A9003A26D2 /* BKRCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BKRCore.h; sourceTree = "<group>"; };
+		C62D23481A0A748A003A26D2 /* BKRZipArchive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BKRZipArchive.h; sourceTree = "<group>"; };
+		C62D23491A0A748A003A26D2 /* BKRZipArchive.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BKRZipArchive.m; sourceTree = "<group>"; };
+		C62D234B1A0A748A003A26D2 /* crypt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypt.h; sourceTree = "<group>"; };
+		C62D234C1A0A748A003A26D2 /* ioapi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ioapi.c; sourceTree = "<group>"; };
+		C62D234D1A0A748A003A26D2 /* ioapi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ioapi.h; sourceTree = "<group>"; };
+		C62D234E1A0A748A003A26D2 /* mztools.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mztools.c; sourceTree = "<group>"; };
+		C62D234F1A0A748A003A26D2 /* mztools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mztools.h; sourceTree = "<group>"; };
+		C62D23501A0A748A003A26D2 /* unzip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = unzip.c; sourceTree = "<group>"; };
+		C62D23511A0A748A003A26D2 /* unzip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = unzip.h; sourceTree = "<group>"; };
+		C62D23521A0A748A003A26D2 /* zip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = zip.c; sourceTree = "<group>"; };
+		C62D23531A0A748A003A26D2 /* zip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = zip.h; sourceTree = "<group>"; };
 		C649F0961A090B6000B02548 /* BKRShelfHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BKRShelfHeaderView.h; sourceTree = "<group>"; };
 		C649F0971A090B6000B02548 /* BKRShelfHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BKRShelfHeaderView.m; sourceTree = "<group>"; };
 		C649F0991A0912F500B02548 /* UIScreen+BakerExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIScreen+BakerExtensions.h"; sourceTree = "<group>"; };
@@ -191,6 +191,9 @@
 			children = (
 				AB67F5B816EE99B2005A04F6 /* BKRReachability.h */,
 				AB67F5B916EE99B2005A04F6 /* BKRReachability.m */,
+				C62D23481A0A748A003A26D2 /* BKRZipArchive.h */,
+				C62D23491A0A748A003A26D2 /* BKRZipArchive.m */,
+				C62D234A1A0A748A003A26D2 /* minizip */,
 				ABD6FC3E16544EAD0032BC44 /* NSData+BakerExtensions.h */,
 				ABD6FC3F16544EAD0032BC44 /* NSData+BakerExtensions.m */,
 				AB246A2F16C5BC6E00715E25 /* NSMutableURLRequest+BakerExtensions.h */,
@@ -234,12 +237,9 @@
 				ABDC05AE16A4C42A00F6B63D /* BKRJSONStatus.m */,
 				AB40044A15B4B83000D87E2A /* BKRUtils.h */,
 				AB40044B15B4B83000D87E2A /* BKRUtils.m */,
-				AB40044815B4B83000D87E2A /* BKRZipArchive.h */,
-				AB40044915B4B83000D87E2A /* BKRZipArchive.m */,
 				AB40043815B4B83000D87E2A /* GTMDefines.h */,
 				AB40043915B4B83000D87E2A /* GTMNSString+HTML.h */,
 				AB40043A15B4B83000D87E2A /* GTMNSString+HTML.m */,
-				AB40043E15B4B83000D87E2A /* minizip */,
 				C66857A21A07DDBE00776443 /* NSObject+BakerExtensions.h */,
 				C66857A31A07DDBE00776443 /* NSObject+BakerExtensions.m */,
 				C668579C1A07D38300776443 /* NSString+BakerExtensions.h */,
@@ -250,22 +250,6 @@
 				C649F09A1A0912F500B02548 /* UIScreen+BakerExtensions.m */,
 			);
 			path = lib;
-			sourceTree = "<group>";
-		};
-		AB40043E15B4B83000D87E2A /* minizip */ = {
-			isa = PBXGroup;
-			children = (
-				AB40043F15B4B83000D87E2A /* crypt.h */,
-				AB40044015B4B83000D87E2A /* ioapi.c */,
-				AB40044115B4B83000D87E2A /* ioapi.h */,
-				AB40044215B4B83000D87E2A /* mztools.c */,
-				AB40044315B4B83000D87E2A /* mztools.h */,
-				AB40044415B4B83000D87E2A /* unzip.c */,
-				AB40044515B4B83000D87E2A /* unzip.h */,
-				AB40044615B4B83000D87E2A /* zip.c */,
-				AB40044715B4B83000D87E2A /* zip.h */,
-			);
-			path = minizip;
 			sourceTree = "<group>";
 		};
 		AB40045015B4B83000D87E2A /* ui */ = {
@@ -367,6 +351,22 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		C62D234A1A0A748A003A26D2 /* minizip */ = {
+			isa = PBXGroup;
+			children = (
+				C62D234B1A0A748A003A26D2 /* crypt.h */,
+				C62D234C1A0A748A003A26D2 /* ioapi.c */,
+				C62D234D1A0A748A003A26D2 /* ioapi.h */,
+				C62D234E1A0A748A003A26D2 /* mztools.c */,
+				C62D234F1A0A748A003A26D2 /* mztools.h */,
+				C62D23501A0A748A003A26D2 /* unzip.c */,
+				C62D23511A0A748A003A26D2 /* unzip.h */,
+				C62D23521A0A748A003A26D2 /* zip.c */,
+				C62D23531A0A748A003A26D2 /* zip.h */,
+			);
+			path = minizip;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -432,18 +432,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C62D23541A0A748A003A26D2 /* BKRZipArchive.m in Sources */,
 				ABAFB59815AB9A2E002FA498 /* main.m in Sources */,
 				ABAFB59C15AB9A2E002FA498 /* BKRAppDelegate.m in Sources */,
 				AB40045315B4B83000D87E2A /* BKRBookViewController.m in Sources */,
 				AB40045F15B4B83000D87E2A /* BKRIndexViewController.m in Sources */,
 				AB40046115B4B83000D87E2A /* BKRInterceptorWindow.m in Sources */,
+				C62D23571A0A748A003A26D2 /* unzip.c in Sources */,
 				AB40046315B4B83000D87E2A /* GTMNSString+HTML.m in Sources */,
-				AB40046715B4B83000D87E2A /* ioapi.c in Sources */,
-				AB40046915B4B83000D87E2A /* mztools.c in Sources */,
-				AB40046B15B4B83000D87E2A /* unzip.c in Sources */,
 				C66857A41A07DDBE00776443 /* NSObject+BakerExtensions.m in Sources */,
-				AB40046D15B4B83000D87E2A /* zip.c in Sources */,
-				AB40046F15B4B83000D87E2A /* BKRZipArchive.m in Sources */,
 				C649F0981A090B6000B02548 /* BKRShelfHeaderView.m in Sources */,
 				AB40047115B4B83000D87E2A /* BKRUtils.m in Sources */,
 				C66857A01A07D38300776443 /* NSString+BakerExtensions.m in Sources */,
@@ -458,15 +455,18 @@
 				ABD7D45F1616FC5B008B13B5 /* BKRIssue.m in Sources */,
 				ABC270D11616F3CB00AD97E9 /* BKRIssuesManager.m in Sources */,
 				ABD24C1E1620309B0042E49C /* BKRIssueViewController.m in Sources */,
+				C62D23551A0A748A003A26D2 /* ioapi.c in Sources */,
 				ABD6FC4016544EAD0032BC44 /* NSData+BakerExtensions.m in Sources */,
 				AB2317D4169F808000BE3BE7 /* BKRPurchasesManager.m in Sources */,
 				ABDC05AF16A4C42A00F6B63D /* BKRJSONStatus.m in Sources */,
 				C649F09B1A0912F500B02548 /* UIScreen+BakerExtensions.m in Sources */,
 				ABDC05B216A4CB3900F6B63D /* BKRShelfStatus.m in Sources */,
 				AB246A3116C5BC6E00715E25 /* NSMutableURLRequest+BakerExtensions.m in Sources */,
+				C62D23561A0A748A003A26D2 /* mztools.c in Sources */,
 				C62D23371A0A710B003A26D2 /* BKRSettings.m in Sources */,
 				ABADF3F916C7BAD900F52F3C /* NSURL+BakerExtensions.m in Sources */,
 				AB67F5BA16EE99B2005A04F6 /* BKRReachability.m in Sources */,
+				C62D23581A0A748A003A26D2 /* zip.c in Sources */,
 				ABF23B1D1708418E003AA3B0 /* BKRBakerAPI.m in Sources */,
 				C62D233F1A0A71DC003A26D2 /* BKRAnalyticsEvents.m in Sources */,
 			);
