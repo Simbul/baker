@@ -144,6 +144,7 @@
 		C62D23361A0A710B003A26D2 /* BKRSettings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BKRSettings.m; sourceTree = "<group>"; };
 		C62D233D1A0A71DC003A26D2 /* BKRAnalyticsEvents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BKRAnalyticsEvents.h; sourceTree = "<group>"; };
 		C62D233E1A0A71DC003A26D2 /* BKRAnalyticsEvents.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BKRAnalyticsEvents.m; sourceTree = "<group>"; };
+		C62D23451A0A73A9003A26D2 /* BKRCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BKRCore.h; sourceTree = "<group>"; };
 		C649F0961A090B6000B02548 /* BKRShelfHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BKRShelfHeaderView.h; sourceTree = "<group>"; };
 		C649F0971A090B6000B02548 /* BKRShelfHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BKRShelfHeaderView.m; sourceTree = "<group>"; };
 		C649F0991A0912F500B02548 /* UIScreen+BakerExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIScreen+BakerExtensions.h"; sourceTree = "<group>"; };
@@ -205,6 +206,7 @@
 			children = (
 				AB40043715B4B83000D87E2A /* lib */,
 				AB40045015B4B83000D87E2A /* ui */,
+				C62D23451A0A73A9003A26D2 /* BKRCore.h */,
 				C62D233D1A0A71DC003A26D2 /* BKRAnalyticsEvents.h */,
 				C62D233E1A0A71DC003A26D2 /* BKRAnalyticsEvents.m */,
 				9F8FC1C215C55E8C0065F0A3 /* BKRBook.h */,

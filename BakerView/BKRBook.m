@@ -30,6 +30,7 @@
 //  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
+#import "BKRCore.h"
 #import "BKRBook.h"
 #import "NSString+BakerExtensions.h"
 
@@ -60,6 +61,7 @@
     NSError* error = nil;
     NSData* bookJSON = [NSData dataWithContentsOfFile:bookJSONPath options:0 error:&error];
     if (error) {
+        self.parseError = [NSString stringWithFormat:@"ERROR: reading 'book.json': %@", error.localizedDescription];
         NSLog(@"[BakerBook] ERROR reading 'book.json': %@", error.localizedDescription);
         return nil;
     }
@@ -68,6 +70,7 @@
                                                              options:0
                                                                error:&error];
     if (error) {
+        self.parseError = [NSString stringWithFormat:@"ERROR: reading 'book.json': %@", error.localizedDescription];
         NSLog(@"[BakerBook] ERROR parsing 'book.json': %@", error.localizedDescription);
         return nil;
     }
@@ -211,6 +214,10 @@
 
 
 #pragma mark - HPub validation
+
+- (BOOL)isValid {
+    return BKR_IsEmpty(self.parseError);
+}
 
 - (BOOL)validateBookJSON:(NSDictionary*)bookData withRequirements:(NSArray*)requirements {
     for (NSString *param in requirements) {

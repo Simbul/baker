@@ -37,6 +37,7 @@
 #pragma mark - HPub Parameters Properties
 
 @property (nonatomic, strong) NSDictionary *bookData;
+@property (copy, nonatomic) NSString *parseError;
 
 @property (nonatomic, copy) NSNumber *hpub;
 @property (nonatomic, copy) NSString *title;
@@ -95,6 +96,7 @@
 
 #pragma mark - HPub validation
 
+- (BOOL)isValid;
 - (BOOL)validateBookJSON:(NSDictionary *)bookData withRequirements:(NSArray *)requirements;
 - (BOOL)validateArray:(NSArray *)array forParam:(NSString *)param withParamsArray:(NSArray*)paramsArray;
 - (BOOL)validateString:(NSString *)string forParam:(NSString *)param withParamsArray:(NSArray*)paramsArray;
