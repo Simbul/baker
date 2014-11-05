@@ -1,5 +1,5 @@
 //
-//  main.m
+//  BakerBookStatus.m
 //  Baker
 //
 //  ==========================================================================================
@@ -30,12 +30,26 @@
 //  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-#import <UIKit/UIKit.h>
+#import "BKRBookStatus.h"
+#import "NSObject+BakerExtensions.h"
 
-#import "BKRAppDelegate.h"
+@implementation BKRBookStatus
 
-int main(int argc, char *argv[]) {
-    @autoreleasepool {
-        return UIApplicationMain(argc, argv, nil, NSStringFromClass([BKRAppDelegate class]));
-    }
+- (id)initWithBookId:(NSString*)bookId {
+    NSString *statusPath = [[[self.bkrCachePath stringByAppendingPathComponent:@"statuses"] stringByAppendingPathComponent:bookId] stringByAppendingPathExtension:@"json"];
+    return [super initWithJSONPath:statusPath];
 }
+
+- (NSDictionary*)load {
+    NSDictionary *jsonDict = [super load];
+    self.page        = jsonDict[@"page"];
+    self.scrollIndex = jsonDict[@"scroll-index"];
+    return jsonDict;
+}
+
+- (void)save {
+    NSDictionary *jsonDict = @{@"page": self.page, @"scroll-index": self.scrollIndex};
+    [super save:jsonDict];
+}
+
+@end

@@ -1,5 +1,5 @@
 //
-//  main.m
+//  NSString+Extensions.h
 //  Baker
 //
 //  ==========================================================================================
@@ -30,12 +30,52 @@
 //  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-#import <UIKit/UIKit.h>
+#import <CommonCrypto/CommonDigest.h>
+#import "NSString+BakerExtensions.h"
 
-#import "BKRAppDelegate.h"
+@implementation NSString (BakerExtensions)
 
-int main(int argc, char *argv[]) {
-    @autoreleasepool {
-        return UIApplicationMain(argc, argv, nil, NSStringFromClass([BKRAppDelegate class]));
+#pragma mark - SHA management
+
+- (NSString*)bkrStringSHAEncoded {
+    const char *src = [self UTF8String];
+    unsigned char result[CC_SHA1_DIGEST_LENGTH];
+
+    CC_SHA1(src, (int)strlen(src), result);
+    NSMutableString *sha = [NSMutableString stringWithCapacity:CC_SHA1_DIGEST_LENGTH * 2];
+
+    for (int i = 0; i < 8; i++) {
+        if (result[i]) [sha appendFormat:@"%02X", result[i]];
     }
+
+    return sha;
 }
+
++ (NSString*)bkrEncodeSHAString:(NSString*)str {
+    return [str bkrStringSHAEncoded];
+}
+
++ (NSString*)bkrStringFromInterfaceOrientation:(UIInterfaceOrientation)orientation {
+    switch (orientation) {
+		case UIInterfaceOrientationPortrait:           return @"UIInterfaceOrientationPortrait";
+		case UIInterfaceOrientationPortraitUpsideDown: return @"UIInterfaceOrientationPortraitUpsideDown";
+		case UIInterfaceOrientationLandscapeLeft:      return @"UIInterfaceOrientationLandscapeLeft";
+		case UIInterfaceOrientationLandscapeRight:     return @"UIInterfaceOrientationLandscapeRight";
+        case UIInterfaceOrientationUnknown:            return @"UIInterfaceOrientationUnknown";
+	}
+	return nil;
+}
+
+#pragma mark - UUID
+
++ (NSString*)bkrUUID {
+    NSString *uuidString = nil;
+    CFUUIDRef uuid = CFUUIDCreate(NULL);
+    if (uuid) {
+        uuidString = (NSString *)CFBridgingRelease(CFUUIDCreateString(NULL, uuid));
+        CFRelease(uuid);
+    }
+    return uuidString;
+}
+
+@end

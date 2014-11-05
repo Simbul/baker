@@ -1,5 +1,5 @@
 //
-//  main.m
+//  NSString+Extensions.h
 //  Baker
 //
 //  ==========================================================================================
@@ -30,12 +30,14 @@
 //  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
 
-#import "BKRAppDelegate.h"
+@interface BKRJSONStatus : NSObject
 
-int main(int argc, char *argv[]) {
-    @autoreleasepool {
-        return UIApplicationMain(argc, argv, nil, NSStringFromClass([BKRAppDelegate class]));
-    }
-}
+@property (nonatomic, copy) NSString *path;
+
+- (id)initWithJSONPath:(NSString*)JSONPath;
+- (void)save:(NSDictionary*)status;
+- (NSDictionary*)load;
+
+@end

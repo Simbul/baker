@@ -1,11 +1,12 @@
 //
-//  main.m
+//  NSMutableURLRequest+WebServiceClient.m
 //  Baker
+//  See: http://stackoverflow.com/a/1289735/551557
 //
 //  ==========================================================================================
 //
 //  Copyright (c) 2010-2013, Davide Casali, Marco Colombo, Alessandro Morandi
-//  Copyright (c) 2014, Andrew Krowczyk, Cédric Mériau, Pieter Claerhout
+//  Copyright (c) 2014, Andrew Krowczyk, Cédric Mériau
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without modification, are
@@ -30,12 +31,38 @@
 //  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-#import <UIKit/UIKit.h>
+#import "NSMutableURLRequest+BakerExtensions.h"
 
-#import "BKRAppDelegate.h"
+@implementation NSMutableURLRequest (BakerExtensions)
 
-int main(int argc, char *argv[]) {
-    @autoreleasepool {
-        return UIApplicationMain(argc, argv, nil, NSStringFromClass([BKRAppDelegate class]));
++ (NSString*)bkrEncodeFormPostParameters:(NSDictionary*)parameters {
+    NSMutableString *formPostParams = [[NSMutableString alloc] init];
+
+    NSEnumerator *keys = [parameters keyEnumerator];
+
+    NSString *name = [keys nextObject];
+    while (nil != name) {
+        NSString *encodedValue = ((NSString *) CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef) [parameters objectForKey: name], NULL, CFSTR("=/:"), kCFStringEncodingUTF8)));
+
+        [formPostParams appendString: name];
+        [formPostParams appendString: @"="];
+        [formPostParams appendString: encodedValue];
+
+        name = [keys nextObject];
+
+        if (nil != name) {
+            [formPostParams appendString: @"&"];
+        }
     }
+
+    return formPostParams;
 }
+
+- (void)bkrSetFormPostParameters:(NSDictionary*)parameters {
+    NSString *formPostParams = [NSMutableURLRequest bkrEncodeFormPostParameters: parameters];
+
+    [self setHTTPBody: [formPostParams dataUsingEncoding: NSUTF8StringEncoding]];
+    [self setValue: @"application/x-www-form-urlencoded; charset=utf-8" forHTTPHeaderField: @"Content-Type"];
+}
+
+@end

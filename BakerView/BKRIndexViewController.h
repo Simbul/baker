@@ -1,5 +1,5 @@
 //
-//  main.m
+//  IndexViewController.h
 //  Baker
 //
 //  ==========================================================================================
@@ -31,11 +31,46 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "BKRBook.h"
 
-#import "BKRAppDelegate.h"
+@interface BKRIndexViewController : UIViewController <UIWebViewDelegate> {
 
-int main(int argc, char *argv[]) {
-    @autoreleasepool {
-        return UIApplicationMain(argc, argv, nil, NSStringFromClass([BKRAppDelegate class]));
-    }
+    NSString *fileName;
+    UIScrollView *indexScrollView;
+    UIViewController <UIWebViewDelegate> *webViewDelegate;
+
+    int pageY;
+    int pageWidth;
+    int pageHeight;
+    int indexWidth;
+    int indexHeight;
+    int actualIndexWidth;
+    int actualIndexHeight;
+
+    BOOL disabled;
+    BOOL loadedFromBundle;
+
+    CGSize cachedContentSize;
 }
+
+@property (nonatomic, strong) BKRBook *book;
+
+- (id)initWithBook:(BKRBook*)bakerBook fileName:(NSString*)name webViewDelegate:(UIViewController*)delegate;
+- (void)loadContent;
+- (void)setBounceForWebView:(UIWebView*)webView bounces:(BOOL)bounces;
+- (void)setPageSizeForOrientation:(UIInterfaceOrientation)orientation;
+- (BOOL)isIndexViewHidden;
+- (BOOL)isDisabled;
+- (void)setIndexViewHidden:(BOOL)hidden withAnimation:(BOOL)animation;
+- (void)willRotate;
+- (void)rotateFromOrientation:(UIInterfaceOrientation)fromInterfaceOrientation toOrientation:(UIInterfaceOrientation)toInterfaceOrientation;
+- (void)fadeOut;
+- (void)fadeIn;
+- (BOOL)stickToLeft;
+- (CGSize)sizeFromContentOf:(UIView*)view;
+- (void)setActualSize;
+- (void)adjustIndexView;
+- (void)setViewFrame:(CGRect)frame;
+- (NSString*)indexPath;
+
+@end

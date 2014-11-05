@@ -1,5 +1,5 @@
 //
-//  main.m
+//  IssuesManager.h
 //  Baker
 //
 //  ==========================================================================================
@@ -30,12 +30,23 @@
 //  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
+#import <NewsstandKit/NewsstandKit.h>
+#import "BKRIssue.h"
 
-#import "BKRAppDelegate.h"
+@interface BKRIssuesManager : NSObject
 
-int main(int argc, char *argv[]) {
-    @autoreleasepool {
-        return UIApplicationMain(argc, argv, nil, NSStringFromClass([BKRAppDelegate class]));
-    }
-}
+@property (nonatomic, copy) NSArray *issues;
+@property (nonatomic, strong) NSString *shelfManifestPath;
+
+#pragma mark - Singleton
+
++ (BKRIssuesManager*)sharedInstance;
+
+- (void)refresh:(void (^)(BOOL))callback;
+- (NSSet*)productIDs;
+- (BOOL)hasProductIDs;
+- (BKRIssue*)latestIssue;
++ (NSArray*)localBooksList;
+
+@end

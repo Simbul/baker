@@ -1,5 +1,5 @@
 //
-//  main.m
+//  NSString+Extensions.h
 //  Baker
 //
 //  ==========================================================================================
@@ -30,12 +30,26 @@
 //  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
+#import "BKRBook.h"
 
-#import "BKRAppDelegate.h"
+// IOS VERSION COMPARISON MACROS
+#define SYSTEM_VERSION_EQUAL_TO(version)                  ([[[UIDevice currentDevice] systemVersion] compare:version options:NSNumericSearch] == NSOrderedSame)
+#define SYSTEM_VERSION_GREATER_THAN(version)              ([[[UIDevice currentDevice] systemVersion] compare:version options:NSNumericSearch] == NSOrderedDescending)
+#define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(version)  ([[[UIDevice currentDevice] systemVersion] compare:version options:NSNumericSearch] != NSOrderedAscending)
+#define SYSTEM_VERSION_LESS_THAN(version)                 ([[[UIDevice currentDevice] systemVersion] compare:version options:NSNumericSearch] == NSOrderedAscending)
+#define SYSTEM_VERSION_LESS_THAN_OR_EQUAL_TO(version)     ([[[UIDevice currentDevice] systemVersion] compare:version options:NSNumericSearch] != NSOrderedDescending)
 
-int main(int argc, char *argv[]) {
-    @autoreleasepool {
-        return UIApplicationMain(argc, argv, nil, NSStringFromClass([BKRAppDelegate class]));
-    }
-}
+@interface BKRUtils : NSObject
+
++ (UIColor*)colorWithRGBHex:(UInt32)hex;
++ (UIColor*)colorWithHexString:(NSString*)stringToConvert;
++ (NSString*)stringFromInterfaceOrientation:(UIInterfaceOrientation)orientation;
++ (BOOL)webViewShouldBePaged:(UIWebView*)webView forBook:(BKRBook*)book;
++ (NSString*)appID;
++ (NSDate*)dateWithFormattedString:(NSString*)string;
++ (void)showAlertWithTitle:(NSString*)title message:(NSString*)message buttonTitle:(NSString*)buttonTitle;
++ (void)webView:(UIWebView*)webView dispatchHTMLEvent:(NSString*)event;
++ (void)webView:(UIWebView*)webView dispatchHTMLEvent:(NSString*)event withParams:(NSDictionary*)params;
+
+@end

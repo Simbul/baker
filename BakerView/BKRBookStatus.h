@@ -1,5 +1,5 @@
 //
-//  main.m
+//  BakerBookStatus.h
 //  Baker
 //
 //  ==========================================================================================
@@ -30,12 +30,15 @@
 //  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
+#import "BKRJSONStatus.h"
 
-#import "BKRAppDelegate.h"
+@interface BKRBookStatus : BKRJSONStatus
 
-int main(int argc, char *argv[]) {
-    @autoreleasepool {
-        return UIApplicationMain(argc, argv, nil, NSStringFromClass([BKRAppDelegate class]));
-    }
-}
+@property (nonatomic, copy) NSNumber *page;
+@property (nonatomic, copy) NSString *scrollIndex;
+
+- (id)initWithBookId:(NSString*)bookId;
+- (void)save;
+
+@end

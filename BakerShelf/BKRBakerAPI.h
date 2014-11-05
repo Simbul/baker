@@ -1,5 +1,5 @@
 //
-//  main.m
+//  BakerAPI.h
 //  Baker
 //
 //  ==========================================================================================
@@ -30,12 +30,40 @@
 //  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
 
-#import "BKRAppDelegate.h"
+@interface BKRBakerAPI : NSObject
 
-int main(int argc, char *argv[]) {
-    @autoreleasepool {
-        return UIApplicationMain(argc, argv, nil, NSStringFromClass([BKRAppDelegate class]));
-    }
-}
+#pragma mark - Singleton
+
++ (BKRBakerAPI*)sharedInstance;
+
+#pragma mark - Shelf
+
+- (BOOL)canGetShelfJSON;
+- (void)getShelfJSON:(void (^)(NSData*)) callback ;
+
+#pragma mark - Purchases
+
+- (BOOL)canGetPurchasesJSON;
+- (void)getPurchasesJSON:(void (^)(NSData*)) callback ;
+
+- (BOOL)canPostPurchaseReceipt;
+- (BOOL)postPurchaseReceipt:(NSString*)receipt ofType:(NSString*)type;
+
+#pragma mark - APNS
+
+- (BOOL)canPostAPNSToken;
+- (BOOL)postAPNSToken:(NSString*)apnsToken;
+
+#pragma mark - User ID
+
++ (BOOL)generateUUIDOnce;
++ (NSString*)UUID;
+
+#pragma mark - Helpers
+
+- (NSURLRequest*)requestForURL:(NSURL*)url method:(NSString*)method;
+- (NSURLRequest*)requestForURL:(NSURL*)url parameters:(NSDictionary*)parameters method:(NSString*)method cachePolicy:(NSURLRequestCachePolicy)cachePolicy;
+
+@end

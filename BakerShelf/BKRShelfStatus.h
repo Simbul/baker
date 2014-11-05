@@ -1,5 +1,5 @@
 //
-//  main.m
+//  ShelfStatus.h
 //  Baker
 //
 //  ==========================================================================================
@@ -30,12 +30,16 @@
 //  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
+#import "BKRJSONStatus.h"
 
-#import "BKRAppDelegate.h"
+@interface BKRShelfStatus : BKRJSONStatus
 
-int main(int argc, char *argv[]) {
-    @autoreleasepool {
-        return UIApplicationMain(argc, argv, nil, NSStringFromClass([BKRAppDelegate class]));
-    }
-}
+@property (nonatomic, strong) NSMutableDictionary *prices;
+
+- (id)init;
+- (void)save;
+- (NSString*)priceFor:(NSString*)productID;
+- (void)setPrice:(NSString*)price for:(NSString*)productID;
+
+@end

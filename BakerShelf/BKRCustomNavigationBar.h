@@ -1,5 +1,5 @@
 //
-//  main.m
+//  UICustomNavigationBar.h
 //  Baker
 //
 //  ==========================================================================================
@@ -32,10 +32,9 @@
 
 #import <UIKit/UIKit.h>
 
-#import "BKRAppDelegate.h"
-
-int main(int argc, char *argv[]) {
-    @autoreleasepool {
-        return UIApplicationMain(argc, argv, nil, NSStringFromClass([BKRAppDelegate class]));
-    }
+@interface BKRCustomNavigationBar : UINavigationBar {
+    UIImageView *backgroundImageView;
+    NSMutableDictionary *backgroundImages;
 }
+
+@end

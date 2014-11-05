@@ -1,5 +1,5 @@
 //
-//  main.m
+//  BakerAnalyticsEvents.h
 //  Baker
 //
 //  ==========================================================================================
@@ -30,12 +30,20 @@
 //  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
 
-#import "BKRAppDelegate.h"
+#import "BKRBookViewController.h"
+#import "BKRShelfViewController.h"
+#import "BKRIssueViewController.h"
 
-int main(int argc, char *argv[]) {
-    @autoreleasepool {
-        return UIApplicationMain(argc, argv, nil, NSStringFromClass([BKRAppDelegate class]));
-    }
-}
+@interface BKRAnalyticsEvents : NSObject
+//{
+//    id tracker; // Can be used to reference tracking libraries (i.e. Google Analytics, ...)
+//}
+
+#pragma mark - Singleton
+
++ (BKRAnalyticsEvents*)sharedInstance;
+- (id)init;
+
+@end

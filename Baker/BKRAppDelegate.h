@@ -1,5 +1,5 @@
 //
-//  main.m
+//  AppDelegate.h
 //  Baker
 //
 //  ==========================================================================================
@@ -32,10 +32,13 @@
 
 #import <UIKit/UIKit.h>
 
-#import "BKRAppDelegate.h"
+#import "BKRInterceptorWindow.h"
+#import "BKRShelfViewController.h"
 
-int main(int argc, char *argv[]) {
-    @autoreleasepool {
-        return UIApplicationMain(argc, argv, nil, NSStringFromClass([BKRAppDelegate class]));
-    }
-}
+@interface BKRAppDelegate : UIResponder <UIApplicationDelegate>
+
+@property (nonatomic, strong) BKRInterceptorWindow *window;
+@property (nonatomic, strong) UIViewController *rootViewController;
+@property (nonatomic, strong) UINavigationController *rootNavigationController;
+
+@end

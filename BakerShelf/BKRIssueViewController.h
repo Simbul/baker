@@ -1,5 +1,5 @@
 //
-//  main.m
+//  IssueViewController.h
 //  Baker
 //
 //  ==========================================================================================
@@ -31,11 +31,61 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "BKRIssue.h"
+#import "BKRPurchasesManager.h"
 
-#import "BKRAppDelegate.h"
-
-int main(int argc, char *argv[]) {
-    @autoreleasepool {
-        return UIApplicationMain(argc, argv, nil, NSStringFromClass([BKRAppDelegate class]));
-    }
+@interface BKRIssueViewController : UIViewController {
+    NSString *currentAction;
+    BOOL purchaseDelayed;
+    BKRPurchasesManager *purchasesManager;
 }
+
+@property (nonatomic, strong) BKRIssue *issue;
+@property (nonatomic, strong) UIButton *actionButton;
+@property (nonatomic, strong) UIButton *archiveButton;
+@property (nonatomic, strong) UIProgressView *progressBar;
+@property (nonatomic, strong) UIActivityIndicatorView *spinner;
+@property (nonatomic, strong) UILabel *loadingLabel;
+
+@property (nonatomic, strong) UIButton *issueCover;
+@property (nonatomic, strong) UILabel *titleLabel;
+@property (nonatomic, strong) UILabel *infoLabel;
+
+@property (nonatomic, copy) NSString *currentStatus;
+
+#pragma mark - Structs
+typedef struct {
+    int cellPadding;
+    int thumbWidth;
+    int thumbHeight;
+    int contentOffset;
+} UI;
+
+#pragma mark - Init
+- (id)initWithBakerIssue:(BKRIssue*)bakerIssue;
+
+#pragma mark - View Lifecycle
+- (void)refresh;
+- (void)refresh:(NSString*)status;
+- (void)refreshContentWithCache:(bool)cache;
+- (void)preferredContentSizeChanged:(NSNotification*)notification;
+
+#pragma mark - Issue management
+- (void)actionButtonPressed:(UIButton*)sender;
+- (void)download;
+- (void)setPrice:(NSString*)price;
+- (void)buy;
+- (void)read;
+
+#pragma mark - Newsstand archive management
+- (void)archiveButtonPressed:(UIButton*)sender;
+
+#pragma mark - Helper methods
++ (UI)getIssueContentMeasures;
++ (int)getIssueCellHeight;
++ (CGSize)getIssueCellSizeForOrientation:(UIInterfaceOrientation)orientation;
+
+@end
+
+@interface alertView: UIAlertView <UIActionSheetDelegate>
+@end

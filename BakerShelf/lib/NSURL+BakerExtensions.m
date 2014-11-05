@@ -1,11 +1,12 @@
 //
-//  main.m
+//  NSURL+Extensions.m
 //  Baker
+//  See: http://stackoverflow.com/a/6312153/551557
 //
 //  ==========================================================================================
 //
 //  Copyright (c) 2010-2013, Davide Casali, Marco Colombo, Alessandro Morandi
-//  Copyright (c) 2014, Andrew Krowczyk, Cédric Mériau, Pieter Claerhout
+//  Copyright (c) 2014, Andrew Krowczyk, Cédric Mériau
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without modification, are
@@ -30,12 +31,19 @@
 //  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-#import <UIKit/UIKit.h>
+#import "NSURL+BakerExtensions.h"
 
-#import "BKRAppDelegate.h"
+@implementation NSURL (BakerExtensions)
 
-int main(int argc, char *argv[]) {
-    @autoreleasepool {
-        return UIApplicationMain(argc, argv, nil, NSStringFromClass([BKRAppDelegate class]));
+- (NSURL*)bkrURLByAppendingQueryString:(NSString*)queryString {
+    if (![queryString length]) {
+        return self;
     }
+
+    NSString *URLString = [[NSString alloc] initWithFormat:@"%@%@%@", [self absoluteString],
+                           [self query] ? @"&" : @"?", queryString];
+    NSURL *theURL = [NSURL URLWithString:URLString];
+    return theURL;
 }
+
+@end

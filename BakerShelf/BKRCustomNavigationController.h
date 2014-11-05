@@ -1,5 +1,5 @@
 //
-//  main.m
+//  UICustomNavigationController.h
 //  Baker
 //
 //  ==========================================================================================
@@ -32,10 +32,6 @@
 
 #import <UIKit/UIKit.h>
 
-#import "BKRAppDelegate.h"
+@interface BKRCustomNavigationController : UINavigationController
 
-int main(int argc, char *argv[]) {
-    @autoreleasepool {
-        return UIApplicationMain(argc, argv, nil, NSStringFromClass([BKRAppDelegate class]));
-    }
-}
+@end

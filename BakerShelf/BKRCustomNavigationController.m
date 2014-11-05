@@ -1,5 +1,5 @@
 //
-//  main.m
+//  UICustomNavigationController.m
 //  Baker
 //
 //  ==========================================================================================
@@ -30,12 +30,17 @@
 //  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-#import <UIKit/UIKit.h>
+#import "BKRCustomNavigationController.h"
+#import "BKRCustomNavigationBar.h"
 
-#import "BKRAppDelegate.h"
+@implementation BKRCustomNavigationController
 
-int main(int argc, char *argv[]) {
-    @autoreleasepool {
-        return UIApplicationMain(argc, argv, nil, NSStringFromClass([BKRAppDelegate class]));
-    }
+- (NSUInteger)supportedInterfaceOrientations {
+    return [self.topViewController supportedInterfaceOrientations];
 }
+
+- (BOOL)shouldAutorotate {
+    return [self.topViewController shouldAutorotate];
+}
+
+@end

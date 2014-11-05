@@ -1,5 +1,5 @@
 //
-//  main.m
+//  NSString+Extensions.h
 //  Baker
 //
 //  ==========================================================================================
@@ -30,12 +30,10 @@
 //  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
 
-#import "BKRAppDelegate.h"
+@interface NSObject (BakerExtensions)
 
-int main(int argc, char *argv[]) {
-    @autoreleasepool {
-        return UIApplicationMain(argc, argv, nil, NSStringFromClass([BKRAppDelegate class]));
-    }
-}
+- (NSString*)bkrCachePath;
+
+@end

@@ -1,5 +1,5 @@
 //
-//  main.m
+//  ModalViewController.h
 //  Baker
 //
 //  ==========================================================================================
@@ -32,10 +32,32 @@
 
 #import <UIKit/UIKit.h>
 
-#import "BKRAppDelegate.h"
+@protocol BKRModalWebViewControllerDelegate;
 
-int main(int argc, char *argv[]) {
-    @autoreleasepool {
-        return UIApplicationMain(argc, argv, nil, NSStringFromClass([BKRAppDelegate class]));
-    }
-}
+@interface BKRModalWebViewController : UIViewController <UIWebViewDelegate>
+
+@property (nonatomic, strong) NSURL *initialURL;
+@property (nonatomic, weak) id <BKRModalWebViewControllerDelegate> delegate;
+@property (nonatomic, strong) UIWebView *webView;
+@property (nonatomic, strong) UIToolbar *toolbar;
+@property (nonatomic, strong) UIBarButtonItem *btnGoBack;
+@property (nonatomic, strong) UIBarButtonItem *btnGoForward;
+@property (nonatomic, strong) UIBarButtonItem *btnReload;
+@property (nonatomic, strong) UIActivityIndicatorView *spinner;
+
+- (id)initWithURL:(NSURL*)url;
+- (void)dismissAction;
+- (void)goBack;
+- (void)goForward;
+- (void)reloadPage;
+- (void)openInSafari;
+
+@end
+
+@protocol BKRModalWebViewControllerDelegate <NSObject>
+
+- (void)closeModalWebView;
+- (void)webView:(UIWebView *)webView setCorrectOrientation:(UIInterfaceOrientation)interfaceOrientation;
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation;
+
+@end

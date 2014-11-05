@@ -1,5 +1,5 @@
 //
-//  main.m
+//  InterceptorWindow.h
 //  Baker
 //
 //  ==========================================================================================
@@ -30,12 +30,12 @@
 //  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
 
-#import "BKRAppDelegate.h"
+@interface BKRInterceptorWindow : UIWindow
 
-int main(int argc, char *argv[]) {
-    @autoreleasepool {
-        return UIApplicationMain(argc, argv, nil, NSStringFromClass([BKRAppDelegate class]));
-    }
-}
+#pragma mark - Events management
+
+- (void)interceptEvent:(UIEvent*)event;
+
+@end

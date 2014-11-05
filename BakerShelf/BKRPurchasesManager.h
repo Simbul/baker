@@ -1,5 +1,5 @@
 //
-//  main.m
+//  PurchasesManager.h
 //  Baker
 //
 //  ==========================================================================================
@@ -30,12 +30,52 @@
 //  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
+#import <StoreKit/StoreKit.h>
 
-#import "BKRAppDelegate.h"
-
-int main(int argc, char *argv[]) {
-    @autoreleasepool {
-        return UIApplicationMain(argc, argv, nil, NSStringFromClass([BKRAppDelegate class]));
-    }
+@interface BKRPurchasesManager : NSObject <SKProductsRequestDelegate, SKPaymentTransactionObserver> {
+    NSMutableDictionary *_purchases;
+    BOOL _enableProductRequestFailureNotifications;
 }
+
+@property (nonatomic, strong) NSMutableDictionary *products;
+@property (nonatomic, strong) NSNumberFormatter *numberFormatter;
+@property (nonatomic, assign) BOOL subscribed;
+
+#pragma mark - Singleton
+
++ (BKRPurchasesManager*)sharedInstance;
+
+#pragma mark - Purchased flag
+
+- (BOOL)isMarkedAsPurchased:(NSString*)productID;
+- (void)markAsPurchased:(NSString*)productID;
+
+#pragma mark - Prices and display information
+
+- (void)retrievePricesFor:(NSSet*)productIDs;
+- (void)retrievePricesFor:(NSSet*)productIDs andEnableFailureNotifications:(BOOL)enable;
+
+- (void)retrievePriceFor:(NSString*)productID;
+- (void)retrievePriceFor:(NSString*)productID andEnableFailureNotification:(BOOL)enable;
+
+- (NSString*)priceFor:(NSString*)productID;
+- (NSString*)displayTitleFor:(NSString*)productID;
+
+#pragma mark - Purchases
+
+- (BOOL)purchase:(NSString*)productID;
+- (BOOL)finishTransaction:(SKPaymentTransaction*)transaction;
+- (void)restore;
+- (void)retrievePurchasesFor:(NSSet*)productIDs withCallback:(void (^)(NSDictionary*))callback;
+- (BOOL)isPurchased:(NSString*)productID;
+
+#pragma mark - Products
+
+- (SKProduct*)productFor:(NSString*)productID;
+
+#pragma mark - Subscriptions
+
+- (BOOL)hasSubscriptions;
+
+@end

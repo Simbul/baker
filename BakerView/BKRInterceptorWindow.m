@@ -1,5 +1,5 @@
 //
-//  main.m
+//  InterceptorWindow.m
 //  Baker
 //
 //  ==========================================================================================
@@ -30,12 +30,27 @@
 //  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-#import <UIKit/UIKit.h>
+#import "BKRInterceptorWindow.h"
 
-#import "BKRAppDelegate.h"
+@implementation BKRInterceptorWindow
 
-int main(int argc, char *argv[]) {
-    @autoreleasepool {
-        return UIApplicationMain(argc, argv, nil, NSStringFromClass([BKRAppDelegate class]));
+#pragma mark - Events management
+
+- (void)sendEvent:(UIEvent*)event {
+    [super sendEvent:event];
+    [self interceptEvent:event];
+}
+
+- (void)interceptEvent:(UIEvent*)event {
+    if (event.type == UIEventTypeTouches) {
+        NSSet *touches = event.allTouches;
+        if (touches.count == 1) {
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_touch_intercepted"
+                                                                object:nil
+                                                              userInfo:@{@"touch": touches.anyObject}
+             ];
+        }
     }
 }
+
+@end

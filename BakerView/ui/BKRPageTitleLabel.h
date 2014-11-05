@@ -1,5 +1,5 @@
 //
-//  main.m
+//  PageTitleLabel.h
 //  Baker
 //
 //  ==========================================================================================
@@ -30,12 +30,12 @@
 //  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
 
-#import "BKRAppDelegate.h"
+@interface BKRPageTitleLabel : UILabel
 
-int main(int argc, char *argv[]) {
-    @autoreleasepool {
-        return UIApplicationMain(argc, argv, nil, NSStringFromClass([BKRAppDelegate class]));
-    }
-}
+- (id)initWithFile:(NSString*)path color:(UIColor*)color alpha:(float)alpha;
+- (id)initWithFileContent:(NSString*)fileContent color:(UIColor*)color alpha:(float)alpha;
+- (void)setX:(CGFloat)x Y:(CGFloat)y;
+
+@end
