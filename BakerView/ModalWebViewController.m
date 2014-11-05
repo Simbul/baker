@@ -34,8 +34,8 @@
 
 #import "ModalWebViewController.h"
 #import "UIColor+Extensions.h"
-#import "UIConstants.h"
 #import "Utils.h"
+#import "BKRSettings.h"
 
 #import "UIScreen+BakerExtensions.h"
 
@@ -77,11 +77,11 @@
     self.btnReload.enabled  = NO;
     self.btnGoForward.width = 30;
 
-    btnClose.tintColor          = [UIColor colorWithHexString:ISSUES_ACTION_BUTTON_BACKGROUND_COLOR];
-    btnAction.tintColor         = [UIColor colorWithHexString:ISSUES_ACTION_BUTTON_BACKGROUND_COLOR];
-    self.btnGoBack.tintColor    = [UIColor colorWithHexString:ISSUES_ACTION_BUTTON_BACKGROUND_COLOR];
-    self.btnGoForward.tintColor = [UIColor colorWithHexString:ISSUES_ACTION_BUTTON_BACKGROUND_COLOR];
-    self.btnReload.tintColor    = [UIColor colorWithHexString:ISSUES_ACTION_BUTTON_BACKGROUND_COLOR];
+    btnClose.tintColor          = [UIColor colorWithHexString:[BKRSettings sharedSettings].issuesActionBackgroundColor];
+    btnAction.tintColor         = [UIColor colorWithHexString:[BKRSettings sharedSettings].issuesActionBackgroundColor];
+    self.btnGoBack.tintColor    = [UIColor colorWithHexString:[BKRSettings sharedSettings].issuesActionBackgroundColor];
+    self.btnGoForward.tintColor = [UIColor colorWithHexString:[BKRSettings sharedSettings].issuesActionBackgroundColor];
+    self.btnReload.tintColor    = [UIColor colorWithHexString:[BKRSettings sharedSettings].issuesActionBackgroundColor];
 
     self.spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
     self.spinner.frame            = CGRectMake(3, 3, 25, 25);

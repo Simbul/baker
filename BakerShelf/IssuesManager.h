@@ -43,12 +43,10 @@
 
 + (IssuesManager*)sharedInstance;
 
-#ifdef BAKER_NEWSSTAND
 - (void)refresh:(void (^)(BOOL))callback;
 - (NSSet*)productIDs;
 - (BOOL)hasProductIDs;
 - (BakerIssue*)latestIssue;
-#endif
 + (NSArray*)localBooksList;
 
 @end

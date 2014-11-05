@@ -30,11 +30,9 @@
 //  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-#import "Constants.h"
 #import <Foundation/Foundation.h>
 #import <StoreKit/StoreKit.h>
 
-#ifdef BAKER_NEWSSTAND
 @interface PurchasesManager : NSObject <SKProductsRequestDelegate, SKPaymentTransactionObserver> {
     NSMutableDictionary *_purchases;
     BOOL _enableProductRequestFailureNotifications;
@@ -81,4 +79,3 @@
 - (BOOL)hasSubscriptions;
 
 @end
-#endif

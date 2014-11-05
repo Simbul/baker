@@ -31,8 +31,8 @@
 //
 
 #import "BakerAPI.h"
-#import "Constants.h"
 #import "Utils.h"
+#import "BKRSettings.h"
 
 #import "NSMutableURLRequest+WebServiceClient.h"
 #import "NSURL+Extensions.h"
@@ -177,9 +177,9 @@
     if ([method isEqualToString:@"GET"]) {
         NSString *queryString = [self queryStringFromParameters:requestParams];
         requestURL = [requestURL URLByAppendingQueryString:queryString];
-        request = [[NSURLRequest requestWithURL:requestURL cachePolicy:cachePolicy timeoutInterval:REQUEST_TIMEOUT] mutableCopy];
+        request = [[NSURLRequest requestWithURL:requestURL cachePolicy:cachePolicy timeoutInterval:[BKRSettings sharedSettings].requestTimeout] mutableCopy];
     } else if ([method isEqualToString:@"POST"]) {
-        request = [[NSMutableURLRequest alloc] initWithURL:requestURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:REQUEST_TIMEOUT];
+        request = [[NSMutableURLRequest alloc] initWithURL:requestURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:[BKRSettings sharedSettings].requestTimeout];
         [request setHTTPMethod:@"POST"];
         [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
         [request setFormPostParameters:requestParams];
@@ -258,35 +258,30 @@
 }
 
 - (NSURL*)manifestURL {
-    #ifdef BAKER_NEWSSTAND
-    if ([NEWSSTAND_MANIFEST_URL length] > 0) {
-        return [NSURL URLWithString:NEWSSTAND_MANIFEST_URL];
+    if ([BKRSettings sharedSettings].isNewsstand && [BKRSettings sharedSettings].newsstandManifestUrl.length > 0) {
+        return [NSURL URLWithString:[BKRSettings sharedSettings].newsstandManifestUrl];
     }
-    #endif
     return nil;
 }
+
 - (NSURL*)purchasesURL {
-    #ifdef BAKER_NEWSSTAND
-    if ([PURCHASES_URL length] > 0) {
-        return [NSURL URLWithString:PURCHASES_URL];
+    if ([BKRSettings sharedSettings].isNewsstand && [BKRSettings sharedSettings].purchasesUrl.length > 0) {
+        return [NSURL URLWithString:[BKRSettings sharedSettings].purchasesUrl];
     }
-    #endif
     return nil;
 }
+
 - (NSURL*)purchaseConfirmationURL {
-    #ifdef BAKER_NEWSSTAND
-    if ([PURCHASE_CONFIRMATION_URL length] > 0) {
-        return [NSURL URLWithString:PURCHASE_CONFIRMATION_URL];
+    if ([BKRSettings sharedSettings].isNewsstand && [BKRSettings sharedSettings].purchaseConfirmationUrl.length > 0) {
+        return [NSURL URLWithString:[BKRSettings sharedSettings].purchaseConfirmationUrl];
     }
-    #endif
     return nil;
 }
+
 - (NSURL*)postAPNSTokenURL {
-    #ifdef BAKER_NEWSSTAND
-    if ([POST_APNS_TOKEN_URL length] > 0) {
-        return [NSURL URLWithString:POST_APNS_TOKEN_URL];
+    if ([BKRSettings sharedSettings].isNewsstand && [BKRSettings sharedSettings].postApnsTokenUrl.length > 0) {
+        return [NSURL URLWithString:[BKRSettings sharedSettings].postApnsTokenUrl];
     }
-    #endif
     return nil;
 }
 

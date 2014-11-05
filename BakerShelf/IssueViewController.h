@@ -32,16 +32,12 @@
 
 #import <UIKit/UIKit.h>
 #import "BakerIssue.h"
-#ifdef BAKER_NEWSSTAND
 #import "PurchasesManager.h"
-#endif
 
 @interface IssueViewController : UIViewController {
     NSString *currentAction;
     BOOL purchaseDelayed;
-    #ifdef BAKER_NEWSSTAND
     PurchasesManager *purchasesManager;
-    #endif
 }
 
 @property (nonatomic, strong) BakerIssue *issue;
@@ -77,17 +73,13 @@ typedef struct {
 
 #pragma mark - Issue management
 - (void)actionButtonPressed:(UIButton*)sender;
-#ifdef BAKER_NEWSSTAND
 - (void)download;
 - (void)setPrice:(NSString*)price;
 - (void)buy;
-#endif
 - (void)read;
 
 #pragma mark - Newsstand archive management
-#ifdef BAKER_NEWSSTAND
 - (void)archiveButtonPressed:(UIButton*)sender;
-#endif
 
 #pragma mark - Helper methods
 + (UI)getIssueContentMeasures;
@@ -96,9 +88,5 @@ typedef struct {
 
 @end
 
-#ifdef BAKER_NEWSSTAND
-@interface alertView: UIAlertView <UIActionSheetDelegate> {
-
-}
+@interface alertView: UIAlertView <UIActionSheetDelegate>
 @end
-#endif

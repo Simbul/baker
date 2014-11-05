@@ -30,13 +30,10 @@
 //  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-#import "Constants.h"
 #import <Foundation/Foundation.h>
 
-#ifdef BAKER_NEWSSTAND
 #import <NewsstandKit/NewsstandKit.h>
 #import "PurchasesManager.h"
-#endif
 
 #import "BakerBook.h"
 
@@ -48,13 +45,9 @@ typedef enum transientStates {
     BakerIssueTransientStatusUnpriced
 } BakerIssueTransientStatus;
 
-#ifdef BAKER_NEWSSTAND
 @interface BakerIssue : NSObject <NSURLConnectionDownloadDelegate> {
     PurchasesManager *purchasesManager;
 }
-#else
-@interface BakerIssue : NSObject
-#endif
 
 @property (nonatomic, copy) NSString *ID;
 @property (nonatomic, copy) NSString *title;
@@ -83,10 +76,8 @@ typedef enum transientStates {
 - (void)getCoverWithCache:(bool)cache andBlock:(void(^)(UIImage *img))completionBlock;
 - (NSString*)getStatus;
 
-#ifdef BAKER_NEWSSTAND
 - (id)initWithIssueData:(NSDictionary*)issueData;
 - (void)download;
 - (void)downloadWithAsset:(NKAssetDownload*)asset;
-#endif
 
 @end

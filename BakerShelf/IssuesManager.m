@@ -60,7 +60,6 @@
     return sharedInstance;
 }
 
-#ifdef BAKER_NEWSSTAND
 - (void)refresh:(void (^)(BOOL))callback {
     [self getShelfJSON:^(NSData *json) {
         if (json) {
@@ -202,7 +201,6 @@
 - (BakerIssue*)latestIssue {
     return self.issues[0];
 }
-#endif
 
 + (NSArray*)localBooksList {
     NSMutableArray *booksList       = [NSMutableArray array];

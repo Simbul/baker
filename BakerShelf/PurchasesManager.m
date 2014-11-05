@@ -32,13 +32,13 @@
 
 #import "PurchasesManager.h"
 #import "BakerAPI.h"
+#import "BKRSettings.h"
 
 #import "NSData+Base64.h"
 #import "NSMutableURLRequest+WebServiceClient.h"
 #import "Utils.h"
 #import "NSURL+Extensions.h"
 
-#ifdef BAKER_NEWSSTAND
 @implementation PurchasesManager
 
 - (id)init {
@@ -202,7 +202,7 @@
 
 - (NSString*)transactionType:(SKPaymentTransaction*)transaction {
     NSString *productID = transaction.payment.productIdentifier;
-    if ([productID isEqualToString:FREE_SUBSCRIPTION_PRODUCT_ID]) {
+    if ([productID isEqualToString:[BKRSettings sharedSettings].freeSubscriptionProductId]) {
         return @"free-subscription";
     } else if ([@[] containsObject:productID]) {
         return @"auto-renewable-subscription";
@@ -311,7 +311,7 @@
     NSDictionary *userInfo = @{@"transaction": transaction};
     NSString *productId = transaction.payment.productIdentifier;
 
-    if ([productId isEqualToString:FREE_SUBSCRIPTION_PRODUCT_ID] || [@[] containsObject:productId]) {
+    if ([productId isEqualToString:[BKRSettings sharedSettings].freeSubscriptionProductId] || [@[] containsObject:productId]) {
         [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_subscription_purchased" object:self userInfo:userInfo];
     } else if ([self productFor:productId]) {
         [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_issue_purchased" object:self userInfo:userInfo];
@@ -324,7 +324,7 @@
     NSDictionary *userInfo = @{@"transaction": transaction};
     NSString *productId = transaction.payment.productIdentifier;
 
-    if ([productId isEqualToString:FREE_SUBSCRIPTION_PRODUCT_ID] || [@[] containsObject:productId]) {
+    if ([productId isEqualToString:[BKRSettings sharedSettings].freeSubscriptionProductId] || [@[] containsObject:productId]) {
         [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_subscription_restored" object:self userInfo:userInfo];
     } else if ([self productFor:productId]) {
         [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_issue_restored" object:self userInfo:userInfo];
@@ -340,7 +340,7 @@
     NSDictionary *userInfo = @{@"transaction": transaction};
     NSString *productId = transaction.payment.productIdentifier;
 
-    if ([productId isEqualToString:FREE_SUBSCRIPTION_PRODUCT_ID] || [@[] containsObject:productId]) {
+    if ([productId isEqualToString:[BKRSettings sharedSettings].freeSubscriptionProductId] || [@[] containsObject:productId]) {
         [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_subscription_failed" object:self userInfo:userInfo];
     } else {
         [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_issue_purchase_failed" object:self userInfo:userInfo];
@@ -374,11 +374,10 @@
 #pragma mark - Subscriptions
 
 - (BOOL)hasSubscriptions {
-    return [FREE_SUBSCRIPTION_PRODUCT_ID length] > 0 || [@[] count] > 0;
+    return [[BKRSettings sharedSettings].freeSubscriptionProductId length] > 0 || [@[] count] > 0;
 }
 
 #pragma mark - Memory management
 
 
 @end
-#endif

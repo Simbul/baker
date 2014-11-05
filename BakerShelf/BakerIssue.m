@@ -32,6 +32,7 @@
 
 #import "BakerIssue.h"
 #import "BakerAPI.h"
+#import "BKRSettings.h"
 
 #import "SSZipArchive.h"
 #import "Reachability.h"
@@ -81,7 +82,6 @@
 
 #pragma mark - Newsstand
 
-#ifdef BAKER_NEWSSTAND
 - (id)initWithIssueData:(NSDictionary*)issueData {
     self = [super init];
     if (self) {
@@ -158,12 +158,11 @@
 }
 
 - (void)connectionDidFinishDownloading:(NSURLConnection*)connection destinationURL:(NSURL*)destinationURL {
-    #ifdef BAKER_NEWSSTAND
-    [self unpackAssetDownload:connection.newsstandAssetDownload toURL:destinationURL];
-    #endif
+    if ([BKRSettings sharedSettings].isNewsstand) {
+        [self unpackAssetDownload:connection.newsstandAssetDownload toURL:destinationURL];
+    }
 }
 
-#ifdef BAKER_NEWSSTAND
 - (void)unpackAssetDownload:(NKAssetDownload*)newsstandAssetDownload toURL:(NSURL*)destinationURL {
 
     UIApplication *application = [UIApplication sharedApplication];
@@ -215,7 +214,6 @@
         [[UIApplication sharedApplication] setNewsstandIconImage:coverImage];
     }
 }
-#endif
 
 - (void)connectionDidResumeDownloading:(NSURLConnection*)connection totalBytesWritten:(long long)totalBytesWritten expectedTotalBytes:(long long)expectedTotalBytes {
 }
@@ -228,8 +226,6 @@
     NSDictionary *userInfo = @{@"error": error};
     [[NSNotificationCenter defaultCenter] postNotificationName:self.notificationDownloadErrorName object:self userInfo:userInfo];
 }
-
-#endif
 
 - (void)getCoverWithCache:(bool)cache andBlock:(void(^)(UIImage *img))completionBlock {
     UIImage *image = [UIImage imageWithContentsOfFile:self.coverPath];
@@ -252,38 +248,38 @@
 }
 
 - (NSString*)getStatus {
-#ifdef BAKER_NEWSSTAND
-    switch (self.transientStatus) {
-        case BakerIssueTransientStatusDownloading:
-            return @"downloading";
-            break;
-        case BakerIssueTransientStatusOpening:
-            return @"opening";
-            break;
-        case BakerIssueTransientStatusPurchasing:
-            return @"purchasing";
-            break;
-        default:
-            break;
-    }
+    if ([BKRSettings sharedSettings].isNewsstand) {
+        switch (self.transientStatus) {
+            case BakerIssueTransientStatusDownloading:
+                return @"downloading";
+                break;
+            case BakerIssueTransientStatusOpening:
+                return @"opening";
+                break;
+            case BakerIssueTransientStatusPurchasing:
+                return @"purchasing";
+                break;
+            default:
+                break;
+        }
 
-    NKLibrary *nkLib = [NKLibrary sharedLibrary];
-    NKIssue *nkIssue = [nkLib issueWithName:self.ID];
-    NSString *nkIssueStatus = [self nkIssueContentStatusToString:[nkIssue status]];
-    if ([nkIssueStatus isEqualToString:@"remote"] && self.productID) {
-        if ([purchasesManager isPurchased:self.productID]) {
-            return @"purchased";
-        } else if (self.price) {
-            return @"purchasable";
+        NKLibrary *nkLib = [NKLibrary sharedLibrary];
+        NKIssue *nkIssue = [nkLib issueWithName:self.ID];
+        NSString *nkIssueStatus = [self nkIssueContentStatusToString:[nkIssue status]];
+        if ([nkIssueStatus isEqualToString:@"remote"] && self.productID) {
+            if ([purchasesManager isPurchased:self.productID]) {
+                return @"purchased";
+            } else if (self.price) {
+                return @"purchasable";
+            } else {
+                return @"unpriced";
+            }
         } else {
-            return @"unpriced";
+            return nkIssueStatus;
         }
     } else {
-        return nkIssueStatus;
+        return @"bundled";
     }
-#else
-    return @"bundled";
-#endif
 }
 
 @end

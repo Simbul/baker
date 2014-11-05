@@ -32,12 +32,10 @@
 
 #import <QuartzCore/QuartzCore.h>
 
+#import "BKRSettings.h"
 #import "IssueViewController.h"
 #import "SSZipArchive.h"
-#import "UIConstants.h"
-#ifdef BAKER_NEWSSTAND
 #import "PurchasesManager.h"
-#endif
 
 #import "UIColor+Extensions.h"
 #import "UIScreen+BakerExtensions.h"
@@ -55,16 +53,16 @@
 
         purchaseDelayed = NO;
 
-        #ifdef BAKER_NEWSSTAND
-        purchasesManager = [PurchasesManager sharedInstance];
-        [self addPurchaseObserver:@selector(handleIssueRestored:) name:@"notification_issue_restored"];
+        if ([BKRSettings sharedSettings].isNewsstand) {
+            purchasesManager = [PurchasesManager sharedInstance];
+            [self addPurchaseObserver:@selector(handleIssueRestored:) name:@"notification_issue_restored"];
 
-        [self addIssueObserver:@selector(handleDownloadStarted:) name:self.issue.notificationDownloadStartedName];
-        [self addIssueObserver:@selector(handleDownloadProgressing:) name:self.issue.notificationDownloadProgressingName];
-        [self addIssueObserver:@selector(handleDownloadFinished:) name:self.issue.notificationDownloadFinishedName];
-        [self addIssueObserver:@selector(handleDownloadError:) name:self.issue.notificationDownloadErrorName];
-        [self addIssueObserver:@selector(handleUnzipError:) name:self.issue.notificationUnzipErrorName];
-        #endif
+            [self addIssueObserver:@selector(handleDownloadStarted:) name:self.issue.notificationDownloadStartedName];
+            [self addIssueObserver:@selector(handleDownloadProgressing:) name:self.issue.notificationDownloadProgressingName];
+            [self addIssueObserver:@selector(handleDownloadFinished:) name:self.issue.notificationDownloadFinishedName];
+            [self addIssueObserver:@selector(handleDownloadError:) name:self.issue.notificationDownloadErrorName];
+            [self addIssueObserver:@selector(handleUnzipError:) name:self.issue.notificationUnzipErrorName];
+        }
     }
     return self;
 }
@@ -87,7 +85,7 @@
     self.issueCover = [UIButton buttonWithType:UIButtonTypeCustom];
     self.issueCover.frame = CGRectMake(ui.cellPadding, ui.cellPadding, ui.thumbWidth, ui.thumbHeight);
 
-    self.issueCover.backgroundColor = [UIColor colorWithHexString:ISSUES_COVER_BACKGROUND_COLOR];
+    self.issueCover.backgroundColor = [UIColor colorWithHexString:[BKRSettings sharedSettings].issuesCoverBackgroundColor];
     self.issueCover.adjustsImageWhenHighlighted = NO;
     self.issueCover.adjustsImageWhenDisabled = NO;
 
@@ -101,7 +99,7 @@
 
     // SETUP TITLE LABEL
     self.titleLabel = [[UILabel alloc] init];
-    self.titleLabel.textColor = [UIColor colorWithHexString:ISSUES_TITLE_COLOR];
+    self.titleLabel.textColor = [UIColor colorWithHexString:[BKRSettings sharedSettings].issuesTitleColor];
     self.titleLabel.backgroundColor = [UIColor clearColor];
     self.titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
     self.titleLabel.textAlignment = NSTextAlignmentLeft;
@@ -110,7 +108,7 @@
 
     // SETUP INFO LABEL
     self.infoLabel = [[UILabel alloc] init];
-    self.infoLabel.textColor = [UIColor colorWithHexString:ISSUES_INFO_COLOR];
+    self.infoLabel.textColor = [UIColor colorWithHexString:[BKRSettings sharedSettings].issuesInfoColor];
     self.infoLabel.backgroundColor = [UIColor clearColor];
     self.infoLabel.lineBreakMode = NSLineBreakByTruncatingTail;
     self.infoLabel.textAlignment = NSTextAlignmentLeft;
@@ -119,7 +117,7 @@
 
     // SETUP PRICE LABEL
     self.priceLabel = [[UILabel alloc] init];
-    self.priceLabel.textColor = [UIColor colorWithHexString:ISSUES_PRICE_COLOR];
+    self.priceLabel.textColor = [UIColor colorWithHexString:[BKRSettings sharedSettings].issuesPriceColor];
     self.priceLabel.backgroundColor = [UIColor clearColor];
     self.priceLabel.lineBreakMode = NSLineBreakByTruncatingTail;
     self.priceLabel.textAlignment = NSTextAlignmentLeft;
@@ -128,34 +126,34 @@
 
     // SETUP ACTION BUTTON
     self.actionButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    self.actionButton.backgroundColor = [UIColor colorWithHexString:ISSUES_ACTION_BUTTON_BACKGROUND_COLOR];
+    self.actionButton.backgroundColor = [UIColor colorWithHexString:[BKRSettings sharedSettings].issuesActionBackgroundColor];
 
     [self.actionButton setTitle:NSLocalizedString(@"ACTION_DOWNLOADED_TEXT", nil) forState:UIControlStateNormal];
-    [self.actionButton setTitleColor:[UIColor colorWithHexString:ISSUES_ACTION_BUTTON_COLOR] forState:UIControlStateNormal];
+    [self.actionButton setTitleColor:[UIColor colorWithHexString:[BKRSettings sharedSettings].issuesActionButtonColor] forState:UIControlStateNormal];
     [self.actionButton addTarget:self action:@selector(actionButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
 
     [self.view addSubview:self.actionButton];
 
     // SETUP ARCHIVE BUTTON
     self.archiveButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    self.archiveButton.backgroundColor = [UIColor colorWithHexString:ISSUES_ARCHIVE_BUTTON_BACKGROUND_COLOR];
+    self.archiveButton.backgroundColor = [UIColor colorWithHexString:[BKRSettings sharedSettings].issuesArchiveBackgroundColor];
 
     [self.archiveButton setTitle:NSLocalizedString(@"ARCHIVE_TEXT", nil) forState:UIControlStateNormal];
-    [self.archiveButton setTitleColor:[UIColor colorWithHexString:ISSUES_ARCHIVE_BUTTON_COLOR] forState:UIControlStateNormal];
+    [self.archiveButton setTitleColor:[UIColor colorWithHexString:[BKRSettings sharedSettings].issuesArchiveButtonColor] forState:UIControlStateNormal];
 
-    #ifdef BAKER_NEWSSTAND
-    [self.archiveButton addTarget:self action:@selector(archiveButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:self.archiveButton];
-    #endif
+    if ([BKRSettings sharedSettings].isNewsstand) {
+        [self.archiveButton addTarget:self action:@selector(archiveButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+        [self.view addSubview:self.archiveButton];
+    }
 
     // SETUP DOWN/LOADING SPINNER AND LABEL
     self.spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-    self.spinner.color = [UIColor colorWithHexString:ISSUES_LOADING_SPINNER_COLOR];
+    self.spinner.color = [UIColor colorWithHexString:[BKRSettings sharedSettings].issuesLoadingSpinnerColor];
     self.spinner.backgroundColor = [UIColor clearColor];
     self.spinner.hidesWhenStopped = YES;
 
     self.loadingLabel = [[UILabel alloc] init];
-    self.loadingLabel.textColor = [UIColor colorWithHexString:ISSUES_LOADING_LABEL_COLOR];
+    self.loadingLabel.textColor = [UIColor colorWithHexString:[BKRSettings sharedSettings].issuesLoadingLabelColor];
     self.loadingLabel.backgroundColor = [UIColor clearColor];
     self.loadingLabel.textAlignment = NSTextAlignmentLeft;
     self.loadingLabel.text = NSLocalizedString(@"DOWNLOADING_TEXT", nil);
@@ -165,53 +163,37 @@
 
     // SETUP PROGRESS BAR
     self.progressBar = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleDefault];
-    self.progressBar.progressTintColor = [UIColor colorWithHexString:ISSUES_PROGRESSBAR_TINT_COLOR];
+    self.progressBar.progressTintColor = [UIColor colorWithHexString:[BKRSettings sharedSettings].issuesProgressbarTintColor];
 
     [self.view addSubview:self.progressBar];
 
-    #ifdef BAKER_NEWSSTAND
-    // RESUME PENDING NEWSSTAND DOWNLOAD
-    NKLibrary *nkLib = [NKLibrary sharedLibrary];
-    for (NKAssetDownload *asset in [nkLib downloadingAssets]) {
-        if ([asset.issue.name isEqualToString:self.issue.ID]) {
-            NSLog(@"[BakerShelf] Resuming abandoned Newsstand download: %@", asset.issue.name);
-            [self.issue downloadWithAsset:asset];
+    if ([BKRSettings sharedSettings].isNewsstand) {
+        // RESUME PENDING NEWSSTAND DOWNLOAD
+        NKLibrary *nkLib = [NKLibrary sharedLibrary];
+        for (NKAssetDownload *asset in [nkLib downloadingAssets]) {
+            if ([asset.issue.name isEqualToString:self.issue.ID]) {
+                NSLog(@"[BakerShelf] Resuming abandoned Newsstand download: %@", asset.issue.name);
+                [self.issue downloadWithAsset:asset];
+            }
         }
     }
-    #endif
-
+    
     [self refreshContentWithCache:NO];
 }
 
 - (void)refreshContentWithCache:(bool)cache {
-    UIFont *titleFont;
-    UIFont *infoFont;
-    UIFont *actionFont;
-    UIFont *archiveFont;
-
-    #if defined(ISSUES_TITLE_FONT) && defined(ISSUES_TITLE_FONT_SIZE)
-        titleFont = [UIFont fontWithName:ISSUES_TITLE_FONT size:ISSUES_TITLE_FONT_SIZE];
-    #else
-        titleFont = [UIFont preferredFontForTextStyle:UIFontTextStyleHeadline];
-    #endif
-
-    #if defined(ISSUES_INFO_FONT) && defined(ISSUES_INFO_FONT_SIZE)
-        infoFont = [UIFont fontWithName:ISSUES_INFO_FONT size:ISSUES_INFO_FONT_SIZE];
-    #else
-        infoFont = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
-    #endif
-
-    #if defined(ISSUES_ACTION_BUTTON_FONT) && defined(ISSUES_ACTION_BUTTON_FONT_SIZE)
-        actionFont = [UIFont fontWithName:ISSUES_ACTION_BUTTON_FONT size:ISSUES_ACTION_BUTTON_FONT_SIZE];
-    #else
-        actionFont = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
-    #endif
-
-    #if defined(ISSUES_ARCHIVE_BUTTON_FONT) && defined(ISSUES_ARCHIVE_BUTTON_FONT_SIZE)
-        archiveFont = [UIFont fontWithName:ISSUES_ARCHIVE_BUTTON_FONT size:ISSUES_ARCHIVE_BUTTON_FONT_SIZE];
-    #else
-        archiveFont = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
-    #endif
+    UIFont *titleFont = [UIFont fontWithName:[BKRSettings sharedSettings].issuesTitleFont
+                                        size:[BKRSettings sharedSettings].issuesTitleFontSize
+                         ];
+    UIFont *infoFont = [UIFont fontWithName:[BKRSettings sharedSettings].issuesInfoFont
+                                       size:[BKRSettings sharedSettings].issuesInfoFontSize
+                        ];
+    UIFont *actionFont = [UIFont fontWithName:[BKRSettings sharedSettings].issuesActionFont
+                                         size:[BKRSettings sharedSettings].issuesActionFontSize
+                          ];
+    UIFont *archiveFont = [UIFont fontWithName:[BKRSettings sharedSettings].issuesArchiveFont
+                                          size:[BKRSettings sharedSettings].issuesArchiveFontSize
+                           ];
 
     UI ui = [IssueViewController getIssueContentMeasures];
     int heightOffset = ui.cellPadding;
@@ -409,24 +391,23 @@
 - (void)actionButtonPressed:(UIButton*)sender {
     NSString *status = [self.issue getStatus];
     if ([status isEqualToString:@"remote"] || [status isEqualToString:@"purchased"]) {
-    #ifdef BAKER_NEWSSTAND
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"BakerIssueDownload" object:self]; // -> Baker Analytics Event
-        [self download];
-    #endif
+        if ([BKRSettings sharedSettings].isNewsstand) {
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"BakerIssueDownload" object:self]; // -> Baker Analytics Event
+            [self download];
+        }
     } else if ([status isEqualToString:@"downloaded"] || [status isEqualToString:@"bundled"]) {
         [[NSNotificationCenter defaultCenter] postNotificationName:@"BakerIssueOpen" object:self]; // -> Baker Analytics Event
         [self read];
     } else if ([status isEqualToString:@"downloading"]) {
         // TODO: assuming it is supported by NewsstandKit, implement a "Cancel" operation
     } else if ([status isEqualToString:@"purchasable"]) {
-    #ifdef BAKER_NEWSSTAND
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"BakerIssuePurchase" object:self]; // -> Baker Analytics Event
-        [self buy];
-    #endif
+        if ([BKRSettings sharedSettings].isNewsstand) {
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"BakerIssuePurchase" object:self]; // -> Baker Analytics Event
+            [self buy];
+        }
     }
 }
 
-#ifdef BAKER_NEWSSTAND
 - (void)download {
     [self.issue download];
 }
@@ -526,7 +507,6 @@
         [self refresh];
     }
 }
-#endif
 
 - (void)read {
     self.issue.transientStatus = BakerIssueTransientStatusOpening;
@@ -576,7 +556,6 @@
 
 #pragma mark - Newsstand archive management
 
-#ifdef BAKER_NEWSSTAND
 - (void)archiveButtonPressed:(UIButton*)sender {
     UIAlertView *updateAlert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"ARCHIVE_ALERT_TITLE", nil)
                                                           message:NSLocalizedString(@"ARCHIVE_ALERT_MESSAGE", nil)
@@ -604,34 +583,33 @@
         [self refresh];
     }
 }
-#endif
 
 #pragma mark - Helper methods
 
 - (void)addPurchaseObserver:(SEL)notificationSelector name:(NSString*)notificationName {
-    #ifdef BAKER_NEWSSTAND
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:notificationSelector
-                                                 name:notificationName
-                                               object:purchasesManager];
-    #endif
+    if ([BKRSettings sharedSettings].isNewsstand) {
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:notificationSelector
+                                                     name:notificationName
+                                                   object:purchasesManager];
+    }
 }
 
 - (void)removePurchaseObserver:(NSString*)notificationName {
-    #ifdef BAKER_NEWSSTAND
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:notificationName
-                                                  object:purchasesManager];
-    #endif
+    if ([BKRSettings sharedSettings].isNewsstand) {
+        [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                        name:notificationName
+                                                      object:purchasesManager];
+    }
 }
 
 - (void)addIssueObserver:(SEL)notificationSelector name:(NSString*)notificationName {
-    #ifdef BAKER_NEWSSTAND
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:notificationSelector
-                                                 name:notificationName
-                                               object:nil];
-    #endif
+    if ([BKRSettings sharedSettings].isNewsstand) {
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:notificationSelector
+                                                     name:notificationName
+                                                   object:nil];
+    }
 }
 
 + (UI)getIssueContentMeasures {

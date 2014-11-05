@@ -37,9 +37,7 @@
 #import "IssuesManager.h"
 #import "ShelfStatus.h"
 #import "BakerAPI.h"
-#ifdef BAKER_NEWSSTAND
 #import "PurchasesManager.h"
-#endif
 
 @class BKRShelfHeaderView;
 
@@ -48,10 +46,7 @@
     IssuesManager *issuesManager;
     NSMutableArray *notRecognisedTransactions;
     UIPopoverController *infoPopover;
-
-    #ifdef BAKER_NEWSSTAND
     PurchasesManager *purchasesManager;
-    #endif
 }
 
 @property (nonatomic, copy) NSArray *issues;
@@ -76,12 +71,10 @@
 - (id)initWithBooks:(NSArray*)currentBooks;
 
 #pragma mark - Shelf data source
-#ifdef BAKER_NEWSSTAND
 - (void)handleRefresh:(NSNotification*)notification;
 
 #pragma mark - Store Kit
 - (void)handleSubscription:(NSNotification*)notification;
-#endif
 
 #pragma mark - Navigation management
 - (void)readIssue:(BakerIssue*)issue;

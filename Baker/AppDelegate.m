@@ -30,9 +30,6 @@
 //  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-#import "Constants.h"
-#import "UIConstants.h"
-
 #import "AppDelegate.h"
 #import "UICustomNavigationController.h"
 #import "UICustomNavigationBar.h"
@@ -41,6 +38,7 @@
 #import "UIColor+Extensions.h"
 #import "Utils.h"
 
+#import "BKRSettings.h"
 #import "BakerViewController.h"
 #import "BakerAnalyticsEvents.h"
 
@@ -57,11 +55,11 @@
 
 - (BOOL)application:(UIApplication*)application didFinishLaunchingWithOptions:(NSDictionary*)launchOptions {
 
-#ifdef BAKER_NEWSSTAND
-    [self configureNewsstandApp:application options:launchOptions];
-#else
-    [self configureStandAloneApp:application options:launchOptions];
-#endif
+    if ([BKRSettings sharedSettings].isNewsstand) {
+        [self configureNewsstandApp:application options:launchOptions];
+    } else {
+        [self configureStandAloneApp:application options:launchOptions];
+    }
 
     self.rootNavigationController = [[UICustomNavigationController alloc] initWithRootViewController:self.rootViewController];
 
@@ -136,7 +134,7 @@
 
 - (void)configureNavigationBar {
     UICustomNavigationBar *navigationBar = (UICustomNavigationBar*)self.rootNavigationController.navigationBar;
-    navigationBar.tintColor           = [UIColor colorWithHexString:ISSUES_ACTION_BUTTON_BACKGROUND_COLOR];
+    navigationBar.tintColor           = [UIColor colorWithHexString:[BKRSettings sharedSettings].issuesActionBackgroundColor];
     navigationBar.barTintColor        = [UIColor colorWithHexString:@"ffffff"];
     navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName: [UIColor colorWithHexString:@"000000"]};
     [navigationBar setBackgroundImage:[UIImage imageNamed:@"navigation-bar-bg"] forBarMetrics:UIBarMetricsDefault];
@@ -154,7 +152,11 @@
 }
 
 - (void)application:(UIApplication*)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)deviceToken {
-#ifdef BAKER_NEWSSTAND
+    
+    if (![BKRSettings sharedSettings].isNewsstand) {
+        return;
+    }
+    
     NSString *apnsToken = [[deviceToken description] stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"<>"]];
     apnsToken = [apnsToken stringByReplacingOccurrencesOfString:@" " withString:@""];
 
@@ -166,29 +168,41 @@
 
     BakerAPI *api = [BakerAPI sharedInstance];
     [api postAPNSToken:apnsToken];
-#endif
+
 }
 
 - (void)application:(UIApplication*)application didReceiveRemoteNotification:(NSDictionary*)userInfo {
-#ifdef BAKER_NEWSSTAND
+    
+    if (![BKRSettings sharedSettings].isNewsstand) {
+        return;
+    }
+
     NSDictionary *aps = userInfo[@"aps"];
     if (aps && aps[@"content-available"]) {
         [self applicationWillHandleNewsstandNotificationOfContent:userInfo[@"content-name"]];
     }
-#endif
+
 }
 
 - (void)application:(UIApplication*)application didReceiveRemoteNotification:(NSDictionary*)userInfo fetchCompletionHandler:(void(^)(UIBackgroundFetchResult result))handler {
-#ifdef BAKER_NEWSSTAND
+    
+    if (![BKRSettings sharedSettings].isNewsstand) {
+        return;
+    }
+
     NSDictionary *aps = userInfo[@"aps"];
     if (aps && aps[@"content-available"]) {
         [self applicationWillHandleNewsstandNotificationOfContent:userInfo[@"content-name"]];
     }
-#endif
+
 }
 
 - (void)applicationWillHandleNewsstandNotificationOfContent:(NSString*)contentName {
-#ifdef BAKER_NEWSSTAND
+
+    if (![BKRSettings sharedSettings].isNewsstand) {
+        return;
+    }
+
     IssuesManager *issuesManager = [IssuesManager sharedInstance];
     PurchasesManager *purchasesManager = [PurchasesManager sharedInstance];
     __block BakerIssue *targetIssue = nil;
@@ -219,7 +233,7 @@
             }
         }];
     }];
-#endif
+
 }
 
 #pragma mark - Application Lifecycle
@@ -229,17 +243,18 @@
 }
 
 - (void)applicationDidEnterBackground:(UIApplication*)application {
-#ifdef BAKER_NEWSSTAND
-    // Everything that happened while the application was opened can be considered as "seen"
-    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
-#endif
+    [self resetApplicationBadge];
 }
 
 - (void)applicationDidBecomeActive:(UIApplication*)application {
-#ifdef BAKER_NEWSSTAND
-    // Opening the application means all new items can be considered as "seen".
+    [self resetApplicationBadge];
+}
+
+- (void)resetApplicationBadge {
+    if (![BKRSettings sharedSettings].isNewsstand) {
+        return;
+    }
     [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
-#endif
 }
 
 @end

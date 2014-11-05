@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>isNewsstand</key>
+	<true/>
+	<key>newsstandManifestUrl</key>
+	<string>http://bakerframework.com/demo/shelf.json</string>
+	<key>purchaseConfirmationUrl</key>
+	<string></string>
+	<key>purchasesUrl</key>
+	<string></string>
+	<key>postApnsTokenUrl</key>
+	<string></string>
+	<key>freeSubscriptionProductId</key>
+	<string></string>
+	<key>autoRenewableSubscriptionProductIds</key>
+	<array/>
+	<key>requestTimeout</key>
+	<integer>15</integer>
+	<key>issuesCoverBackgroundColor</key>
+	<string>#ffffff</string>
+	<key>issuesTitleFont</key>
+	<string>Helvetica</string>
+	<key>issuesTitleFontSize</key>
+	<integer>15</integer>
+	<key>issuesTitleColor</key>
+	<string>#000000</string>
+	<key>issuesInfoFont</key>
+	<string>Helvetica</string>
+	<key>issuesInfoFontSize</key>
+	<integer>15</integer>
+	<key>issuesInfoColor</key>
+	<string>#929292</string>
+	<key>issuesPriceColor</key>
+	<string>#bc242a</string>
+	<key>issuesActionFont</key>
+	<string>Helvetica-Bold</string>
+	<key>issuesActionFontSize</key>
+	<integer>11</integer>
+	<key>issuesActionBackgroundColor</key>
+	<string>#bc242a</string>
+	<key>issuesActionButtonColor</key>
+	<string>#ffffff</string>
+	<key>issuesArchiveFont</key>
+	<string>Helvetica-Bold</string>
+	<key>issuesArchiveFontSize</key>
+	<integer>11</integer>
+	<key>issuesArchiveBackgroundColor</key>
+	<string>#bc242a</string>
+	<key>issuesArchiveButtonColor</key>
+	<string>#ffffff</string>
+	<key>issuesLoadingLabelColor</key>
+	<string>#bc242a</string>
+	<key>issuesLoadingSpinnerColor</key>
+	<string>#929292</string>
+	<key>issuesProgressbarTintColor</key>
+	<string>#bc242a</string>
+</dict>
+</plist>
