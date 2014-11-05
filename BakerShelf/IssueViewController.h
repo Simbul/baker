@@ -46,7 +46,6 @@
 @property (nonatomic, strong) UIProgressView *progressBar;
 @property (nonatomic, strong) UIActivityIndicatorView *spinner;
 @property (nonatomic, strong) UILabel *loadingLabel;
-@property (nonatomic, strong) UILabel *priceLabel;
 
 @property (nonatomic, strong) UIButton *issueCover;
 @property (nonatomic, strong) UILabel *titleLabel;
