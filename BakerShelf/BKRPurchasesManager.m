@@ -191,8 +191,12 @@
 
     BKRBakerAPI *api = [BKRBakerAPI sharedInstance];
     if ([api canPostPurchaseReceipt]) {
-        NSURL *receiptURL = [[NSBundle mainBundle] appStoreReceiptURL];
-        NSString *receipt = [[NSData dataWithContentsOfURL:receiptURL] bkrBase64EncodedString];
+        NSString *receipt = [transaction.transactionReceipt bkrBase64EncodedString];
+//        NSURL *receiptURL = [[NSBundle mainBundle] appStoreReceiptURL];
+//        NSString *receipt = [[NSData dataWithContentsOfURL:receiptURL] bkrBase64EncodedString];
+//        NSLog(@"receipt1: %@", receipt1);
+//        NSLog(@"receipt: %@", receipt);
+
         NSString *type = [self transactionType:transaction];
         return [api postPurchaseReceipt:receipt ofType:type];
     }
