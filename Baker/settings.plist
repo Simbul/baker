@@ -4,6 +4,8 @@
 <dict>
 	<key>isNewsstand</key>
 	<true/>
+	<key>newsstandLatestIssueCover</key>
+	<true/>
 	<key>newsstandManifestUrl</key>
 	<string>http://bakerframework.com/demo/shelf.json</string>
 	<key>purchaseConfirmationUrl</key>

@@ -34,6 +34,7 @@
 #import "BKRIssue.h"
 #import "BKRUtils.h"
 #import "BKRBakerAPI.h"
+#import "BKRSettings.h"
 #import "NSObject+BakerExtensions.h"
 
 @implementation BKRIssuesManager
@@ -98,9 +99,9 @@
 
 - (void)updateNewsstandIcon {
     
-    #ifdef SET_NEWSSTAND_LATEST_ISSUE_COVER
-        BakerIssue *latestIssue = nil;
-        for (BakerIssue *issue in self.issues) {
+    if ([BKRSettings sharedSettings].newsstandLatestIssueCover) {
+        BKRIssue *latestIssue = nil;
+        for (BKRIssue *issue in self.issues) {
             if ([[issue getStatus] isEqualToString:@"downloaded"]) {
                 return;
             }
@@ -114,10 +115,10 @@
                 [[UIApplication sharedApplication] setNewsstandIconImage:image];
             }
         }];
-    #else
+    } else {
         UIImage *image = [UIImage imageNamed:@"newsstand-app-icon"];
         [[UIApplication sharedApplication] setNewsstandIconImage:image];
-    #endif
+    }
     
 }
 

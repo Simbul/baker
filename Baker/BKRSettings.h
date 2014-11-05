@@ -44,6 +44,8 @@
 // E.g. @"http://example.com/shelf.json"
 @property (nonatomic, readonly) NSString *newsstandManifestUrl;
 
+@property (nonatomic, readonly) BOOL newsstandLatestIssueCover;
+
 // ----------------------------------------------------------------------------------------------------
 // Optional - This constant specifies the URL to ping back when a user purchases an issue or a subscription.
 // For more information, see: https://github.com/Simbul/baker/wiki/Baker-Server-API
