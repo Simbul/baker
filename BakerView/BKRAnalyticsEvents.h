@@ -32,10 +32,6 @@
 
 #import <Foundation/Foundation.h>
 
-#import "BKRBookViewController.h"
-#import "BKRShelfViewController.h"
-#import "BKRIssueViewController.h"
-
 @interface BKRAnalyticsEvents : NSObject
 //{
 //    id tracker; // Can be used to reference tracking libraries (i.e. Google Analytics, ...)
