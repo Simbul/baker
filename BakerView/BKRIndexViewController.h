@@ -67,7 +67,7 @@
 - (void)fadeOut;
 - (void)fadeIn;
 - (BOOL)stickToLeft;
-- (CGSize)sizeFromContentOf:(UIView*)view;
+- (CGSize)sizeFromContentOf:(UIWebView*)webView;
 - (void)setActualSize;
 - (void)adjustIndexView;
 - (void)setViewFrame:(CGRect)frame;
