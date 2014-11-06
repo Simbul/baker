@@ -191,7 +191,10 @@
 
     BKRBakerAPI *api = [BKRBakerAPI sharedInstance];
     if ([api canPostPurchaseReceipt]) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         NSString *receipt = [transaction.transactionReceipt bkrBase64EncodedString];
+#pragma clang diagnostic pop
 //        NSURL *receiptURL = [[NSBundle mainBundle] appStoreReceiptURL];
 //        NSString *receipt = [[NSData dataWithContentsOfURL:receiptURL] bkrBase64EncodedString];
 //        NSLog(@"receipt1: %@", receipt1);
