@@ -235,7 +235,8 @@
     return (actualIndexHeight > actualIndexWidth);
 }
 
-- (CGSize)sizeFromContentOf:(UIView*)view {
+- (CGSize)sizeFromContentOf:(UIWebView*)webView {
+    /*
     // Setting the frame to 1x1 is required to get meaningful results from sizeThatFits when
     // the orientation of the is anything but Portrait.
     // See: http://stackoverflow.com/questions/3936041/how-to-determine-the-content-size-of-a-uiwebview/3937599#3937599
@@ -244,6 +245,11 @@
     frame.size.height = 1;
     view.frame = frame;
     return [view sizeThatFits:CGSizeZero];
+     */
+    
+    CGFloat contentWidth  = [[webView stringByEvaluatingJavaScriptFromString:@"document.width"] floatValue];
+    CGFloat contentHeight = [[webView stringByEvaluatingJavaScriptFromString:@"document.height"] floatValue];
+    return CGSizeMake(contentWidth, contentHeight);
 }
 
 - (NSString*)indexPath {
