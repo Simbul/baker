@@ -211,7 +211,7 @@
     NSString *productID = transaction.payment.productIdentifier;
     if ([productID isEqualToString:[BKRSettings sharedSettings].freeSubscriptionProductId]) {
         return @"free-subscription";
-    } else if ([@[] containsObject:productID]) {
+    } else if ([[BKRSettings sharedSettings].autoRenewableSubscriptionProductIds containsObject:productID]) {
         return @"auto-renewable-subscription";
     } else {
         return @"issue";
@@ -318,7 +318,7 @@
     NSDictionary *userInfo = @{@"transaction": transaction};
     NSString *productId = transaction.payment.productIdentifier;
 
-    if ([productId isEqualToString:[BKRSettings sharedSettings].freeSubscriptionProductId] || [@[] containsObject:productId]) {
+    if ([productId isEqualToString:[BKRSettings sharedSettings].freeSubscriptionProductId] || [[BKRSettings sharedSettings].autoRenewableSubscriptionProductIds containsObject:productId]) {
         [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_subscription_purchased" object:self userInfo:userInfo];
     } else if ([self productFor:productId]) {
         [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_issue_purchased" object:self userInfo:userInfo];
@@ -331,7 +331,7 @@
     NSDictionary *userInfo = @{@"transaction": transaction};
     NSString *productId = transaction.payment.productIdentifier;
 
-    if ([productId isEqualToString:[BKRSettings sharedSettings].freeSubscriptionProductId] || [@[] containsObject:productId]) {
+    if ([productId isEqualToString:[BKRSettings sharedSettings].freeSubscriptionProductId] || [[BKRSettings sharedSettings].autoRenewableSubscriptionProductIds containsObject:productId]) {
         [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_subscription_restored" object:self userInfo:userInfo];
     } else if ([self productFor:productId]) {
         [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_issue_restored" object:self userInfo:userInfo];
@@ -347,7 +347,7 @@
     NSDictionary *userInfo = @{@"transaction": transaction};
     NSString *productId = transaction.payment.productIdentifier;
 
-    if ([productId isEqualToString:[BKRSettings sharedSettings].freeSubscriptionProductId] || [@[] containsObject:productId]) {
+    if ([productId isEqualToString:[BKRSettings sharedSettings].freeSubscriptionProductId] || [[BKRSettings sharedSettings].autoRenewableSubscriptionProductIds containsObject:productId]) {
         [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_subscription_failed" object:self userInfo:userInfo];
     } else {
         [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_issue_purchase_failed" object:self userInfo:userInfo];
@@ -381,7 +381,7 @@
 #pragma mark - Subscriptions
 
 - (BOOL)hasSubscriptions {
-    return [[BKRSettings sharedSettings].freeSubscriptionProductId length] > 0 || [@[] count] > 0;
+    return [[BKRSettings sharedSettings].freeSubscriptionProductId length] > 0 || [[BKRSettings sharedSettings].autoRenewableSubscriptionProductIds count] > 0;
 }
 
 #pragma mark - Memory management

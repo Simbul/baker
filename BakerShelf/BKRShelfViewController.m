@@ -123,7 +123,7 @@
     self.layout = [[UICollectionViewFlowLayout alloc] init];
     self.layout.minimumInteritemSpacing = 0;
     self.layout.minimumLineSpacing      = 0;
-    
+
     self.gridView = [[UICollectionView alloc] initWithFrame:self.view.frame collectionViewLayout:self.layout];
     self.gridView.dataSource       = self;
     self.gridView.delegate         = self;
@@ -161,7 +161,7 @@
         [self.blockingProgressView addSubview:spinner];
         [spinner startAnimating];
 
-        NSMutableSet *subscriptions = [NSMutableSet setWithArray:@[]];
+        NSMutableSet *subscriptions = [NSMutableSet setWithArray:[BKRSettings sharedSettings].autoRenewableSubscriptionProductIds];
         if ([[BKRSettings sharedSettings].freeSubscriptionProductId length] > 0 && ![purchasesManager isPurchased:[BKRSettings sharedSettings].freeSubscriptionProductId]) {
             [subscriptions addObject:[BKRSettings sharedSettings].freeSubscriptionProductId];
         }
@@ -424,7 +424,7 @@
             [actions addObject:[BKRSettings sharedSettings].freeSubscriptionProductId];
         }
 
-        for (NSString *productId in @[]) {
+        for (NSString *productId in [BKRSettings sharedSettings].autoRenewableSubscriptionProductIds) {
             NSString *title = [purchasesManager displayTitleFor:productId];
             NSString *price = [purchasesManager priceFor:productId];
             if (price) {
@@ -448,7 +448,7 @@
     return sheet;
 }
 
-- (void)actionSheet:(UIActionSheet*)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
+- (void) actionSheet:(UIActionSheet*)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
     if (actionSheet == self.subscriptionsActionSheet) {
         NSString *action = (self.subscriptionsActionSheetActions)[buttonIndex];
         if ([action isEqualToString:@"cancel"]) {
@@ -567,7 +567,7 @@
         if ([productId isEqualToString:[BKRSettings sharedSettings].freeSubscriptionProductId]) {
             // ID is for a free subscription
             [self setSubscribeButtonEnabled:YES];
-        } else if ([@[] containsObject:productId]) {
+        } else if ([[BKRSettings sharedSettings].autoRenewableSubscriptionProductIds containsObject:productId]) {
             // ID is for an auto-renewable subscription
             [self setSubscribeButtonEnabled:YES];
         } else {
