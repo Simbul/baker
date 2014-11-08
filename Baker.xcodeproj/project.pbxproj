@@ -59,6 +59,7 @@
 		C66857A01A07D38300776443 /* NSString+BakerExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = C668579D1A07D38300776443 /* NSString+BakerExtensions.m */; };
 		C66857A11A07D38300776443 /* UIColor+BakerExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = C668579F1A07D38300776443 /* UIColor+BakerExtensions.m */; };
 		C66857A41A07DDBE00776443 /* NSObject+BakerExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = C66857A31A07DDBE00776443 /* NSObject+BakerExtensions.m */; };
+		C6F4FB991A0E6D9100E365F6 /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = C6F4FB981A0E6D9100E365F6 /* MBProgressHUD.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -156,6 +157,8 @@
 		C668579F1A07D38300776443 /* UIColor+BakerExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+BakerExtensions.m"; sourceTree = "<group>"; };
 		C66857A21A07DDBE00776443 /* NSObject+BakerExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+BakerExtensions.h"; sourceTree = "<group>"; };
 		C66857A31A07DDBE00776443 /* NSObject+BakerExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+BakerExtensions.m"; sourceTree = "<group>"; };
+		C6F4FB971A0E6D9100E365F6 /* MBProgressHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBProgressHUD.h; sourceTree = "<group>"; };
+		C6F4FB981A0E6D9100E365F6 /* MBProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MBProgressHUD.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -193,6 +196,8 @@
 				AB67F5B916EE99B2005A04F6 /* BKRReachability.m */,
 				C62D23481A0A748A003A26D2 /* BKRZipArchive.h */,
 				C62D23491A0A748A003A26D2 /* BKRZipArchive.m */,
+				C6F4FB971A0E6D9100E365F6 /* MBProgressHUD.h */,
+				C6F4FB981A0E6D9100E365F6 /* MBProgressHUD.m */,
 				C62D234A1A0A748A003A26D2 /* minizip */,
 				ABD6FC3E16544EAD0032BC44 /* NSData+BakerExtensions.h */,
 				ABD6FC3F16544EAD0032BC44 /* NSData+BakerExtensions.m */,
@@ -439,6 +444,7 @@
 				AB40045F15B4B83000D87E2A /* BKRIndexViewController.m in Sources */,
 				AB40046115B4B83000D87E2A /* BKRInterceptorWindow.m in Sources */,
 				C62D23571A0A748A003A26D2 /* unzip.c in Sources */,
+				C6F4FB991A0E6D9100E365F6 /* MBProgressHUD.m in Sources */,
 				AB40046315B4B83000D87E2A /* GTMNSString+HTML.m in Sources */,
 				C66857A41A07DDBE00776443 /* NSObject+BakerExtensions.m in Sources */,
 				C649F0981A090B6000B02548 /* BKRShelfHeaderView.m in Sources */,

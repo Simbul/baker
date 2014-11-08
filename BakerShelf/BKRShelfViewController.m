@@ -42,6 +42,8 @@
 #import "NSString+BakerExtensions.h"
 #import "BKRUtils.h"
 
+#import "MBProgressHUD.h"
+
 @interface BKRShelfViewController ()
 
 @property (nonatomic, strong) UICollectionViewFlowLayout *layout;
@@ -296,7 +298,10 @@
 
 - (void)handleRefresh:(NSNotification*)notification {
     [self setrefreshButtonEnabled:NO];
-
+    
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    hud.labelText = NSLocalizedString(@"Loading", @"");
+    
     [issuesManager refresh:^(BOOL status) {
         if(status) {
             self.issues = issuesManager.issues;
@@ -353,6 +358,10 @@
                     [(BKRIssueViewController*)obj refreshContentWithCache:NO];
                 }];
                 [self setrefreshButtonEnabled:YES];
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
+                });
             }];
 
             [purchasesManager retrievePricesFor:issuesManager.productIDs andEnableFailureNotifications:NO];
@@ -360,7 +369,13 @@
             [BKRUtils showAlertWithTitle:NSLocalizedString(@"INTERNET_CONNECTION_UNAVAILABLE_TITLE", nil)
                               message:NSLocalizedString(@"INTERNET_CONNECTION_UNAVAILABLE_MESSAGE", nil)
                           buttonTitle:NSLocalizedString(@"INTERNET_CONNECTION_UNAVAILABLE_CLOSE", nil)];
+            
             [self setrefreshButtonEnabled:YES];
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
+            });
+            
         }
     }];
 }
