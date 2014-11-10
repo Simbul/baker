@@ -110,6 +110,9 @@
 // Progress bar for issues that are being downloaded in the shelf
 @property (nonatomic, readonly) NSString *issuesProgressbarTintColor;
 
+// Shelf background customization
+@property (nonatomic, readonly) NSDictionary *issuesShelfOptions;
+
 + (BKRSettings*)sharedSettings;
 
 @end

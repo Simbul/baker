@@ -134,7 +134,22 @@
     
     [self.gridView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:@"cellIdentifier"];
     [self.gridView registerClass:[BKRShelfHeaderView class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"headerIdentifier"];
-
+    
+    NSString *backgroundFillStyle = [BKRSettings sharedSettings].issuesShelfOptions[@"backgroundFillStyle"];
+    if([backgroundFillStyle isEqualToString:@"Gradient"]) {
+        self.gradientLayer = [BKRUtils gradientLayerFromHexString:[BKRSettings sharedSettings].issuesShelfOptions[@"backgroundFillGradientStart"]
+                                                                  toHexString:[BKRSettings sharedSettings].issuesShelfOptions[@"backgroundFillGradientStop"]];
+        self.gradientLayer.frame = self.gridView.bounds;
+        self.gridView.backgroundColor = [UIColor clearColor];
+        self.gridView.backgroundView = [[UIView alloc] init];
+        [self.gridView.backgroundView.layer insertSublayer:self.gradientLayer atIndex:0];
+        self.gridView.backgroundColor = [BKRUtils colorWithHexString:[BKRSettings sharedSettings].issuesShelfOptions[@"backgroundFillColor"]];
+    }else if([backgroundFillStyle isEqualToString:@"Pattern"]) {
+        self.gridView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"shelf-background"]];
+    }else if([backgroundFillStyle isEqualToString:@"Color"]) {
+        self.gridView.backgroundColor = [BKRUtils colorWithHexString:[BKRSettings sharedSettings].issuesShelfOptions[@"backgroundFillColor"]];
+    }
+    
     [self.view addSubview:self.gridView];
 
     [self willRotateToInterfaceOrientation:self.interfaceOrientation duration:0];
@@ -239,6 +254,13 @@
     [self.gridView.collectionViewLayout invalidateLayout];
 }
 
+- (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
+    if(self.gradientLayer) {
+        [self.gradientLayer setFrame:self.gridView.bounds];
+    }
+}
+
+
 - (BKRIssueViewController*)createIssueViewControllerWithIssue:(BKRIssue*)issue {
     BKRIssueViewController *controller = [[BKRIssueViewController alloc] initWithBakerIssue:issue];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleReadIssue:) name:@"read_issue_request" object:controller];
@@ -293,7 +315,7 @@
 }
 
 - (CGSize)collectionView:(UICollectionView*)collectionView layout:(UICollectionViewLayout*)collectionViewLayout referenceSizeForHeaderInSection:(NSInteger)section {
-    return CGSizeMake(self.view.frame.size.width, [BKRShelfViewController getBannerHeight]);
+    return CGSizeMake(self.view.frame.size.width, [self getBannerHeight]);
 }
 
 - (void)handleRefresh:(NSNotification*)notification {
@@ -742,12 +764,17 @@
     }
 }
 
-+ (int)getBannerHeight {
-    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
-        return 215;
-    } else {
-        return 107;
-    }
+- (int)getBannerHeight {
+    return [[BKRSettings sharedSettings].issuesShelfOptions[[NSString stringWithFormat:@"headerHeight%@%@", [self getDeviceString], [self getOrientationString]]] intValue];
 }
+
+- (NSString *)getDeviceString {
+    return (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) ? @"Pad" : @"Phone";
+}
+
+- (NSString *)getOrientationString {
+    return UIInterfaceOrientationIsLandscape(self.interfaceOrientation) ? @"Landscape" : @"Portrait";
+}
+
 
 @end

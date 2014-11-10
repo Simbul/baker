@@ -56,6 +56,7 @@
 @property (nonatomic, strong) BKRShelfStatus *shelfStatus;
 
 @property (nonatomic, strong) UICollectionView *gridView;
+@property (nonatomic, strong) CAGradientLayer *gradientLayer;
 @property (nonatomic, strong) BKRShelfHeaderView *headerView;
 @property (nonatomic, strong) UIBarButtonItem *refreshButton;
 @property (nonatomic, strong) UIBarButtonItem *subscribeButton;
@@ -88,6 +89,6 @@
 - (void)setSubscribeButtonEnabled:(BOOL)enabled;
 
 #pragma mark - Helper methods
-+ (int)getBannerHeight;
+- (int)getBannerHeight;
 
 @end
