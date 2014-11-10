@@ -48,7 +48,7 @@
         }else{
             _headerImage.contentMode  = UIViewContentModeScaleAspectFit;
         }
-        _headerImage.backgroundColor = [BKRUtils colorWithHexString:[BKRSettings sharedSettings].issuesShelfOptions[@"headerImageBackgroundColor"]];
+        _headerImage.backgroundColor = [BKRUtils colorWithHexString:[BKRSettings sharedSettings].issuesShelfOptions[@"headerBackgroundColor"]];
 
         [self addSubview:_headerImage];
         

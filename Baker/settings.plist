@@ -27,12 +27,16 @@
 		<key>backgroundFillStyle</key>
 		<string>Color</string>
 		<key>backgroundFillGradientStart</key>
-		<string>#444444</string>
+		<string>#FFFFFF</string>
 		<key>backgroundFillGradientStop</key>
-		<string>#171717</string>
+		<string>#EEEEEE</string>
 		<key>backgroundFillColor</key>
 		<string>#FFFFFF</string>
-		<key>headerImageBackgroundColor</key>
+		<key>headerSticky</key>
+		<false/>
+		<key>headerStretch</key>
+		<true/>
+		<key>headerBackgroundColor</key>
 		<string>transparent</string>
 		<key>headerImageFill</key>
 		<false/>
