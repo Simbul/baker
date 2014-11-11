@@ -38,11 +38,11 @@
 #import "BKRShelfStatus.h"
 #import "BKRBakerAPI.h"
 #import "BKRPurchasesManager.h"
-#import "MLBarDropdownItem.h"
+#import "BKRCategoryFilterItem.h"
 
 @class BKRShelfHeaderView;
 
-@interface BKRShelfViewController : UIViewController <UICollectionViewDataSource, UICollectionViewDelegate, UIActionSheetDelegate, UIWebViewDelegate, MLBarDropdownItemDelegate> {
+@interface BKRShelfViewController : UIViewController <UICollectionViewDataSource, UICollectionViewDelegate, UIActionSheetDelegate, UIWebViewDelegate, BKRCategoryFilterItemDelegate> {
     BKRBakerAPI *api;
     BKRIssuesManager *issuesManager;
     NSMutableArray *notRecognisedTransactions;
@@ -61,7 +61,7 @@
 @property (nonatomic, strong) UIBarButtonItem *refreshButton;
 @property (nonatomic, strong) UIBarButtonItem *subscribeButton;
 @property (strong, nonatomic) UIBarButtonItem *infoItem;
-@property (strong, nonatomic) MLBarDropdownItem *categoryButton;
+@property (strong, nonatomic) BKRCategoryFilterItem *categoryItem;
 
 @property (nonatomic, strong) UIActionSheet *subscriptionsActionSheet;
 @property (nonatomic, strong) NSArray *subscriptionsActionSheetActions;

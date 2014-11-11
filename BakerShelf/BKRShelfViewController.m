@@ -152,7 +152,7 @@
                                  target:self
                                  action:@selector(handleSubscribeButtonPressed:)];
         
-        self.categoryButton = [[MLBarDropdownItem alloc] initWithData:issuesManager.categories delegate:self];
+        self.categoryItem = [[BKRCategoryFilterItem alloc] initWithCategories:issuesManager.categories delegate:self];
 
         self.blockingProgressView = [[UIAlertView alloc]
                                      initWithTitle:@"Processing..."
@@ -308,13 +308,13 @@
         if(status) {
 
             // Set dropdown categories
-            [self.categoryButton setData:issuesManager.categories];
+            self.categoryItem.categories = issuesManager.categories;
             
             // Show / Hide category button
             if(issuesManager.categories.count == 0) {
                 self.navigationItem.rightBarButtonItems = [NSArray arrayWithObjects:self.infoItem, nil];
             }else{
-                self.navigationItem.rightBarButtonItems = [NSArray arrayWithObjects:self.infoItem, self.categoryButton, nil];
+                self.navigationItem.rightBarButtonItems = [NSArray arrayWithObjects:self.infoItem, self.categoryItem, nil];
             }
 
             // Set issues
@@ -370,7 +370,7 @@
         BKRIssue *issue = (BKRIssue *)obj;
         
         // Test if category exists
-        if([self.categoryButton.title isEqualToString:NSLocalizedString(@"ALL_CATEGORIES_TITLE", nil)] || [issue.categories containsObject:self.categoryButton.title]) {
+        if([self.categoryItem.title isEqualToString:NSLocalizedString(@"ALL_CATEGORIES_TITLE", nil)] || [issue.categories containsObject:self.categoryItem.title]) {
             [filteredIssues addObject:issue];
         }
     }];
@@ -785,10 +785,9 @@
     }
 }
 
-#pragma mark - MLBarDropdownItemDelegate
+#pragma mark - BKRCategoryFilterItemDelegate
 
--(void)barDropdownItem:(MLBarDropdownItem *)barDropdownItem didSelectItem:(NSString *)item {
-    // Refresh Issue List
+- (void)categoryFilterItem:(BKRCategoryFilterItem *)categoryFilterItem clickedAction:(NSString *)action {
     [self refreshIssueList];
 }
 
