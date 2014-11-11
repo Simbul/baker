@@ -151,6 +151,8 @@
                                  style:UIBarButtonItemStylePlain
                                  target:self
                                  action:@selector(handleSubscribeButtonPressed:)];
+        
+        self.categoryButton = [[MLBarDropdownItem alloc] initWithData:issuesManager.categories delegate:self];
 
         self.blockingProgressView = [[UIAlertView alloc]
                                      initWithTitle:@"Processing..."
@@ -168,6 +170,7 @@
             [subscriptions addObject:[BKRSettings sharedSettings].freeSubscriptionProductId];
         }
         [purchasesManager retrievePricesFor:subscriptions andEnableFailureNotifications:NO];
+
     }
 }
 
@@ -201,16 +204,15 @@
         [[SKPaymentQueue defaultQueue] addTransactionObserver:purchasesManager];
     }
     
-    UIBarButtonItem *infoButton = [[UIBarButtonItem alloc]
-                                    initWithTitle: NSLocalizedString(@"INFO_BUTTON_TEXT", nil)
-                                    style:UIBarButtonItemStylePlain
-                                    target:self
-                                    action:@selector(handleInfoButtonPressed:)];
+    // Add info button
+    UIButton *infoButton = [UIButton buttonWithType:UIButtonTypeInfoLight];
+    [infoButton addTarget:self action:@selector(handleInfoButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    self.infoItem = [[UIBarButtonItem alloc] initWithCustomView:infoButton];
 
     // Remove file info.html if you don't want the info button to be added to the shelf navigation bar
     NSString *infoPath = [[NSBundle mainBundle] pathForResource:@"info" ofType:@"html" inDirectory:@"info"];
     if ([[NSFileManager defaultManager] fileExistsAtPath:infoPath]) {
-        self.navigationItem.rightBarButtonItem = infoButton;
+        self.navigationItem.rightBarButtonItem = self.infoItem;
     }
 }
 
@@ -304,67 +306,23 @@
     
     [issuesManager refresh:^(BOOL status) {
         if(status) {
+
+            // Set dropdown categories
+            [self.categoryButton setData:issuesManager.categories];
+            
+            // Show / Hide category button
+            if(issuesManager.categories.count == 0) {
+                self.navigationItem.rightBarButtonItems = [NSArray arrayWithObjects:self.infoItem, nil];
+            }else{
+                self.navigationItem.rightBarButtonItems = [NSArray arrayWithObjects:self.infoItem, self.categoryButton, nil];
+            }
+
+            // Set issues
             self.issues = issuesManager.issues;
-
-            [self.shelfStatus load];
-            for (BKRIssue *issue in self.issues) {
-                issue.price = [self.shelfStatus priceFor:issue.productID];
-            }
-
-            void (^updateIssues)() = ^{
-                // Step 1: remove controllers for issues that no longer exist
-                __weak NSMutableArray *discardedControllers = [NSMutableArray array];
-                [self.issueViewControllers enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-                    BKRIssueViewController *ivc = (BKRIssueViewController*)obj;
-
-                    if (![self bakerIssueWithID:ivc.issue.ID]) {
-                        [discardedControllers addObject:ivc];
-                        [self.gridView deleteItemsAtIndexPaths:@[[NSIndexPath indexPathForItem:idx inSection:0]]];
-                    }
-                }];
-                [self.issueViewControllers removeObjectsInArray:discardedControllers];
-
-                // Step 2: add controllers for issues that did not yet exist (and refresh the ones that do exist)
-                [self.issues enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-                    // NOTE: this block changes the issueViewController array while looping
-                    BKRIssue *issue = (BKRIssue*)obj;
-
-                    BKRIssueViewController *existingIvc = [self issueViewControllerWithID:issue.ID];
-
-                    if (existingIvc) {
-                        existingIvc.issue = issue;
-                    } else {
-                        BKRIssueViewController *newIvc = [self createIssueViewControllerWithIssue:issue];
-                        [self.issueViewControllers insertObject:newIvc atIndex:idx];
-                        [self.gridView insertItemsAtIndexPaths:@[[NSIndexPath indexPathForItem:idx inSection:0]] ];
-                    }
-                }];
-
-                [self.gridView reloadData];
-            };
-
-            // When first launched, the grid is not initialised, so we can't
-            // call in the "batch update" method of the grid view
-            if (self.gridView) {
-                [self.gridView performBatchUpdates:updateIssues completion:nil];
-            }
-            else {
-                updateIssues();
-            }
-
-            [purchasesManager retrievePurchasesFor:[issuesManager productIDs] withCallback:^(NSDictionary *purchases) {
-                // List of purchases has been returned, so we can refresh all issues
-                [self.issueViewControllers enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-                    [(BKRIssueViewController*)obj refreshContentWithCache:NO];
-                }];
-                [self setrefreshButtonEnabled:YES];
-                
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
-                });
-            }];
-
-            [purchasesManager retrievePricesFor:issuesManager.productIDs andEnableFailureNotifications:NO];
+            
+            // Refresh issue list
+            [self refreshIssueList];
+            
         } else {
             [BKRUtils showAlertWithTitle:NSLocalizedString(@"INTERNET_CONNECTION_UNAVAILABLE_TITLE", nil)
                               message:NSLocalizedString(@"INTERNET_CONNECTION_UNAVAILABLE_MESSAGE", nil)
@@ -402,6 +360,83 @@
         }
     }];
     return foundIssue;
+}
+
+- (void)refreshIssueList {
+    
+    // Filter issues
+    __block NSMutableArray *filteredIssues = [NSMutableArray array];
+    [issuesManager.issues enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        BKRIssue *issue = (BKRIssue *)obj;
+        
+        // Test if category exists
+        if([self.categoryButton.title isEqualToString:NSLocalizedString(@"ALL_CATEGORIES_TITLE", nil)] || [issue.categories containsObject:self.categoryButton.title]) {
+            [filteredIssues addObject:issue];
+        }
+    }];
+    
+    // Assign filtered issues
+    self.issues = [filteredIssues copy];
+    
+    [self.shelfStatus load];
+    for (BKRIssue *issue in self.issues) {
+        issue.price = [self.shelfStatus priceFor:issue.productID];
+    }
+    
+    void (^updateIssues)() = ^{
+        // Step 1: remove controllers for issues that no longer exist
+        __weak NSMutableArray *discardedControllers = [NSMutableArray array];
+        [self.issueViewControllers enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+            BKRIssueViewController *ivc = (BKRIssueViewController*)obj;
+            
+            if (![self bakerIssueWithID:ivc.issue.ID]) {
+                [discardedControllers addObject:ivc];
+                [self.gridView deleteItemsAtIndexPaths:@[[NSIndexPath indexPathForItem:idx inSection:0]]];
+            }
+        }];
+        [self.issueViewControllers removeObjectsInArray:discardedControllers];
+        
+        // Step 2: add controllers for issues that did not yet exist (and refresh the ones that do exist)
+        [self.issues enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+            // NOTE: this block changes the issueViewController array while looping
+            BKRIssue *issue = (BKRIssue*)obj;
+            
+            BKRIssueViewController *existingIvc = [self issueViewControllerWithID:issue.ID];
+            
+            if (existingIvc) {
+                existingIvc.issue = issue;
+            } else {
+                BKRIssueViewController *newIvc = [self createIssueViewControllerWithIssue:issue];
+                [self.issueViewControllers insertObject:newIvc atIndex:idx];
+                [self.gridView insertItemsAtIndexPaths:@[[NSIndexPath indexPathForItem:idx inSection:0]] ];
+            }
+        }];
+        
+        [self.gridView reloadData];
+    };
+    
+    // When first launched, the grid is not initialised, so we can't
+    // call in the "batch update" method of the grid view
+    if (self.gridView) {
+        [self.gridView performBatchUpdates:updateIssues completion:nil];
+    }
+    else {
+        updateIssues();
+    }
+    
+    [purchasesManager retrievePurchasesFor:[issuesManager productIDs] withCallback:^(NSDictionary *purchases) {
+        // List of purchases has been returned, so we can refresh all issues
+        [self.issueViewControllers enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+            [(BKRIssueViewController*)obj refreshContentWithCache:NO];
+        }];
+        [self setrefreshButtonEnabled:YES];
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
+        });
+    }];
+    
+    [purchasesManager retrievePricesFor:issuesManager.productIDs andEnableFailureNotifications:NO];
 }
 
 #pragma mark - Store Kit
@@ -721,7 +756,7 @@
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
         // On iPad use the UIPopoverController
         infoPopover = [[UIPopoverController alloc] initWithContentViewController:popoverContent];
-        [infoPopover presentPopoverFromBarButtonItem:sender
+        [infoPopover presentPopoverFromBarButtonItem:self.infoItem
                             permittedArrowDirections:UIPopoverArrowDirectionUp
                                             animated:YES];
     } else {
@@ -748,6 +783,13 @@
     } else {
         return 107;
     }
+}
+
+#pragma mark - MLBarDropdownItemDelegate
+
+-(void)barDropdownItem:(MLBarDropdownItem *)barDropdownItem didSelectItem:(NSString *)item {
+    // Refresh Issue List
+    [self refreshIssueList];
 }
 
 @end

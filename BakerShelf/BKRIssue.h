@@ -55,6 +55,7 @@ typedef enum transientStates {
 @property (nonatomic, copy) NSString *date;
 @property (nonatomic, copy) NSURL *url;
 @property (nonatomic, copy) NSString *path;
+@property (nonatomic, copy) NSArray *categories;
 
 @property (nonatomic, copy) NSString *coverPath;
 @property (nonatomic, copy) NSURL *coverURL;

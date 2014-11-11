@@ -47,15 +47,16 @@
 - (id)initWithBakerBook:(BKRBook*)book {
     self = [super init];
     if (self) {
-        _ID        = book.ID;
-        _title     = book.title;
-        _info      = @"";
-        _date      = book.date;
-        _url       = [NSURL URLWithString:book.url];
-        _path      = book.path;
-        _productID = @"";
-        _price     = nil;
-        _bakerBook = book;
+        _ID         = book.ID;
+        _title      = book.title;
+        _info       = @"";
+        _date       = book.date;
+        _url        = [NSURL URLWithString:book.url];
+        _path       = book.path;
+        _categories = book.categories;
+        _productID  = @"";
+        _price      = nil;
+        _bakerBook  = book;
 
         _coverPath = @"";
         if (book.cover == nil) {
@@ -85,12 +86,13 @@
 - (id)initWithIssueData:(NSDictionary*)issueData {
     self = [super init];
     if (self) {
-        self.ID       = issueData[@"name"];
-        self.title    = issueData[@"title"];
-        self.info     = issueData[@"info"];
-        self.date     = issueData[@"date"];
-        self.coverURL = [NSURL URLWithString:issueData[@"cover"]];
-        self.url      = [NSURL URLWithString:issueData[@"url"]];
+        self.ID         = issueData[@"name"];
+        self.title      = issueData[@"title"];
+        self.info       = issueData[@"info"];
+        self.date       = issueData[@"date"];
+        self.categories = issueData[@"categories"];
+        self.coverURL   = [NSURL URLWithString:issueData[@"cover"]];
+        self.url        = [NSURL URLWithString:issueData[@"url"]];
         if (issueData[@"product_id"] != [NSNull null]) {
             self.productID = issueData[@"product_id"];
         }
