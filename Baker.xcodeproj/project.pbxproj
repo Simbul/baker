@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		20CC551D16AD346900DEFB5C /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 20CC551F16AD346900DEFB5C /* Localizable.strings */; };
+		904C31E71A12645C00E53E66 /* BKRCategoryFilterItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 904C31E61A12645C00E53E66 /* BKRCategoryFilterItem.m */; };
 		9F55576815B4C6C3003072A3 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F55576515B4C6B7003072A3 /* QuartzCore.framework */; };
 		9F58D85115D66E870027902C /* BKRCustomNavigationBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F58D84E15D66E870027902C /* BKRCustomNavigationBar.m */; };
 		9F58D85215D66E870027902C /* BKRCustomNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F58D85015D66E870027902C /* BKRCustomNavigationController.m */; };
@@ -64,6 +65,8 @@
 
 /* Begin PBXFileReference section */
 		20CC551E16AD346900DEFB5C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		904C31E51A12645C00E53E66 /* BKRCategoryFilterItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BKRCategoryFilterItem.h; sourceTree = "<group>"; };
+		904C31E61A12645C00E53E66 /* BKRCategoryFilterItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BKRCategoryFilterItem.m; sourceTree = "<group>"; };
 		9F55576515B4C6B7003072A3 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		9F58D84D15D66E870027902C /* BKRCustomNavigationBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BKRCustomNavigationBar.h; sourceTree = "<group>"; };
 		9F58D84E15D66E870027902C /* BKRCustomNavigationBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BKRCustomNavigationBar.m; sourceTree = "<group>"; };
@@ -182,6 +185,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		904C31E41A12645C00E53E66 /* BakerComponents */ = {
+			isa = PBXGroup;
+			children = (
+				904C31E51A12645C00E53E66 /* BKRCategoryFilterItem.h */,
+				904C31E61A12645C00E53E66 /* BKRCategoryFilterItem.m */,
+			);
+			path = BakerComponents;
+			sourceTree = "<group>";
+		};
 		9F58D85E15D6743C0027902C /* img */ = {
 			isa = PBXGroup;
 			children = (
@@ -306,6 +318,7 @@
 				ABAFB59115AB9A2E002FA498 /* Baker */,
 				ABAFB58A15AB9A2E002FA498 /* Frameworks */,
 				ABAFB58815AB9A2E002FA498 /* Products */,
+				904C31E41A12645C00E53E66 /* BakerComponents */,
 			);
 			sourceTree = "<group>";
 		};
@@ -441,6 +454,7 @@
 				ABAFB59815AB9A2E002FA498 /* main.m in Sources */,
 				ABAFB59C15AB9A2E002FA498 /* BKRAppDelegate.m in Sources */,
 				AB40045315B4B83000D87E2A /* BKRBookViewController.m in Sources */,
+				904C31E71A12645C00E53E66 /* BKRCategoryFilterItem.m in Sources */,
 				AB40045F15B4B83000D87E2A /* BKRIndexViewController.m in Sources */,
 				AB40046115B4B83000D87E2A /* BKRInterceptorWindow.m in Sources */,
 				C62D23571A0A748A003A26D2 /* unzip.c in Sources */,

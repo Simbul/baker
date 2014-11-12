@@ -39,7 +39,6 @@
 #pragma mark - Initialization
 
 - (id)initWithBookPath:(NSString*)bookPath bundled:(BOOL)bundled {
-    
     if (![[NSFileManager defaultManager] fileExistsAtPath:bookPath]) {
         return nil;
     }
@@ -115,9 +114,10 @@
 
     self.bookData = bookData;
     
-    self.hpub  = bookData[@"hpub"];
-    self.title = bookData[@"title"];
-    self.date  = bookData[@"date"];
+    self.hpub       = bookData[@"hpub"];
+    self.title      = bookData[@"title"];
+    self.date       = bookData[@"date"];
+    self.categories = bookData[@"categories"];
 
     if ([bookData[@"author"] isKindOfClass:[NSArray class]]) {
         self.author = bookData[@"author"];
