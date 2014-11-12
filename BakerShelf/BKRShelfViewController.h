@@ -38,10 +38,11 @@
 #import "BKRShelfStatus.h"
 #import "BKRBakerAPI.h"
 #import "BKRPurchasesManager.h"
+#import "BKRCategoryFilterItem.h"
 
 @class BKRShelfHeaderView;
 
-@interface BKRShelfViewController : UIViewController <UICollectionViewDataSource, UICollectionViewDelegate, UIActionSheetDelegate, UIWebViewDelegate> {
+@interface BKRShelfViewController : UIViewController <UICollectionViewDataSource, UICollectionViewDelegate, UIActionSheetDelegate, UIWebViewDelegate, BKRCategoryFilterItemDelegate> {
     BKRBakerAPI *api;
     BKRIssuesManager *issuesManager;
     NSMutableArray *notRecognisedTransactions;
@@ -60,6 +61,8 @@
 @property (nonatomic, strong) BKRShelfHeaderView *headerView;
 @property (nonatomic, strong) UIBarButtonItem *refreshButton;
 @property (nonatomic, strong) UIBarButtonItem *subscribeButton;
+@property (strong, nonatomic) UIBarButtonItem *infoItem;
+@property (strong, nonatomic) BKRCategoryFilterItem *categoryItem;
 
 @property (nonatomic, strong) UIActionSheet *subscriptionsActionSheet;
 @property (nonatomic, strong) NSArray *subscriptionsActionSheetActions;
@@ -87,6 +90,7 @@
 #pragma mark - Buttons management
 - (void)setrefreshButtonEnabled:(BOOL)enabled;
 - (void)setSubscribeButtonEnabled:(BOOL)enabled;
+- (void)handleSubscribeButtonPressed:(NSNotification *)notification;
 
 #pragma mark - Helper methods
 - (int)getBannerHeight;

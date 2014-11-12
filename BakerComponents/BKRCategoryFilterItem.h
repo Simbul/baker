@@ -1,11 +1,11 @@
 //
-//  IssuesManager.h
+//  BKRCategoryFilterItem.h
 //  Baker
 //
 //  ==========================================================================================
 //
 //  Copyright (c) 2010-2013, Davide Casali, Marco Colombo, Alessandro Morandi
-//  Copyright (c) 2014, Andrew Krowczyk, Cédric Mériau, Pieter Claerhout
+//  Copyright (c) 2014, Andrew Krowczyk, Cédric Mériau, Pieter Claerhout, Tobias Strebitzer
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without modification, are
@@ -30,24 +30,23 @@
 //  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-#import <Foundation/Foundation.h>
-#import <NewsstandKit/NewsstandKit.h>
-#import "BKRIssue.h"
+#import <UIKit/UIKit.h>
 
-@interface BKRIssuesManager : NSObject
+@protocol BKRCategoryFilterItemDelegate <NSObject>
+@required
+- (void)categoryFilterItem:(id)categoryFilterItem clickedAction:(NSString *)action;
+@end
 
-@property (nonatomic, copy) NSArray *issues;
-@property (nonatomic, strong) NSString *shelfManifestPath;
-@property (nonatomic, copy) NSArray *categories;
+@interface BKRCategoryFilterItem : UIBarButtonItem <UIActionSheetDelegate> {
+    id <BKRCategoryFilterItemDelegate> delegate;
+}
 
-#pragma mark - Singleton
+@property (retain) id delegate;
+@property (nonatomic, strong) UIActionSheet *categoriesActionSheet;
+@property (nonatomic, strong) NSArray *categoriesActionSheetActions;
+@property (nonatomic, strong) NSArray *categories;
 
-+ (BKRIssuesManager*)sharedInstance;
-
-- (void)refresh:(void (^)(BOOL))callback;
-- (NSSet*)productIDs;
-- (BOOL)hasProductIDs;
-- (BKRIssue*)latestIssue;
-+ (NSArray*)localBooksList;
+-(id)initWithCategories:(NSArray *)aCategories delegate:(NSObject *)aDelegate;
+-(id)initWithDelegate:(NSObject *)aDelegate;
 
 @end

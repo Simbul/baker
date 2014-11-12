@@ -72,11 +72,26 @@
             [self updateNewsstandIssuesList:jsonArr];
             
             NSMutableArray *tmpIssues = [NSMutableArray array];
+            NSMutableArray *tmpCategories = [NSMutableArray array];
             [jsonArr enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
                 BKRIssue *issue = [[BKRIssue alloc] initWithIssueData:obj];
+                
+                // Append categories
+                [issue.categories enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+                    if(![tmpCategories containsObject:obj]) {
+                        [tmpCategories addObject:obj];
+                    }
+                }];
+                
+                // Add issue to temporary issue list
                 [tmpIssues addObject:issue];
             }];
             
+            // Sort categories
+            [tmpCategories sortUsingSelector:@selector(compare:)];
+            _categories = tmpCategories;
+            
+            // Sort issues
             self.issues = [tmpIssues sortedArrayUsingComparator:^NSComparisonResult(id a, id b) {
                 NSDate *first = [BKRUtils dateWithFormattedString:[(BKRIssue*)a date]];
                 NSDate *second = [BKRUtils dateWithFormattedString:[(BKRIssue*)b date]];

@@ -139,6 +139,10 @@
         NSDictionary *userInfo = @{@"error": error};
         [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_products_request_failed" object:self userInfo:userInfo];
     }
+    
+    // @TODO: REMOVE CODE
+    NSDictionary *userInfo = @{@"ids": @[]};
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"notification_products_retrieved" object:self userInfo:userInfo];
 
 }
 

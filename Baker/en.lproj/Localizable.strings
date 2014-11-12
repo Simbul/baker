@@ -103,3 +103,6 @@
 // (These are just examples: you'll need to provide your own product IDs and names)
 //"com.example.MyBook.subscription.3months" = "3 Months Subscription";
 //"com.example.MyBook.subscription.6months" = "Half Year Subscription";
+
+// Categories
+"ALL_CATEGORIES_TITLE" = "All Categories";
