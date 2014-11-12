@@ -22,6 +22,33 @@
 	<integer>15</integer>
 	<key>issuesCoverBackgroundColor</key>
 	<string>#ffffff</string>
+	<key>issuesShelfOptions</key>
+	<dict>
+		<key>backgroundFillStyle</key>
+		<string>Color</string>
+		<key>backgroundFillGradientStart</key>
+		<string>#FFFFFF</string>
+		<key>backgroundFillGradientStop</key>
+		<string>#EEEEEE</string>
+		<key>backgroundFillColor</key>
+		<string>#FFFFFF</string>
+		<key>headerSticky</key>
+		<false/>
+		<key>headerStretch</key>
+		<true/>
+		<key>headerBackgroundColor</key>
+		<string>transparent</string>
+		<key>headerImageFill</key>
+		<false/>
+		<key>headerHeightPadLandscape</key>
+		<integer>215</integer>
+		<key>headerHeightPadPortrait</key>
+		<integer>215</integer>
+		<key>headerHeightPhoneLandscape</key>
+		<integer>107</integer>
+		<key>headerHeightPhonePortrait</key>
+		<integer>107</integer>
+	</dict>
 	<key>issuesTitleFont</key>
 	<string>Helvetica</string>
 	<key>issuesTitleFontSize</key>

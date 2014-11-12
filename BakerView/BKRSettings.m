@@ -104,6 +104,8 @@
         _issuesLoadingSpinnerColor           = [self stringSettingForKey:@"issuesLoadingSpinnerColor" withDefault:@"#929292"];
 
         _issuesProgressbarTintColor          = [self stringSettingForKey:@"issuesProgressbarTintColor" withDefault:@"#bc242a"];
+        
+        _issuesShelfOptions                  = [self dictionarySettingForKey:@"issuesShelfOptions" withDefault:@{}];
     
     }
     return self;
@@ -112,6 +114,14 @@
 #pragma mark - Helpers
 
 - (NSString*)stringSettingForKey:(NSString*)setting withDefault:(NSString*)defaultValue {
+    if (self.settings && [self.settings objectForKey:setting]) {
+        return [self.settings objectForKey:setting];
+    } else {
+        return defaultValue;
+    }
+}
+
+- (NSDictionary*)dictionarySettingForKey:(NSString*)setting withDefault:(NSDictionary*)defaultValue {
     if (self.settings && [self.settings objectForKey:setting]) {
         return [self.settings objectForKey:setting];
     } else {

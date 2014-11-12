@@ -56,6 +56,10 @@
     // Returns a UIColor by scanning the string for a hex number and passing that to (UIColor*)colorWithRGBHex:(UInt32)hex
     // Skips any leading whitespace and ignores any trailing characters
 
+    if([stringToConvert isEqualToString:@"transparent"]) {
+        return [UIColor clearColor];
+    }
+    
     NSString *hexString = [stringToConvert stringByReplacingOccurrencesOfString:@"#" withString:@""];
 	NSScanner *scanner = [NSScanner scannerWithString:hexString];
 
@@ -64,6 +68,20 @@
         return nil;
     }
 	return [BKRUtils colorWithRGBHex:hexNum];
+}
+
++ (CAGradientLayer *)gradientLayerFromHexString:(NSString *)startString toHexString:(NSString *)stopString {
+    UIColor *startColor = [self colorWithHexString:startString];
+    UIColor *stopColor = [self colorWithHexString:stopString];
+    
+    NSArray *gradientColors = [NSArray arrayWithObjects:(id)startColor.CGColor, (id)stopColor.CGColor, nil];
+    NSArray *gradientLocations = [NSArray arrayWithObjects:[NSNumber numberWithInt:0.0],[NSNumber numberWithInt:1.0], nil];
+    
+    CAGradientLayer *gradientLayer = [CAGradientLayer layer];
+    gradientLayer.colors = gradientColors;
+    gradientLayer.locations = gradientLocations;
+    
+    return gradientLayer;
 }
 
 + (NSString*)stringFromInterfaceOrientation:(UIInterfaceOrientation)orientation {

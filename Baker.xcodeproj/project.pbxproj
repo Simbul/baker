@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		20CC551D16AD346900DEFB5C /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 20CC551F16AD346900DEFB5C /* Localizable.strings */; };
+		904033901A10FF230035071A /* BKRShelfViewLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 9040338F1A10FF230035071A /* BKRShelfViewLayout.m */; };
 		9F55576815B4C6C3003072A3 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F55576515B4C6B7003072A3 /* QuartzCore.framework */; };
 		9F58D85115D66E870027902C /* BKRCustomNavigationBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F58D84E15D66E870027902C /* BKRCustomNavigationBar.m */; };
 		9F58D85215D66E870027902C /* BKRCustomNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F58D85015D66E870027902C /* BKRCustomNavigationController.m */; };
@@ -64,6 +65,8 @@
 
 /* Begin PBXFileReference section */
 		20CC551E16AD346900DEFB5C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		9040338E1A10FF230035071A /* BKRShelfViewLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BKRShelfViewLayout.h; sourceTree = "<group>"; };
+		9040338F1A10FF230035071A /* BKRShelfViewLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BKRShelfViewLayout.m; sourceTree = "<group>"; };
 		9F55576515B4C6B7003072A3 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		9F58D84D15D66E870027902C /* BKRCustomNavigationBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BKRCustomNavigationBar.h; sourceTree = "<group>"; };
 		9F58D84E15D66E870027902C /* BKRCustomNavigationBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BKRCustomNavigationBar.m; sourceTree = "<group>"; };
@@ -229,6 +232,8 @@
 				AB40043615B4B83000D87E2A /* BKRInterceptorWindow.m */,
 				AB40044C15B4B83000D87E2A /* BKRModalWebViewController.h */,
 				AB40044D15B4B83000D87E2A /* BKRModalWebViewController.m */,
+				9040338E1A10FF230035071A /* BKRShelfViewLayout.h */,
+				9040338F1A10FF230035071A /* BKRShelfViewLayout.m */,
 				C62D23351A0A710B003A26D2 /* BKRSettings.h */,
 				C62D23361A0A710B003A26D2 /* BKRSettings.m */,
 			);
@@ -453,6 +458,7 @@
 				C66857A11A07D38300776443 /* UIColor+BakerExtensions.m in Sources */,
 				AB40047315B4B83000D87E2A /* BKRModalWebViewController.m in Sources */,
 				AB40047715B4B83000D87E2A /* BKRPageTitleLabel.m in Sources */,
+				904033901A10FF230035071A /* BKRShelfViewLayout.m in Sources */,
 				9FF795A715B4C57E00899E51 /* BKRShelfViewController.m in Sources */,
 				9F8FC1C415C55E8C0065F0A3 /* BKRBook.m in Sources */,
 				9F58D85115D66E870027902C /* BKRCustomNavigationBar.m in Sources */,

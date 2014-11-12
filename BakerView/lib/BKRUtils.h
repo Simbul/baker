@@ -44,6 +44,7 @@
 
 + (UIColor*)colorWithRGBHex:(UInt32)hex;
 + (UIColor*)colorWithHexString:(NSString*)stringToConvert;
++ (CAGradientLayer *)gradientLayerFromHexString:(NSString *)startString toHexString:(NSString *)stopString;
 + (NSString*)stringFromInterfaceOrientation:(UIInterfaceOrientation)orientation;
 + (BOOL)webViewShouldBePaged:(UIWebView*)webView forBook:(BKRBook*)book;
 + (NSString*)appID;

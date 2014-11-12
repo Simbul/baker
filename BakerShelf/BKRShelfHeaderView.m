@@ -30,6 +30,8 @@
 //
 
 #import "BKRShelfHeaderView.h"
+#import "BKRSettings.h"
+#import "BKRUtils.h"
 
 @implementation BKRShelfHeaderView
 
@@ -39,8 +41,14 @@
         
         _headerImage = [[UIImageView alloc] initWithFrame:self.frame];
         _headerImage.autoresizingMask = UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth;
-        _headerImage.contentMode      = UIViewContentModeScaleAspectFit;
+        [_headerImage setClipsToBounds:YES];
         _headerImage.image            = [UIImage imageNamed:@"shelf-header"];
+        if([[BKRSettings sharedSettings].issuesShelfOptions[@"headerImageFill"] boolValue] == TRUE) {
+            _headerImage.contentMode  = UIViewContentModeScaleAspectFill;
+        }else{
+            _headerImage.contentMode  = UIViewContentModeScaleAspectFit;
+        }
+        _headerImage.backgroundColor = [BKRUtils colorWithHexString:[BKRSettings sharedSettings].issuesShelfOptions[@"headerBackgroundColor"]];
 
         [self addSubview:_headerImage];
         
