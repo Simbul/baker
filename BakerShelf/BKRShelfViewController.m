@@ -259,18 +259,32 @@
 }
 
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
-    CGSize itemSize = [BKRIssueViewController getIssueCellSizeForOrientation:toInterfaceOrientation];
-    self.layout.itemSize = itemSize;
-    [self.gridView.collectionViewLayout invalidateLayout];
+    realInterfaceOrientation = toInterfaceOrientation;
+    [super willRotateToInterfaceOrientation:toInterfaceOrientation duration:duration];
 }
 
 - (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
+    [super willAnimateRotationToInterfaceOrientation:toInterfaceOrientation duration:duration];
+
+    // Update label widths
+    [self.issueViewControllers enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        [(BKRIssueViewController*)obj refreshContentWithCache:NO];
+    }];
+}
+
+- (void)viewDidLayoutSubviews {
+    // Update gradient background (if set)
     if(self.gradientLayer) {
         [self.gradientLayer setFrame:self.gridView.bounds];
     }
+    
+    // Update header size
     [self.layout setHeaderReferenceSize:[self getBannerSize]];
+    
+    // Invalidate layout
+    [self.layout invalidateLayout];
+    
 }
-
 
 - (BKRIssueViewController*)createIssueViewControllerWithIssue:(BKRIssue*)issue {
     BKRIssueViewController *controller = [[BKRIssueViewController alloc] initWithBakerIssue:issue];
@@ -314,8 +328,9 @@
     return cell;
 }
 
+
 - (CGSize)collectionView:(UICollectionView*)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath*)indexPath {
-    return [BKRIssueViewController getIssueCellSizeForOrientation:self.interfaceOrientation];
+    return [BKRIssueViewController getIssueCellSizeForOrientation:realInterfaceOrientation];
 }
 
 - (UICollectionReusableView*)collectionView:(UICollectionView*)collectionView viewForSupplementaryElementOfKind:(NSString*)kind atIndexPath:(NSIndexPath*)indexPath {
