@@ -48,6 +48,7 @@
     NSMutableArray *notRecognisedTransactions;
     UIPopoverController *infoPopover;
     BKRPurchasesManager *purchasesManager;
+    UIInterfaceOrientation realInterfaceOrientation;
 }
 
 @property (nonatomic, copy) NSArray *issues;
