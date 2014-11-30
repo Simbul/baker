@@ -80,7 +80,12 @@
     [BKRBakerAPI generateUUIDOnce];
     
     // Let the device know we want to handle Newsstand push notifications
-    [application registerForRemoteNotificationTypes:(UIRemoteNotificationTypeNewsstandContentAvailability|UIRemoteNotificationTypeBadge|UIRemoteNotificationTypeSound|UIRemoteNotificationTypeAlert)];
+    if ([application respondsToSelector:@selector(registerUserNotificationSettings:)]) {
+        UIUserNotificationSettings *notificationSettings = [UIUserNotificationSettings settingsForTypes:(UIRemoteNotificationTypeNewsstandContentAvailability|UIRemoteNotificationTypeBadge|UIRemoteNotificationTypeSound|UIRemoteNotificationTypeAlert) categories:nil];
+        [application registerUserNotificationSettings:notificationSettings];
+    } else {
+        [application registerForRemoteNotificationTypes:(UIRemoteNotificationTypeNewsstandContentAvailability|UIRemoteNotificationTypeBadge|UIRemoteNotificationTypeSound|UIRemoteNotificationTypeAlert)];
+    }
     
 #ifdef DEBUG
     // For debug only... so that you can download multiple issues per day during development
@@ -146,6 +151,10 @@
 }
 
 #pragma mark - Push Notifications
+
+- (void)application:(UIApplication*)application didRegisterUserNotificationSettings:(UIUserNotificationSettings*)notificationSettings {
+    [application registerForRemoteNotifications];
+}
 
 - (void)application:(UIApplication*)application didFailToRegisterForRemoteNotificationsWithError:(NSError*)error {
     NSLog(@"[AppDelegate] Push Notification - Device Token, review: %@", error);
