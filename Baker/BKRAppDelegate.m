@@ -193,6 +193,7 @@
 
 }
 
+/*
 - (void)application:(UIApplication*)application didReceiveRemoteNotification:(NSDictionary*)userInfo fetchCompletionHandler:(void(^)(UIBackgroundFetchResult result))handler {
     
     if (![BKRSettings sharedSettings].isNewsstand) {
@@ -205,6 +206,7 @@
     }
 
 }
+*/
 
 - (void)applicationWillHandleNewsstandNotificationOfContent:(NSString*)contentName {
 
