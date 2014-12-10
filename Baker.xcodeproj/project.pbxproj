@@ -58,6 +58,9 @@
 		C649F0981A090B6000B02548 /* BKRShelfHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = C649F0971A090B6000B02548 /* BKRShelfHeaderView.m */; };
 		C649F09B1A0912F500B02548 /* UIScreen+BakerExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = C649F09A1A0912F500B02548 /* UIScreen+BakerExtensions.m */; };
 		C649F09D1A0926CD00B02548 /* settings.plist in Resources */ = {isa = PBXBuildFile; fileRef = C649F09C1A0926CD00B02548 /* settings.plist */; };
+		C659B2941A38BA3700CA238C /* newsstand-app-icon.png in Resources */ = {isa = PBXBuildFile; fileRef = C659B2911A38BA3700CA238C /* newsstand-app-icon.png */; };
+		C659B2951A38BA3700CA238C /* newsstand-app-icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C659B2921A38BA3700CA238C /* newsstand-app-icon@2x.png */; };
+		C659B2961A38BA3700CA238C /* newsstand-app-icon@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = C659B2931A38BA3700CA238C /* newsstand-app-icon@3x.png */; };
 		C66857A01A07D38300776443 /* NSString+BakerExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = C668579D1A07D38300776443 /* NSString+BakerExtensions.m */; };
 		C66857A11A07D38300776443 /* UIColor+BakerExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = C668579F1A07D38300776443 /* UIColor+BakerExtensions.m */; };
 		C66857A41A07DDBE00776443 /* NSObject+BakerExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = C66857A31A07DDBE00776443 /* NSObject+BakerExtensions.m */; };
@@ -157,6 +160,9 @@
 		C649F0991A0912F500B02548 /* UIScreen+BakerExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIScreen+BakerExtensions.h"; sourceTree = "<group>"; };
 		C649F09A1A0912F500B02548 /* UIScreen+BakerExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIScreen+BakerExtensions.m"; sourceTree = "<group>"; };
 		C649F09C1A0926CD00B02548 /* settings.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = settings.plist; sourceTree = "<group>"; };
+		C659B2911A38BA3700CA238C /* newsstand-app-icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "newsstand-app-icon.png"; sourceTree = "<group>"; };
+		C659B2921A38BA3700CA238C /* newsstand-app-icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "newsstand-app-icon@2x.png"; sourceTree = "<group>"; };
+		C659B2931A38BA3700CA238C /* newsstand-app-icon@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "newsstand-app-icon@3x.png"; sourceTree = "<group>"; };
 		C668579C1A07D38300776443 /* NSString+BakerExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+BakerExtensions.h"; sourceTree = "<group>"; };
 		C668579D1A07D38300776443 /* NSString+BakerExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+BakerExtensions.m"; sourceTree = "<group>"; };
 		C668579E1A07D38300776443 /* UIColor+BakerExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+BakerExtensions.h"; sourceTree = "<group>"; };
@@ -355,6 +361,9 @@
 		ABAFB59115AB9A2E002FA498 /* Baker */ = {
 			isa = PBXGroup;
 			children = (
+				C659B2911A38BA3700CA238C /* newsstand-app-icon.png */,
+				C659B2921A38BA3700CA238C /* newsstand-app-icon@2x.png */,
+				C659B2931A38BA3700CA238C /* newsstand-app-icon@3x.png */,
 				C649F09C1A0926CD00B02548 /* settings.plist */,
 				ABAFB59A15AB9A2E002FA498 /* BKRAppDelegate.h */,
 				ABAFB59B15AB9A2E002FA498 /* BKRAppDelegate.m */,
@@ -440,6 +449,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C659B2941A38BA3700CA238C /* newsstand-app-icon.png in Resources */,
+				C659B2951A38BA3700CA238C /* newsstand-app-icon@2x.png in Resources */,
+				C659B2961A38BA3700CA238C /* newsstand-app-icon@3x.png in Resources */,
 				AB40048515B4BB8B00D87E2A /* books in Resources */,
 				BF78D1B0180C8F070093DFBC /* BakerAssets.xcassets in Resources */,
 				20CC551D16AD346900DEFB5C /* Localizable.strings in Resources */,
