@@ -124,12 +124,19 @@ BUGS AND FEEDBACK
 CHANGELOG
 ---------
 
-* **4.3** (in development)
+* **4.3** (11/12/2014)
   * Added support for iOS 8, iOS 8.1, iPhone 6 and iPhone 6 Plus
   * The Baker app is now a universal app
   * Support for iOS 6 is dropped, Baker now requires iOS 7 or newer
   * The shelf header is now a separate view that can be customized
   * The embedded book "A Study Of Scarlet" is now responsive
+  * The shelf view now supports categories
+  * Newsstand icon is now updated dynamically
+  * Autoplay on UIWebView is now allowed
+  * Settings are now defined in the settings.plist file instead of code
+  * Many new config settings to customize the shelf
+  * Full cleanup of the code, move to ARC and move to modern Objective-C syntax
+  * Minor bug fixes and other resolved GitHub reported issues
 
 * **4.2.1** (26/01/2014)
   * Branding changes.  New Baker Framework logo assets
