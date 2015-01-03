@@ -473,7 +473,7 @@
     [purchasesManager retrievePurchasesFor:[issuesManager productIDs] withCallback:^(NSDictionary *purchases) {
         // List of purchases has been returned, so we can refresh all issues
         [self.issueViewControllers enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-            [(BKRIssueViewController*)obj refreshContentWithCache:NO];
+            [(BKRIssueViewController*)obj refreshWithCache:NO];
         }];
         [self setrefreshButtonEnabled:YES];
         

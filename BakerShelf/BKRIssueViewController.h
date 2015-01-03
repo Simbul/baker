@@ -67,6 +67,8 @@ typedef struct {
 #pragma mark - View Lifecycle
 - (void)refresh;
 - (void)refresh:(NSString*)status;
+- (void)refresh:(NSString*)status cache:(BOOL)cache;
+- (void)refreshWithCache:(BOOL)cache;
 - (void)refreshContentWithCache:(bool)cache;
 - (void)preferredContentSizeChanged:(NSNotification*)notification;
 
