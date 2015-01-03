@@ -258,7 +258,15 @@
 }
 
 - (void)refresh:(NSString*)status {
-    //NSLog(@"[BakerShelf] Shelf UI - Refreshing %@ item with status from <%@> to <%@>", self.issue.ID, self.currentStatus, status);
+    [self refresh:[self.issue getStatus] cache:YES];
+}
+
+- (void)refreshWithCache:(BOOL)cache {
+    [self refresh:[self.issue getStatus] cache:cache];
+}
+
+- (void)refresh:(NSString*)status cache:(BOOL)cache {
+    // NSLog(@"[BakerShelf] Shelf UI - Refreshing %@ item with status from <%@> to <%@>", self.issue.ID, self.currentStatus, status);
     if ([status isEqualToString:@"remote"]) {
         [self.actionButton setTitle:NSLocalizedString(@"FREE_TEXT", nil) forState:UIControlStateNormal];
         [self.spinner stopAnimating];
@@ -351,7 +359,7 @@
         self.loadingLabel.hidden  = NO;
     }
 
-    [self refreshContentWithCache:YES];
+    [self refreshContentWithCache:cache];
 
     self.currentStatus = status;
 }
