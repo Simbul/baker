@@ -156,12 +156,13 @@
 }
 
 - (NSString*)displayTitleFor:(NSString*)productID {
-    SKProduct *product = self.products[productID];
-    if(product) {
-        return product.localizedTitle;
+    
+    if ([BKRSettings sharedSettings].useiTunesConnectLocalizations) {
+        SKProduct *product = self.products[productID];
+        if(product) {
+            return product.localizedTitle;
+        }
     }
-    // If for some reason we can't find the product, then fallback to the old
-    // behaviour of looking for a localized string
     return NSLocalizedString(productID, nil);
 }
 

@@ -83,6 +83,8 @@
         _postApnsTokenUrl                    = [self stringSettingForKey:@"postApnsTokenUrl" withDefault:@""];
         _freeSubscriptionProductId           = [self stringSettingForKey:@"freeSubscriptionProductId" withDefault:@""];
         _autoRenewableSubscriptionProductIds = [self arraySettingForKey:@"autoRenewableSubscriptionProductIds" withDefault:@[]];
+        
+        _useiTunesConnectLocalizations       = [self boolSettingForKey:@"useiTunesConnectLocalizations" withDefault:YES];
 
         _issuesCoverBackgroundColor          = [self stringSettingForKey:@"issuesCoverBackgroundColor" withDefault:@"#ffffff"];
 
