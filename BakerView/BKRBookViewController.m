@@ -1155,6 +1155,21 @@
 
                     return NO;
                 }
+                else if ([[url scheme] isEqualToString:@"baker-toc://show"])
+                {
+                    [self showBars];
+                    return NO;
+                }
+                else if ([[url scheme] isEqualToString:@"baker-toc://hide"])
+                {
+                    [self hideBars:@YES];
+                    return NO;
+                }
+                else if ([[url scheme] isEqualToString:@"baker-toc://toggle"])
+                {
+                    [self toggleBars];
+                    return NO;
+                }
                 else
                 {
                     // **************************************************************************************************** OPEN OUTSIDE BAKER
