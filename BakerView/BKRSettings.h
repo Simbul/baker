@@ -75,6 +75,8 @@
 // This constant identifies one or more auto-renewable subscriptions.
 @property (nonatomic, readonly) NSArray *autoRenewableSubscriptionProductIds;
 
+// Pull subscriptions localisations from iTunes or localizedString
+@property (nonatomic, readonly) BOOL useiTunesConnectLocalizations;
 
 // Background color for issues cover (before downloading the actual cover)
 @property (nonatomic, readonly) NSString *issuesCoverBackgroundColor;
