@@ -1853,6 +1853,7 @@
     if (self.currPage != nil) {
         bookStatus.scrollIndex = [self.currPage stringByEvaluatingJavaScriptFromString:@"window.scrollY;"];
     }
+    bookStatus.page = @(self.currentPageNumber);
     [bookStatus save];
     //NSLog(@"[BakerView] Saved status");
 }
